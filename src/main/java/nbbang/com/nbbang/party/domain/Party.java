@@ -1,6 +1,7 @@
-package nbbang.com.nbbang;
+package nbbang.com.nbbang.party.domain;
 
 import lombok.Getter;
+import nbbang.com.nbbang.member.domain.Member;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;

@@ -1,4 +1,4 @@
-package nbbang.com.nbbang;
+package nbbang.com.nbbang.member.controller;
 
 import org.springframework.stereotype.Controller;
 
