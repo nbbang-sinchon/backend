@@ -1,4 +1,4 @@
-package nbbang.com.nbbang;
+package nbbang.com.nbbang.party.domain;
 
 import lombok.Getter;
 

@@ -1,6 +1,8 @@
-package nbbang.com.nbbang;
+package nbbang.com.nbbang.bbangpan.domain;
 
 import lombok.Getter;
+import nbbang.com.nbbang.member.domain.Member;
+import nbbang.com.nbbang.party.domain.Party;
 
 import javax.persistence.*;
 
