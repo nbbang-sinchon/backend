@@ -17,7 +17,7 @@ import java.util.List;
 
 @Tag(name = "bbangpan", description = "빵판과 관련된 API입니다.")
 @RestController
-@RequestMapping("/bbangpans")
+@RequestMapping("/bbangpans/{party_id}")
 @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "OK"),
         @ApiResponse(responseCode = "401", description = "Unauthorized"),
@@ -26,8 +26,16 @@ import java.util.List;
 public class BbangpanController {
 
     @Operation(summary = "빵판 정보", description = "유저가 빵판을 클릭했을 때, 필요한 정보를 보냅니다.")
-    @GetMapping("{/party_id}")
+    @GetMapping
     public BbangpanGetResponseDto getBbanpan(@PathVariable Long party_id) {
+        List<MemberBbangpanDto> memberBbangpanDtos = new ArrayList<>();
+        memberBbangpanDtos.add(new MemberBbangpanDto("연희동 주민", 2000, "송금 완료"));
+        return new BbangpanGetResponseDto(memberBbangpanDtos, 2000, 4000, 6000);
+    }
+
+    @Operation(summary = "빵판 정보", description = "유저가 빵판을 클릭했을 때, 필요한 정보를 보냅니다.")
+    @PostMapping
+    public BbangpanGetResponseDto changePrice(@PathVariable Long party_id) {
         List<MemberBbangpanDto> memberBbangpanDtos = new ArrayList<>();
         memberBbangpanDtos.add(new MemberBbangpanDto("연희동 주민", 2000, "송금 완료"));
         return new BbangpanGetResponseDto(memberBbangpanDtos, 2000, 4000, 6000);
