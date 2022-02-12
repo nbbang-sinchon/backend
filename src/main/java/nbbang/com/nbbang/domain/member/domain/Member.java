@@ -15,4 +15,6 @@ public class Member {
 
     private String avatar;
 
+    private String place;
+
 }
