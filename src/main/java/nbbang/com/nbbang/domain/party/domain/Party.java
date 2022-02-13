@@ -30,7 +30,7 @@ public class Party {
 
     private LocalDateTime cancelTime;
 
-    private Integer fee;
+    private Integer deliveryFee;
 
     @ManyToOne
     @JoinColumn(name = "member_id")

@@ -44,7 +44,7 @@ public class PartyController {
 
     @Operation(summary = "파티 생성", description = "파티를 생성합니다.")
     @PostMapping
-    public void createParty(@Validated @ModelAttribute PartyRequestDto partyRequestDtO, BindingResult bindingResult) {
+    public void createParty(@Validated @RequestBody PartyRequestDto partyRequestDtO, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             bindingResult.getAllErrors().stream().forEach(System.out::println);
         }
@@ -60,8 +60,8 @@ public class PartyController {
 
     @Operation(summary = "파티 수정", description = "파티를 수정합니다.")
     @PatchMapping("/{party_id}")
-    @ApiResponse(responseCode = "403", description = "Forbidden")
-    public void updateParty(@PathVariable Long party_id, @ModelAttribute PartyRequestDto partyRequestDtO) {
+    @ApiResponse(responseCode = "403", description = "NotOwner")
+    public void updateParty(@PathVariable Long party_id, @RequestBody PartyRequestDto partyRequestDtO) {
 
     }
 
