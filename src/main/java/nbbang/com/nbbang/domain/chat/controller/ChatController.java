@@ -29,25 +29,25 @@ public class ChatController {
 
     @Operation(summary = "채팅방 조회", description = "채팅방을 파티 id 로 조회합니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ChatResponseDto.class)))
-    @ApiResponse(responseCode = "403", description = "채팅방의 멤버가 아닙니다.", content = @Content(mediaType = "application/json"))
-    @GetMapping("/chats/{party_id}")
-    public ResponseEntity select(@PathVariable("party_id") Long partyId) {
+    @ApiResponse(responseCode = "403", description = "Not Party Member", content = @Content(mediaType = "application/json"))
+    @GetMapping("/{party-id}")
+    public ResponseEntity select(@PathVariable("party-id") Long partyId) {
         return new ResponseEntity(DefaultResponse.res(StatusCode.OK, ResponseMessage.READ_CHAT, ChatResponseDto.createMock()), HttpStatus.OK);
     }
 
     @Operation(summary = "채팅 메시지 전송", description = "채팅 메시지를 전송합니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
-    @ApiResponse(responseCode = "403", description = "채팅방의 멤버가 아닙니다..", content = @Content(mediaType = "application/json"))
-    @PostMapping("/chats/{party_id}/messages")
-    public ResponseEntity sendMessage(@PathVariable("party_id") Long partyId, @RequestBody ChatMessageSendRequestDto chatMessageSendRequestDto) {
+    @ApiResponse(responseCode = "403", description = "Not Party Member", content = @Content(mediaType = "application/json"))
+    @PostMapping("/{party-id}/messages")
+    public ResponseEntity sendMessage(@PathVariable("party-id") Long partyId, @RequestBody ChatMessageSendRequestDto chatMessageSendRequestDto) {
         return new ResponseEntity(DefaultResponse.res(StatusCode.OK, ResponseMessage.UPLOADED_MESSAGE), HttpStatus.OK);
     }
 
     @Operation(summary = "메시지 사진 업로드", description = "메시지 사진을 업로드합니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ChatMessageImageUploadResponseDto.class)))
     @ApiResponse(responseCode = "400", description = "잘못된 요청입니다.", content = @Content(mediaType = "application/json"))
-    @PostMapping(path = "/chats/{party_id}/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity sendImage(@PathVariable("party_id") Long partyId,
+    @PostMapping(path = "/{party-id}/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity sendImage(@PathVariable("party-id") Long partyId,
                                                        @Schema(description = "이미지 파일을 업로드합니다.")
                                                        @RequestPart MultipartFile imgFile) {
         String filePath = fileUploadService.fileUpload(imgFile);
@@ -57,29 +57,29 @@ public class ChatController {
     @Operation(summary = "채팅방에서 나가기", description = "채팅방에서 나갑니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "400", description = "잘못된 요청입니다.", content = @Content(mediaType = "application/json"))
-    @ApiResponse(responseCode = "403", description = "방장 또는 참여 회원이 아닙니다.", content = @Content(mediaType = "application/json"))
-    @PostMapping("/chats/{party_id}/out")
-    public ResponseEntity exitChat(@PathVariable("party_id") Long partyId) {
+    @ApiResponse(responseCode = "403", description = "Not Owner or Party Member", content = @Content(mediaType = "application/json"))
+    @PostMapping("/{party-id}/out")
+    public ResponseEntity exitChat(@PathVariable("party-id") Long partyId) {
         return new ResponseEntity(DefaultResponse.res(StatusCode.OK, ResponseMessage.EXIT_CHAT), HttpStatus.OK);
     }
 
     @Operation(summary = "채팅방 상태 변경", description = "방장만 채팅방 속성을 변경할 수 있습니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "400", description = "잘못된 요청입니다. Status 를 올바르게 입력하세요.", content = @Content(mediaType = "application/json"))
-    @ApiResponse(responseCode = "403", description = "방장이 아닙니다.", content = @Content(mediaType = "application/json"))
-    @PatchMapping("/chats/{party_id}/status")
-    public ResponseEntity changeStatus(@PathVariable("party_id") Long partyId,
-                                       @Schema(description = "채팅방 상태: 모집 중 - running, 마감 임박 - imminent, 모집 완료 - full, 주문 완료 - complete, 모집 취소 - cancel")
+    @ApiResponse(responseCode = "403", description = "Not Owner", content = @Content(mediaType = "application/json"))
+    @PatchMapping("/{party-id}/status")
+    public ResponseEntity changeStatus(@PathVariable("party-id") Long partyId,
+                                       @Schema(description = "채팅방 상태: 모집 중 - on, 마감 임박 - soon, 모집 완료 - full, 주문 완료 - finish, 모집 취소 - cancel")
                                                ChatStatusChangeRequestDto chatStatusChangeRequestDto) {
         return new ResponseEntity(DefaultResponse.res(StatusCode.OK, ResponseMessage.UPDATE_CHAT), HttpStatus.OK);
     }
 
     @Operation(summary = "채팅방 최대 참여자 수 변경", description = "방장만 채팅방 속성을 변경할 수 있습니다.")
-    @ApiResponse(responseCode = "200", description = "채팅방 최대 참여자 수 변경 성공", content = @Content(mediaType = "application/json"))
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "400", description = "잘못된 요청입니다. Status 를 올바르게 입력하세요.", content = @Content(mediaType = "application/json"))
-    @ApiResponse(responseCode = "403", description = "방장이 아닙니다.", content = @Content(mediaType = "application/json"))
-    @PatchMapping("/chats/{party_id}/number")
-    public ResponseEntity changeMaxMemberNumber(@PathVariable("party_id") Long partyId,
+    @ApiResponse(responseCode = "403", description = "Not Owner", content = @Content(mediaType = "application/json"))
+    @PatchMapping("/{party-id}/number")
+    public ResponseEntity changeMaxMemberNumber(@PathVariable("party-id") Long partyId,
                                                 @Schema(description = "채팅방 최대 참여자 수")
                                                         ChatChangeGoalNumberRequestDto chatChangeGoalNumberRequestDto) {
         return new ResponseEntity(DefaultResponse.res(StatusCode.OK, ResponseMessage.UPDATE_CHAT), HttpStatus.OK);

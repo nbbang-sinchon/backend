@@ -7,6 +7,7 @@ import nbbang.com.nbbang.domain.member.dto.MemberResponseDto;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Data @Builder
@@ -28,16 +29,10 @@ public class ChatResponseDto {
                 .memberNumber(3)
                 .maxMemberNumber(4)
                 .owner(MemberResponseDto.createLuffy())
-                .participants(new ArrayList<>())
+                .participants(new ArrayList<>(Arrays.asList(MemberResponseDto.createKorung(), MemberResponseDto.createHyungKyung())))
                 .createTime(LocalDateTime.of(2022, 02, 12, 12, 40))
-                .chatMessages(new ArrayList<>())
+                .chatMessages(new ArrayList<>(Arrays.asList(ChatMessageResponseDto.createMock1(), ChatMessageResponseDto.createMock2())))
                 .build();
-
-        dto.participants.add(MemberResponseDto.createKorung());
-        dto.participants.add(MemberResponseDto.createHyungKyung());
-
-        dto.chatMessages.add(ChatMessageResponseDto.createMock1());
-        dto.chatMessages.add(ChatMessageResponseDto.createMock2());
         return dto;
     }
 }
