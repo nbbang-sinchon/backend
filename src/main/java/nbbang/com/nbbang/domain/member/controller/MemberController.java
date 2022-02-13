@@ -36,7 +36,7 @@ public class MemberController {
 
     @Operation(summary = "마이페이지 정보 조회", description = "자신의 정보를 조회합니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MemberResponseDto.class)))
-    @GetMapping("")
+    @GetMapping
     public ResponseEntity select() {
         return new ResponseEntity(DefaultResponse.builder()
                 .statusCode(StatusCode.OK)
@@ -46,7 +46,7 @@ public class MemberController {
     }
 
     @Operation(summary = "마이페이지 정보 업데이트", description = "자신의 정보를 업데이트합니다.")
-    @PatchMapping("")
+    @PatchMapping
     public ResponseEntity update(@RequestPart MemberUpdateRequestDto memberUpdateRequestDto) {
         return new ResponseEntity(DefaultResponse.builder()
                 .statusCode(StatusCode.OK)
@@ -55,12 +55,12 @@ public class MemberController {
     }
 
     @Operation(summary = "회원 탈퇴", description = "서비스에서 탈퇴합니다.")
-    @DeleteMapping("")
+    @DeleteMapping
     public ResponseEntity delete() {
         return new ResponseEntity(DefaultResponse.builder()
-                .statusCode(StatusCode.NO_CONTENT)
+                .statusCode(StatusCode.OK)
                 .responseMessage(ResponseMessage.UPDATE_USER)
-                .build(), HttpStatus.NO_CONTENT);
+                .build(), HttpStatus.OK);
     }
 
     @Operation(summary = "프로필 사진 업로드", description = "프로필 사진을 업로드합니다.")
