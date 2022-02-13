@@ -37,15 +37,6 @@ import static org.springframework.http.HttpStatus.OK;
 @Slf4j
 public class PartyController {
 
-    // 이 컨트롤러는 맴버 컨트롤러 쪽으로 위치 옮겨야함! conflict 나지 않을 때 옮기기
-    @Operation(summary = "멤버 위치", description = "멤버의 위치 정보를 제공합니다.")
-    @ApiResponse(responseCode = "200", description = "OK",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = PlaceResponseDto.class)))
-    @GetMapping("/members/place")
-    public ResponseEntity memberPlace() {
-        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, ResponseMessageParty.MEMBER_LOCATION_SUCCESS,new PlaceResponseDto("연희동")), OK);
-    }
-
     @Operation(summary = "파티 생성", description = "파티를 생성합니다.")
     @PostMapping
     public ResponseEntity createParty(@Validated @RequestBody PartyRequestDto partyRequestDtO, BindingResult bindingResult) {

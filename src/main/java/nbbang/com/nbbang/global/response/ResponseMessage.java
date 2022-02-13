@@ -23,6 +23,8 @@ public class ResponseMessage {
 
     public static final String DELETE_USER = "회원 탈퇴 성공";
 
+    public static final String MEMBER_LOCATION_SUCCESS = "회원 위치 정보 조회 성공"; // 멤버 쪽으로
+
     //party
 
 

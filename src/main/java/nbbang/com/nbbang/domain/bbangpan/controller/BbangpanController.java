@@ -31,7 +31,6 @@ import static org.springframework.http.HttpStatus.OK;
 })
 @Slf4j
 public class BbangpanController {
-
     @Operation(summary = "빵판 정보", description = "유저가 빵판을 클릭했을 때, 필요한 정보를 보냅니다.")
     @ApiResponse(responseCode = "200", description = "OK",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = BbangpanGetResponseDto.class)))

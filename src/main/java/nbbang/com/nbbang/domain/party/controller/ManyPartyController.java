@@ -13,6 +13,7 @@ import nbbang.com.nbbang.global.response.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -28,7 +29,7 @@ import static org.springframework.http.HttpStatus.*;
 })
 @Slf4j
 public class ManyPartyController {
-    @Operation(summary = "여러 개 파티 리스트", description = "여러 개의 파티 리스트를 전송합니다.")
+    @Operation(summary = "여러 개 파티 리스트 조회", description = "여러 개의 파티 리스트를 전송합니다. json이 아닌 query parameter로 데이터를 전송해야 합니다.")
     @ApiResponse(responseCode = "200", description = "OK",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ObjectMaker.class)))
     @GetMapping("/parties")
@@ -38,7 +39,9 @@ public class ManyPartyController {
         List<String> hashtags = Arrays.asList("BHC", "치킨");
         PartyFindResponseDto partyFindResponseDto = new PartyFindResponseDto("연희동 올리브영 앞 BHC 7시", LocalDateTime.now(), 3, 4, "마감 임박", hashtags);
         List<PartyFindResponseDto> collect = Arrays.asList(partyFindResponseDto);
+/*        System.out.println("partyFindRequestDto.getPlaces().size() = " + partyFindRequestDto.getPlaces().size());
+        partyFindRequestDto.getPlaces().stream().forEach(System.out::println);
+        System.out.println("partyFindRequestDto.isOngoing() "+ partyFindRequestDto.isOngoing());*/
         return new ResponseEntity(DefaultResponse.res(StatusCode.OK, ResponseMessageParty.PARTY_FIND_SUCCESS, new ObjectMaker(collect)), OK);
     }
-
 }
