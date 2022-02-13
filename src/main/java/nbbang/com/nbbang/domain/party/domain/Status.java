@@ -3,5 +3,5 @@ package nbbang.com.nbbang.domain.party.domain;
 /*모집 중, 마감 임박, 모집 완료, 주문 완료, 모집 취소*/
 
 public enum Status {
-    ON, SOON, FINISH, ORDER, CANCEL
+    ON, SOON, FULL, ORDER, CANCEL
 }

@@ -16,6 +16,7 @@ import nbbang.com.nbbang.domain.member.dto.*;
 import nbbang.com.nbbang.domain.party.dto.PartyListResponseDto;
 import nbbang.com.nbbang.global.response.DefaultResponse;
 import nbbang.com.nbbang.global.response.ResponseMessage;
+import nbbang.com.nbbang.global.response.ResponseMessageParty;
 import nbbang.com.nbbang.global.response.StatusCode;
 import nbbang.com.nbbang.global.support.FileUpload.FileUploadService;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import static org.springframework.http.HttpStatus.OK;
 
 @Tag(name = "Member", description = "회원 관리 api (로그인 구현시 올바른 토큰을 보내지 않을 경우 401 Unauthorized 메시지를 받습니다.)")
 @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(mediaType = "application/json"))
@@ -77,7 +80,7 @@ public class MemberController {
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PlaceResponseDto.class)))
     @GetMapping("/place")
     public ResponseEntity memberPlace() {
-        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, ResponseMessage.READ_USER, new PlaceResponseDto("연희동")), HttpStatus.OK);
+        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, ResponseMessage.MEMBER_LOCATION_SUCCESS, new PlaceResponseDto("연희동")), HttpStatus.OK);
     }
 
 }
