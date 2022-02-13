@@ -18,7 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-@Tag(name = "Chat", description = "채팅방 api (로그인 구현시 올바른 토큰을 보내지 않을 경우 401 Unauthorized 메시지를 받습니다.)")
+@Tag(name = "Chat", description = "채팅방 api (로그인 구현시 올바른 토큰을 보내지 않을 경우 401 Unauthorized 메시지를 받습니다.).")
 @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(mediaType = "application/json"))
 @Slf4j
 @RestController
