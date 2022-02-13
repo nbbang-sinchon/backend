@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ObjectMaker<T>{ // 얘를 어디에 둘지 고민해보기
-    private T oneData;
+public class ObjectMaker<T>{
+    private T list;
 }
 
