@@ -50,7 +50,8 @@ public class ChatController {
     public ResponseEntity sendImage(@PathVariable("party_id") Long partyId,
                                                        @Schema(description = "이미지 파일을 업로드합니다.")
                                                        @RequestPart MultipartFile imgFile) {
-        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, ResponseMessage.UPLOADED_MESSAGE), HttpStatus.OK);
+        String filePath = fileUploadService.fileUpload(imgFile);
+        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, ResponseMessage.UPLOADED_MESSAGE, new ChatMessageImageUploadResponseDto(filePath)), HttpStatus.OK);
     }
 
     @Operation(summary = "채팅방에서 나가기", description = "채팅방에서 나갑니다.")
