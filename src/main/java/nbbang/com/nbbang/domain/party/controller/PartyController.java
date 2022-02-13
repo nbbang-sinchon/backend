@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import nbbang.com.nbbang.domain.member.dto.PlaceResponseDto;
 import nbbang.com.nbbang.domain.party.dto.PartyReadResponseDto;
 import nbbang.com.nbbang.domain.party.dto.PartyRequestDto;
 import org.springframework.http.HttpStatus;
@@ -81,13 +82,6 @@ public class PartyController {
 
     }
 
-    @Data @NoArgsConstructor @AllArgsConstructor
-    static class PartyResponseDto<T>{ // 얘를 어디에 둘지 고민해보기
-        private T party;
-    }
 
-    @Data @NoArgsConstructor @AllArgsConstructor
-    static class PlaceResponseDto{ // 얘를 어디에 둘지 고민해보기 + 이름.. place가 과연 엔티티인가
-        private String place;
-    }
+
 }
