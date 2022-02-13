@@ -11,4 +11,8 @@ public class StatusCode {
     public static final int INTERNAL_SERVER_ERROR = 500;
     public static final int SERVICE_UNAVAILABLE = 503;
     public static final int DB_ERROR = 600;
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 3f9f67d147d5f02a0ec2fef50159a0ccdf35fe0d
