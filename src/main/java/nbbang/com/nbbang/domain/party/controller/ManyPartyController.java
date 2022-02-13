@@ -16,10 +16,7 @@ import nbbang.com.nbbang.domain.party.dto.PartyRequestDto;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.Column;
 import javax.persistence.Enumerated;
@@ -27,6 +24,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static javax.persistence.EnumType.STRING;
@@ -42,14 +40,11 @@ import static javax.persistence.EnumType.STRING;
 public class ManyPartyController {
     @Operation(summary = "여러 개 파티 리스트", description = "여러 개의 파티 리스트를 전송합니다.")
     @GetMapping("/parties")
-    public Result findParty(@Validated @ModelAttribute PartyFindRequestDto partyFindRequestDto, BindingResult bindingResult) {
+    public Result findParty(@Validated @RequestBody PartyFindRequestDto partyFindRequestDto, BindingResult bindingResult) {
         log.info("errors={}", bindingResult);
-        List<String> hashtags = new ArrayList<>();
-        hashtags.add("BHC");
-        hashtags.add("치킨");
+        List<String> hashtags = Arrays.asList("BHC", "치킨");
         PartyFindResponseDto partyFindResponseDto = new PartyFindResponseDto("연희동 올리브영 앞 BHC 7시", LocalDateTime.now(), 3, 4, "마감 임박", hashtags);
-        List<PartyFindResponseDto> collect = new ArrayList<>();
-        collect.add(partyFindResponseDto);
+        List<PartyFindResponseDto> collect = Arrays.asList(partyFindResponseDto);
         return new Result(collect);
     }
 
