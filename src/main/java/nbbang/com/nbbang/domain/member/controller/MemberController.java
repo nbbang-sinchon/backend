@@ -100,11 +100,11 @@ public class MemberController {
     }
 
 
-    @Data
+/*    @Data
     @NoArgsConstructor
     @AllArgsConstructor
     public static class MemberResponseDtoWrapper<T> {
         private T member;
-    }
+    }*/
 
 }
