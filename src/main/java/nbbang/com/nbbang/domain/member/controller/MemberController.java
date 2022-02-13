@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,7 +25,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "Member", description = "회원 관리 api (로그인 구현시 올바른 토큰을 보내지 않을 경우 401 Unauthorized 메시지를 받습니다.)")
-@ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
 @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(mediaType = "application/json"))
 @Slf4j
 @RestController
@@ -38,29 +38,22 @@ public class MemberController {
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MemberResponseDto.class)))
     @GetMapping
     public ResponseEntity select() {
-        return new ResponseEntity(DefaultResponse.builder()
-                .statusCode(StatusCode.OK)
-                .responseMessage(ResponseMessage.READ_USER)
-                .data(MemberResponseDto.createMock())
-                .build(), HttpStatus.OK);
+        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, ResponseMessage.READ_USER, MemberResponseDto.createMock()), HttpStatus.OK);
     }
 
     @Operation(summary = "마이페이지 정보 업데이트", description = "자신의 정보를 업데이트합니다.")
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
     @PatchMapping
-    public ResponseEntity update(@RequestPart MemberUpdateRequestDto memberUpdateRequestDto) {
-        return new ResponseEntity(DefaultResponse.builder()
-                .statusCode(StatusCode.OK)
-                .responseMessage(ResponseMessage.UPDATE_USER)
-                .build(), HttpStatus.OK);
+    public ResponseEntity update(@RequestBody MemberUpdateRequestDto memberUpdateRequestDto) {
+        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, ResponseMessage.UPDATE_USER), HttpStatus.OK);
     }
 
+
     @Operation(summary = "회원 탈퇴", description = "서비스에서 탈퇴합니다.")
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
     @DeleteMapping
     public ResponseEntity delete() {
-        return new ResponseEntity(DefaultResponse.builder()
-                .statusCode(StatusCode.OK)
-                .responseMessage(ResponseMessage.UPDATE_USER)
-                .build(), HttpStatus.OK);
+        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, ResponseMessage.DELETE_USER), HttpStatus.OK);
     }
 
     @Operation(summary = "프로필 사진 업로드", description = "프로필 사진을 업로드합니다.")
@@ -70,41 +63,21 @@ public class MemberController {
     public ResponseEntity uploadProfileImage(@Schema(description = "이미지 파일을 업로드합니다.")
                                                        @RequestPart MultipartFile imgFile) {
         String filePath = fileUploadService.fileUpload(imgFile);
-        return new ResponseEntity(DefaultResponse.builder()
-                .statusCode(StatusCode.OK)
-                .responseMessage(ResponseMessage.UPDATE_USER)
-                .data(MemberProfileImageUploadResponseDto.createMock())
-                .build(), HttpStatus.OK);
+        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, ResponseMessage.UPDATE_USER, MemberProfileImageUploadResponseDto.createMock()), HttpStatus.OK);
     }
 
     @Operation(summary = "나의 파티", description = "자신이 속한 파티 목록을 조회합니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PartyListResponseDto.class)))
     @GetMapping("/parties")
     public ResponseEntity parties() {
-        return new ResponseEntity(DefaultResponse.builder()
-                .statusCode(StatusCode.OK)
-                .responseMessage(ResponseMessage.READ_USER)
-                .data(PartyListResponseDto.createMock())
-                .build(), HttpStatus.OK);
+        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, ResponseMessage.READ_USER, PartyListResponseDto.createMock()), HttpStatus.OK);
     }
 
     @Operation(summary = "멤버 위치", description = "멤버의 위치 정보를 제공합니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PlaceResponseDto.class)))
     @GetMapping("/place")
     public ResponseEntity memberPlace() {
-        return new ResponseEntity(DefaultResponse.builder()
-                .statusCode(StatusCode.OK)
-                .responseMessage(ResponseMessage.READ_USER)
-                .data(new PlaceResponseDto("연희동"))
-                .build(), HttpStatus.OK);
+        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, ResponseMessage.READ_USER, new PlaceResponseDto("연희동")), HttpStatus.OK);
     }
-
-
-/*    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class MemberResponseDtoWrapper<T> {
-        private T member;
-    }*/
 
 }
