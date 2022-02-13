@@ -11,7 +11,6 @@ import nbbang.com.nbbang.domain.member.dto.PlaceResponseDto;
 import nbbang.com.nbbang.domain.party.dto.PartyReadResponseDto;
 import nbbang.com.nbbang.domain.party.dto.PartyRequestDto;
 import nbbang.com.nbbang.global.response.DefaultResponse;
-import nbbang.com.nbbang.global.response.ObjectMaker;
 import nbbang.com.nbbang.global.response.ResponseMessageParty;
 import nbbang.com.nbbang.global.response.StatusCode;
 import org.springframework.http.ResponseEntity;
@@ -30,9 +29,9 @@ import static org.springframework.http.HttpStatus.OK;
 @RestController
 @RequestMapping("/parties")
 @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "OK"),
-        @ApiResponse(responseCode = "401", description = "Unauthorized"),
-        @ApiResponse(responseCode = "404", description = "Not Found")
+        @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json")),
+        @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(mediaType = "application/json")),
+        @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(mediaType = "application/json"))
 })
 @Slf4j
 public class PartyController {
@@ -55,8 +54,8 @@ public class PartyController {
     */
 
     @Operation(summary = "파티 수정", description = "파티를 수정합니다.")
+    @ApiResponse(responseCode = "403", description = "Not Owner", content = @Content(mediaType = "application/json"))
     @PatchMapping("/{party-id}")
-    @ApiResponse(responseCode = "403", description = "NotOwner")
     public ResponseEntity updateParty(@PathVariable("party-id") Long partyId, @RequestBody PartyRequestDto partyRequestDtO) {
         return new ResponseEntity(DefaultResponse.res(StatusCode.OK, ResponseMessageParty.PARTY_UPDATE_SUCCESS), OK);
     }
@@ -74,7 +73,7 @@ public class PartyController {
     }
 
     @Operation(summary = "파티 삭제", description = "파티를 삭제합니다.")
-    @ApiResponse(responseCode = "403", description = "Not Owner")
+    @ApiResponse(responseCode = "403", description = "Not Owner", content = @Content(mediaType = "application/json"))
     @DeleteMapping("/{party-id}")
     public ResponseEntity deleteParty(@PathVariable("party-id") Long partyId) {
         return new ResponseEntity(DefaultResponse.res(StatusCode.OK, ResponseMessageParty.PARTY_DELETE_SUCCESS), OK);

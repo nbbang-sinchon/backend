@@ -11,6 +11,7 @@ import nbbang.com.nbbang.domain.bbangpan.dto.BbangpanGetResponseDto;
 import nbbang.com.nbbang.domain.bbangpan.dto.BbangpanPriceChangeRequestDto;
 import nbbang.com.nbbang.domain.bbangpan.dto.BbangpanStatusChangeRequestDto;
 import nbbang.com.nbbang.domain.bbangpan.dto.MemberBbangpanDto;
+import nbbang.com.nbbang.domain.party.dto.PartyRequestDto;
 import nbbang.com.nbbang.global.response.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,9 +26,9 @@ import static org.springframework.http.HttpStatus.OK;
 @RestController
 @RequestMapping("/bbangpans/{party-id}")
 @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "OK"),
-        @ApiResponse(responseCode = "401", description = "Unauthorized"),
-        @ApiResponse(responseCode = "404", description = "Not Found")
+        @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json")),
+        @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(mediaType = "application/json")),
+        @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(mediaType = "application/json"))
 })
 @Slf4j
 public class BbangpanController {
@@ -44,7 +45,7 @@ public class BbangpanController {
     }
 
     @Operation(summary = "주문 금액 설정", description = "유저가 주문 금액을 설정합니다.")
-    @ApiResponse(responseCode = "403", description = "Not Party Member")
+    @ApiResponse(responseCode = "403", description = "Not Party Member", content = @Content(mediaType = "application/json"))
     @PostMapping("/price")
     public ResponseEntity changePrice(@PathVariable("party-id") Long partyId, @RequestBody BbangpanPriceChangeRequestDto bbangpanPriceChangeRequestDto) {
         // 프론트에 socket.emit 보내면 주문 금액도 바뀌어 보이고 총 금액도 바뀌어 보여야함
@@ -53,14 +54,14 @@ public class BbangpanController {
     }
 
     @Operation(summary = "배달비 설정", description = "방장이 배달비를 설정합니다.")
-    @ApiResponse(responseCode = "403", description = "Not Owner")
+    @ApiResponse(responseCode = "403", description = "Not Owner", content = @Content(mediaType = "application/json"))
     @PostMapping("/delivery-fee")
     public ResponseEntity changeDeliveryFee(@PathVariable("party-id") Long partyId, @RequestBody BbangpanPriceChangeRequestDto bbangpanPriceChangeRequestDto) {
         return new ResponseEntity(DefaultResponse.res(StatusCode.OK, ResponseMessageBbangpan.DELIVERYFEE_CHANGE_SUCCESS), OK);
     }
 
     @Operation(summary = "송금 상태 설정", description = "송금 상태를 설정합니다.")
-    @ApiResponse(responseCode = "403", description = "Not Party Member")
+    @ApiResponse(responseCode = "403", description = "Not Party Member", content = @Content(mediaType = "application/json"))
     @PostMapping("/send-status")
     public ResponseEntity changeSendStatus(@PathVariable("party-id") Long partyId, @RequestBody BbangpanStatusChangeRequestDto bbangpanStatusChangeRequestDto) {
         return new ResponseEntity(DefaultResponse.res(StatusCode.OK, ResponseMessageBbangpan.SENDSTATUS_CHANGE_SUCCESS), OK);
