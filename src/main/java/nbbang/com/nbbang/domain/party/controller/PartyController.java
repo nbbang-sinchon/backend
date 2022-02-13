@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -45,13 +46,10 @@ public class PartyController {
     @PostMapping
     public void createParty(@Validated @ModelAttribute PartyRequestDto partyRequestDtO, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            List<ObjectError> allErrors = bindingResult.getAllErrors();
-            for(ObjectError e : allErrors) {
-                System.out.println(e.getDefaultMessage());
-            }
+            bindingResult.getAllErrors().stream().forEach(System.out::println);
         }
             log.info("errors={}", bindingResult);
-        }
+    }
 
 /*    제목, 본문, 해시태그를 작성하고 음식 유형을 선택한다.
     제목과 모집 인원수는 필수, 본문과 해시태그는 선택이다.
@@ -70,9 +68,7 @@ public class PartyController {
     @Operation(summary = "파티 상세", description = "파티의 상세 정보입니다.")
     @GetMapping("/{party_id}")
     public PartyResponseDto readParty(@PathVariable Long party_id){
-        List<String> hashtags = new ArrayList<>();
-        hashtags.add("BHC");
-        hashtags.add("치킨");
+        List<String> hashtags = Arrays.asList("BHC, 치킨");
         return new PartyResponseDto(new PartyReadResponseDto("BHC 7시", "연희동 올리브영 앞에서 나눠요", LocalDateTime.now(),
                 "연히동", 3, 4, "마감 임박",
                 "연희동 주민", 10, hashtags));
