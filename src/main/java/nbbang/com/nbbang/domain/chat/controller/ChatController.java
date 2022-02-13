@@ -79,7 +79,7 @@ public class ChatController {
     @ApiResponse(responseCode = "400", description = "잘못된 요청입니다. Status 를 올바르게 입력하세요.", content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "403", description = "Not Owner", content = @Content(mediaType = "application/json"))
     @PatchMapping("/{party-id}/number")
-    public ResponseEntity changeMaxMemberNumber(@PathVariable("party-id") Long partyId,
+    public ResponseEntity changeGoalNumber(@PathVariable("party-id") Long partyId,
                                                 @Schema(description = "채팅방 최대 참여자 수")
                                                         ChatChangeGoalNumberRequestDto chatChangeGoalNumberRequestDto) {
         return new ResponseEntity(DefaultResponse.res(StatusCode.OK, ResponseMessage.UPDATE_CHAT), HttpStatus.OK);
