@@ -1,6 +1,8 @@
 package nbbang.com.nbbang.domain.bbangpan.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,6 +29,8 @@ import java.util.List;
 public class BbangpanController {
 
     @Operation(summary = "빵판 정보", description = "유저가 빵판을 클릭했을 때, 필요한 정보를 보냅니다.")
+/*    @ApiResponse(responseCode = "200", description = "OK",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = BbangpanGetResponseDto.class)))*/
     @GetMapping
     public BbangpanGetResponseDto getInfo(@PathVariable Long party_id) {
         // 파티 멤버가 되는 로직을 추가한다.
@@ -35,9 +39,8 @@ public class BbangpanController {
         return new BbangpanGetResponseDto(memberBbangpanDtos, 2000, 4000, 6000);
     }
 
-    @ApiResponse(responseCode = "403", description = "Not Party Member")
     @Operation(summary = "주문 금액 설정", description = "유저가 주문 금액을 설정합니다.")
-            // content = @Content(schema = @Schema(implementation = BbangpanGetResponseDto.class)))
+    @ApiResponse(responseCode = "403", description = "Not Party Member")
     @PostMapping("/price")
     public void changePrice(@PathVariable Long party_id, @RequestBody BbangpanPriceChangeRequestDto bbangpanPriceChangeRequestDto) {
         // 프론트에 socket.emit 보내면 주문 금액도 바뀌어 보이고 총 금액도 바뀌어 보여야함

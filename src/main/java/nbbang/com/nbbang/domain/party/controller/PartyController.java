@@ -1,6 +1,7 @@
 package nbbang.com.nbbang.domain.party.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -12,6 +13,10 @@ import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.domain.member.dto.PlaceResponseDto;
 import nbbang.com.nbbang.domain.party.dto.PartyReadResponseDto;
 import nbbang.com.nbbang.domain.party.dto.PartyRequestDto;
+import nbbang.com.nbbang.global.response.DefaultResponse;
+import nbbang.com.nbbang.global.response.ObjectMaker;
+import nbbang.com.nbbang.global.response.ResponseMessageParty;
+import nbbang.com.nbbang.global.response.StatusCode;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -23,6 +28,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static org.springframework.http.HttpStatus.OK;
 
 
 @Tag(name = "party", description = "단일 파티 CRUD")
@@ -67,12 +74,15 @@ public class PartyController {
     }
 
     @Operation(summary = "파티 상세", description = "파티의 상세 정보입니다.")
+    @ApiResponse(responseCode = "200", description = "OK",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = PartyResponseDto.class)))
     @GetMapping("/{party_id}")
-    public PartyResponseDto readParty(@PathVariable Long party_id){
+    public ResponseEntity readParty(@PathVariable Long party_id){
         List<String> hashtags = Arrays.asList("BHC, 치킨");
-        return new PartyResponseDto(new PartyReadResponseDto("BHC 7시", "연희동 올리브영 앞에서 나눠요", LocalDateTime.now(),
+        PartyReadResponseDto partyResponseDto = new PartyReadResponseDto("BHC 7시", "연희동 올리브영 앞에서 나눠요", LocalDateTime.now(),
                 "연히동", 3, 4, "마감 임박",
-                "연희동 주민", 10, hashtags));
+                "연희동 주민", 10, hashtags);
+        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, ResponseMessageParty.PARTY_FIND_SUCCESS, partyResponseDto), OK);
     }
 
     @Operation(summary = "파티 삭제", description = "파티를 삭제합니다.")
