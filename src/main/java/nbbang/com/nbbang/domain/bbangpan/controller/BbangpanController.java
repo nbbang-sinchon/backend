@@ -1,25 +1,19 @@
 package nbbang.com.nbbang.domain.bbangpan.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.domain.bbangpan.dto.BbangpanGetResponseDto;
 import nbbang.com.nbbang.domain.bbangpan.dto.BbangpanPriceChangeRequestDto;
 import nbbang.com.nbbang.domain.bbangpan.dto.BbangpanStatusChangeRequestDto;
 import nbbang.com.nbbang.domain.bbangpan.dto.MemberBbangpanDto;
-import nbbang.com.nbbang.domain.party.dto.PartyFindRequestDto;
 import org.springframework.web.bind.annotation.*;
-
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 @Tag(name = "bbangpan", description = "빵판과 관련된 API입니다.")
 @RestController
@@ -47,7 +41,6 @@ public class BbangpanController {
     @PostMapping("/price")
     public void changePrice(@PathVariable Long party_id, @RequestBody BbangpanPriceChangeRequestDto bbangpanPriceChangeRequestDto) {
         // 프론트에 socket.emit 보내면 주문 금액도 바뀌어 보이고 총 금액도 바뀌어 보여야함
-
     }
 
     @ApiResponse(responseCode = "403", description = "Not Owner")
