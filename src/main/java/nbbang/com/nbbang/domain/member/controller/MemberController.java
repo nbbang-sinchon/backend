@@ -15,6 +15,7 @@ import nbbang.com.nbbang.domain.member.dto.*;
 import nbbang.com.nbbang.domain.party.dto.PartyListResponseDto;
 import nbbang.com.nbbang.global.response.DefaultResponse;
 import nbbang.com.nbbang.global.response.ResponseMessage;
+import nbbang.com.nbbang.global.response.StatusCode;
 import nbbang.com.nbbang.global.support.FileUpload.FileUploadService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -38,7 +39,7 @@ public class MemberController {
     @GetMapping("")
     public ResponseEntity select() {
         return new ResponseEntity(DefaultResponse.builder()
-                .statusCode(200)
+                .statusCode(StatusCode.OK)
                 .responseMessage(ResponseMessage.READ_USER)
                 .data(MemberResponseDto.createMock())
                 .build(), HttpStatus.OK);
@@ -48,7 +49,7 @@ public class MemberController {
     @PatchMapping("")
     public ResponseEntity update(@RequestPart MemberUpdateRequestDto memberUpdateRequestDto) {
         return new ResponseEntity(DefaultResponse.builder()
-                .statusCode(200)
+                .statusCode(StatusCode.OK)
                 .responseMessage(ResponseMessage.UPDATE_USER)
                 .build(), HttpStatus.OK);
     }
@@ -57,7 +58,7 @@ public class MemberController {
     @DeleteMapping("")
     public ResponseEntity delete() {
         return new ResponseEntity(DefaultResponse.builder()
-                .statusCode(204)
+                .statusCode(StatusCode.NO_CONTENT)
                 .responseMessage(ResponseMessage.UPDATE_USER)
                 .build(), HttpStatus.NO_CONTENT);
     }
@@ -70,7 +71,7 @@ public class MemberController {
                                                        @RequestPart MultipartFile imgFile) {
         String filePath = fileUploadService.fileUpload(imgFile);
         return new ResponseEntity(DefaultResponse.builder()
-                .statusCode(200)
+                .statusCode(StatusCode.OK)
                 .responseMessage(ResponseMessage.UPDATE_USER)
                 .data(MemberProfileImageUploadResponseDto.createMock())
                 .build(), HttpStatus.OK);
@@ -81,7 +82,7 @@ public class MemberController {
     @GetMapping("/parties")
     public ResponseEntity parties() {
         return new ResponseEntity(DefaultResponse.builder()
-                .statusCode(200)
+                .statusCode(StatusCode.OK)
                 .responseMessage(ResponseMessage.READ_USER)
                 .data(PartyListResponseDto.createMock())
                 .build(), HttpStatus.OK);
@@ -92,7 +93,7 @@ public class MemberController {
     @GetMapping("/place")
     public ResponseEntity memberPlace() {
         return new ResponseEntity(DefaultResponse.builder()
-                .statusCode(200)
+                .statusCode(StatusCode.OK)
                 .responseMessage(ResponseMessage.READ_USER)
                 .data(new PlaceResponseDto("연희동"))
                 .build(), HttpStatus.OK);
