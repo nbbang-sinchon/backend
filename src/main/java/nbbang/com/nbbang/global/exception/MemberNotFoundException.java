@@ -1,4 +1,4 @@
 package nbbang.com.nbbang.global.exception;
 
-public class MemberNotFoundException {
+public class MemberNotFoundException extends Exception {
 }
