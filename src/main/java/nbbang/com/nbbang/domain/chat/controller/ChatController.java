@@ -57,7 +57,7 @@ public class ChatController {
     @Operation(summary = "채팅방에서 나가기", description = "채팅방에서 나갑니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "400", description = "잘못된 요청입니다.", content = @Content(mediaType = "application/json"))
-    @ApiResponse(responseCode = "403", description = "Not Owner or Party Member", content = @Content(mediaType = "application/json"))
+    @ApiResponse(responseCode = "403", description = "Not Party Member", content = @Content(mediaType = "application/json"))
     @PostMapping("/{party-id}/out")
     public ResponseEntity exitChat(@PathVariable("party-id") Long partyId) {
         return new ResponseEntity(DefaultResponse.res(StatusCode.OK, ResponseMessage.EXIT_CHAT), HttpStatus.OK);

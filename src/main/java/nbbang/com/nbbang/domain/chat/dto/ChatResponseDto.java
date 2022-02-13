@@ -29,9 +29,9 @@ public class ChatResponseDto {
                 .memberNumber(3)
                 .maxMemberNumber(4)
                 .owner(MemberResponseDto.createLuffy())
-                .participants(new ArrayList<>(Arrays.asList(MemberResponseDto.createKorung(), MemberResponseDto.createHyungKyung())))
+                .participants(Arrays.asList(MemberResponseDto.createKorung(), MemberResponseDto.createHyungKyung()))
                 .createTime(LocalDateTime.of(2022, 02, 12, 12, 40))
-                .chatMessages(new ArrayList<>(Arrays.asList(ChatMessageResponseDto.createMock1(), ChatMessageResponseDto.createMock2())))
+                .chatMessages(Arrays.asList(ChatMessageResponseDto.createMock1(), ChatMessageResponseDto.createMock2()))
                 .build();
         return dto;
     }
