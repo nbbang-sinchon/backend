@@ -1,14 +1,22 @@
 package nbbang.com.nbbang.domain.party.domain;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import nbbang.com.nbbang.domain.bbangpan.domain.MemberParty;
 import nbbang.com.nbbang.domain.member.domain.Member;
+import nbbang.com.nbbang.domain.member.dto.Place;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+import java.util.List;
+
 import static javax.persistence.EnumType.STRING;
 
-@Entity @Getter
+@Entity @Getter @Builder
+@AllArgsConstructor
 public class Party {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "party_id")
@@ -24,9 +32,10 @@ public class Party {
     private Integer goalNumber;
 
     @Enumerated(STRING)
-    private Status status;
+    private PartyStatus status;
 
-    private String place;
+    @Enumerated(STRING)
+    private Place place;
 
     private LocalDateTime cancelTime;
 
@@ -38,4 +47,11 @@ public class Party {
 
     private Boolean isBlocked;
 
+    @OneToMany(mappedBy = "party")
+    private List<Hashtag> hashtags;
+
+    @OneToMany(mappedBy = "party")
+    private List<MemberParty> memberParties;
+
+    protected Party() {}
 }

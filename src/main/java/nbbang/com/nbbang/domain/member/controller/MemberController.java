@@ -22,6 +22,8 @@ import nbbang.com.nbbang.global.support.FileUpload.FileUploadService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -46,8 +48,12 @@ public class MemberController {
 
     @Operation(summary = "마이페이지 정보 업데이트", description = "자신의 정보를 업데이트합니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
+    @ApiResponse(responseCode = "400", description = "회원 정보를 올바르게 입력하세요.", content = @Content(mediaType = "application/json"))
     @PatchMapping
-    public ResponseEntity update(@RequestBody MemberUpdateRequestDto memberUpdateRequestDto) {
+    public ResponseEntity update(@Validated @RequestBody MemberUpdateRequestDto memberUpdateRequestDto, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return new ResponseEntity(DefaultResponse.res(StatusCode.BAD_REQUEST, "회원 정보를 올바르게 입력하세요."), HttpStatus.BAD_REQUEST);
+        }
         return new ResponseEntity(DefaultResponse.res(StatusCode.OK, ResponseMessage.UPDATE_USER), HttpStatus.OK);
     }
 

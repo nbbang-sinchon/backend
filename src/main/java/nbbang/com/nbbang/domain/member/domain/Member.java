@@ -1,10 +1,18 @@
 package nbbang.com.nbbang.domain.member.domain;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import nbbang.com.nbbang.domain.member.dto.Place;
 
 import javax.persistence.*;
 
-@Entity @Getter
+import java.time.LocalDateTime;
+
+import static javax.persistence.EnumType.STRING;
+
+@Entity @Getter @Builder
+@AllArgsConstructor
 public class Member {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,6 +23,8 @@ public class Member {
 
     private String avatar;
 
-    private String place;
+    @Enumerated(STRING)
+    private Place place;
 
+    protected Member() {}
 }

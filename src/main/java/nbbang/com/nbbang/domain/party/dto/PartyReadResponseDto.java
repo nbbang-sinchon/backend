@@ -3,6 +3,7 @@ package nbbang.com.nbbang.domain.party.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import nbbang.com.nbbang.domain.member.dto.MemberResponseDto;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,7 +19,11 @@ public class PartyReadResponseDto {
     private Integer joinNumber;
     private Integer goalNumber;
     private String status;
-    private String nickname;
+    private String owner;
+    //private MemberResponseDto owner;
+    //private Boolean liked = false;
+    //private Boolean isOwner = false;
+    //private Boolean isMember = false;
     private Integer breadNumber;
     private List<String> hashtags;
 }
