@@ -2,22 +2,24 @@ package nbbang.com.nbbang.domain.party.dto;
 
 import lombok.Builder;
 import lombok.Data;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
+import nbbang.com.nbbang.domain.party.domain.Party;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data @Builder
 public class PartyListResponseDto {
     List<PartyFindResponseDto> parties;
 
-    public static PartyListResponseDto createMock() {
-        List<String> hashtags = Arrays.asList("BHC", "치킨");
-        PartyFindResponseDto partyFindResponseDto = new PartyFindResponseDto("연희동 올리브영 앞 BHC 7시", LocalDateTime.now(), 3, 4, "마감 임박", hashtags);
-        List<PartyFindResponseDto> collect = Arrays.asList(partyFindResponseDto);
+    public static PartyListResponseDto createFromEntity(List<Party> partyList) {
         return PartyListResponseDto.builder()
-                .parties(collect)
+                .parties(partyList.stream().map(PartyFindResponseDto::createByEntity).collect(Collectors.toList()))
+                .build();
+    }
+
+    public static PartyListResponseDto createMock() {
+        return PartyListResponseDto.builder()
+                .parties(Arrays.asList(PartyFindResponseDto.createMock()))
                 .build();
     }
 }

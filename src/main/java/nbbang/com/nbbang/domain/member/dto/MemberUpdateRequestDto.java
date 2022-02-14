@@ -11,6 +11,6 @@ import javax.validation.constraints.Size;
 public class MemberUpdateRequestDto {
     @Size(min = 1, max = 16) @NotNull
     private String nickname;
-    @ValueOfEnum(enumClass = Place.class) @Schema(description = "올바른 place 값: sinchon, ")
+    @ValueOfEnum(enumClass = Place.class) @Schema(description = "올바른 place 값: SINCHON, ")
     private String place;
 }
