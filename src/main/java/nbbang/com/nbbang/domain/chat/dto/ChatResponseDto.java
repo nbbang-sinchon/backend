@@ -14,20 +14,20 @@ import java.util.List;
 public class ChatResponseDto {
 
     private String title;
+    private LocalDateTime createTime;
+    private Integer joinNumber;
+    private Integer goalNumber;
     private String status;
-    private Integer memberNumber;
-    private Integer maxMemberNumber;
     private MemberResponseDto owner;
     private List<MemberResponseDto> participants;
-    private LocalDateTime createTime;
     private List<ChatMessageResponseDto> chatMessages;
 
     public static ChatResponseDto createMock() {
         ChatResponseDto dto = ChatResponseDto.builder()
                 .title("뿌링클 오늘 7시")
                 .status("모집 중")
-                .memberNumber(3)
-                .maxMemberNumber(4)
+                .joinNumber(3)
+                .goalNumber(4)
                 .owner(MemberResponseDto.createLuffy())
                 .participants(Arrays.asList(MemberResponseDto.createKorung(), MemberResponseDto.createHyungKyung()))
                 .createTime(LocalDateTime.of(2022, 02, 12, 12, 40))

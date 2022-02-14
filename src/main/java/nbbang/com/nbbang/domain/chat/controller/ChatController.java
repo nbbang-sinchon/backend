@@ -15,8 +15,12 @@ import nbbang.com.nbbang.global.support.FileUpload.FileUploadService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.naming.Binding;
 
 @Tag(name = "Chat", description = "채팅방 api (로그인 구현시 올바른 토큰을 보내지 않을 경우 401 Unauthorized 메시지를 받습니다.).")
 @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(mediaType = "application/json"))
@@ -69,19 +73,26 @@ public class ChatController {
     @ApiResponse(responseCode = "403", description = "Not Owner", content = @Content(mediaType = "application/json"))
     @PatchMapping("/{party-id}/status")
     public ResponseEntity changeStatus(@PathVariable("party-id") Long partyId,
-                                       @Schema(description = "채팅방 상태: 모집 중 - on, 마감 임박 - soon, 모집 완료 - full, 주문 완료 - finish, 모집 취소 - cancel")
-                                               ChatStatusChangeRequestDto chatStatusChangeRequestDto) {
+                                       @Validated @RequestBody ChatStatusChangeRequestDto chatStatusChangeRequestDto,
+                                       BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return new ResponseEntity(DefaultResponse.res(StatusCode.BAD_REQUEST, "잘못된 요청입니다. Status 를 올바르게 입력하세요."), HttpStatus.BAD_REQUEST);
+        }
         return new ResponseEntity(DefaultResponse.res(StatusCode.OK, ResponseMessage.UPDATE_CHAT), HttpStatus.OK);
     }
 
     @Operation(summary = "채팅방 최대 참여자 수 변경", description = "방장만 채팅방 속성을 변경할 수 있습니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
-    @ApiResponse(responseCode = "400", description = "잘못된 요청입니다. Status 를 올바르게 입력하세요.", content = @Content(mediaType = "application/json"))
+    @ApiResponse(responseCode = "400", description = "잘못된 요청입니다. 참여자 수를 올바르게 입력하세요.", content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "403", description = "Not Owner", content = @Content(mediaType = "application/json"))
     @PatchMapping("/{party-id}/number")
     public ResponseEntity changeGoalNumber(@PathVariable("party-id") Long partyId,
-                                                @Schema(description = "채팅방 최대 참여자 수")
-                                                        ChatChangeGoalNumberRequestDto chatChangeGoalNumberRequestDto) {
+                                           @Schema(description = "채팅방 최대 참여자 수")
+                                           @Validated @RequestBody ChatChangeGoalNumberRequestDto chatChangeGoalNumberRequestDto,
+                                           BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return new ResponseEntity(DefaultResponse.res(StatusCode.BAD_REQUEST, "잘못된 요청입니다. 참여자 수를 올바르게 입력하세요."), HttpStatus.BAD_REQUEST);
+        }
         return new ResponseEntity(DefaultResponse.res(StatusCode.OK, ResponseMessage.UPDATE_CHAT), HttpStatus.OK);
     }
 
