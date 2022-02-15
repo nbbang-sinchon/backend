@@ -25,4 +25,13 @@ public class PartyHashtag {
     private Hashtag hashtag;
 
     protected PartyHashtag() {}
+
+    public static PartyHashtag createPartyHashtag(Party party) {
+        PartyHashtag partyHashtag = PartyHashtag.builder().party(party).build();
+        return partyHashtag;
+    }
+
+    public void addHashtag(Hashtag hashtag) {
+        this.hashtag = hashtag;
+    }
 }
