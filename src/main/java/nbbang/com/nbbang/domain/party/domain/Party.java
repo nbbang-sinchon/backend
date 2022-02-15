@@ -14,11 +14,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static javax.persistence.EnumType.STRING;
+import static javax.persistence.FetchType.*;
 
 @Entity @Getter @Builder
 @AllArgsConstructor
 public class Party {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue
     @Column(name = "party_id")
     private Long id;
 
@@ -41,14 +42,11 @@ public class Party {
 
     private Integer deliveryFee;
 
-    @ManyToOne
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "member_id")
     private Member owner;
 
     private Boolean isBlocked;
-
-    @OneToMany(mappedBy = "party")
-    private List<Hashtag> hashtags;
 
     @OneToMany(mappedBy = "party")
     private List<MemberParty> memberParties;

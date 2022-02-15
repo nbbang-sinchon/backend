@@ -6,8 +6,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.domain.member.dto.PlaceResponseDto;
+import nbbang.com.nbbang.domain.member.service.MemberService;
 import nbbang.com.nbbang.domain.party.dto.PartyReadResponseDto;
 import nbbang.com.nbbang.domain.party.dto.PartyRequestDto;
 import nbbang.com.nbbang.global.response.DefaultResponse;
@@ -26,15 +28,18 @@ import static org.springframework.http.HttpStatus.OK;
 
 
 @Tag(name = "party", description = "단일 파티 CRUD")
-@RestController
-@RequestMapping("/parties")
 @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json")),
         @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(mediaType = "application/json")),
         @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(mediaType = "application/json"))
 })
 @Slf4j
+@RestController
+@RequestMapping("/parties")
+@RequiredArgsConstructor
 public class PartyController {
+
+    private final MemberService memberService;
 
     @Operation(summary = "파티 생성", description = "파티를 생성합니다.")
     @PostMapping
@@ -42,7 +47,7 @@ public class PartyController {
         if (bindingResult.hasErrors()) {
             bindingResult.getAllErrors().stream().forEach(System.out::println);
         }
-        log.info("errors={}", bindingResult);
+
         return new ResponseEntity(DefaultResponse.res(StatusCode.OK, ResponseMessageParty.PARTY_CREATE_SUCCESS), OK);
     }
 
