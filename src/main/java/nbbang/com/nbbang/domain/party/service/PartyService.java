@@ -32,7 +32,6 @@ public class PartyService {
     }
 
     public void deleteParty(Long partyId) {
-        Optional<Party> party = partyRepository.findById(partyId);
-        partyRepository.delete(party.get()); // get 말고 좋은 방법을 생각해보자.
+        partyRepository.deleteById(partyId);
     }
 }
