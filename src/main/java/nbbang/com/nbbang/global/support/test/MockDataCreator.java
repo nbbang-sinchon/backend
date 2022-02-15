@@ -34,14 +34,19 @@ public class MockDataCreator implements CommandLineRunner {
 
     private Long luffyId;
     private Long korungId;
+    private Long mock1Id;
 
-    private Long partyId;
+
+    private Long party1Id;
+    private Long party2Id;
+    private Long party3Id;
 
     @Override
     public void run(String... args) throws Exception {
         createMembers();
-        createParties();
-        createParties();
+        createParty1();
+        createParty2();
+        createParty3();
     }
 
     @Transactional
@@ -57,14 +62,22 @@ public class MockDataCreator implements CommandLineRunner {
         Member korung = Member.builder()
                 .nickname("코렁")
                 .avatar("https://w.namu.la/s/bc75175b063a43a123523fba625ed9d185f6a180a3c1e9ae9409db0c110266e4f69e7aa434253687819b7dd5b36cccf4bd508977f6f76e3b9353db545d75168bfde624ca06dbf51818304d0bddc8c11cd1bdea60c7fb56113091172d05dd2dd5")
-                .place(Place.SINCHON)
+                .place(Place.YEONHUI)
                 .build();
         memberRepository.save(korung);
         korungId = korung.getId();
+
+        Member mock1 = Member.builder()
+                .nickname("철수")
+                .place(Place.CHANGCHEON)
+                .build();
+        memberRepository.save(mock1);
+        mock1Id = mock1.getId();
+
     }
 
     @Transactional
-    public void createParties() {
+    public void createParty1() {
         Party party = Party.builder()
                 .title("BHC 뿌링클 오늘 7시")
                 .content("오늘 연대 서문에서 치킨 같이 시켜 먹을 파티 구해요 또는 각자 시키고 배달비만 n빵 하실분?? 2~3명 모아봅니다 ㅎㅎ 뿌링클 교촌 다 좋아요 ㅎㅎ")
@@ -79,7 +92,57 @@ public class MockDataCreator implements CommandLineRunner {
                 .isBlocked(false)
                 .build();
         partyRepository.save(party);
-        partyId = party.getId();
+        party1Id = party.getId();
+        //hashtagRepository.save(Hashtag.builder().content("콤보").party(party).build());
+        memberPartyRepository.save(MemberParty.builder()
+                .member(memberRepository.findById(korungId).get())
+                .party(party)
+                .price(1000)
+                .build());
+    }
+
+    @Transactional
+    public void createParty2() {
+        Party party = Party.builder()
+                .title("BHC 맛초킹 내일 8시")
+                .content("뿌링클 넘나 먹구 싶다잉")
+                .createTime(LocalDateTime.of(2022, 02, 14, 12, 40))
+                .cancelTime(LocalDateTime.of(2022, 02, 15, 12, 40))
+                .goalNumber(4)
+                .owner(memberRepository.findById(luffyId).get())
+                //.hashtags(Arrays.asList(Hashtag.builder().content("콤보").build(), Hashtag.builder().content("배달비").build(),Hashtag.builder().content("야식").build(),Hashtag.builder().content("사이드 가능").build()))
+                .place(Place.YEONHUI)
+                .deliveryFee(300)
+                .status(PartyStatus.ON)
+                .isBlocked(false)
+                .build();
+        partyRepository.save(party);
+        party2Id = party.getId();
+        //hashtagRepository.save(Hashtag.builder().content("콤보").party(party).build());
+        memberPartyRepository.save(MemberParty.builder()
+                .member(memberRepository.findById(korungId).get())
+                .party(party)
+                .price(1000)
+                .build());
+    }
+
+    @Transactional
+    public void createParty3() {
+        Party party = Party.builder()
+                .title("롯데리아 오늘 8시")
+                .content("뿌링클 넘나 먹구 싶다잉")
+                .createTime(LocalDateTime.of(2022, 02, 10, 15, 40))
+                .cancelTime(LocalDateTime.of(2022, 02, 11, 15, 40))
+                .goalNumber(4)
+                .owner(memberRepository.findById(luffyId).get())
+                //.hashtags(Arrays.asList(Hashtag.builder().content("콤보").build(), Hashtag.builder().content("배달비").build(),Hashtag.builder().content("야식").build(),Hashtag.builder().content("사이드 가능").build()))
+                .place(Place.CHANGCHEON)
+                .deliveryFee(300)
+                .status(PartyStatus.CANCEL)
+                .isBlocked(false)
+                .build();
+        partyRepository.save(party);
+        party3Id = party.getId();
         //hashtagRepository.save(Hashtag.builder().content("콤보").party(party).build());
         memberPartyRepository.save(MemberParty.builder()
                 .member(memberRepository.findById(korungId).get())
