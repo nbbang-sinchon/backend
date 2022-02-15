@@ -14,4 +14,6 @@ public interface ManyPartyRepository extends JpaRepository<Party, Long>, ManyPar
 
     @Override
     Page<Party> findAllByRequestDto(Pageable pageable, PartyFindRequestFilterDto requestFilterDto);
+
+    Page<Party> findMyParties(Pageable pageable, Long memberId);
 }
