@@ -55,10 +55,7 @@ public class PartyController {
             bindingResult.getAllErrors().stream().forEach();
         }*/
 
-        Long partyId = partyService.createParty(Party.builder().title("hello").build());
-        for (String content: partyRequestDtO.getHashtags()){
-            hashtagService.createHashtag(partyId, content);
-        }
+        Long partyId = partyService.createParty(Party.builder().title("hello").build(),partyRequestDtO.getHashtags() );
         return new ResponseEntity(DefaultResponse.res(StatusCode.OK, ResponseMessageParty.PARTY_CREATE_SUCCESS), OK);
     }
 

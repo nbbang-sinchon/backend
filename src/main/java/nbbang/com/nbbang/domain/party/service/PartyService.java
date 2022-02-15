@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -15,13 +16,18 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class PartyService {
     private final PartyRepository partyRepository;
+    private final HashtagService hashtagService;
 
     public Page<Party> findAll(Pageable pageable) {
         return partyRepository.findAll(pageable);
     }
 
-    public Long createParty(Party party) {
+    public Long createParty(Party party, List<String> hashtags) {
         Party savedParty = partyRepository.save(party);
+        Long partyId = savedParty.getId();
+        for (String content: hashtags){
+            hashtagService.createHashtag(partyId, content);
+        }
         return savedParty.getId();
     }
 
