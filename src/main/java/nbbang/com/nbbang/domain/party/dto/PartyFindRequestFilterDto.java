@@ -13,20 +13,28 @@ import java.awt.print.Pageable;
 @Data @Builder
 public class PartyFindRequestFilterDto {
 
+    @Builder.Default
     private Boolean showOngoing = false;
-    private String search;
+    @Builder.Default
+    private String search = "";
 
     public static PartyFindRequestFilterDto createRequestFilterDto(String search) {
-        return PartyFindRequestFilterDto.builder()
-                .search(search)
-                .build();
+        PartyFindRequestFilterDtoBuilder dtoBuilder = PartyFindRequestFilterDto.builder();
+        if (search != null) {
+            dtoBuilder.search(search);
+        }
+        return dtoBuilder.build();
     }
 
     public static PartyFindRequestFilterDto createRequestFilterDto(Boolean showOngoing, String search) {
-        return PartyFindRequestFilterDto.builder()
-                .search(search)
-                .showOngoing(showOngoing)
-                .build();
+        PartyFindRequestFilterDtoBuilder dtoBuilder = PartyFindRequestFilterDto.builder();
+        if (showOngoing != null) {
+            dtoBuilder.showOngoing(showOngoing);
+        }
+        if (search != null) {
+            dtoBuilder.search(search);
+        }
+        return dtoBuilder.build();
     }
 
     public static PartyFindRequestFilterDto createRequestFilterDto(PartyFindRequestDto requestDto) {
