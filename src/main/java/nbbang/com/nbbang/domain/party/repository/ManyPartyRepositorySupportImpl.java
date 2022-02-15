@@ -32,7 +32,7 @@ public class ManyPartyRepositorySupportImpl implements ManyPartyRepositorySuppor
             q.where(party.status.eq(PartyStatus.ON));
         }
         if (requestFilterDto.getPlaces() != null) {
-            requestFilterDto.getPlaces().stream().forEach(p -> q.where(placeEquals(p)));
+            q.where(placeEquals(requestFilterDto.getPlaces()));
         }
         q.offset(pageable.getOffset())
                 .limit(pageable.getPageSize());
@@ -42,9 +42,13 @@ public class ManyPartyRepositorySupportImpl implements ManyPartyRepositorySuppor
         return new PageImpl<>(res, pageable, count);
     }
 
-    private BooleanExpression placeEquals(Place place) {
+    private BooleanBuilder placeEquals(List<Place> places) {
         QParty party = QParty.party;
-        return party.place.eq(place);
+        BooleanBuilder builder = new BooleanBuilder();
+        for (Place p : places) {
+            builder.or(party.place.eq(p));
+        }
+        return builder;
     }
 
     @Override

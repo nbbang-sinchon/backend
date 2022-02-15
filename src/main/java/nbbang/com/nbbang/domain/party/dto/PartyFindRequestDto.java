@@ -25,6 +25,9 @@ public class PartyFindRequestDto extends PageableDto {
 
     @Parameter(hidden = true)
     public List<Place> getPlaces() {
+        if (places == null) {
+            return null;
+        }
         List<Place> res = new ArrayList<>();
         places.stream().forEach(p -> res.add(Place.valueOf(p)));
         return res;
