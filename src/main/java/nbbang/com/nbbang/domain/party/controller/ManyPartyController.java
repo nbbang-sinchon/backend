@@ -34,7 +34,7 @@ public class ManyPartyController {
     @GetMapping("/parties")
     public ResponseEntity findParty(@ModelAttribute PartyFindRequestDto partyFindRequestDto) {
         Page<Party> queryResults = manyPartyService.findAllByRequestDto(partyFindRequestDto.createPageRequest(),
-                PartyFindRequestFilterDto.createRequestFilterDto(partyFindRequestDto.getSearch()));
+                PartyFindRequestFilterDto.createRequestFilterDto(partyFindRequestDto.getShowOngoing(), partyFindRequestDto.getSearch()));
         return new ResponseEntity(DefaultResponse.res(StatusCode.OK, ResponseMessageParty.PARTY_FIND_SUCCESS,
                 PartyListResponseDto.createFromEntity(queryResults.getContent())), OK);
     }

@@ -12,6 +12,7 @@ import nbbang.com.nbbang.domain.party.repository.HashtagRepository;
 import nbbang.com.nbbang.domain.party.repository.PartyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +23,7 @@ import java.util.Arrays;
 
 @Component
 @Transactional
+@Profile("!test")
 public class MockDataCreator implements CommandLineRunner {
 
     @PersistenceContext EntityManager em;
