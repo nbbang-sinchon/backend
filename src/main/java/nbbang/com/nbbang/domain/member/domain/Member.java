@@ -38,8 +38,8 @@ public class Member {
         this.nickname = nickname;
     }
 
-    public void setLeave(Boolean leave) {
-        this.leaved = leave;
+    public void setLeaved(Boolean leaved) {
+        this.leaved = leaved;
     }
 
     public static Member createMember(String nickname, Place place) {
