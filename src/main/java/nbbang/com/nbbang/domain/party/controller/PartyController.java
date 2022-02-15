@@ -8,10 +8,15 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import nbbang.com.nbbang.domain.chat.dto.ChatMessageImageUploadResponseDto;
+import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.dto.PlaceResponseDto;
 import nbbang.com.nbbang.domain.member.service.MemberService;
+import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.dto.PartyReadResponseDto;
 import nbbang.com.nbbang.domain.party.dto.PartyRequestDto;
+import nbbang.com.nbbang.domain.party.service.HashtagService;
+import nbbang.com.nbbang.domain.party.service.PartyService;
 import nbbang.com.nbbang.global.response.DefaultResponse;
 import nbbang.com.nbbang.global.response.ResponseMessageParty;
 import nbbang.com.nbbang.global.response.StatusCode;
@@ -39,15 +44,21 @@ import static org.springframework.http.HttpStatus.OK;
 @RequiredArgsConstructor
 public class PartyController {
 
-    private final MemberService memberService;
+    private final PartyService partyService;
+    private final HashtagService hashtagService;
 
     @Operation(summary = "파티 생성", description = "파티를 생성합니다.")
     @PostMapping
-    public ResponseEntity createParty(@Validated @RequestBody PartyRequestDto partyRequestDtO, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            bindingResult.getAllErrors().stream().forEach(System.out::println);
-        }
 
+    public ResponseEntity createParty(@Validated @RequestBody PartyRequestDto partyRequestDtO, BindingResult bindingResult) {
+/*        if (bindingResult.hasErrors()) {
+            bindingResult.getAllErrors().stream().forEach();
+        }*/
+
+        Long partyId = partyService.createParty(Party.builder().title("hello").build());
+        for (String content: partyRequestDtO.getHashtags()){
+            hashtagService.createHashtag(partyId, content);
+        }
         return new ResponseEntity(DefaultResponse.res(StatusCode.OK, ResponseMessageParty.PARTY_CREATE_SUCCESS), OK);
     }
 
@@ -81,6 +92,7 @@ public class PartyController {
     @ApiResponse(responseCode = "403", description = "Not Owner", content = @Content(mediaType = "application/json"))
     @DeleteMapping("/{party-id}")
     public ResponseEntity deleteParty(@PathVariable("party-id") Long partyId) {
+        partyService.deleteParty(partyId);
         return new ResponseEntity(DefaultResponse.res(StatusCode.OK, ResponseMessageParty.PARTY_DELETE_SUCCESS), OK);
 
     }

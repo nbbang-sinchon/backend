@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity @Getter @Builder
 @AllArgsConstructor
@@ -17,4 +18,13 @@ public class Hashtag {
     private String content;
 
     protected Hashtag() {}
+
+
+    public static Hashtag createHashtag(String content, PartyHashtag partyHashtag) {
+        Hashtag hashtag = Hashtag.builder().content(content).build();
+        partyHashtag.addHashtag(hashtag);
+        return hashtag;
+    }
+
+
 }
