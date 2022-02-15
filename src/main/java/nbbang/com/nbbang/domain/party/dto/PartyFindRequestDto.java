@@ -13,6 +13,6 @@ import java.util.List;
 @AllArgsConstructor
 public class PartyFindRequestDto extends PageableDto {
     private List<String> places;
-    private Boolean isOngoing;
+    private Boolean showOngoing;
     private String search;
 }

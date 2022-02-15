@@ -12,6 +12,7 @@ import nbbang.com.nbbang.domain.party.repository.HashtagRepository;
 import nbbang.com.nbbang.domain.party.repository.PartyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +23,7 @@ import java.util.Arrays;
 
 @Component
 @Transactional
+@Profile("!test")
 public class MockDataCreator implements CommandLineRunner {
 
     @PersistenceContext EntityManager em;
@@ -70,7 +72,7 @@ public class MockDataCreator implements CommandLineRunner {
                 .cancelTime(LocalDateTime.of(2022, 02, 13, 12, 40))
                 .goalNumber(4)
                 .owner(memberRepository.findById(luffyId).get())
-                .hashtags(Arrays.asList(Hashtag.builder().content("콤보").build(), Hashtag.builder().content("배달비").build(),Hashtag.builder().content("야식").build(),Hashtag.builder().content("사이드 가능").build()))
+                //.hashtags(Arrays.asList(Hashtag.builder().content("콤보").build(), Hashtag.builder().content("배달비").build(),Hashtag.builder().content("야식").build(),Hashtag.builder().content("사이드 가능").build()))
                 .place(Place.SINCHON)
                 .deliveryFee(300)
                 .status(PartyStatus.ON)
@@ -78,7 +80,7 @@ public class MockDataCreator implements CommandLineRunner {
                 .build();
         partyRepository.save(party);
         partyId = party.getId();
-        hashtagRepository.save(Hashtag.builder().content("콤보").party(party).build());
+        //hashtagRepository.save(Hashtag.builder().content("콤보").party(party).build());
         memberPartyRepository.save(MemberParty.builder()
                 .member(memberRepository.findById(korungId).get())
                 .party(party)
