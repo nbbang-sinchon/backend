@@ -47,7 +47,7 @@ public class MemberService {
     public void deleteMember(Long memberId) {
         //memberRepository.deleteById(memberId);
         Member member = findById(memberId);
-        member.setLeave(true);
+        member.setLeaved(true);
     }
 
 
