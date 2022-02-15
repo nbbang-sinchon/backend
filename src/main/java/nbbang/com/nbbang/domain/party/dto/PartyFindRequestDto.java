@@ -11,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor
@@ -28,9 +29,9 @@ public class PartyFindRequestDto extends PageableDto {
         if (places == null) {
             return null;
         }
-        List<Place> res = new ArrayList<>();
-        places.stream().forEach(p -> res.add(Place.valueOf(p)));
-        return res;
+        return places.stream()
+                .map(p -> Place.valueOf(p))
+                .collect(Collectors.toList());
     }
 
     public List<String> getPlacesString() {
