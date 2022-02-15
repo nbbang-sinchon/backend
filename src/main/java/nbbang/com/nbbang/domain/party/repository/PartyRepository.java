@@ -9,5 +9,4 @@ import org.springframework.stereotype.Repository;
 
 public interface PartyRepository extends JpaRepository<Party, Long> {
     Page<Party> findAll(Pageable pageable);
-
 }

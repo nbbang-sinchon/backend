@@ -27,6 +27,11 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	implementation 'org.springdoc:springdoc-openapi-ui:1.5.7'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	implementation 'com.querydsl:querydsl-jpa'
+	annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jpa"
+	annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+	annotationProcessor "jakarta.annotation:jakarta.annotation-api"
 }
 
 tasks.named('test') {
