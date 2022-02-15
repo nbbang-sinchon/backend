@@ -20,9 +20,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 
-@Tag(name = "sample", description = "테스트 api")
-@Controller
-@RestController
+//@Tag(name = "sample", description = "테스트 api")
+//@Controller
+//@RestController
 public class SampleController {
 
     @Operation(summary = "샘플 조회", description = "id 를 이용하여 샘플을 조회합니다.")
