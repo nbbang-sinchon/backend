@@ -1,15 +1,10 @@
 package nbbang.com.nbbang.domain.member.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.domain.member.domain.Member;
@@ -20,8 +15,7 @@ import nbbang.com.nbbang.domain.party.dto.PartyListResponseDto;
 import nbbang.com.nbbang.domain.party.service.ManyPartyService;
 import nbbang.com.nbbang.global.exception.MemberNotFoundException;
 import nbbang.com.nbbang.global.response.DefaultResponse;
-import nbbang.com.nbbang.global.response.ResponseMessage;
-import nbbang.com.nbbang.global.response.ResponseMessageParty;
+import nbbang.com.nbbang.global.response.GlobalResponseMessage;
 import nbbang.com.nbbang.global.response.StatusCode;
 import nbbang.com.nbbang.global.support.FileUpload.FileUploadService;
 import org.springframework.data.domain.PageRequest;
@@ -33,9 +27,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import static org.springframework.http.HttpStatus.OK;
-
 import java.util.List;
+
+import static nbbang.com.nbbang.domain.member.controller.MemberResponseMessage.READ_USER;
 
 @Tag(name = "Member", description = "회원 관리 api (로그인 구현시 올바른 토큰을 보내지 않을 경우 401 Unauthorized 메시지를 받습니다.)")
 @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(mediaType = "application/json"))
@@ -63,7 +57,7 @@ public class MemberController {
     public ResponseEntity select() {
         Member member = memberService.findById(memberId);
         MemberResponseDto dto = MemberResponseDto.createByEntity(member);
-        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, ResponseMessage.READ_USER, dto), HttpStatus.OK);
+        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, MemberResponseMessage.READ_USER, dto), HttpStatus.OK);
     }
 
     @Operation(summary = "마이페이지 정보 업데이트", description = "자신의 정보를 업데이트합니다.")
@@ -75,7 +69,7 @@ public class MemberController {
             return new ResponseEntity(DefaultResponse.res(StatusCode.BAD_REQUEST, "회원 정보를 올바르게 입력하세요."), HttpStatus.BAD_REQUEST);
         }
         memberService.updateMember(memberId, memberUpdateRequestDto.getNickname(), memberUpdateRequestDto.getPlace());
-        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, ResponseMessage.UPDATE_USER), HttpStatus.OK);
+        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, MemberResponseMessage.UPDATE_USER), HttpStatus.OK);
     }
 
 
@@ -84,7 +78,7 @@ public class MemberController {
     @DeleteMapping
     public ResponseEntity delete() {
         memberService.deleteMember(memberId);
-        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, ResponseMessage.DELETE_USER), HttpStatus.OK);
+        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, MemberResponseMessage.DELETE_USER), HttpStatus.OK);
     }
 
     @Operation(summary = "프로필 사진 업로드", description = "프로필 사진을 업로드합니다.")
@@ -94,7 +88,7 @@ public class MemberController {
     public ResponseEntity uploadProfileImage(@Schema(description = "이미지 파일을 업로드합니다.")
                                              @RequestPart MultipartFile imgFile) {
         String filePath = fileUploadService.fileUpload(imgFile);
-        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, ResponseMessage.UPDATE_USER, MemberProfileImageUploadResponseDto.createMock()), HttpStatus.OK);
+        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, MemberResponseMessage.UPDATE_USER, MemberProfileImageUploadResponseDto.createMock()), HttpStatus.OK);
     }
 
     @Operation(summary = "나의 파티", description = "자신이 속한 파티 목록을 조회합니다.")
@@ -102,7 +96,7 @@ public class MemberController {
     @GetMapping("/parties")
     public ResponseEntity parties(Integer pageNumber, Integer pageSize) {
         List<Party> myParties = manyPartyService.findMyParties(PageRequest.of(pageNumber, pageSize), memberId).getContent();
-        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, ResponseMessage.READ_USER, PartyListResponseDto.createFromEntity(myParties)), HttpStatus.OK);
+        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, MemberResponseMessage.READ_USER, PartyListResponseDto.createFromEntity(myParties)), HttpStatus.OK);
     }
 
     @Operation(summary = "멤버 위치", description = "멤버의 위치 정보를 제공합니다.")
@@ -110,7 +104,7 @@ public class MemberController {
     @GetMapping("/place")
     public ResponseEntity memberPlace() {
         Member member = memberService.findById(memberId);
-        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, ResponseMessage.MEMBER_LOCATION_SUCCESS, PlaceResponseDto.create(member.getPlace())), HttpStatus.OK);
+        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, MemberResponseMessage.MEMBER_LOCATION_SUCCESS, PlaceResponseDto.create(member.getPlace())), HttpStatus.OK);
     }
 
     @ExceptionHandler(MemberNotFoundException.class)

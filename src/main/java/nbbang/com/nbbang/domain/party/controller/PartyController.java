@@ -8,17 +8,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import nbbang.com.nbbang.domain.chat.dto.ChatMessageImageUploadResponseDto;
-import nbbang.com.nbbang.domain.member.domain.Member;
-import nbbang.com.nbbang.domain.member.dto.PlaceResponseDto;
-import nbbang.com.nbbang.domain.member.service.MemberService;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.dto.PartyReadResponseDto;
 import nbbang.com.nbbang.domain.party.dto.PartyRequestDto;
 import nbbang.com.nbbang.domain.party.service.HashtagService;
 import nbbang.com.nbbang.domain.party.service.PartyService;
 import nbbang.com.nbbang.global.response.DefaultResponse;
-import nbbang.com.nbbang.global.response.ResponseMessageParty;
 import nbbang.com.nbbang.global.response.StatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -56,7 +51,7 @@ public class PartyController {
         }*/
 
         Long partyId = partyService.createParty(Party.builder().title("hello").build(),partyRequestDtO.getHashtags() );
-        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, ResponseMessageParty.PARTY_CREATE_SUCCESS), OK);
+        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_CREATE_SUCCESS), OK);
     }
 
 /*    제목, 본문, 해시태그를 작성하고 음식 유형을 선택한다.
@@ -70,7 +65,7 @@ public class PartyController {
     @ApiResponse(responseCode = "403", description = "Not Owner", content = @Content(mediaType = "application/json"))
     @PatchMapping("/{party-id}")
     public ResponseEntity updateParty(@PathVariable("party-id") Long partyId, @RequestBody PartyRequestDto partyRequestDtO) {
-        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, ResponseMessageParty.PARTY_UPDATE_SUCCESS), OK);
+        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_UPDATE_SUCCESS), OK);
     }
 
     @Operation(summary = "파티 상세", description = "파티의 상세 정보입니다.")
@@ -82,7 +77,7 @@ public class PartyController {
         PartyReadResponseDto partyReadResponseDto = new PartyReadResponseDto("BHC 7시", "연희동 올리브영 앞에서 나눠요", LocalDateTime.now(),
                 "연히동", 3, 4, "마감 임박",
                 "연희동 주민", 10, hashtags);
-        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, ResponseMessageParty.PARTY_READ_SUCCESS, partyReadResponseDto), OK);
+        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_READ_SUCCESS, partyReadResponseDto), OK);
     }
 
     @Operation(summary = "파티 삭제", description = "파티를 삭제합니다.")
@@ -90,7 +85,7 @@ public class PartyController {
     @DeleteMapping("/{party-id}")
     public ResponseEntity deleteParty(@PathVariable("party-id") Long partyId) {
         partyService.deleteParty(partyId);
-        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, ResponseMessageParty.PARTY_DELETE_SUCCESS), OK);
+        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_DELETE_SUCCESS), OK);
 
     }
 

@@ -1,6 +1,6 @@
-package nbbang.com.nbbang.global.response;
+package nbbang.com.nbbang.domain.party.controller;
 
-public class ResponseMessageParty {
+public class PartyResponseMessage {
     public static final String PARTY_FIND_SUCCESS = "파티 조회 성공";
 
     public static final String PARTY_CREATE_SUCCESS = "파티 생성 성공";
