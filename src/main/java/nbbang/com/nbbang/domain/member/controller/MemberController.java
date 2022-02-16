@@ -13,11 +13,13 @@ import nbbang.com.nbbang.domain.member.service.MemberService;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.dto.PartyListResponseDto;
 import nbbang.com.nbbang.domain.party.service.ManyPartyService;
+import nbbang.com.nbbang.global.dto.PageableDto;
 import nbbang.com.nbbang.global.exception.MemberNotFoundException;
 import nbbang.com.nbbang.global.response.DefaultResponse;
 import nbbang.com.nbbang.global.response.GlobalResponseMessage;
 import nbbang.com.nbbang.global.response.StatusCode;
 import nbbang.com.nbbang.global.support.FileUpload.FileUploadService;
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -94,8 +96,8 @@ public class MemberController {
     @Operation(summary = "나의 파티", description = "자신이 속한 파티 목록을 조회합니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PartyListResponseDto.class)))
     @GetMapping("/parties")
-    public ResponseEntity parties(Integer pageNumber, Integer pageSize) {
-        List<Party> myParties = manyPartyService.findMyParties(PageRequest.of(pageNumber, pageSize), memberId).getContent();
+    public ResponseEntity parties(@ParameterObject PageableDto pageableDto) {
+        List<Party> myParties = manyPartyService.findMyParties(pageableDto.createPageRequest(), memberId).getContent();
         return new ResponseEntity(DefaultResponse.res(StatusCode.OK, MemberResponseMessage.READ_MEMBER, PartyListResponseDto.createFromEntity(myParties)), HttpStatus.OK);
     }
 
