@@ -30,8 +30,8 @@ import java.util.List;
 
 @Tag(name = "parties", description = "여러 개 파티 조회")
 @RestController
-@ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(mediaType = "application/json"))
-@ApiResponse(responseCode = "404", description = "Not Found", content = @Content(mediaType = "application/json"))
+//@ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(mediaType = "application/json"))
+//@ApiResponse(responseCode = "404", description = "Not Found", content = @Content(mediaType = "application/json"))
 @Slf4j
 @RequiredArgsConstructor
 public class ManyPartyController {
