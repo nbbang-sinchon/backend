@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.webjars.NotFoundException;
 
 import java.util.List;
 import java.util.Optional;
@@ -32,6 +33,7 @@ public class PartyService {
     }
 
     public void deleteParty(Long partyId) {
-        partyRepository.deleteById(partyId);
+        Party party = partyRepository.findById(partyId).orElseThrow(() -> new NotFoundException("There is no party"));
+        partyRepository.delete(party);
     }
 }

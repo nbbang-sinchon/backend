@@ -1,7 +1,6 @@
 package nbbang.com.nbbang.domain.party.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -17,7 +16,6 @@ import nbbang.com.nbbang.domain.party.service.ManyPartyService;
 import nbbang.com.nbbang.global.response.*;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -58,7 +56,7 @@ public class ManyPartyController {
 
         Page<Party> queryResults = manyPartyService.findAllByRequestDto(partyFindRequestDto.createPageRequest(),
                 PartyFindRequestFilterDto.createRequestFilterDto(partyFindRequestDto.getOngoing(), partyFindRequestDto.getSearch(), partyFindRequestDto.getPlaces()));
-        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, ResponseMessageParty.PARTY_FIND_SUCCESS,
+        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_FIND_SUCCESS,
                 PartyListResponseDto.createFromEntity(queryResults.getContent())), OK);
     }
 }

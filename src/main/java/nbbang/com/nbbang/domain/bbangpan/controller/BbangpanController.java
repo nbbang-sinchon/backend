@@ -11,7 +11,6 @@ import nbbang.com.nbbang.domain.bbangpan.dto.BbangpanGetResponseDto;
 import nbbang.com.nbbang.domain.bbangpan.dto.BbangpanPriceChangeRequestDto;
 import nbbang.com.nbbang.domain.bbangpan.dto.BbangpanStatusChangeRequestDto;
 import nbbang.com.nbbang.domain.bbangpan.dto.MemberBbangpanDto;
-import nbbang.com.nbbang.domain.party.dto.PartyRequestDto;
 import nbbang.com.nbbang.global.response.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -40,7 +39,7 @@ public class BbangpanController {
         // 파티 멤버가 되는 로직을 추가한다.
         List<MemberBbangpanDto> memberBbangpanDtos = new ArrayList<>();
         memberBbangpanDtos.add(new MemberBbangpanDto("연희동 주민", 2000, "송금 완료"));
-        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, ResponseMessageBbangpan.BBANGPAN_READ_SUCCESS,
+        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, BbangpanResponseMessage.BBANGPAN_READ_SUCCESS,
                 new BbangpanGetResponseDto(memberBbangpanDtos, 2000, 4000, 6000)), OK);
     }
 
@@ -49,7 +48,7 @@ public class BbangpanController {
     @PostMapping("/price")
     public ResponseEntity changePrice(@PathVariable("party-id") Long partyId, @RequestBody BbangpanPriceChangeRequestDto bbangpanPriceChangeRequestDto) {
         // 프론트에 socket.emit 보내면 주문 금액도 바뀌어 보이고 총 금액도 바뀌어 보여야함
-        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, ResponseMessageBbangpan.PRICE_CHANGE_SUCCESS), OK);
+        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, BbangpanResponseMessage.PRICE_CHANGE_SUCCESS), OK);
 
     }
 
@@ -57,14 +56,14 @@ public class BbangpanController {
     @ApiResponse(responseCode = "403", description = "Not Owner", content = @Content(mediaType = "application/json"))
     @PostMapping("/delivery-fee")
     public ResponseEntity changeDeliveryFee(@PathVariable("party-id") Long partyId, @RequestBody BbangpanPriceChangeRequestDto bbangpanPriceChangeRequestDto) {
-        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, ResponseMessageBbangpan.DELIVERYFEE_CHANGE_SUCCESS), OK);
+        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, BbangpanResponseMessage.DELIVERYFEE_CHANGE_SUCCESS), OK);
     }
 
     @Operation(summary = "송금 상태 설정", description = "송금 상태를 설정합니다.")
     @ApiResponse(responseCode = "403", description = "Not Party Member", content = @Content(mediaType = "application/json"))
     @PostMapping("/send-status")
     public ResponseEntity changeSendStatus(@PathVariable("party-id") Long partyId, @RequestBody BbangpanStatusChangeRequestDto bbangpanStatusChangeRequestDto) {
-        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, ResponseMessageBbangpan.SENDSTATUS_CHANGE_SUCCESS), OK);
+        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, BbangpanResponseMessage.SENDSTATUS_CHANGE_SUCCESS), OK);
 
     }
 
