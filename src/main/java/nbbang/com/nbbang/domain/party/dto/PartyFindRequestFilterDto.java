@@ -17,7 +17,7 @@ import java.util.List;
 public class PartyFindRequestFilterDto {
 
     @Builder.Default
-    private Boolean ongoing = false;
+    private Boolean isOngoing = false;
     @Builder.Default
     private String search = "";
     private List<Place> places;
@@ -30,10 +30,10 @@ public class PartyFindRequestFilterDto {
         return dtoBuilder.build();
     }
 
-    public static PartyFindRequestFilterDto createRequestFilterDto(Boolean ongoing, String search) {
+    public static PartyFindRequestFilterDto createRequestFilterDto(Boolean isOngoing, String search) {
         PartyFindRequestFilterDtoBuilder dtoBuilder = PartyFindRequestFilterDto.builder();
-        if (ongoing != null) {
-            dtoBuilder.ongoing(ongoing);
+        if (isOngoing != null) {
+            dtoBuilder.isOngoing(isOngoing);
         }
         if (search != null) {
             dtoBuilder.search(search);
@@ -41,10 +41,10 @@ public class PartyFindRequestFilterDto {
         return dtoBuilder.build();
     }
 
-    public static PartyFindRequestFilterDto createRequestFilterDto(Boolean ongoing, String search, List<Place> places) {
+    public static PartyFindRequestFilterDto createRequestFilterDto(Boolean isOngoing, String search, List<Place> places) {
         PartyFindRequestFilterDtoBuilder dtoBuilder = PartyFindRequestFilterDto.builder();
-        if (ongoing != null) {
-            dtoBuilder.ongoing(ongoing);
+        if (isOngoing != null) {
+            dtoBuilder.isOngoing(isOngoing);
         }
         if (search != null) {
             dtoBuilder.search(search);

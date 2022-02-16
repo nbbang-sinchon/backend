@@ -20,7 +20,7 @@ public class PartyFindRequestDto extends PageableDto {
 
     private List<String> places;
     @Parameter(description = "true -> ON 인 파티만, false(null) -> 모든 파티")
-    private Boolean ongoing;
+    private Boolean isOngoing;
     @Parameter(description = "제목 검색어")
     private String search;
 
