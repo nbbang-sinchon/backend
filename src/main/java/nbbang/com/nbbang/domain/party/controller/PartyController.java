@@ -13,10 +13,13 @@ import nbbang.com.nbbang.domain.party.dto.PartyReadResponseDto;
 import nbbang.com.nbbang.domain.party.dto.PartyRequestDto;
 import nbbang.com.nbbang.domain.party.service.HashtagService;
 import nbbang.com.nbbang.domain.party.service.PartyService;
+import nbbang.com.nbbang.global.exception.CustomIllegalArgumentException;
 import nbbang.com.nbbang.global.response.DefaultResponse;
+import nbbang.com.nbbang.global.response.GlobalResponseMessage;
 import nbbang.com.nbbang.global.response.StatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,13 +47,13 @@ public class PartyController {
 
     @Operation(summary = "파티 생성", description = "파티를 생성합니다.")
     @PostMapping
-
     public ResponseEntity createParty(@Validated @RequestBody PartyRequestDto partyRequestDtO, BindingResult bindingResult) {
-/*        if (bindingResult.hasErrors()) {
-            bindingResult.getAllErrors().stream().forEach();
-        }*/
+       if (bindingResult.hasErrors()) {
+            throw new CustomIllegalArgumentException(GlobalResponseMessage.ILLEGAL_ARGUMENT_ERROR, bindingResult);
+        }
 
-        Long partyId = partyService.createParty(Party.builder().title("hello").build(),partyRequestDtO.getHashtags() );
+        log.info("{}", "hello");
+       // Long partyId = partyService.createParty(Party.builder().title("hello").build(),partyRequestDtO.getHashtags() );
         return new ResponseEntity(DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_CREATE_SUCCESS), OK);
     }
 
