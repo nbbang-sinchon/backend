@@ -57,7 +57,7 @@ public class ManyPartyController {
         /**  ==================== 나중에 구현할 것 ==============  */
 
         Page<Party> queryResults = manyPartyService.findAllByRequestDto(partyFindRequestDto.createPageRequest(),
-                PartyFindRequestFilterDto.createRequestFilterDto(partyFindRequestDto.getShowOngoing(), partyFindRequestDto.getSearch(), partyFindRequestDto.getPlaces()));
+                PartyFindRequestFilterDto.createRequestFilterDto(partyFindRequestDto.getOngoing(), partyFindRequestDto.getSearch(), partyFindRequestDto.getPlaces()));
         return new ResponseEntity(DefaultResponse.res(StatusCode.OK, ResponseMessageParty.PARTY_FIND_SUCCESS,
                 PartyListResponseDto.createFromEntity(queryResults.getContent())), OK);
     }

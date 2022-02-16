@@ -29,11 +29,7 @@ public class MemberService {
      * @return
      */
     public Member findById(Long memberId) {
-        Optional<Member> member = memberRepository.findById(memberId);
-        if (member.isEmpty()) {
-            throw new MemberNotFoundException();
-        }
-        return memberRepository.findById(memberId).get();
+        return memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
     }
 
     @Transactional
@@ -47,7 +43,7 @@ public class MemberService {
     public void deleteMember(Long memberId) {
         //memberRepository.deleteById(memberId);
         Member member = findById(memberId);
-        member.setLeaved(true);
+        member.setIsLeaved(true);
     }
 
 

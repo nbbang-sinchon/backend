@@ -23,7 +23,7 @@ public class Member {
 
     private String avatar;
 
-    private Boolean leaved;
+    private Boolean isLeaved;
 
     @Enumerated(STRING)
     private Place place;
@@ -38,15 +38,15 @@ public class Member {
         this.nickname = nickname;
     }
 
-    public void setLeaved(Boolean leaved) {
-        this.leaved = leaved;
+    public void setIsLeaved(Boolean leaved) {
+        this.isLeaved = leaved;
     }
 
     public static Member createMember(String nickname, Place place) {
         return Member.builder()
                 .nickname(nickname)
                 .place(place)
-                .leaved(false)
+                .isLeaved(false)
                 .build();
     }
 
