@@ -17,6 +17,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.LAZY;
@@ -50,5 +51,12 @@ public class PartyService {
     public void deleteParty(Long partyId) {
         Party party = partyRepository.findById(partyId).orElseThrow(() -> new NotFoundException("There is no party"));
         partyRepository.delete(party);
+    }
+
+    public List<String> findHashtagContentsByParty(Party party) {
+        List<String> hashtagContents = party.getPartyHashtags().stream()
+                .map(partyHashtag -> partyHashtag.getHashtag().getContent())
+                .collect(Collectors.toList());
+        return hashtagContents;
     }
 }

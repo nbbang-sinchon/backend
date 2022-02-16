@@ -69,7 +69,7 @@ public class PartyController {
         Long userId = 1L; //세션 구현 후 수정
         Party party = partyService.findParty(partyId);
         List<Party> parties = null; // ManyPartyService에서 가져오기
-        List<String> hashtags = hashtagService.findContentsByParty(party);
+        List<String> hashtags = partyService.findHashtagContentsByParty(party);
         PartyReadResponseDto partyReadResponseDto = PartyReadResponseDto.createDto(party, userId,  hashtags, parties);
         return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_READ_SUCCESS, partyReadResponseDto);
     }

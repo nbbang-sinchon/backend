@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import nbbang.com.nbbang.domain.bbangpan.domain.MemberParty;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.dto.Place;
+import nbbang.com.nbbang.global.support.validation.ValueOfEnum;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -33,9 +34,11 @@ public class Party {
 
     private Integer goalNumber;
 
+    @ValueOfEnum(enumClass = PartyStatus.class)
     @Enumerated(STRING)
     private PartyStatus status;
 
+    @ValueOfEnum(enumClass = Place.class)
     @Enumerated(STRING)
     private Place place;
 

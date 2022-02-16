@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 public class HashtagService {
     private final PartyRepository partyRepository;
     private final HashtagRepository hashtagRepository;
-    //private final PartyHashtagRepository partyHashtagRepository;
 
     @Transactional
     public void createHashtag(Long partyId, String content){
@@ -37,12 +36,5 @@ public class HashtagService {
             Hashtag hashtag = hashtags.get(0);
             partyHashtag.mapHashtag(hashtag);
         }
-    }
-
-    public List<String> findContentsByParty(Party party) {
-        List<String> hashtagContents = party.getPartyHashtags().stream()
-                .map(partyHashtag -> partyHashtag.getHashtag().getContent())
-                .collect(Collectors.toList());
-        return hashtagContents;
     }
 }
