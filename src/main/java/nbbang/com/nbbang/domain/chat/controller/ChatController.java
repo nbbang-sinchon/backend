@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import nbbang.com.nbbang.domain.chat.domain.Message;
 import nbbang.com.nbbang.domain.chat.dto.*;
 import nbbang.com.nbbang.domain.chat.service.ChatService;
 import nbbang.com.nbbang.domain.party.domain.Party;
@@ -18,6 +19,7 @@ import nbbang.com.nbbang.global.response.GlobalResponseMessage;
 import nbbang.com.nbbang.global.response.StatusCode;
 import nbbang.com.nbbang.global.support.FileUpload.FileUploadService;
 import org.springdoc.api.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -44,10 +46,11 @@ public class ChatController {
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ChatResponseDto.class)))
     @ApiResponse(responseCode = "403", description = "Not Party Member", content = @Content(mediaType = "application/json"))
     @GetMapping("/{party-id}")
-    public ResponseEntity select(@PathVariable("party-id") Long partyId) {
+    public ResponseEntity select(@PathVariable("party-id") Long partyId, @ParameterObject PageableDto pageableDto) {
         Party party = partyRepository.findById(partyId).get(); // Party Service 구현 시 바꿔야 할 것 같습니다.
         Long lastMessageId = chatService.findLastMessageId(partyId);
-        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, ChatResponseMessage.READ_CHAT, ChatResponseDto.createByPartyEntity(party, lastMessageId)), HttpStatus.OK);
+        Page<Message> messages = chatService.findMessages(partyId, pageableDto.createPageRequest(), lastMessageId);
+        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, ChatResponseMessage.READ_CHAT, ChatResponseDto.createByPartyEntity(party, lastMessageId, messages.getContent())), HttpStatus.OK);
     }
 
     @Operation(summary = "채팅 메시지 조회", description = "페이징이 적용된 채팅 메시지를 조회합니다.")
