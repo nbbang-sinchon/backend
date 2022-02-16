@@ -4,11 +4,13 @@ import lombok.Builder;
 import lombok.Data;
 import nbbang.com.nbbang.domain.member.dto.MemberResponseDto;
 import nbbang.com.nbbang.domain.member.dto.MemberResponseDto;
+import nbbang.com.nbbang.domain.party.domain.Party;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data @Builder
 public class ChatResponseDto {
@@ -20,7 +22,18 @@ public class ChatResponseDto {
     private String status;
     private MemberResponseDto owner;
     private List<MemberResponseDto> participants;
-    private List<ChatMessageResponseDto> chatMessages;
+
+    public static ChatResponseDto createByPartyEntity(Party party) {
+        return ChatResponseDto.builder()
+                .title(party.getTitle())
+                .createTime(party.getCreateTime())
+                .owner(MemberResponseDto.createByEntity(party.getOwner()))
+                .participants(party.getMemberParties().stream().map(m -> MemberResponseDto.createByEntity(m.getMember())).collect(Collectors.toList()))
+                .goalNumber(party.getGoalNumber())
+                .joinNumber(party.getMemberParties().size())
+                .status(party.getStatus().toString())
+                .build();
+    }
 
     public static ChatResponseDto createMock() {
         ChatResponseDto dto = ChatResponseDto.builder()
@@ -31,7 +44,7 @@ public class ChatResponseDto {
                 .owner(MemberResponseDto.createLuffy())
                 .participants(Arrays.asList(MemberResponseDto.createKorung(), MemberResponseDto.createHyungKyung()))
                 .createTime(LocalDateTime.of(2022, 02, 12, 12, 40))
-                .chatMessages(Arrays.asList(ChatMessageResponseDto.createMock1(), ChatMessageResponseDto.createMock2()))
+                //.chatMessages(Arrays.asList(ChatMessageResponseDto.createMock1(), ChatMessageResponseDto.createMock2()))
                 .build();
         return dto;
     }
