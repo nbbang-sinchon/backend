@@ -45,8 +45,7 @@ public class ManyPartyRepositorySupportImpl implements ManyPartyRepositorySuppor
         QParty party = QParty.party;
         return new BooleanBuilder()
                 .or(party.status.eq(PartyStatus.ON))
-                .or(party.status.eq(PartyStatus.SOON))
-                .or(party.status.eq(PartyStatus.FULL));
+                .or(party.status.eq(PartyStatus.SOON));
     }
 
     private BooleanBuilder placeEquals(List<Place> places) {
