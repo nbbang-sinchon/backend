@@ -19,4 +19,8 @@ public class ManyPartyService {
     public Page<Party> findAllByRequestDto(Pageable pageable, PartyFindRequestFilterDto requestFilterDto) {
         return manyPartyRepository.findAllByRequestDto(pageable, requestFilterDto);
     }
+
+    public Page<Party> findMyParties(Pageable pageable, Long memberId) {
+        return manyPartyRepository.findMyParties(pageable, memberId);
+    }
 }

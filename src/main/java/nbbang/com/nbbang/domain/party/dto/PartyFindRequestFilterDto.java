@@ -2,10 +2,13 @@ package nbbang.com.nbbang.domain.party.dto;
 
 import lombok.Builder;
 import lombok.Data;
+import nbbang.com.nbbang.domain.member.dto.Place;
 import nbbang.com.nbbang.global.dto.PageableDto;
 
 import java.awt.print.Pageable;
-
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 /**
  * Service layer 에 필터를 적용한 파티리스트 조회하기 위한 dto 입니다.
  */
@@ -17,6 +20,7 @@ public class PartyFindRequestFilterDto {
     private Boolean showOngoing = false;
     @Builder.Default
     private String search = "";
+    private List<Place> places;
 
     public static PartyFindRequestFilterDto createRequestFilterDto(String search) {
         PartyFindRequestFilterDtoBuilder dtoBuilder = PartyFindRequestFilterDto.builder();
@@ -33,6 +37,20 @@ public class PartyFindRequestFilterDto {
         }
         if (search != null) {
             dtoBuilder.search(search);
+        }
+        return dtoBuilder.build();
+    }
+
+    public static PartyFindRequestFilterDto createRequestFilterDto(Boolean showOngoing, String search, List<Place> places) {
+        PartyFindRequestFilterDtoBuilder dtoBuilder = PartyFindRequestFilterDto.builder();
+        if (showOngoing != null) {
+            dtoBuilder.showOngoing(showOngoing);
+        }
+        if (search != null) {
+            dtoBuilder.search(search);
+        }
+        if (places != null) {
+            dtoBuilder.places(places);
         }
         return dtoBuilder.build();
     }

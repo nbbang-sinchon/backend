@@ -23,8 +23,28 @@ public class Member {
 
     private String avatar;
 
+    private Boolean isLeaved;
+
     @Enumerated(STRING)
     private Place place;
 
     protected Member() {}
+
+    public void updateMember(String nickname, Place place) {
+        this.nickname = nickname;
+        this.place = place;
+    }
+
+    public void leaveMember() {
+        this.isLeaved = true;
+    }
+
+    public static Member createMember(String nickname, Place place) {
+        return Member.builder()
+                .nickname(nickname)
+                .place(place)
+                .isLeaved(false)
+                .build();
+    }
+
 }

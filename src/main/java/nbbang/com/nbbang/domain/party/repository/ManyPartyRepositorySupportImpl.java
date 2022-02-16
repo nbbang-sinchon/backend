@@ -1,8 +1,11 @@
 package nbbang.com.nbbang.domain.party.repository;
 
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import nbbang.com.nbbang.domain.member.dto.Place;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.domain.PartyStatus;
 import nbbang.com.nbbang.domain.party.domain.QParty;
@@ -28,6 +31,31 @@ public class ManyPartyRepositorySupportImpl implements ManyPartyRepositorySuppor
         if (requestFilterDto.getShowOngoing()) {
             q.where(party.status.eq(PartyStatus.ON));
         }
+        if (requestFilterDto.getPlaces() != null) {
+            q.where(placeEquals(requestFilterDto.getPlaces()));
+        }
+        q.offset(pageable.getOffset())
+                .limit(pageable.getPageSize());
+        List<Party> res = q.fetch();
+        Long count = query.selectFrom(party)
+                .stream().count();
+        return new PageImpl<>(res, pageable, count);
+    }
+
+    private BooleanBuilder placeEquals(List<Place> places) {
+        QParty party = QParty.party;
+        BooleanBuilder builder = new BooleanBuilder();
+        for (Place p : places) {
+            builder.or(party.place.eq(p));
+        }
+        return builder;
+    }
+
+    @Override
+    public Page<Party> findMyParties(Pageable pageable, Long memberId) {
+        QParty party = QParty.party;
+        JPQLQuery<Party> q = query.selectFrom(party)
+                .where(party.owner.id.eq(memberId));
         q.offset(pageable.getOffset())
                 .limit(pageable.getPageSize());
         List<Party> res = q.fetch();
