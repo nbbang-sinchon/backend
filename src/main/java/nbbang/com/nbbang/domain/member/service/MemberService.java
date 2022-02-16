@@ -35,15 +35,14 @@ public class MemberService {
     @Transactional
     public void updateMember(Long memberId, String nickname, Place place) {
         Member member = findById(memberId);
-        member.setNickname(nickname);
-        member.setPlace(place);
+        member.updateMember(nickname, place);
     }
 
     @Transactional
     public void deleteMember(Long memberId) {
         //memberRepository.deleteById(memberId);
         Member member = findById(memberId);
-        member.setIsLeaved(true);
+        member.leaveMember();
     }
 
 

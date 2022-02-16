@@ -30,16 +30,13 @@ public class Member {
 
     protected Member() {}
 
-    public void setPlace(Place place) {
+    public void updateMember(String nickname, Place place) {
+        this.nickname = nickname;
         this.place = place;
     }
 
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
-    }
-
-    public void setIsLeaved(Boolean leaved) {
-        this.isLeaved = leaved;
+    public void leaveMember() {
+        this.isLeaved = true;
     }
 
     public static Member createMember(String nickname, Place place) {
