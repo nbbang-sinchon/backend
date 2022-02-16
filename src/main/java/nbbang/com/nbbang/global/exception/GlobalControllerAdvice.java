@@ -30,46 +30,43 @@ public class GlobalControllerAdvice {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(NotFoundException.class)
-    public DefaultResponse illegalExHandle(NotFoundException e) {
+    public ErrorResponse illegalExHandle(NotFoundException e) {
         // 사용 예시:Party party = partyRepository.findById(partyId)
         //                       .orElseThrow(() -> new NotFoundException("There is no party"));
-        log.error("[exceptionHandle] NotFoundException: ", e);
-        return new DefaultResponse(StatusCode.BAD_REQUEST, e.getMessage());
+        log.error("[ExceptionHandle] NotFoundException: ", e);
+        return new ErrorResponse(StatusCode.BAD_REQUEST, e.getMessage());
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(CustomIllegalArgumentException.class)
-    public DefaultResponse illegalExHandle(CustomIllegalArgumentException e) {
-        log.error("[exceptionHandle] CustomIllegalArgumentException: ");
+    public ErrorResponse illegalExHandle(CustomIllegalArgumentException e) {
+        log.error("[ExceptionHandle] CustomIllegalArgumentException: ", e);
         BindingResult bindingResult = e.getBindingResult();
         List<FieldErrorInfo> fieldErrorInfo = new ArrayList<>();
         bindingResult.getFieldErrors().stream()
                 .forEach(error-> fieldErrorInfo.add(new FieldErrorInfo(error.getField(), error.getDefaultMessage())));
-        log.error("processed");
-        log.error("fieldErrorInfo: {}", fieldErrorInfo);
-        return new DefaultResponse(StatusCode.BAD_REQUEST, e.getMessage(), fieldErrorInfo);
+        return new ErrorResponse(StatusCode.BAD_REQUEST, e.getMessage(), fieldErrorInfo);
     }
-
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(IllegalArgumentException.class)
-    public DefaultResponse illegalExHandle(IllegalArgumentException e) {
-        log.error("[exceptionHandle] IllegalArgumentException: ", e);
-        return new DefaultResponse(StatusCode.BAD_REQUEST, e.getMessage());
+    public ErrorResponse illegalExHandle(IllegalArgumentException e) {
+        log.error("[ExceptionHandle] IllegalArgumentException: ", e);
+        return new ErrorResponse(StatusCode.BAD_REQUEST, e.getMessage());
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler
-    public DefaultResponse userExHandle(UserException e) {
-        log.error("[exceptionHandle] UserException: ", e);
-        return new DefaultResponse(StatusCode.BAD_REQUEST, e.getMessage());
+    public ErrorResponse userExHandle(UserException e) {
+        log.error("[ExceptionHandle] UserException: ", e);
+        return new ErrorResponse(StatusCode.BAD_REQUEST, e.getMessage());
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler
-    public DefaultResponse exHandle(Exception e) {
-        log.error("[exceptionHandle] Exception: ", e);
-        return new DefaultResponse(StatusCode.INTERNAL_SERVER_ERROR, GlobalResponseMessage.INTERNAL_SERVER_ERROR);
+    public ErrorResponse exHandle(Exception e) {
+        log.error("[ExceptionHandle] Exception: ", e);
+        return new ErrorResponse(StatusCode.INTERNAL_SERVER_ERROR, GlobalResponseMessage.INTERNAL_SERVER_ERROR);
     }
 }
 
