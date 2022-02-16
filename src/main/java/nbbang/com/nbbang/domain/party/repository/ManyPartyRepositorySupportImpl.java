@@ -27,8 +27,7 @@ public class ManyPartyRepositorySupportImpl implements ManyPartyRepositorySuppor
         QParty party = QParty.party;
         JPQLQuery<Party> q = query.selectFrom(party)
                 .where(party.title.contains(requestFilterDto.getSearch()));
-        System.out.println(requestFilterDto.getShowOngoing());
-        if (requestFilterDto.getShowOngoing()) {
+        if (requestFilterDto.getOngoing()) {
             q.where(party.status.eq(PartyStatus.ON));
         }
         if (requestFilterDto.getPlaces() != null) {
