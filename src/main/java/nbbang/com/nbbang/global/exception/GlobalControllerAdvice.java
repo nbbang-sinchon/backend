@@ -1,16 +1,21 @@
 package nbbang.com.nbbang.global.exception;
 
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.global.response.DefaultResponse;
 import nbbang.com.nbbang.global.response.GlobalResponseMessage;
 import nbbang.com.nbbang.global.response.StatusCode;
 import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.webjars.NotFoundException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static nbbang.com.nbbang.global.response.GlobalResponseMessage.INTERNAL_SERVER_ERROR;
 
@@ -31,6 +36,20 @@ public class GlobalControllerAdvice {
         log.error("[exceptionHandle] NotFoundException: ", e);
         return new DefaultResponse(StatusCode.BAD_REQUEST, e.getMessage());
     }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(CustomIllegalArgumentException.class)
+    public DefaultResponse illegalExHandle(CustomIllegalArgumentException e) {
+        log.error("[exceptionHandle] CustomIllegalArgumentException: ");
+        BindingResult bindingResult = e.getBindingResult();
+        List<FieldErrorInfo> fieldErrorInfo = new ArrayList<>();
+        bindingResult.getFieldErrors().stream()
+                .forEach(error-> fieldErrorInfo.add(new FieldErrorInfo(error.getField(), error.getDefaultMessage())));
+        log.error("processed");
+        log.error("fieldErrorInfo: {}", fieldErrorInfo);
+        return new DefaultResponse(StatusCode.BAD_REQUEST, e.getMessage(), fieldErrorInfo);
+    }
+
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(IllegalArgumentException.class)
