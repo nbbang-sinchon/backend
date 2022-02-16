@@ -13,11 +13,13 @@ import nbbang.com.nbbang.domain.member.service.MemberService;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.dto.PartyListResponseDto;
 import nbbang.com.nbbang.domain.party.service.ManyPartyService;
+import nbbang.com.nbbang.global.dto.PageableDto;
 import nbbang.com.nbbang.global.exception.MemberNotFoundException;
 import nbbang.com.nbbang.global.response.DefaultResponse;
 import nbbang.com.nbbang.global.response.GlobalResponseMessage;
 import nbbang.com.nbbang.global.response.StatusCode;
 import nbbang.com.nbbang.global.support.FileUpload.FileUploadService;
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -29,7 +31,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-import static nbbang.com.nbbang.domain.member.controller.MemberResponseMessage.READ_USER;
 
 @Tag(name = "Member", description = "회원 관리 api (로그인 구현시 올바른 토큰을 보내지 않을 경우 401 Unauthorized 메시지를 받습니다.)")
 @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(mediaType = "application/json"))
@@ -45,19 +46,20 @@ public class MemberController {
     private Long memberId = 1L; // 로그인 기능 구현 후 삭제 예정
 
     @Operation(summary = "테스트 용도 멤버 생성")
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
     @PostMapping("/create")
     public ResponseEntity create() {
         memberId = memberService.saveMember("루피", Place.SINCHON);
         return new ResponseEntity(DefaultResponse.res(StatusCode.OK, "테스트 멤버가 생성되었습니다."), HttpStatus.OK);
     }
-
+    
     @Operation(summary = "마이페이지 정보 조회", description = "자신의 정보를 조회합니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MemberResponseDto.class)))
     @GetMapping
     public ResponseEntity select() {
         Member member = memberService.findById(memberId);
         MemberResponseDto dto = MemberResponseDto.createByEntity(member);
-        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, MemberResponseMessage.READ_USER, dto), HttpStatus.OK);
+        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, MemberResponseMessage.READ_MEMBER, dto), HttpStatus.OK);
     }
 
     @Operation(summary = "마이페이지 정보 업데이트", description = "자신의 정보를 업데이트합니다.")
@@ -66,10 +68,10 @@ public class MemberController {
     @PatchMapping
     public ResponseEntity update(@Validated @RequestBody MemberUpdateRequestDto memberUpdateRequestDto, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            return new ResponseEntity(DefaultResponse.res(StatusCode.BAD_REQUEST, "회원 정보를 올바르게 입력하세요."), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(DefaultResponse.res(StatusCode.BAD_REQUEST, MemberResponseMessage.ILLEGAL_MEMBER_UPDATE_REQUEST), HttpStatus.BAD_REQUEST);
         }
         memberService.updateMember(memberId, memberUpdateRequestDto.getNickname(), memberUpdateRequestDto.getPlace());
-        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, MemberResponseMessage.UPDATE_USER), HttpStatus.OK);
+        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, MemberResponseMessage.UPDATE_MEMBER), HttpStatus.OK);
     }
 
 
@@ -78,25 +80,25 @@ public class MemberController {
     @DeleteMapping
     public ResponseEntity delete() {
         memberService.deleteMember(memberId);
-        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, MemberResponseMessage.DELETE_USER), HttpStatus.OK);
+        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, MemberResponseMessage.DELETE_MEMBER), HttpStatus.OK);
     }
 
-    @Operation(summary = "프로필 사진 업로드", description = "프로필 사진을 업로드합니다.")
+    @Operation(summary = "프로필 사진 업로드(미구현)", description = "프로필 사진을 업로드합니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(type = "string", implementation = MemberProfileImageUploadResponseDto.class)))
     @ApiResponse(responseCode = "400", description = "프로필 사진 업로드 실패, 잘못된 요청입니다. 사진이 올바른지 확인하세요.", content = @Content(mediaType = "application/json"))
     @PostMapping(path = "/profile-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity uploadProfileImage(@Schema(description = "이미지 파일을 업로드합니다.")
                                              @RequestPart MultipartFile imgFile) {
         String filePath = fileUploadService.fileUpload(imgFile);
-        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, MemberResponseMessage.UPDATE_USER, MemberProfileImageUploadResponseDto.createMock()), HttpStatus.OK);
+        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, MemberResponseMessage.UPDATE_MEMBER, MemberProfileImageUploadResponseDto.createMock()), HttpStatus.OK);
     }
 
     @Operation(summary = "나의 파티", description = "자신이 속한 파티 목록을 조회합니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PartyListResponseDto.class)))
     @GetMapping("/parties")
-    public ResponseEntity parties(Integer pageNumber, Integer pageSize) {
-        List<Party> myParties = manyPartyService.findMyParties(PageRequest.of(pageNumber, pageSize), memberId).getContent();
-        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, MemberResponseMessage.READ_USER, PartyListResponseDto.createFromEntity(myParties)), HttpStatus.OK);
+    public ResponseEntity parties(@ParameterObject PageableDto pageableDto) {
+        List<Party> myParties = manyPartyService.findMyParties(pageableDto.createPageRequest(), memberId).getContent();
+        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, MemberResponseMessage.READ_MEMBER, PartyListResponseDto.createFromEntity(myParties)), HttpStatus.OK);
     }
 
     @Operation(summary = "멤버 위치", description = "멤버의 위치 정보를 제공합니다.")
@@ -109,6 +111,6 @@ public class MemberController {
 
     @ExceptionHandler(MemberNotFoundException.class)
     public ResponseEntity memberNotFoundException(MemberNotFoundException e) {
-        return new ResponseEntity(DefaultResponse.res(StatusCode.NOT_FOUND, "존재하지 않는 회원입니다."), HttpStatus.NOT_FOUND);
+        return new ResponseEntity(DefaultResponse.res(StatusCode.NOT_FOUND, MemberResponseMessage.MEMBER_NOT_FOUND), HttpStatus.NOT_FOUND);
     }
 }

@@ -1,8 +1,10 @@
 package nbbang.com.nbbang.global.dto;
 
+import lombok.Data;
 import org.springframework.data.domain.PageRequest;
 
-public abstract class PageableDto {
+@Data
+public class PageableDto {
     private Integer pageNumber;
     private Integer pageSize;
 

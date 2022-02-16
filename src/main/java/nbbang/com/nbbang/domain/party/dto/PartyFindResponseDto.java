@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PartyFindResponseDto{
+    private Long partyId;
     private String title;
     private LocalDateTime createTime;
     private Integer joinNumber;
@@ -37,6 +38,7 @@ public class PartyFindResponseDto{
 
     public static PartyFindResponseDto createByEntity(Party party) {
         return PartyFindResponseDto.builder()
+                .partyId(party.getId())
                 .title(party.getTitle())
                 .createTime(party.getCreateTime())
                 .goalNumber(party.getGoalNumber())

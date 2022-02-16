@@ -27,9 +27,8 @@ public class ManyPartyRepositorySupportImpl implements ManyPartyRepositorySuppor
         QParty party = QParty.party;
         JPQLQuery<Party> q = query.selectFrom(party)
                 .where(party.title.contains(requestFilterDto.getSearch()));
-        System.out.println(requestFilterDto.getShowOngoing());
-        if (requestFilterDto.getShowOngoing()) {
-            q.where(party.status.eq(PartyStatus.ON));
+        if (requestFilterDto.getIsOngoing()) {
+            q.where(isPartyOngoing());
         }
         if (requestFilterDto.getPlaces() != null) {
             q.where(placeEquals(requestFilterDto.getPlaces()));
@@ -40,6 +39,13 @@ public class ManyPartyRepositorySupportImpl implements ManyPartyRepositorySuppor
         Long count = query.selectFrom(party)
                 .stream().count();
         return new PageImpl<>(res, pageable, count);
+    }
+
+    private BooleanBuilder isPartyOngoing() {
+        QParty party = QParty.party;
+        return new BooleanBuilder()
+                .or(party.status.eq(PartyStatus.ON))
+                .or(party.status.eq(PartyStatus.SOON));
     }
 
     private BooleanBuilder placeEquals(List<Place> places) {
