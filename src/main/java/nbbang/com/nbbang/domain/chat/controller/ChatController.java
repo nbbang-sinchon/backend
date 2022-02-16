@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.domain.chat.dto.*;
+import nbbang.com.nbbang.domain.chat.service.ChatService;
 import nbbang.com.nbbang.global.response.DefaultResponse;
 import nbbang.com.nbbang.global.response.GlobalResponseMessage;
 import nbbang.com.nbbang.global.response.StatusCode;
@@ -28,12 +29,24 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class ChatController {
     private final FileUploadService fileUploadService;
+    private final ChatService chatService;
+    private Long memberId; // 로그인 기능 구현시 삭제 예정
 
     @Operation(summary = "채팅방 조회", description = "채팅방을 파티 id 로 조회합니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ChatResponseDto.class)))
     @ApiResponse(responseCode = "403", description = "Not Party Member", content = @Content(mediaType = "application/json"))
     @GetMapping("/{party-id}")
     public ResponseEntity select(@PathVariable("party-id") Long partyId) {
+
+        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, ChatResponseMessage.READ_CHAT, ChatResponseDto.createMock()), HttpStatus.OK);
+    }
+
+    @Operation(summary = "채팅 메시지 조회", description = "페이징이 적용된 채팅 메시지를 조회합니다.")
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ChatResponseDto.class)))
+    @ApiResponse(responseCode = "403", description = "Not Party Member", content = @Content(mediaType = "application/json"))
+    @GetMapping("/{party-id}/messages")
+    public ResponseEntity selectChatMessages(@PathVariable("party-id") Long partyId) {
+
         return new ResponseEntity(DefaultResponse.res(StatusCode.OK, ChatResponseMessage.READ_CHAT, ChatResponseDto.createMock()), HttpStatus.OK);
     }
 
@@ -74,7 +87,7 @@ public class ChatController {
                                        @Validated @RequestBody ChatStatusChangeRequestDto chatStatusChangeRequestDto,
                                        BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            return new ResponseEntity(DefaultResponse.res(StatusCode.BAD_REQUEST, "잘못된 요청입니다. Status 를 올바르게 입력하세요."), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(DefaultResponse.res(StatusCode.BAD_REQUEST, ChatResponseMessage.ILLEGAL_CHAT_STATUS), HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity(DefaultResponse.res(StatusCode.OK, ChatResponseMessage.UPDATE_CHAT), HttpStatus.OK);
     }
@@ -89,7 +102,7 @@ public class ChatController {
                                            @Validated @RequestBody ChatChangeGoalNumberRequestDto chatChangeGoalNumberRequestDto,
                                            BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            return new ResponseEntity(DefaultResponse.res(StatusCode.BAD_REQUEST, "잘못된 요청입니다. 참여자 수를 올바르게 입력하세요."), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(DefaultResponse.res(StatusCode.BAD_REQUEST, ChatResponseMessage.ILLEGAL_CHAT_GOAL_NUMBER), HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity(DefaultResponse.res(StatusCode.OK, ChatResponseMessage.UPDATE_CHAT), HttpStatus.OK);
     }

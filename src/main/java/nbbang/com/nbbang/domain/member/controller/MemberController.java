@@ -50,7 +50,7 @@ public class MemberController {
         memberId = memberService.saveMember("루피", Place.SINCHON);
         return new ResponseEntity(DefaultResponse.res(StatusCode.OK, "테스트 멤버가 생성되었습니다."), HttpStatus.OK);
     }
-
+    
     @Operation(summary = "마이페이지 정보 조회", description = "자신의 정보를 조회합니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MemberResponseDto.class)))
     @GetMapping
@@ -81,7 +81,7 @@ public class MemberController {
         return new ResponseEntity(DefaultResponse.res(StatusCode.OK, MemberResponseMessage.DELETE_MEMBER), HttpStatus.OK);
     }
 
-    @Operation(summary = "프로필 사진 업로드", description = "프로필 사진을 업로드합니다.")
+    @Operation(summary = "프로필 사진 업로드(미구현)", description = "프로필 사진을 업로드합니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(type = "string", implementation = MemberProfileImageUploadResponseDto.class)))
     @ApiResponse(responseCode = "400", description = "프로필 사진 업로드 실패, 잘못된 요청입니다. 사진이 올바른지 확인하세요.", content = @Content(mediaType = "application/json"))
     @PostMapping(path = "/profile-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

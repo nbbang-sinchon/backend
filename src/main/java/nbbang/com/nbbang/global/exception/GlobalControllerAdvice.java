@@ -62,7 +62,7 @@ public class GlobalControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(IllegalPlaceException.class)
     public DefaultResponse illegalExHandle(IllegalPlaceException e) {
-        log.error("[exceptionHandle] IllegalPlaceException: ", GlobalResponseMessage.ILLEGAL_PLACE);
+        //log.error("[exceptionHandle] IllegalPlaceException: ", GlobalResponseMessage.ILLEGAL_PLACE);
         return new DefaultResponse(StatusCode.BAD_REQUEST, ManyPartyResponseMessage.ILLEGAL_PLACE);
     }
 }
