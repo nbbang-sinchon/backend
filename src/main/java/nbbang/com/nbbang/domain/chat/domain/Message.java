@@ -29,6 +29,6 @@ public class Message {
 
     @ManyToOne
     @JoinColumn(name = "member_id")
-    private Member author;
+    private Member sender;
 
 }
