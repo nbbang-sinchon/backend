@@ -1,6 +1,9 @@
 package nbbang.com.nbbang.global.exception;
 
 
+import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.domain.party.controller.ManyPartyResponseMessage;
 import nbbang.com.nbbang.global.response.DefaultResponse;
@@ -15,6 +18,7 @@ import org.webjars.NotFoundException;
 
 import static nbbang.com.nbbang.global.response.GlobalResponseMessage.INTERNAL_SERVER_ERROR;
 
+@Hidden
 @Slf4j
 @RestControllerAdvice
 public class GlobalControllerAdvice {
