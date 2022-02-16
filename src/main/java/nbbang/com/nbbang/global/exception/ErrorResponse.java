@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import nbbang.com.nbbang.global.response.DefaultResponse;
 
 import java.util.List;
 
@@ -11,11 +12,11 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ErrorResponse {
+public class ErrorResponse<T> {
 
     private int statusCode;
     private String message;
-    private List<FieldErrorInfo> errors;
+    private T errors;
 
     public ErrorResponse(final int statusCode, final String message) {
         this.statusCode = statusCode;
@@ -23,12 +24,12 @@ public class ErrorResponse {
         this.errors = null;
     }
 
-    public static ErrorResponse res(final int statusCode, final String message) {
+    public static<T> ErrorResponse<T> res(final int statusCode, final String message) {
         return res(statusCode, message, null);
     }
 
-    public static ErrorResponse res(final int statusCode, final String message, final List<FieldErrorInfo> errors) {
-        return ErrorResponse.builder()
+    public static<T> ErrorResponse<T> res(final int statusCode, final String message, final T errors) {
+        return ErrorResponse.<T>builder()
                 .errors(errors)
                 .statusCode(statusCode)
                 .message(message)
