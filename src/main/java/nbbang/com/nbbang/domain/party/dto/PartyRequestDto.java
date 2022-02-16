@@ -3,6 +3,8 @@ package nbbang.com.nbbang.domain.party.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import nbbang.com.nbbang.domain.member.dto.Place;
+import nbbang.com.nbbang.domain.party.domain.Party;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -16,8 +18,19 @@ public class PartyRequestDto {
     private String title;
     private String content;
     private List<String> hashtags; // 해시태그 개수 검증기 만들기
-    @NotBlank(message = "파티의 위치는 필수 값입니다.")
+    @NotNull(message = "파티의 위치는 필수 값입니다.")
     private String place;
     @NotNull(message = "모집 인원수는 필수 값입니다.")
     private Integer goalNumber;
+
+    public Party createByDto(){
+        Place place = Place.valueOf(this.place);
+        Party party = Party.builder()
+                .title(this.title)
+                .content(this.content)
+                .place(place)
+                .goalNumber(this.goalNumber)
+                .build();
+        return party;
+    }
 }
