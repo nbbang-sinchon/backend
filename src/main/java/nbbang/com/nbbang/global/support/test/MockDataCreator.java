@@ -2,6 +2,7 @@ package nbbang.com.nbbang.global.support.test;
 
 import nbbang.com.nbbang.domain.bbangpan.domain.MemberParty;
 import nbbang.com.nbbang.domain.bbangpan.repository.MemberPartyRepository;
+import nbbang.com.nbbang.domain.chat.service.ChatService;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.dto.Place;
 import nbbang.com.nbbang.domain.member.repository.MemberRepository;
@@ -31,6 +32,7 @@ public class MockDataCreator implements CommandLineRunner {
     @Autowired PartyRepository partyRepository;
     @Autowired HashtagRepository hashtagRepository;
     @Autowired MemberPartyRepository memberPartyRepository;
+    @Autowired ChatService chatService;
 
     private Long luffyId;
     private Long korungId;
@@ -47,6 +49,7 @@ public class MockDataCreator implements CommandLineRunner {
         createParty1();
         createParty2();
         createParty3();
+        createMessage1();
     }
 
     @Transactional
@@ -113,7 +116,7 @@ public class MockDataCreator implements CommandLineRunner {
                 //.hashtags(Arrays.asList(Hashtag.builder().content("콤보").build(), Hashtag.builder().content("배달비").build(),Hashtag.builder().content("야식").build(),Hashtag.builder().content("사이드 가능").build()))
                 .place(Place.YEONHUI)
                 .deliveryFee(300)
-                .status(PartyStatus.ON)
+                .status(PartyStatus.SOON)
                 .isBlocked(false)
                 .build();
         partyRepository.save(party);
@@ -149,6 +152,12 @@ public class MockDataCreator implements CommandLineRunner {
                 .party(party)
                 .price(1000)
                 .build());
+    }
+
+    @Transactional
+    public void createMessage1() {
+        chatService.sendMessage(luffyId, party1Id, "뿌링클 넘나 먹고 싶다.", LocalDateTime.of(2022, 02, 10, 16, 40));
+        chatService.sendMessage(korungId, party1Id, "내일 점심에 버거킹 드실분", LocalDateTime.of(2022, 02, 10, 16, 45));
     }
 
 }
