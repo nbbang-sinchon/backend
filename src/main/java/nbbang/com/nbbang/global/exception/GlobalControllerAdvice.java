@@ -2,6 +2,7 @@ package nbbang.com.nbbang.global.exception;
 
 
 import lombok.extern.slf4j.Slf4j;
+import nbbang.com.nbbang.domain.party.controller.ManyPartyResponseMessage;
 import nbbang.com.nbbang.global.response.DefaultResponse;
 import nbbang.com.nbbang.global.response.GlobalResponseMessage;
 import nbbang.com.nbbang.global.response.StatusCode;
@@ -51,6 +52,14 @@ public class GlobalControllerAdvice {
     public DefaultResponse exHandle(Exception e) {
         log.error("[exceptionHandle] Exception: ", e);
         return new DefaultResponse(StatusCode.INTERNAL_SERVER_ERROR, GlobalResponseMessage.INTERNAL_SERVER_ERROR);
+    }
+
+    // 위치 정보: NONE, SINCHON, YEONHUI, CHANGCHEON 이외의 값
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(IllegalPlaceException.class)
+    public DefaultResponse illegalExHandle(IllegalPlaceException e) {
+        log.error("[exceptionHandle] IllegalPlaceException: ", GlobalResponseMessage.ILLEGAL_PLACE);
+        return new DefaultResponse(StatusCode.BAD_REQUEST, ManyPartyResponseMessage.ILLEGAL_PLACE);
     }
 }
 

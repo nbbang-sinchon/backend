@@ -18,6 +18,7 @@ import nbbang.com.nbbang.global.exception.IllegalPlaceException;
 import nbbang.com.nbbang.global.response.*;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -63,4 +64,10 @@ public class ManyPartyController {
         return new ResponseEntity(DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_FIND_SUCCESS,
                 PartyListResponseDto.createFromEntity(queryResults.getContent())), OK);
     }
+
+    @ExceptionHandler(IllegalPartyFindRequestException.class)
+    public ResponseEntity illegalPartyFindRequestExHandle(IllegalPartyFindRequestException e) {
+        return new ResponseEntity(DefaultResponse.res(StatusCode.BAD_REQUEST, ManyPartyResponseMessage.ILLEGAL_PARTY_LIST_REQUEST), BAD_REQUEST);
+    }
+
 }
