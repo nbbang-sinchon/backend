@@ -26,13 +26,9 @@ public class PartyHashtag {
 
     protected PartyHashtag() {}
 
-    public static PartyHashtag createPartyHashtag(Party party) {
-        PartyHashtag partyHashtag = PartyHashtag.builder().party(party).build();
+    public static PartyHashtag createPartyHashtag(Party party, Hashtag findHashtag) {
+        PartyHashtag partyHashtag = PartyHashtag.builder().party(party).hashtag(findHashtag).build();
         party.addPartyHashtag(partyHashtag);
         return partyHashtag;
-    }
-
-    public void mapHashtag(Hashtag hashtag) {
-        this.hashtag = hashtag;
     }
 }

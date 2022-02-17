@@ -16,25 +16,28 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static nbbang.com.nbbang.domain.party.controller.PartyResponseMessage.PARTY_NOT_FOUND;
+
 @Service
 @Transactional(readOnly=true)
 @RequiredArgsConstructor
 public class HashtagService {
-    private final PartyRepository partyRepository;
     private final HashtagRepository hashtagRepository;
+    private final PartyHashtagRepository partyHashtagRepository;
 
-    @Transactional
-    public void createHashtag(Long partyId, String content){
-        Party party = partyRepository.findById(partyId).orElseThrow(() -> new NotFoundException("There is no party"));
-        PartyHashtag partyHashtag = PartyHashtag.createPartyHashtag(party);
-        List<Hashtag> hashtags = hashtagRepository.findByContent(content);
-        if(hashtags.isEmpty()){
-            Hashtag hashtag = Hashtag.createHashtag(content, partyHashtag);
-            hashtagRepository.save(hashtag);
-        }
-        else{
-            Hashtag hashtag = hashtags.get(0);
-            partyHashtag.mapHashtag(hashtag);
+    public Hashtag createHashtag(String content) {
+        Hashtag hashtag = Hashtag.createHashtag(content);
+        hashtagRepository.save(hashtag);
+        return hashtag;
+    }
+
+    public Hashtag findByContent(String content) {
+        return hashtagRepository.findByContent(content);
+    }
+
+    public void deleteIfNotReferred(Hashtag hashtag) {
+        if (partyHashtagRepository.findByHashtagId(hashtag.getId()).size()==0){
+            hashtagRepository.delete(hashtag);
         }
     }
 }

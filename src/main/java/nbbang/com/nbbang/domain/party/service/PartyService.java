@@ -4,8 +4,13 @@ import lombok.RequiredArgsConstructor;
 import nbbang.com.nbbang.domain.bbangpan.domain.MemberParty;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.dto.Place;
+import nbbang.com.nbbang.domain.party.domain.Hashtag;
 import nbbang.com.nbbang.domain.party.domain.Party;
+import nbbang.com.nbbang.domain.party.domain.PartyHashtag;
 import nbbang.com.nbbang.domain.party.domain.PartyStatus;
+import nbbang.com.nbbang.domain.party.dto.PartyRequestDto;
+import nbbang.com.nbbang.domain.party.dto.PartyUpdateServiceDto;
+import nbbang.com.nbbang.domain.party.repository.PartyHashtagRepository;
 import nbbang.com.nbbang.domain.party.repository.PartyRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,35 +26,62 @@ import java.util.stream.Collectors;
 
 import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.LAZY;
+import static nbbang.com.nbbang.domain.party.controller.PartyResponseMessage.PARTY_NOT_FOUND;
 
 @Service
 @Transactional(readOnly=true)
 @RequiredArgsConstructor
 public class PartyService {
     private final PartyRepository partyRepository;
+    private final PartyHashtagRepository partyHashtagRepository;
     private final HashtagService hashtagService;
 
     @Transactional
-    public Long createParty(Party party, List<String> hashtags) {
+    public Long createParty(Party party, List<String> hashtagContents) {
         Party savedParty = partyRepository.save(party);
         Long partyId = savedParty.getId();
-        if (!hashtags.isEmpty()){
-            for (String content: hashtags){
-                hashtagService.createHashtag(partyId, content);
-            }
-        }
+        hashtagContents.stream().forEach(content->createHashtag(partyId, content));
         return partyId;
     }
 
     public Party findParty(Long partyId) {
-        Party party = partyRepository.findById(partyId).orElseThrow(() -> new NotFoundException("정보가 일치하는 파티가 존재하지 않습니다."));
+        Party party = partyRepository.findById(partyId).orElseThrow(() -> new NotFoundException(PARTY_NOT_FOUND));
         return party;
     }
 
+    @Transactional
+    public void updateParty(Long partyId, PartyUpdateServiceDto partyUpdateServiceDto) {
+        Party party = findParty(partyId);
+        List<String> newHashtagContents = partyUpdateServiceDto.getHashtagContents();
+        List<String> intersectionHashtagContents = findHashtagContentsByParty(party);
+        intersectionHashtagContents.retainAll(newHashtagContents);
+        List<String> deletedHashtagContents = findHashtagContentsByParty(party);
+        deletedHashtagContents.removeAll(intersectionHashtagContents);
+        newHashtagContents.removeAll(intersectionHashtagContents);
+        newHashtagContents.stream().forEach(content->createHashtag(partyId, content));
+        deletedHashtagContents.stream().forEach(content->deleteHashtag(partyId, content));
+    }
+
+    @Transactional
+    public void createHashtag(Long partyId, String content){
+        Party party = findParty(partyId);
+        Hashtag hashtag = hashtagService.findByContent(content);
+        if(hashtag==null){
+            hashtag = hashtagService.createHashtag(content);
+        }
+        PartyHashtag partyHashtag = PartyHashtag.createPartyHashtag(party, hashtag);
+    }
+
+    private void deleteHashtag(Long partyId, String content) {
+        Party party = findParty(partyId);
+        PartyHashtag partyHashtag = party.deletePartyHashtag(content);
+        partyHashtagRepository.delete(partyHashtag);
+        hashtagService.deleteIfNotReferred(partyHashtag.getHashtag());
+    }
 
     @Transactional
     public void deleteParty(Long partyId) {
-        Party party = partyRepository.findById(partyId).orElseThrow(() -> new NotFoundException("There is no party"));
+        Party party = findParty(partyId);
         partyRepository.delete(party);
     }
 

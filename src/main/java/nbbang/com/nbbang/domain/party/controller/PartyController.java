@@ -14,6 +14,7 @@ import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.dto.PartyIdResponseDto;
 import nbbang.com.nbbang.domain.party.dto.PartyReadResponseDto;
 import nbbang.com.nbbang.domain.party.dto.PartyRequestDto;
+import nbbang.com.nbbang.domain.party.dto.PartyUpdateServiceDto;
 import nbbang.com.nbbang.domain.party.service.HashtagService;
 import nbbang.com.nbbang.domain.party.service.ManyPartyService;
 import nbbang.com.nbbang.domain.party.service.PartyService;
@@ -78,12 +79,14 @@ public class PartyController {
     @Operation(summary = "파티 수정", description = "파티를 수정합니다.")
     @ApiResponse(responseCode = "403", description = "Not Owner", content = @Content(mediaType = "application/json"))
     @PatchMapping("/{party-id}")
-    public DefaultResponse updateParty(@PathVariable("party-id") Long partyId, @RequestBody PartyRequestDto partyRequestDtO) {
-        return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_UPDATE_SUCCESS);
+    public DefaultResponse updateParty(@PathVariable("party-id") Long partyId, @Valid @RequestBody PartyRequestDto partyRequestDtO) {
+        partyService.updateParty(partyId, PartyUpdateServiceDto.createByPartyRequestDto(partyRequestDtO));
+        return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_UPDATE_SUCCESS, new PartyIdResponseDto(partyId));
     }
 
 
     @Operation(summary = "파티 삭제", description = "파티를 삭제합니다.")
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "403", description = "Not Owner", content = @Content(mediaType = "application/json"))
     @DeleteMapping("/{party-id}")
     public DefaultResponse deleteParty(@PathVariable("party-id") Long partyId) {

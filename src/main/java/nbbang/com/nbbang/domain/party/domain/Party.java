@@ -8,6 +8,8 @@ import nbbang.com.nbbang.domain.bbangpan.domain.MemberParty;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.dto.Place;
 import nbbang.com.nbbang.global.support.validation.ValueOfEnum;
+import org.springframework.data.crossstore.ChangeSetPersister;
+import org.webjars.NotFoundException;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -17,6 +19,7 @@ import java.util.List;
 
 import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.*;
+import static nbbang.com.nbbang.domain.party.controller.PartyResponseMessage.HASHTAG_NOT_FOUND;
 
 @Entity @Getter @Builder
 @AllArgsConstructor
@@ -63,9 +66,14 @@ public class Party {
     protected Party() {}
 
     public void addPartyHashtag(PartyHashtag partyHashtag){
-        System.out.println("partyHashtag = " + partyHashtag);
-        System.out.println("partyHashtags = " + partyHashtags);
         partyHashtags.add(partyHashtag);
+    }
+
+    public PartyHashtag deletePartyHashtag(String content){
+        PartyHashtag findPartyHashtag = partyHashtags.stream().filter(partyHashtag -> partyHashtag.getHashtag().getContent() == content)
+                .findAny().orElseThrow(() -> new NotFoundException(HASHTAG_NOT_FOUND));
+        partyHashtags.remove(findPartyHashtag);
+        return findPartyHashtag;
     }
 
     public void addOwner(Member member) {
