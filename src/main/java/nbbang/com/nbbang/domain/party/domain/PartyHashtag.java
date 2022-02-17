@@ -28,10 +28,11 @@ public class PartyHashtag {
 
     public static PartyHashtag createPartyHashtag(Party party) {
         PartyHashtag partyHashtag = PartyHashtag.builder().party(party).build();
+        party.addPartyHashtag(partyHashtag);
         return partyHashtag;
     }
 
-    public void addHashtag(Hashtag hashtag) {
+    public void mapHashtag(Hashtag hashtag) {
         this.hashtag = hashtag;
     }
 }
