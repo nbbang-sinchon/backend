@@ -1,16 +1,20 @@
 package nbbang.com.nbbang.domain.chat.domain;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.party.domain.Party;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Entity @Getter
+@Entity @Getter @Builder
+@AllArgsConstructor
 public class Message {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "message_id")
     private Long id;
 
@@ -30,5 +34,16 @@ public class Message {
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member sender;
+
+    protected Message() {}
+
+    public static Message createMessage(Member member, Party party, String content, LocalDateTime createTime) {
+        return Message.builder()
+                .sender(member)
+                .party(party)
+                .content(content)
+                .createTime(createTime)
+                .build();
+    }
 
 }

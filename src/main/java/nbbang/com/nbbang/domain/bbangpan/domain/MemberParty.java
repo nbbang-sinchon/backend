@@ -27,4 +27,11 @@ public class MemberParty {
     private Party party;
 
     protected MemberParty() {}
+
+    public static MemberParty createMemberParty(Member member, Party party) {
+        return MemberParty.builder()
+                .member(member)
+                .party(party)
+                .build();
+    }
 }

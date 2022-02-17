@@ -12,6 +12,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.webjars.NotFoundException;
 
 import java.util.ArrayList;
@@ -67,6 +68,30 @@ public class GlobalControllerAdvice {
     public ErrorResponse exHandle(Exception e) {
         log.error("[ExceptionHandle] Exception: ", e);
         return new ErrorResponse(StatusCode.INTERNAL_SERVER_ERROR, GlobalResponseMessage.INTERNAL_SERVER_ERROR);
+    }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ErrorResponse exHandle(MethodArgumentTypeMismatchException e) {
+        return new ErrorResponse(StatusCode.INTERNAL_SERVER_ERROR, GlobalResponseMessage.ILLEGAL_TYPE_CONVERSION_ERROR);
+    }
+
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(NotOwnerException.class)
+    public ErrorResponse exHandle(NotOwnerException e) {
+        return new ErrorResponse(StatusCode.FORBIDDEN, GlobalResponseMessage.NOT_OWNER_ERROR);
+    }
+
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(NotPartyMemberException.class)
+    public ErrorResponse exHandle(NotPartyMemberException e) {
+        return new ErrorResponse(StatusCode.FORBIDDEN, GlobalResponseMessage.NOT_PARTY_MEMBER_ERROR);
+    }
+
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(UnauthorizedException.class)
+    public ErrorResponse exHandle(UnauthorizedException e) {
+        return new ErrorResponse(StatusCode.UNAUTHORIZED, GlobalResponseMessage.UNAUTHORIZED_ERROR);
     }
 }
 

@@ -11,4 +11,6 @@ public class ChatResponseMessage {
     public static final String ILLEGAL_CHAT_STATUS = "채팅방 상태 정보를 올바르게 입력하세요.";
     public static final String ILLEGAL_CHAT_GOAL_NUMBER = "채팅방 최대 참여자 수를 올바르게 입력하세요.";
 
+    public static final String MESSAGE_NOT_FOUND = "존재하지 않는 메시지입니다.";
+
 }

@@ -9,5 +9,9 @@ import nbbang.com.nbbang.global.support.validation.ValueOfEnum;
 public class ChatStatusChangeRequestDto {
     @ValueOfEnum(enumClass = PartyStatus.class) @Schema(description = "올바른 status 값: ON, SOON, FULL, FINISH, CANCEL")
     private String status;
+
+    public PartyStatus createStatus() {
+        return PartyStatus.valueOf(status);
+    }
 }
 

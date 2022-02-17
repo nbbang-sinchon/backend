@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 
 @Data @Builder
 public class ChatMessageResponseDto {
+    private Long messageId;
     private String content;
     private LocalDateTime createdTime;
     private Integer notReadNumber;
@@ -18,6 +19,7 @@ public class ChatMessageResponseDto {
 
     public static ChatMessageResponseDto createByEntity(Message message) {
         return ChatMessageResponseDto.builder()
+                .messageId(message.getId())
                 .content(message.getContent())
                 .createdTime(message.getCreateTime())
                 .notReadNumber(0)

@@ -2,6 +2,7 @@ package nbbang.com.nbbang.domain.chat.dto;
 
 import lombok.Builder;
 import lombok.Data;
+import nbbang.com.nbbang.domain.chat.domain.Message;
 import nbbang.com.nbbang.domain.member.dto.MemberResponseDto;
 import nbbang.com.nbbang.domain.member.dto.MemberResponseDto;
 import nbbang.com.nbbang.domain.party.domain.Party;
@@ -14,7 +15,7 @@ import java.util.stream.Collectors;
 
 @Data @Builder
 public class ChatResponseDto {
-
+    private Long partyId;
     private String title;
     private LocalDateTime createTime;
     private Integer joinNumber;
@@ -23,9 +24,11 @@ public class ChatResponseDto {
     private MemberResponseDto owner;
     private List<MemberResponseDto> participants;
     private Long lastMessageId;
+    private List<ChatMessageResponseDto> messages;
 
-    public static ChatResponseDto createByPartyEntity(Party party, Long lastMessageId) {
+    public static ChatResponseDto createByPartyEntity(Party party, Long lastMessageId, List<Message> messages) {
         return ChatResponseDto.builder()
+                .partyId(party.getId())
                 .title(party.getTitle())
                 .createTime(party.getCreateTime())
                 .owner(MemberResponseDto.createByEntity(party.getOwner()))
@@ -33,6 +36,7 @@ public class ChatResponseDto {
                 .goalNumber(party.getGoalNumber())
                 .joinNumber(party.getMemberParties().size())
                 .status(party.getStatus().toString())
+                .messages(messages.stream().map(ChatMessageResponseDto::createByEntity).collect(Collectors.toList()))
                 .lastMessageId(lastMessageId)
                 .build();
     }

@@ -34,11 +34,11 @@ public class Party {
 
     private Integer goalNumber;
 
-    @ValueOfEnum(enumClass = PartyStatus.class)
+    //@ValueOfEnum(enumClass = PartyStatus.class)
     @Enumerated(STRING)
     private PartyStatus status;
 
-    @ValueOfEnum(enumClass = Place.class)
+    //@ValueOfEnum(enumClass = Place.class)
     @Enumerated(STRING)
     private Place place;
 
@@ -66,6 +66,23 @@ public class Party {
         System.out.println("partyHashtag = " + partyHashtag);
         System.out.println("partyHashtags = " + partyHashtags);
         partyHashtags.add(partyHashtag);
-
     }
+
+    public void addOwner(Member member) {
+        this.owner = member;
+    }
+
+    public void addMember(Member member) {
+        MemberParty memberParty = MemberParty.createMemberParty(member, this);
+        this.getMemberParties().add(memberParty);
+    }
+
+    public void changeGoalNumber(Integer goalNumber) {
+        this.goalNumber = goalNumber;
+    }
+
+    public void changeStatus(PartyStatus status) {
+        this.status = status;
+    }
+
 }
