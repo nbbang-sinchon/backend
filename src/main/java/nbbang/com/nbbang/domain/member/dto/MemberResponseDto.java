@@ -14,6 +14,7 @@ import nbbang.com.nbbang.domain.member.domain.Member;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MemberResponseDto {
+    private Long id;
     private String profileImagePath;
     private String nickname;
     private String place;

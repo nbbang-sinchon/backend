@@ -41,6 +41,18 @@ public class PartyService {
         return partyId;
     }
 
+    @Transactional
+    public void joinParty(Party party, Member member) {
+        if (party.getOwner().equals(member) &&party.getMemberParties().stream().noneMatch(mp -> mp.getMember().equals(member))) {
+            party.joinMember(member);
+        }
+    }
+
+    @Transactional
+    public void exitParty(Party party, Member member) {
+        party.exitMember(member);
+    }
+
     public Party findParty(Long partyId) {
         Party party = partyRepository.findById(partyId).orElseThrow(() -> new NotFoundException("정보가 일치하는 파티가 존재하지 않습니다."));
         return party;
