@@ -5,7 +5,7 @@ import lombok.Data;
 
 import javax.validation.constraints.Size;
 
-@Data @Builder
+@Data
 public class ChatMessageSendRequestDto {
     @Size(max = 255)
     private String content;
