@@ -1,5 +1,6 @@
 package nbbang.com.nbbang.domain.chat.controller;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -31,7 +32,14 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Stream;
 
 @Tag(name = "Chat", description = "채팅방 api (로그인 구현시 올바른 토큰을 보내지 않을 경우 401 Unauthorized 메시지를 받습니다.).")
 @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(mediaType = "application/json"))
@@ -50,7 +58,7 @@ public class ChatController {
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ChatResponseDto.class)))
     @ApiResponse(responseCode = "403", description = "Not Party Member", content = @Content(mediaType = "application/json"))
     @GetMapping("/{party-id}")
-    public DefaultResponse select(@PathVariable("party-id") Long partyId, @RequestParam(required = false) Integer pageSize) {
+    public DefaultResponse select(@PathVariable("party-id") Long partyId, @RequestParam(required = false) Integer pageSize, HttpServletResponse response) {
         if (pageSize == null) {
             pageSize = 10;
         }
@@ -58,16 +66,41 @@ public class ChatController {
         Long lastMessageId = chatService.findLastMessageId(partyId);
         //Page<Message> messages = chatService.findMessages(partyId, pageableDto.createPageRequest(), lastMessageId);
         Page<Message> messages = chatService.findMessagesByCursorId(partyId, PageRequest.of(0, pageSize), lastMessageId);
+        Cookie cursorIdCookie = new Cookie("cursorId", partyId.toString()+"="+lastMessageId.toString());
+        cursorIdCookie.setPath("/");
+        cursorIdCookie.setMaxAge(1000000);
+        response.addCookie(cursorIdCookie);
         return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.READ_CHAT, ChatResponseDto.createByPartyEntity(party, lastMessageId, messages.getContent()));
     }
 
-    @Operation(summary = "채팅 메시지 조회", description = "커서 페이징이 적용된 채팅 메시지를 조회합니다. 클라이언트는 커서 id 를 쿼리 파라미터에 전송해야 합니다.")
+    /**@Operation(summary = "채팅 메시지 조회", description = "커서 페이징이 적용된 채팅 메시지를 조회합니다. 클라이언트는 커서 id 를 쿼리 파라미터에 전송해야 합니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ChatResponseDto.class)))
     @ApiResponse(responseCode = "400", description = "잘못된 요청입니다.", content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "403", description = "Not Party Member", content = @Content(mediaType = "application/json"))
     @GetMapping("/{party-id}/messages")
     public DefaultResponse selectChatMessages(@PathVariable("party-id") Long partyId, @ParameterObject CursorPageableDto cursorPageableDto) {
         Page<Message> messages = chatService.findMessagesByCursorId(partyId, cursorPageableDto.createPageRequest(), cursorPageableDto.getCursorId());
+        return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.READ_CHAT, ChatMessageListResponseDto.createByEntity(messages.getContent()));
+    }*/
+    @Operation(summary = "채팅 메시지 조회", description = "커서 페이징이 적용된 채팅 메시지를 조회합니다. 클라이언트는 커서 id 를 쿼리 파라미터에 전송해야 합니다.")
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ChatResponseDto.class)))
+    @ApiResponse(responseCode = "400", description = "잘못된 요청입니다.", content = @Content(mediaType = "application/json"))
+    @ApiResponse(responseCode = "403", description = "Not Party Member", content = @Content(mediaType = "application/json"))
+    @GetMapping("/{party-id}/messages")
+    public DefaultResponse selectChatMessages(@PathVariable("party-id") Long partyId, @ParameterObject PageableDto pageableDto, HttpServletRequest request, @CookieValue(value = "cursorId", required = false) Cookie cookie) {
+        /*Long cursorId = null;
+        Cookie[] cookies = request.getCookies();
+        for (Cookie c : cookies) {
+            if (c.getName().equals("cursorId")) {
+                cursorId = Long.parseLong(c.getValue());
+            }
+        }*/
+        String [] cookieVals = cookie.getValue().split("=");
+        Long cookiePartyId = Long.parseLong(cookieVals[0]);
+        Long cursorId = Long.parseLong(cookieVals[1]);
+        if (cookiePartyId != partyId) throw new RuntimeException();
+        //System.out.println(cursorId);
+        Page<Message> messages = chatService.findMessagesByCursorId(partyId, pageableDto.createPageRequest(), cursorId);
         return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.READ_CHAT, ChatMessageListResponseDto.createByEntity(messages.getContent()));
     }
 
