@@ -7,10 +7,12 @@ import lombok.NoArgsConstructor;
 import nbbang.com.nbbang.domain.bbangpan.domain.MemberParty;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.dto.Place;
+import nbbang.com.nbbang.global.support.validation.ValueOfEnum;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static javax.persistence.EnumType.STRING;
@@ -32,9 +34,11 @@ public class Party {
 
     private Integer goalNumber;
 
+    @ValueOfEnum(enumClass = PartyStatus.class)
     @Enumerated(STRING)
     private PartyStatus status;
 
+    @ValueOfEnum(enumClass = Place.class)
     @Enumerated(STRING)
     private Place place;
 
@@ -48,8 +52,20 @@ public class Party {
 
     private Boolean isBlocked;
 
+    @Builder.Default // https://www.inflearn.com/questions/151658
+    @OneToMany(mappedBy = "party", cascade = CascadeType.ALL)
+    private List<PartyHashtag> partyHashtags = new ArrayList<>();
+
+    @Builder.Default
     @OneToMany(mappedBy = "party")
-    private List<MemberParty> memberParties;
+    private List<MemberParty> memberParties = new ArrayList<>();
 
     protected Party() {}
+
+    public void addPartyHashtag(PartyHashtag partyHashtag){
+        System.out.println("partyHashtag = " + partyHashtag);
+        System.out.println("partyHashtags = " + partyHashtags);
+        partyHashtags.add(partyHashtag);
+
+    }
 }

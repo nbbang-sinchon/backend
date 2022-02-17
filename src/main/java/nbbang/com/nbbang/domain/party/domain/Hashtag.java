@@ -22,9 +22,8 @@ public class Hashtag {
 
     public static Hashtag createHashtag(String content, PartyHashtag partyHashtag) {
         Hashtag hashtag = Hashtag.builder().content(content).build();
-        partyHashtag.addHashtag(hashtag);
+        partyHashtag.mapHashtag(hashtag);
         return hashtag;
     }
-
 
 }
