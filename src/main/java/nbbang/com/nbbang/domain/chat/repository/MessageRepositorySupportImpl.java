@@ -18,7 +18,7 @@ public class MessageRepositorySupportImpl implements MessageRepositorySupport {
     private final JPAQueryFactory query;
 
     @Override
-    public Long findLastMessageId(Long partyId) {
+    public Message findLastMessage(Long partyId) {
         QMessage message = QMessage.message;
         JPQLQuery<Message> q = query.selectFrom(message)
                 .where(message.party.id.eq(partyId))
@@ -28,7 +28,7 @@ public class MessageRepositorySupportImpl implements MessageRepositorySupport {
         if (res == null) {
             return null;
         }
-        return res.getId();
+        return res;
     }
 
     @Override
