@@ -2,23 +2,22 @@ package nbbang.com.nbbang.domain.chat.service;
 
 import lombok.RequiredArgsConstructor;
 import nbbang.com.nbbang.domain.bbangpan.domain.MemberParty;
+import nbbang.com.nbbang.domain.chat.controller.ChatResponseMessage;
 import nbbang.com.nbbang.domain.chat.domain.Message;
 import nbbang.com.nbbang.domain.chat.repository.MessageRepository;
 import nbbang.com.nbbang.domain.member.domain.Member;
-import nbbang.com.nbbang.domain.member.repository.MemberRepository;
 import nbbang.com.nbbang.domain.member.service.MemberService;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.domain.PartyStatus;
 import nbbang.com.nbbang.domain.party.repository.PartyRepository;
-import nbbang.com.nbbang.global.exception.MessageNotFoundException;
 import nbbang.com.nbbang.global.exception.NotPartyMemberException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.webjars.NotFoundException;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -90,7 +89,7 @@ public class ChatService {
     }
 
     public Message findById(Long messageId) {
-        return messageRepository.findById(messageId).orElseThrow(MessageNotFoundException::new);
+        return messageRepository.findById(messageId).orElseThrow(() -> new NotFoundException(ChatResponseMessage.MESSAGE_NOT_FOUND));
     }
 
     public Page<Message> findMessages(Party party, Pageable pageable) {

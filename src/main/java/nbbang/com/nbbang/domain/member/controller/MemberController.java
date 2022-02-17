@@ -14,13 +14,10 @@ import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.dto.PartyListResponseDto;
 import nbbang.com.nbbang.domain.party.service.ManyPartyService;
 import nbbang.com.nbbang.global.dto.PageableDto;
-import nbbang.com.nbbang.global.exception.MemberNotFoundException;
 import nbbang.com.nbbang.global.response.DefaultResponse;
-import nbbang.com.nbbang.global.response.GlobalResponseMessage;
 import nbbang.com.nbbang.global.response.StatusCode;
 import nbbang.com.nbbang.global.support.FileUpload.FileUploadService;
 import org.springdoc.api.annotations.ParameterObject;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -109,8 +106,4 @@ public class MemberController {
         return new ResponseEntity(DefaultResponse.res(StatusCode.OK, MemberResponseMessage.MEMBER_LOCATION_SUCCESS, PlaceResponseDto.create(member.getPlace())), HttpStatus.OK);
     }
 
-    @ExceptionHandler(MemberNotFoundException.class)
-    public ResponseEntity memberNotFoundException(MemberNotFoundException e) {
-        return new ResponseEntity(DefaultResponse.res(StatusCode.NOT_FOUND, MemberResponseMessage.MEMBER_NOT_FOUND), HttpStatus.NOT_FOUND);
-    }
 }

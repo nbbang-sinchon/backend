@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class Message {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "message_id")
     private Long id;
 
@@ -37,12 +37,12 @@ public class Message {
 
     protected Message() {}
 
-    public static Message createMessage(Member member, Party party, String content, LocalDateTime localDateTime) {
+    public static Message createMessage(Member member, Party party, String content, LocalDateTime createTime) {
         return Message.builder()
                 .sender(member)
                 .party(party)
                 .content(content)
-                .createTime(localDateTime)
+                .createTime(createTime)
                 .build();
     }
 

@@ -1,14 +1,14 @@
 package nbbang.com.nbbang.domain.member.service;
 
 import lombok.RequiredArgsConstructor;
+import nbbang.com.nbbang.domain.member.controller.MemberResponseMessage;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.dto.Place;
 import nbbang.com.nbbang.domain.member.repository.MemberRepository;
-import nbbang.com.nbbang.global.exception.MemberNotFoundException;
+import nbbang.com.nbbang.domain.party.domain.Party;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
+import org.webjars.NotFoundException;
 
 @Service
 @Transactional(readOnly = true)
@@ -29,7 +29,7 @@ public class MemberService {
      * @return
      */
     public Member findById(Long memberId) {
-        return memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
+        return memberRepository.findById(memberId).orElseThrow(() -> new NotFoundException(MemberResponseMessage.NOT_FOUND_MEMBER));
     }
 
     @Transactional
