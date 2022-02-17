@@ -93,4 +93,37 @@ class ChatServiceTest {
         assertThat(findLastMessageId.equals(saveLastMessageId));
         System.out.println(saveLastMessageId);
     }
+
+    @Test
+    public void findMessagesByCursorTest1() {
+        // given
+        Member memberA = Member.builder().nickname("memberA").build();
+        memberRepository.save(memberA);
+        Party partyA = Party.builder().owner(memberA).build();
+        partyRepository.save(partyA);
+        String content = "처음";
+        chatService.sendMessage(memberA.getId(), partyA.getId(), content, LocalDateTime.now());
+        content = "뿌링클";
+        for (int i = 0; i < 20; i++) {
+            chatService.sendMessage(memberA.getId(), partyA.getId(), content, LocalDateTime.now());
+        }
+        String targ1 = "뿌뿌뿌";
+        chatService.sendMessage(memberA.getId(), partyA.getId(), targ1, LocalDateTime.now());
+        content = "뿌링클";
+        for (int i = 0; i < 8; i++) {
+            chatService.sendMessage(memberA.getId(), partyA.getId(), content, LocalDateTime.now());
+        }
+        String targ2 = "응애";
+        Long idx = chatService.sendMessage(memberA.getId(), partyA.getId(), targ2, LocalDateTime.now());
+        content = "햄버거";
+        for (int i = 0; i < 20; i++) {
+            chatService.sendMessage(memberA.getId(), partyA.getId(), content, LocalDateTime.now());
+        }
+        // when
+        Page<Message> findMessages = chatService.findMessagesByCursorId(partyA.getId(), PageRequest.of(0, 10), idx);
+        // then
+        findMessages.getContent().stream().forEach(m -> System.out.println(m.getContent()));
+        assertThat(findMessages.getContent().get(0).getContent().equals(targ1));
+        assertThat(findMessages.getContent().get(9).getContent().equals(targ2));
+    }
 }
