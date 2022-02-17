@@ -107,13 +107,13 @@ class ChatServiceTest {
         for (int i = 0; i < 20; i++) {
             chatService.sendMessage(memberA.getId(), partyA.getId(), content, LocalDateTime.now());
         }
-        String targ1 = "뿌뿌뿌";
+        String targ1 = "target1";
         chatService.sendMessage(memberA.getId(), partyA.getId(), targ1, LocalDateTime.now());
         content = "뿌링클";
         for (int i = 0; i < 8; i++) {
             chatService.sendMessage(memberA.getId(), partyA.getId(), content, LocalDateTime.now());
         }
-        String targ2 = "응애";
+        String targ2 = "target2";
         Long idx = chatService.sendMessage(memberA.getId(), partyA.getId(), targ2, LocalDateTime.now());
         content = "햄버거";
         for (int i = 0; i < 20; i++) {
