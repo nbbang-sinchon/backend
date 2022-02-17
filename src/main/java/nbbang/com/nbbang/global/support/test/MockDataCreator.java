@@ -49,7 +49,9 @@ public class MockDataCreator implements CommandLineRunner {
         createParty1();
         createParty2();
         createParty3();
-        createMessage1();
+        for (int i = 0; i < 10; i++) {
+            createMessage1();
+        }
     }
 
     @Transactional
