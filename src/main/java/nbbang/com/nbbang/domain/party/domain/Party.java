@@ -95,6 +95,7 @@ public class Party {
         }
     }
 
+
     public void changeGoalNumber(Integer goalNumber) {
         this.goalNumber = goalNumber;
     }

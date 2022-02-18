@@ -4,14 +4,18 @@ import lombok.RequiredArgsConstructor;
 import nbbang.com.nbbang.domain.bbangpan.domain.MemberParty;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.dto.Place;
+import nbbang.com.nbbang.domain.party.controller.PartyResponseMessage;
 import nbbang.com.nbbang.domain.party.domain.Hashtag;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.domain.PartyHashtag;
 import nbbang.com.nbbang.domain.party.domain.PartyStatus;
 import nbbang.com.nbbang.domain.party.dto.PartyRequestDto;
 import nbbang.com.nbbang.domain.party.dto.PartyUpdateServiceDto;
+import nbbang.com.nbbang.domain.party.exception.PartyJoinException;
 import nbbang.com.nbbang.domain.party.repository.PartyHashtagRepository;
 import nbbang.com.nbbang.domain.party.repository.PartyRepository;
+import nbbang.com.nbbang.global.exception.NotPartyMemberException;
+import nbbang.com.nbbang.global.response.GlobalResponseMessage;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -45,15 +49,26 @@ public class PartyService {
         return partyId;
     }
 
+    public boolean isPartyOwnerOrMember(Party party, Member member) {
+        return party.getOwner().equals(member) || party.getMemberParties().stream().anyMatch(mp -> mp.getMember().equals(member));
+    }
+
     @Transactional
     public void joinParty(Party party, Member member) {
-        if (party.getOwner().equals(member) &&party.getMemberParties().stream().noneMatch(mp -> mp.getMember().equals(member))) {
-            party.joinMember(member);
+        if (isPartyOwnerOrMember(party, member)) {
+            throw new PartyJoinException(PartyResponseMessage.PARTY_DUPLICATE_JOIN_ERROR);
         }
+        if (party.getGoalNumber().equals(party.getMemberParties().size())) {
+            throw new PartyJoinException(PartyResponseMessage.PARTY_FULL_ERROR);
+        }
+        party.joinMember(member);
     }
 
     @Transactional
     public void exitParty(Party party, Member member) {
+        if (!isPartyOwnerOrMember(party, member)) {
+            throw new NotPartyMemberException();
+        }
         party.exitMember(member);
     }
 

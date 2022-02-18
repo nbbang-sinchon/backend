@@ -9,13 +9,16 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.domain.member.domain.Member;
+import nbbang.com.nbbang.domain.member.service.MemberService;
 import nbbang.com.nbbang.domain.party.domain.Hashtag;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.dto.*;
+import nbbang.com.nbbang.domain.party.exception.PartyJoinException;
 import nbbang.com.nbbang.domain.party.service.HashtagService;
 import nbbang.com.nbbang.domain.party.service.ManyPartyService;
 import nbbang.com.nbbang.domain.party.service.PartyService;
 import nbbang.com.nbbang.global.exception.CustomIllegalArgumentException;
+import nbbang.com.nbbang.global.exception.ErrorResponse;
 import nbbang.com.nbbang.global.response.DefaultResponse;
 import nbbang.com.nbbang.global.response.GlobalResponseMessage;
 import nbbang.com.nbbang.global.response.StatusCode;
@@ -47,6 +50,7 @@ public class PartyController {
 
     private final PartyService partyService;
     private final ManyPartyService manyPartyService;
+    private final MemberService memberService;
 
     @Operation(summary = "파티 생성", description = "파티를 생성합니다.")
     @PostMapping
@@ -94,4 +98,22 @@ public class PartyController {
         partyService.deleteParty(partyId);
         return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_DELETE_SUCCESS);
     }
+
+
+    @Operation(summary = "파티 참여", description = "파티에 참여합니다.")
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
+    @ApiResponse(responseCode = "400", description = "파티에 참여할 수 없습니다.", content = @Content(mediaType = "application/json"))
+    public DefaultResponse joinParty(@PathVariable("party-id") Long partyId) {
+        Long memberId = 1L;
+        Party party = partyService.findParty(partyId);
+        Member member = memberService.findById(memberId);
+        partyService.joinParty(party, member);
+        return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_JOIN_SUCCESS);
+    }
+
+    @ExceptionHandler(PartyJoinException.class)
+    public ErrorResponse partyJoinExHandle(PartyJoinException e) {
+        return new ErrorResponse(StatusCode.BAD_REQUEST, e.getMessage());
+    }
+
 }

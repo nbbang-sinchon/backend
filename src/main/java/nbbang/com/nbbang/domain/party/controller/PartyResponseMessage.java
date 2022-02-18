@@ -13,4 +13,10 @@ public class PartyResponseMessage {
 
     public static final String PARTY_NOT_FOUND = "파티가 존재하지 않습니다.";
     public static final String HASHTAG_NOT_FOUND = "해시태그가 존재하지 않습니다.";
+
+    // 파티 참여에 대한 메시지
+    public static final String PARTY_JOIN_SUCCESS = "파티 참여 성공";
+    public static final String PARTY_JOIN_ERROR = "파티에 참여할 수 없습니다.";
+    public static final String PARTY_DUPLICATE_JOIN_ERROR = "이미 참여한 파티입니다.";
+    public static final String PARTY_FULL_ERROR = "파티가 이미 찼습니다";
 }
