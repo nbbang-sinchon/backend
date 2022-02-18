@@ -145,13 +145,13 @@ public class PartyController {
         return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_UPDATE_SUCCESS);
     }
 
-    @Operation(summary = "채팅방 최대 참여자 수 변경", description = "방장만 채팅방 속성을 변경할 수 있습니다. MAX 10, MIN 2")
+    @Operation(summary = "파티 최대 참여자 수 변경", description = "방장만 파티 속성을 변경할 수 있습니다. MAX 10, MIN 2")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "400", description = "잘못된 요청입니다. 참여자 수를 올바르게 입력하세요.", content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "403", description = "Not Owner", content = @Content(mediaType = "application/json"))
     @PatchMapping("/{party-id}/number")
     public DefaultResponse changeGoalNumber(@PathVariable("party-id") Long partyId,
-                                            @Schema(description = "채팅방 최대 참여자 수")
+                                            @Schema(description = "파티 최대 참여자 수")
                                             @Validated @RequestBody PartyChangeGoalNumberRequestDto partyChangeGoalNumberRequestDto,
                                             BindingResult bindingResult) {
         Long memberId = 1L;
