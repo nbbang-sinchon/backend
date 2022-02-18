@@ -20,9 +20,8 @@ public class Hashtag {
     protected Hashtag() {}
 
 
-    public static Hashtag createHashtag(String content, PartyHashtag partyHashtag) {
+    public static Hashtag createHashtag(String content) {
         Hashtag hashtag = Hashtag.builder().content(content).build();
-        partyHashtag.mapHashtag(hashtag);
         return hashtag;
     }
 

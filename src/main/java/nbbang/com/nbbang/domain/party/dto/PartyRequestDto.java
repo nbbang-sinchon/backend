@@ -32,6 +32,7 @@ public class PartyRequestDto {
         Party party = Party.builder()
                 .title(this.title)
                 .content(this.content)
+                .createTime(LocalDateTime.now())
                 .place(place)
                 .goalNumber(this.goalNumber)
                 .build();

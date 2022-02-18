@@ -43,7 +43,7 @@ public class PartyFindResponseDto{
                 .createTime(party.getCreateTime())
                 .goalNumber(party.getGoalNumber())
                 .joinNumber(party.getMemberParties().size() + 1)
-                .status(party.getStatus().toString())
+                .status(party.getStatus()!=null?party.getStatus().toString():null)
                 //.hashtags(party.getHashtags().stream().map(h -> h.getContent()).collect(Collectors.toList()))
                 .place(party.getPlace().toString())
                 .build();

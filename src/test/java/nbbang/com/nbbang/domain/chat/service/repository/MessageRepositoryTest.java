@@ -1,5 +1,6 @@
-package nbbang.com.nbbang.domain.chat.repository;
+package nbbang.com.nbbang.domain.chat.service.repository;
 
+import nbbang.com.nbbang.domain.chat.repository.MessageRepository;
 import nbbang.com.nbbang.domain.chat.service.ChatService;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.repository.MemberRepository;
@@ -17,7 +18,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @ActiveProfiles("test")
 @Transactional
 class MessageRepositoryTest {
-    @Autowired MessageRepository messageRepository;
+    @Autowired
+    MessageRepository messageRepository;
     @Autowired ChatService chatService;
     @Autowired PartyRepository partyRepository;
     @Autowired MemberRepository memberRepository;
