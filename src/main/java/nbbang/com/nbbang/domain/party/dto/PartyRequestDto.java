@@ -3,6 +3,7 @@ package nbbang.com.nbbang.domain.party.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.dto.Place;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.global.support.validation.ValueOfEnum;
@@ -34,7 +35,20 @@ public class PartyRequestDto {
                 .createTime(LocalDateTime.now())
                 .place(place)
                 .goalNumber(this.goalNumber)
+                .isBlocked(false)
                 .build();
         return party;
     }
+
+    public Party createByDto(Member owner) {
+        return Party.builder()
+                .title(this.title)
+                .content(this.content)
+                .place(Place.valueOf(this.place))
+                .goalNumber(this.goalNumber)
+                .owner(owner)
+                .createTime(LocalDateTime.now())
+                .build();
+    }
 }
+

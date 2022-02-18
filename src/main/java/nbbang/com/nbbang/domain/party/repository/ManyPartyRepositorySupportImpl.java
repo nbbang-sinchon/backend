@@ -44,8 +44,7 @@ public class ManyPartyRepositorySupportImpl implements ManyPartyRepositorySuppor
     private BooleanBuilder isPartyOngoing() {
         QParty party = QParty.party;
         return new BooleanBuilder()
-                .or(party.status.eq(PartyStatus.ON))
-                .or(party.status.eq(PartyStatus.SOON));
+                .or(party.status.eq(PartyStatus.OPEN));
     }
 
     private BooleanBuilder placeEquals(List<Place> places) {

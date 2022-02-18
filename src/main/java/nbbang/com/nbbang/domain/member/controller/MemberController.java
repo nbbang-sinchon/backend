@@ -14,6 +14,7 @@ import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.dto.PartyListResponseDto;
 import nbbang.com.nbbang.domain.party.service.ManyPartyService;
 import nbbang.com.nbbang.global.dto.PageableDto;
+import nbbang.com.nbbang.global.exception.CustomIllegalArgumentException;
 import nbbang.com.nbbang.global.response.DefaultResponse;
 import nbbang.com.nbbang.global.response.StatusCode;
 import nbbang.com.nbbang.global.support.FileUpload.FileUploadService;
@@ -45,65 +46,65 @@ public class MemberController {
     @Operation(summary = "테스트 용도 멤버 생성")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
     @PostMapping("/create")
-    public ResponseEntity create() {
+    public DefaultResponse create() {
         memberId = memberService.saveMember("루피", Place.SINCHON);
-        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, "테스트 멤버가 생성되었습니다."), HttpStatus.OK);
+        return DefaultResponse.res(StatusCode.OK, "테스트 멤버가 생성되었습니다.");
     }
     
     @Operation(summary = "마이페이지 정보 조회", description = "자신의 정보를 조회합니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MemberResponseDto.class)))
     @GetMapping
-    public ResponseEntity select() {
+    public DefaultResponse select() {
         Member member = memberService.findById(memberId);
         MemberResponseDto dto = MemberResponseDto.createByEntity(member);
-        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, MemberResponseMessage.READ_MEMBER, dto), HttpStatus.OK);
+        return DefaultResponse.res(StatusCode.OK, MemberResponseMessage.READ_MEMBER, dto);
     }
 
     @Operation(summary = "마이페이지 정보 업데이트", description = "자신의 정보를 업데이트합니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "400", description = "회원 정보를 올바르게 입력하세요.", content = @Content(mediaType = "application/json"))
     @PatchMapping
-    public ResponseEntity update(@Validated @RequestBody MemberUpdateRequestDto memberUpdateRequestDto, BindingResult bindingResult) {
+    public DefaultResponse update(@Validated @RequestBody MemberUpdateRequestDto memberUpdateRequestDto, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            return new ResponseEntity(DefaultResponse.res(StatusCode.BAD_REQUEST, MemberResponseMessage.ILLEGAL_MEMBER_UPDATE_REQUEST), HttpStatus.BAD_REQUEST);
+            throw new CustomIllegalArgumentException(MemberResponseMessage.ILLEGAL_MEMBER_UPDATE_REQUEST, bindingResult);
         }
         memberService.updateMember(memberId, memberUpdateRequestDto.getNickname(), memberUpdateRequestDto.getPlace());
-        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, MemberResponseMessage.UPDATE_MEMBER), HttpStatus.OK);
+        return DefaultResponse.res(StatusCode.OK, MemberResponseMessage.UPDATE_MEMBER);
     }
 
 
     @Operation(summary = "회원 탈퇴", description = "서비스에서 탈퇴합니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
     @DeleteMapping
-    public ResponseEntity delete() {
+    public DefaultResponse delete() {
         memberService.deleteMember(memberId);
-        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, MemberResponseMessage.DELETE_MEMBER), HttpStatus.OK);
+        return DefaultResponse.res(StatusCode.OK, MemberResponseMessage.DELETE_MEMBER);
     }
 
     @Operation(summary = "프로필 사진 업로드(미구현)", description = "프로필 사진을 업로드합니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(type = "string", implementation = MemberProfileImageUploadResponseDto.class)))
     @ApiResponse(responseCode = "400", description = "프로필 사진 업로드 실패, 잘못된 요청입니다. 사진이 올바른지 확인하세요.", content = @Content(mediaType = "application/json"))
     @PostMapping(path = "/profile-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity uploadProfileImage(@Schema(description = "이미지 파일을 업로드합니다.")
+    public DefaultResponse uploadProfileImage(@Schema(description = "이미지 파일을 업로드합니다.")
                                              @RequestPart MultipartFile imgFile) {
         String filePath = fileUploadService.fileUpload(imgFile);
-        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, MemberResponseMessage.UPDATE_MEMBER, MemberProfileImageUploadResponseDto.createMock()), HttpStatus.OK);
+        return DefaultResponse.res(StatusCode.OK, MemberResponseMessage.UPDATE_MEMBER, MemberProfileImageUploadResponseDto.createMock());
     }
 
     @Operation(summary = "나의 파티", description = "자신이 속한 파티 목록을 조회합니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PartyListResponseDto.class)))
     @GetMapping("/parties")
-    public ResponseEntity parties(@ParameterObject PageableDto pageableDto) {
+    public DefaultResponse parties(@ParameterObject PageableDto pageableDto) {
         List<Party> myParties = manyPartyService.findMyParties(pageableDto.createPageRequest(), memberId).getContent();
-        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, MemberResponseMessage.READ_MEMBER, PartyListResponseDto.createFromEntity(myParties)), HttpStatus.OK);
+        return DefaultResponse.res(StatusCode.OK, MemberResponseMessage.READ_MEMBER, PartyListResponseDto.createFromEntity(myParties));
     }
 
     @Operation(summary = "멤버 위치", description = "멤버의 위치 정보를 제공합니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PlaceResponseDto.class)))
     @GetMapping("/place")
-    public ResponseEntity memberPlace() {
+    public DefaultResponse memberPlace() {
         Member member = memberService.findById(memberId);
-        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, MemberResponseMessage.MEMBER_LOCATION_SUCCESS, PlaceResponseDto.create(member.getPlace())), HttpStatus.OK);
+        return DefaultResponse.res(StatusCode.OK, MemberResponseMessage.MEMBER_LOCATION_SUCCESS, PlaceResponseDto.create(member.getPlace()));
     }
 
 }
