@@ -54,21 +54,21 @@ public class PartyService {
     public void updateParty(Long partyId, PartyUpdateServiceDto partyUpdateServiceDto) {
         Party party = findParty(partyId);
         party.update(partyUpdateServiceDto);
-        List<String> newHashtagContents = partyUpdateServiceDto.getHashtagContents().orElseThrow();
-        List<String> intersectionHashtagContents = findHashtagContentsByParty(party);
-        intersectionHashtagContents.retainAll(newHashtagContents);
-        List<String> deletedHashtagContents = findHashtagContentsByParty(party);
-        deletedHashtagContents.removeAll(intersectionHashtagContents);
-        newHashtagContents.removeAll(intersectionHashtagContents);
-        newHashtagContents.stream().forEach(content->createHashtag(partyId, content));
-        deletedHashtagContents.stream().forEach(content->deleteHashtag(partyId, content));
+        if (partyUpdateServiceDto.getHashtagContents().isPresent()) {
+            List<String> newHashtagContents = partyUpdateServiceDto.getHashtagContents().get();
+            List<String> oldHashtagContents = findHashtagContentsByParty(party);
+            newHashtagContents.removeAll(findHashtagContentsByParty(party));
+            oldHashtagContents.removeAll(newHashtagContents);
+            newHashtagContents.stream().forEach(content -> createHashtag(partyId, content));
+            oldHashtagContents.stream().forEach(content -> deleteHashtag(partyId, content));
+        }
     }
 
     @Transactional
     public void deleteParty(Long partyId) {
         Party party = findParty(partyId);
         partyRepository.delete(party);
-        party.getPartyHashtags().stream().forEach(partyHashtagRepository::delete);
+        partyHashtagRepository.deleteAll(party.getPartyHashtags());
         party.getPartyHashtags().stream().forEach(partyHashtag -> hashtagService.deleteIfNotReferred(partyHashtag.getHashtag()));
     }
 
