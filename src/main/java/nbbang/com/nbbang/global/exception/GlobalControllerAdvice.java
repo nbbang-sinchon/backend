@@ -1,6 +1,7 @@
 package nbbang.com.nbbang.global.exception;
 
 
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.global.response.DefaultResponse;
@@ -20,6 +21,7 @@ import java.util.List;
 
 import static nbbang.com.nbbang.global.response.GlobalResponseMessage.INTERNAL_SERVER_ERROR;
 
+@Hidden
 @Slf4j
 @RestControllerAdvice
 public class GlobalControllerAdvice {

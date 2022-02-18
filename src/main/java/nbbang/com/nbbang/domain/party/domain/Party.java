@@ -82,10 +82,20 @@ public class Party {
         this.owner = member;
     }
 
-    public void addMember(Member member) {
+    public void joinMember(Member member) {
         MemberParty memberParty = MemberParty.createMemberParty(member, this);
         this.getMemberParties().add(memberParty);
     }
+
+    public void exitMember(Member member) {
+        if (owner.equals(member)) {
+            isBlocked = true;
+            status = PartyStatus.CLOSED;
+        } else {
+            boolean removed = memberParties.removeIf(mp -> mp.getMember().getId().equals(member.getId()));
+        }
+    }
+
 
     public void changeGoalNumber(Integer goalNumber) {
         this.goalNumber = goalNumber;

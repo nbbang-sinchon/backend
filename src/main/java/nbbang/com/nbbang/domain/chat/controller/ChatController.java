@@ -43,7 +43,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
-@Tag(name = "Chat", description = "채팅방 api (로그인 구현시 올바른 토큰을 보내지 않을 경우 401 Unauthorized 메시지를 받습니다.).")
+@Tag(name = "Chat", description = "채팅방 api, 채팅 기능은 미구현입니다. (로그인 구현시 올바른 토큰을 보내지 않을 경우 401 Unauthorized 메시지를 받습니다.).")
 @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(mediaType = "application/json"))
 @Slf4j
 @RestController
@@ -113,7 +113,7 @@ public class ChatController {
         return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.UPLOADED_MESSAGE, new ChatMessageImageUploadResponseDto(filePath));
     }
 
-    @Operation(summary = "채팅방에서 나가기", description = "채팅방에서 나갑니다.")
+    @Operation(summary = "채팅방에서 나가기", description = "채팅방에서 나갑니다. 소켓 종료 용도로 쓰일 것 같습니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "400", description = "잘못된 요청입니다.", content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "403", description = "Not Party Member", content = @Content(mediaType = "application/json"))
@@ -122,7 +122,7 @@ public class ChatController {
         return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.EXIT_CHAT);
     }
 
-    @Operation(summary = "채팅방 상태 변경", description = "방장만 채팅방 속성을 변경할 수 있습니다.")
+    /*@Operation(summary = "채팅방 상태 변경", description = "방장만 채팅방 속성을 변경할 수 있습니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "400", description = "잘못된 요청입니다. Status 를 올바르게 입력하세요.", content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "403", description = "Not Owner", content = @Content(mediaType = "application/json"))
@@ -155,7 +155,7 @@ public class ChatController {
         Member member = memberService.findById(memberId);
         chatService.changeGoalNumber(party, member, chatChangeGoalNumberRequestDto.getGoalNumber());
         return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.UPDATE_CHAT);
-    }
+    }*/
 
 
     /*@Operation(summary = "채팅방 조회", description = "채팅방을 파티 id 로 조회합니다.")

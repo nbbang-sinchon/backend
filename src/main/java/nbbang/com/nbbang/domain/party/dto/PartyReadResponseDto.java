@@ -28,9 +28,11 @@ public class PartyReadResponseDto {
     // private Integer likeNumber;
     private Boolean isOwner;
     private Boolean isMember;
+    private Boolean isBlocked;
     private String title;
     private String content;
     private List<PartyFindResponseDto> parties;
+    private List<MemberResponseDto> members;
 
     public static PartyReadResponseDto createDto(Party party, Long userId, List<String> hashtags,  List<PartyFindResponseDto> parties) {
         /* 유저 정보(닉네임, 빵 수), 지역, 모집 현황(참여 인원수/모집 인원수, 모집 상태), 작성 시간, 해시태그, 하트 수,
@@ -51,9 +53,13 @@ public class PartyReadResponseDto {
                 .hashtags(hashtags)
                 .isOwner((party.getOwner()!=null)?((party.getOwner().getId())==userId):false)
                 .isMember(isMember)
+                .isBlocked(party.getIsBlocked())
                 .title(party.getTitle())
                 .content(party.getContent())
                 .parties(parties)
+
+                .members(party.getMemberParties().stream().map(m -> MemberResponseDto.createByEntity(m.getMember())).collect(Collectors.toList()))
+
                 .build();
         return partyReadResponseDto;
     }

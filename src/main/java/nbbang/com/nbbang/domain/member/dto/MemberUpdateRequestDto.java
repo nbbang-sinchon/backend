@@ -7,6 +7,7 @@ import nbbang.com.nbbang.global.support.validation.ValueOfEnum;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.Locale;
 
 @Data
 public class MemberUpdateRequestDto {
@@ -17,8 +18,8 @@ public class MemberUpdateRequestDto {
     private String place;
     public Place getPlace() {
         if (place == null) {
-            return Place.SINCHON;
+            return Place.NONE;
         }
-        return Place.valueOf(place);
+        return Place.valueOf(place.toUpperCase(Locale.ROOT));
     }
 }

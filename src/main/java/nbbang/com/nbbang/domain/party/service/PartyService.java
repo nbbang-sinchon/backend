@@ -1,31 +1,25 @@
 package nbbang.com.nbbang.domain.party.service;
 
 import lombok.RequiredArgsConstructor;
-import nbbang.com.nbbang.domain.bbangpan.domain.MemberParty;
 import nbbang.com.nbbang.domain.member.domain.Member;
-import nbbang.com.nbbang.domain.member.dto.Place;
+import nbbang.com.nbbang.domain.party.controller.PartyResponseMessage;
 import nbbang.com.nbbang.domain.party.domain.Hashtag;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.domain.PartyHashtag;
 import nbbang.com.nbbang.domain.party.domain.PartyStatus;
-import nbbang.com.nbbang.domain.party.dto.PartyRequestDto;
 import nbbang.com.nbbang.domain.party.dto.PartyUpdateServiceDto;
+import nbbang.com.nbbang.domain.party.exception.PartyExitForbiddenException;
+import nbbang.com.nbbang.domain.party.exception.PartyJoinException;
 import nbbang.com.nbbang.domain.party.repository.PartyHashtagRepository;
 import nbbang.com.nbbang.domain.party.repository.PartyRepository;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import nbbang.com.nbbang.global.exception.NotPartyMemberException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
 
-import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static javax.persistence.EnumType.STRING;
-import static javax.persistence.FetchType.LAZY;
 import static nbbang.com.nbbang.domain.party.controller.PartyResponseMessage.PARTY_NOT_FOUND;
 
 @Service
@@ -39,10 +33,59 @@ public class PartyService {
     @Transactional
     public Long createParty(Party party, List<String> hashtagContents) {
         Party savedParty = partyRepository.save(party);
-        savedParty.changeStatus(PartyStatus.ON);
+        savedParty.changeStatus(PartyStatus.OPEN);
         Long partyId = savedParty.getId();
         hashtagContents.stream().forEach(content->createHashtag(partyId, content));
         return partyId;
+    }
+
+    @Transactional
+    public void changeStatus(Party party, Member member, PartyStatus status) {
+        party.changeStatus(status);
+    }
+
+    @Transactional
+    public void changeGoalNumber(Party party, Member member, Integer goalNumber) {
+        party.changeGoalNumber(goalNumber);
+    }
+
+
+    public boolean isPartyOwnerOrMember(Party party, Member member) {
+        return party.getOwner().equals(member) || party.getMemberParties().stream().anyMatch(mp -> mp.getMember().equals(member));
+    }
+
+    @Transactional
+    public void joinParty(Party party, Member member) {
+        // 이미 참여한 파티일 경우
+        if (isPartyOwnerOrMember(party, member)) {
+            throw new PartyJoinException(PartyResponseMessage.PARTY_DUPLICATE_JOIN_ERROR);
+        }
+        // 파티가 찼을 경우
+        if (party.getGoalNumber().equals(party.getMemberParties().size())) {
+            throw new PartyJoinException(PartyResponseMessage.PARTY_FULL_ERROR);
+        }
+        // 파티가 isBlocked 일 경우
+        if (party.getIsBlocked()) {
+            throw new PartyJoinException(PartyResponseMessage.PARTY_JOIN_BLOCKED_ERROR);
+        }
+        // 파티 STATUS 가 full 또는 closed 일 경우
+        if (party.getStatus().equals(PartyStatus.FULL) || party.getStatus().equals(PartyStatus.CLOSED)) {
+            throw new PartyJoinException(PartyResponseMessage.PARTY_JOIN_NONOPEN_ERROR);
+        }
+        party.joinMember(member);
+    }
+
+    @Transactional
+    public void exitParty(Party party, Member member) {
+        // 참여하지 않은 파티일 경우
+        if (!isPartyOwnerOrMember(party, member)) {
+            throw new NotPartyMemberException();
+        }
+        // 파티 STATUS 가 FULL 또는 CLOSED 인데 방장이 탈퇴하려 했을 경우
+        if (party.getOwner().equals(member) && !party.getStatus().equals(PartyStatus.OPEN)) {
+            throw new PartyExitForbiddenException(PartyResponseMessage.PARTY_OWNER_EXIT_ERROR);
+        }
+        party.exitMember(member);
     }
 
     public Party findParty(Long partyId) {

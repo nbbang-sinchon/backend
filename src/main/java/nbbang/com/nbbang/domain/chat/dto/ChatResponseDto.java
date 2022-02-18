@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 @Data @Builder
 public class ChatResponseDto {
-    private Long partyId;
+    private Long id;
     private String title;
     private LocalDateTime createTime;
     private Integer joinNumber;
@@ -28,7 +28,7 @@ public class ChatResponseDto {
 
     public static ChatResponseDto createByPartyEntity(Party party, Long lastMessageId, List<Message> messages) {
         return ChatResponseDto.builder()
-                .partyId(party.getId())
+                .id(party.getId())
                 .title(party.getTitle())
                 .createTime(party.getCreateTime())
                 .owner(MemberResponseDto.createByEntity(party.getOwner()))
