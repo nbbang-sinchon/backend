@@ -70,11 +70,8 @@ public class PartyController {
 
         PartyFindRequestDto partyFindRequestDto = PartyFindRequestDto.builder().places(Arrays.asList("SINCHON"))
                 .isOngoing(true).build();
-        List<Party> queryResults = manyPartyService.findAllByRequestDto(partyFindRequestDto.createPageRequest(),
-                PartyFindRequestFilterDto.createRequestFilterDto(partyFindRequestDto.getIsOngoing(),
-                        partyFindRequestDto.getSearch(), partyFindRequestDto.getPlaces())).getContent();
-        List<PartyFindResponseDto> collect = queryResults.stream().map(PartyFindResponseDto::createByEntity).collect(Collectors.toList());
-
+        List<Party> parties = partyService.findNearAndSimilar(partyId);
+        List<PartyFindResponseDto> collect = parties.stream().map(PartyFindResponseDto::createByEntity).collect(Collectors.toList());
         List<String> hashtags = partyService.findHashtagContentsByParty(party);
         PartyReadResponseDto partyReadResponseDto = PartyReadResponseDto.createDto(party, userId,  hashtags, collect);
         return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_READ_SUCCESS, partyReadResponseDto);
@@ -90,14 +87,14 @@ public class PartyController {
         return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_UPDATE_SUCCESS, new PartyIdResponseDto(partyId));
     }
 
-    @Operation(summary = "파티 삭제", description = "파티를 삭제합니다.")
+/*    @Operation(summary = "파티 종료", description = "파티를 종료합니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "403", description = "Not Owner", content = @Content(mediaType = "application/json"))
     @DeleteMapping("/{party-id}")
     public DefaultResponse deleteParty(@PathVariable("party-id") Long partyId) {
-        partyService.deleteParty(partyId);
+        partyService.closeParty(partyId);
         return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_DELETE_SUCCESS);
-    }
+    }*/
 
 
     @Operation(summary = "파티 참여", description = "파티에 참여합니다.")
