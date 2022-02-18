@@ -9,6 +9,7 @@ import org.springframework.data.domain.PageRequest;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 @Data
@@ -30,7 +31,7 @@ public class PartyFindRequestDto extends PageableDto {
             return null;
         }
         return places.stream()
-                .map(p -> Place.valueOf(p))
+                .map(p -> Place.valueOf(p.toUpperCase(Locale.ROOT)))
                 .collect(Collectors.toList());
     }
 

@@ -10,6 +10,7 @@ import nbbang.com.nbbang.global.support.validation.ValueOfEnum;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 @Data
@@ -28,7 +29,7 @@ public class PartyUpdateServiceDto {
                 .title(Optional.ofNullable(partyRequestDto.getTitle()))
                 .content(Optional.ofNullable(partyRequestDto.getContent()))
                 .hashtagContents(Optional.ofNullable(partyRequestDto.getHashtags()))
-                .place(Optional.ofNullable(partyRequestDto.getPlace()!=null?Place.valueOf(partyRequestDto.getPlace()):null))
+                .place(Optional.ofNullable(partyRequestDto.getPlace()!=null?Place.valueOf(partyRequestDto.getPlace().toUpperCase(Locale.ROOT)):null))
                 .goalNumber(Optional.ofNullable(partyRequestDto.getGoalNumber()))
                 .build();
     }

@@ -4,6 +4,7 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -23,6 +24,6 @@ public class ValueOfEnumValidator implements ConstraintValidator<ValueOfEnum, Ch
             return true;
         }
 
-        return acceptedValues.contains(value.toString());
+        return acceptedValues.contains(value.toString().toUpperCase(Locale.ROOT));
     }
 }

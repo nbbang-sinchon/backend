@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 import static org.springframework.http.HttpStatus.*;
 
 import java.util.List;
+import java.util.Locale;
 
 @Tag(name = "parties", description = "여러 개 파티 조회")
 @Slf4j
@@ -49,6 +50,7 @@ public class ManyPartyController {
         if (partyFindRequestDto.getPlacesString() != null) {
             List<String> places = partyFindRequestDto.getPlacesString();
             for (String p : places) {
+                p = p.toUpperCase(Locale.ROOT);
                 if (!(p.equals(Place.NONE.toString()) || p.equals(Place.SINCHON.toString()) || p.equals(Place.YEONHUI.toString()) || p.equals(Place.CHANGCHEON.toString()))) {
                     //return new ResponseEntity(DefaultResponse.res(StatusCode.BAD_REQUEST, ManyPartyResponseMessage.ILLEGAL_PLACE), BAD_REQUEST);
                     throw new IllegalPlaceException();

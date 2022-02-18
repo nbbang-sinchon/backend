@@ -127,7 +127,7 @@ public class PartyController {
         return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_EXIT_SUCCESS);
     }
 
-    @Operation(summary = "파티 상태 변경", description = "방장만 파티를 변경할 수 있습니다. OPEN, FULL, CLOSED")
+    @Operation(summary = "파티 상태 변경", description = "방장만 파티의 상태를 변경할 수 있습니다. OPEN, FULL, CLOSED")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "400", description = "잘못된 요청입니다. Status 를 올바르게 입력하세요.", content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "403", description = "Not Owner", content = @Content(mediaType = "application/json"))
