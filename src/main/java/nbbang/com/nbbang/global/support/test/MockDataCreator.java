@@ -93,7 +93,7 @@ public class MockDataCreator implements CommandLineRunner {
                 //.hashtags(Arrays.asList(Hashtag.builder().content("콤보").build(), Hashtag.builder().content("배달비").build(),Hashtag.builder().content("야식").build(),Hashtag.builder().content("사이드 가능").build()))
                 .place(Place.SINCHON)
                 .deliveryFee(300)
-                .status(PartyStatus.ON)
+                .status(PartyStatus.OPEN)
                 .isBlocked(false)
                 .build();
         partyRepository.save(party);
@@ -118,7 +118,7 @@ public class MockDataCreator implements CommandLineRunner {
                 //.hashtags(Arrays.asList(Hashtag.builder().content("콤보").build(), Hashtag.builder().content("배달비").build(),Hashtag.builder().content("야식").build(),Hashtag.builder().content("사이드 가능").build()))
                 .place(Place.YEONHUI)
                 .deliveryFee(300)
-                .status(PartyStatus.SOON)
+                .status(PartyStatus.FULL)
                 .isBlocked(false)
                 .build();
         partyRepository.save(party);
@@ -143,7 +143,7 @@ public class MockDataCreator implements CommandLineRunner {
                 //.hashtags(Arrays.asList(Hashtag.builder().content("콤보").build(), Hashtag.builder().content("배달비").build(),Hashtag.builder().content("야식").build(),Hashtag.builder().content("사이드 가능").build()))
                 .place(Place.CHANGCHEON)
                 .deliveryFee(300)
-                .status(PartyStatus.CANCEL)
+                .status(PartyStatus.CLOSED)
                 .isBlocked(false)
                 .build();
         partyRepository.save(party);

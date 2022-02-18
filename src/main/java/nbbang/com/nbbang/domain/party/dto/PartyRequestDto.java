@@ -35,6 +35,7 @@ public class PartyRequestDto {
                 .createTime(LocalDateTime.now())
                 .place(place)
                 .goalNumber(this.goalNumber)
+                .isBlocked(false)
                 .build();
         return party;
     }

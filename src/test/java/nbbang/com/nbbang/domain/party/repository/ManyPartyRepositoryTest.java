@@ -45,9 +45,9 @@ class ManyPartyRepositoryTest {
     @Test
     public void filterPartyByStatus() {
         // given
-        Party party1 = Party.builder().title("뿌링").status(PartyStatus.ON).build();
-        Party party2 = Party.builder().title("뿌링").status(PartyStatus.CANCEL).build();
-        Party party3 = Party.builder().title("뿌링").status(PartyStatus.ORDER).build();
+        Party party1 = Party.builder().title("뿌링").status(PartyStatus.OPEN).build();
+        Party party2 = Party.builder().title("뿌링").status(PartyStatus.CLOSED).build();
+        Party party3 = Party.builder().title("뿌링").status(PartyStatus.FULL).build();
         partyRepository.saveAll(Arrays.asList(party1, party2, party3));
 
         PartyFindRequestFilterDto filter = PartyFindRequestFilterDto.createRequestFilterDto(true, null);
