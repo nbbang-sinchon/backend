@@ -8,6 +8,8 @@ import nbbang.com.nbbang.domain.party.repository.PartyHashtagRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @Transactional(readOnly=true)
 @RequiredArgsConstructor
@@ -37,5 +39,10 @@ public class HashtagService {
             hashtag = createHashtag(content);
         }
         return hashtag;
+    }
+
+    // ************** 구현 필요(쿼리 최적화) ************** /
+    public List<Hashtag> findOrCreateByContent(List<String> hashtagContents) {
+        return null;
     }
 }

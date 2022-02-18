@@ -6,6 +6,8 @@ import lombok.Getter;
 
 import javax.persistence.*;
 
+import java.util.List;
+
 import static javax.persistence.FetchType.*;
 
 @Entity @Getter
@@ -30,5 +32,9 @@ public class PartyHashtag {
         PartyHashtag partyHashtag = PartyHashtag.builder().party(party).hashtag(findHashtag).build();
         party.addPartyHashtag(partyHashtag);
         return partyHashtag;
+    }
+
+    // ************** 구현 필요(쿼리 최적화) ************** /
+    public static void createPartyHashtags(Party party, List<Hashtag> hashtags) {
     }
 }

@@ -55,12 +55,14 @@ public class PartyService {
         Party party = findParty(partyId);
         party.update(partyUpdateServiceDto);
         if (partyUpdateServiceDto.getHashtagContents().isPresent()) {
-            List<String> newHashtagContents = partyUpdateServiceDto.getHashtagContents().get();
             List<String> oldHashtagContents = findHashtagContentsByParty(party);
-            newHashtagContents.removeAll(findHashtagContentsByParty(party));
+            List<String> newHashtagContents = partyUpdateServiceDto.getHashtagContents().get();
             oldHashtagContents.removeAll(newHashtagContents);
-            newHashtagContents.stream().forEach(content -> createHashtag(partyId, content));
+            newHashtagContents.removeAll(findHashtagContentsByParty(party));
+
             oldHashtagContents.stream().forEach(content -> deleteHashtag(partyId, content));
+            newHashtagContents.stream().forEach(content -> createHashtag(partyId, content));
+
         }
     }
 
@@ -77,6 +79,13 @@ public class PartyService {
         Party party = findParty(partyId);
         Hashtag hashtag = hashtagService.findOrCreateByContent(content);
         PartyHashtag.createPartyHashtag(party, hashtag);
+    }
+
+    @Transactional // ************** 구현 필요(쿼리 최적화) ************** /
+    public void createHashtags(Long partyId, List<String> hashtagContents){
+        Party party = findParty(partyId);
+        List<Hashtag> hashtags = hashtagService.findOrCreateByContent(hashtagContents);
+        PartyHashtag.createPartyHashtags(party, hashtags);
     }
 
     private void deleteHashtag(Long partyId, String content) {
