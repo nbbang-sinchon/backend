@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import nbbang.com.nbbang.domain.bbangpan.domain.MemberParty;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.dto.Place;
+import nbbang.com.nbbang.domain.party.dto.PartyUpdateServiceDto;
 import nbbang.com.nbbang.global.support.validation.ValueOfEnum;
 import org.springframework.data.crossstore.ChangeSetPersister;
 import org.webjars.NotFoundException;
@@ -16,6 +17,7 @@ import java.time.LocalDateTime;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.*;
@@ -93,4 +95,10 @@ public class Party {
         this.status = status;
     }
 
+    public void update(PartyUpdateServiceDto partyUpdateServiceDto) {
+        partyUpdateServiceDto.getTitle().ifPresent(title->this.title=title);
+        partyUpdateServiceDto.getContent().ifPresent(content->this.content=content);
+        partyUpdateServiceDto.getPlace().ifPresent(place->this.place=place);
+        partyUpdateServiceDto.getGoalNumber().ifPresent(goalNumber->this.goalNumber=goalNumber);
+    }
 }

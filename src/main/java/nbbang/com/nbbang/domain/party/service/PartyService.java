@@ -39,6 +39,7 @@ public class PartyService {
     @Transactional
     public Long createParty(Party party, List<String> hashtagContents) {
         Party savedParty = partyRepository.save(party);
+        savedParty.changeStatus(PartyStatus.ON);
         Long partyId = savedParty.getId();
         hashtagContents.stream().forEach(content->createHashtag(partyId, content));
         return partyId;
@@ -52,7 +53,8 @@ public class PartyService {
     @Transactional
     public void updateParty(Long partyId, PartyUpdateServiceDto partyUpdateServiceDto) {
         Party party = findParty(partyId);
-        List<String> newHashtagContents = partyUpdateServiceDto.getHashtagContents();
+        party.update(partyUpdateServiceDto);
+        List<String> newHashtagContents = partyUpdateServiceDto.getHashtagContents().orElseThrow();
         List<String> intersectionHashtagContents = findHashtagContentsByParty(party);
         intersectionHashtagContents.retainAll(newHashtagContents);
         List<String> deletedHashtagContents = findHashtagContentsByParty(party);
@@ -63,13 +65,18 @@ public class PartyService {
     }
 
     @Transactional
+    public void deleteParty(Long partyId) {
+        Party party = findParty(partyId);
+        partyRepository.delete(party);
+        party.getPartyHashtags().stream().forEach(partyHashtagRepository::delete);
+        party.getPartyHashtags().stream().forEach(partyHashtag -> hashtagService.deleteIfNotReferred(partyHashtag.getHashtag()));
+    }
+
+    @Transactional
     public void createHashtag(Long partyId, String content){
         Party party = findParty(partyId);
-        Hashtag hashtag = hashtagService.findByContent(content);
-        if(hashtag==null){
-            hashtag = hashtagService.createHashtag(content);
-        }
-        PartyHashtag partyHashtag = PartyHashtag.createPartyHashtag(party, hashtag);
+        Hashtag hashtag = hashtagService.findOrCreateByContent(content);
+        PartyHashtag.createPartyHashtag(party, hashtag);
     }
 
     private void deleteHashtag(Long partyId, String content) {
@@ -77,12 +84,6 @@ public class PartyService {
         PartyHashtag partyHashtag = party.deletePartyHashtag(content);
         partyHashtagRepository.delete(partyHashtag);
         hashtagService.deleteIfNotReferred(partyHashtag.getHashtag());
-    }
-
-    @Transactional
-    public void deleteParty(Long partyId) {
-        Party party = findParty(partyId);
-        partyRepository.delete(party);
     }
 
     public List<String> findHashtagContentsByParty(Party party) {
