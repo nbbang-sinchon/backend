@@ -49,7 +49,7 @@ public class PartyService {
         Party party = partyRepository.findById(partyId).orElseThrow(() -> new NotFoundException(PARTY_NOT_FOUND));
         return party;
     }
-
+    
     @Transactional
     public void updateParty(Long partyId, PartyUpdateServiceDto partyUpdateServiceDto) {
         Party party = findParty(partyId);
@@ -100,5 +100,13 @@ public class PartyService {
                 .map(partyHashtag -> partyHashtag.getHashtag().getContent())
                 .collect(Collectors.toList());
         return hashtagContents;
+    }
+
+    // 현재 Near, ON, 스스로 아님만 구현. Hashtag로 찾는 기능 추가하기.
+    public List<Party> findNearAndSimilar(Long partyId) {
+        Party party = findParty(partyId);
+        Place place = party.getPlace();
+        List<Party> parties = partyRepository.findByPlaceAndNotSelf(partyId);
+        return parties;
     }
 }

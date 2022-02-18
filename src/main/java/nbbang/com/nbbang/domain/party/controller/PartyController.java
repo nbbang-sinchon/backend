@@ -68,11 +68,8 @@ public class PartyController {
 
         PartyFindRequestDto partyFindRequestDto = PartyFindRequestDto.builder().places(Arrays.asList("SINCHON"))
                 .isOngoing(true).build();
-        List<Party> queryResults = manyPartyService.findAllByRequestDto(partyFindRequestDto.createPageRequest(),
-                PartyFindRequestFilterDto.createRequestFilterDto(partyFindRequestDto.getIsOngoing(),
-                        partyFindRequestDto.getSearch(), partyFindRequestDto.getPlaces())).getContent();
-        List<PartyFindResponseDto> collect = queryResults.stream().map(PartyFindResponseDto::createByEntity).collect(Collectors.toList());
-
+        List<Party> parties = partyService.findNearAndSimilar(partyId);
+        List<PartyFindResponseDto> collect = parties.stream().map(PartyFindResponseDto::createByEntity).collect(Collectors.toList());
         List<String> hashtags = partyService.findHashtagContentsByParty(party);
         PartyReadResponseDto partyReadResponseDto = PartyReadResponseDto.createDto(party, userId,  hashtags, collect);
         return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_READ_SUCCESS, partyReadResponseDto);
