@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.dto.PartyFindRequestDto;
 import nbbang.com.nbbang.domain.party.dto.PartyFindRequestFilterDto;
+import nbbang.com.nbbang.domain.party.dto.PartyListRequestFilterDto;
 import nbbang.com.nbbang.domain.party.repository.ManyPartyRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,7 +21,15 @@ public class ManyPartyService {
         return manyPartyRepository.findAllByRequestDto(pageable, requestFilterDto);
     }
 
-    public Page<Party> findMyParties(Pageable pageable, Long memberId) {
-        return manyPartyRepository.findMyParties(pageable, memberId);
+    public Page<Party> findAllByCursoredFilterDto(Pageable pageable, PartyFindRequestFilterDto requestFilterDto, Long cursorId) {
+        return manyPartyRepository.findAllByCursoredFilterDto(pageable, requestFilterDto, cursorId);
+    }
+
+    public Page<Party> findMyParties(Pageable pageable, PartyListRequestFilterDto filter, Long memberId) {
+        return manyPartyRepository.findMyParties(pageable, filter, memberId);
+    }
+
+    public Party findLastParty() {
+        return manyPartyRepository.findTopByOrderByIdDesc();
     }
 }

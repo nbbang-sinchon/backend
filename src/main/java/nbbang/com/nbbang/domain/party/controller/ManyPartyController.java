@@ -46,6 +46,10 @@ public class ManyPartyController {
         if (bindingResult.hasErrors()) {
             throw new CustomIllegalArgumentException(ManyPartyResponseMessage.ILLEGAL_PARTY_LIST_REQUEST, bindingResult);
         }
+        Long cursorId = partyFindRequestDto.getCursorId();
+        if (cursorId == null) {
+            cursorId = manyPartyService.findLastParty().getId();
+        }
         /** 이 부분 검증 로직을 annotation 으로 어떻게 구현할지? */
         if (partyFindRequestDto.getPlacesString() != null) {
             List<String> places = partyFindRequestDto.getPlacesString();

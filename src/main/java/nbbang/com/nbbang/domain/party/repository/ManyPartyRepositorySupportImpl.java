@@ -5,11 +5,13 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import nbbang.com.nbbang.domain.bbangpan.domain.QMemberParty;
 import nbbang.com.nbbang.domain.member.dto.Place;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.domain.PartyStatus;
 import nbbang.com.nbbang.domain.party.domain.QParty;
 import nbbang.com.nbbang.domain.party.dto.PartyFindRequestFilterDto;
+import nbbang.com.nbbang.domain.party.dto.PartyListRequestFilterDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -33,6 +35,7 @@ public class ManyPartyRepositorySupportImpl implements ManyPartyRepositorySuppor
         if (requestFilterDto.getPlaces() != null) {
             q.where(placeEquals(requestFilterDto.getPlaces()));
         }
+        q.orderBy(party.id.desc());
         q.offset(pageable.getOffset())
                 .limit(pageable.getPageSize());
         List<Party> res = q.fetch();
@@ -56,16 +59,47 @@ public class ManyPartyRepositorySupportImpl implements ManyPartyRepositorySuppor
         return builder;
     }
 
+    private BooleanBuilder isMemberOfParty(Long memberId) {
+        QParty party = QParty.party;
+        QMemberParty mp = QMemberParty.memberParty;
+        BooleanBuilder builder = new BooleanBuilder();
+        builder.or(party.owner.id.eq(memberId));
+        builder.or(party.memberParties.any().member.id.eq(memberId));
+        return builder;
+    }
+
     @Override
-    public Page<Party> findMyParties(Pageable pageable, Long memberId) {
+    public Page<Party> findMyParties(Pageable pageable, PartyListRequestFilterDto filter, Long memberId) {
         QParty party = QParty.party;
         JPQLQuery<Party> q = query.selectFrom(party)
-                .where(party.owner.id.eq(memberId));
+                .where(isMemberOfParty(memberId));
+        q.orderBy(party.id.desc());
+
         q.offset(pageable.getOffset())
                 .limit(pageable.getPageSize());
         List<Party> res = q.fetch();
         Long count = query.selectFrom(party)
                 .stream().count();
+        return new PageImpl<>(res, pageable, count);
+    }
+
+    @Override
+    public Page<Party> findAllByCursoredFilterDto(Pageable pageable, PartyFindRequestFilterDto requestFilterDto, Long cursorId) {
+        QParty party = QParty.party;
+        JPQLQuery<Party> q = query.selectFrom(party)
+                .where(party.id.loe(cursorId))
+                .where(party.title.contains(requestFilterDto.getSearch()));
+        if (requestFilterDto.getIsOngoing()) {
+            q.where(isPartyOngoing());
+        }
+        if (requestFilterDto.getPlaces() != null) {
+            q.where(placeEquals(requestFilterDto.getPlaces()));
+        }
+        q.offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .orderBy(party.id.desc());
+        List<Party> res = q.fetch();
+        Long count = query.selectFrom(party).stream().count();
         return new PageImpl<>(res, pageable, count);
     }
 }

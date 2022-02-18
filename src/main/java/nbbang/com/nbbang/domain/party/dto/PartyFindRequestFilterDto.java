@@ -22,6 +22,11 @@ public class PartyFindRequestFilterDto {
     private String search = "";
     private List<Place> places;
 
+    public static PartyFindRequestFilterDto createRequestFilterDto() {
+        PartyFindRequestFilterDtoBuilder dtoBuilder = PartyFindRequestFilterDto.builder();
+        return dtoBuilder.build();
+    }
+
     public static PartyFindRequestFilterDto createRequestFilterDto(String search) {
         PartyFindRequestFilterDtoBuilder dtoBuilder = PartyFindRequestFilterDto.builder();
         if (search != null) {

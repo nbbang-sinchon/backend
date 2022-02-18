@@ -11,6 +11,7 @@ import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.dto.*;
 import nbbang.com.nbbang.domain.member.service.MemberService;
 import nbbang.com.nbbang.domain.party.domain.Party;
+import nbbang.com.nbbang.domain.party.dto.PartyListRequestDto;
 import nbbang.com.nbbang.domain.party.dto.PartyListResponseDto;
 import nbbang.com.nbbang.domain.party.service.ManyPartyService;
 import nbbang.com.nbbang.global.dto.PageableDto;
@@ -94,8 +95,8 @@ public class MemberController {
     @Operation(summary = "나의 파티", description = "자신이 속한 파티 목록을 조회합니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PartyListResponseDto.class)))
     @GetMapping("/parties")
-    public DefaultResponse parties(@ParameterObject PageableDto pageableDto) {
-        List<Party> myParties = manyPartyService.findMyParties(pageableDto.createPageRequest(), memberId).getContent();
+    public DefaultResponse parties(@ParameterObject PartyListRequestDto partyListRequestDto) {
+        List<Party> myParties = manyPartyService.findMyParties(partyListRequestDto.createPageRequest(), partyListRequestDto.createPartyListRequestFilterDto(), memberId).getContent();
         return DefaultResponse.res(StatusCode.OK, MemberResponseMessage.READ_MEMBER, PartyListResponseDto.createFromEntity(myParties));
     }
 
