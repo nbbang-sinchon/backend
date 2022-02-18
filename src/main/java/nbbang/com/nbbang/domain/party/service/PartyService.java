@@ -11,6 +11,7 @@ import nbbang.com.nbbang.domain.party.domain.PartyHashtag;
 import nbbang.com.nbbang.domain.party.domain.PartyStatus;
 import nbbang.com.nbbang.domain.party.dto.PartyRequestDto;
 import nbbang.com.nbbang.domain.party.dto.PartyUpdateServiceDto;
+import nbbang.com.nbbang.domain.party.exception.PartyExitException;
 import nbbang.com.nbbang.domain.party.exception.PartyJoinException;
 import nbbang.com.nbbang.domain.party.repository.PartyHashtagRepository;
 import nbbang.com.nbbang.domain.party.repository.PartyRepository;
@@ -43,7 +44,7 @@ public class PartyService {
     @Transactional
     public Long createParty(Party party, List<String> hashtagContents) {
         Party savedParty = partyRepository.save(party);
-        savedParty.changeStatus(PartyStatus.ON);
+        savedParty.changeStatus(PartyStatus.OPEN);
         Long partyId = savedParty.getId();
         hashtagContents.stream().forEach(content->createHashtag(partyId, content));
         return partyId;
@@ -68,6 +69,9 @@ public class PartyService {
     public void exitParty(Party party, Member member) {
         if (!isPartyOwnerOrMember(party, member)) {
             throw new NotPartyMemberException();
+        }
+        if (party.getOwner().equals(member) && !party.getStatus().equals(PartyStatus.OPEN)) {
+            throw new PartyExitException(PartyResponseMessage.PARTY_OWNER_EXIT_ERROR);
         }
         party.exitMember(member);
     }

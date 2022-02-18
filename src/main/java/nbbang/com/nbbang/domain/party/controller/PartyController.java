@@ -13,6 +13,7 @@ import nbbang.com.nbbang.domain.member.service.MemberService;
 import nbbang.com.nbbang.domain.party.domain.Hashtag;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.dto.*;
+import nbbang.com.nbbang.domain.party.exception.PartyExitException;
 import nbbang.com.nbbang.domain.party.exception.PartyJoinException;
 import nbbang.com.nbbang.domain.party.service.HashtagService;
 import nbbang.com.nbbang.domain.party.service.ManyPartyService;
@@ -114,6 +115,11 @@ public class PartyController {
     @ExceptionHandler(PartyJoinException.class)
     public ErrorResponse partyJoinExHandle(PartyJoinException e) {
         return new ErrorResponse(StatusCode.BAD_REQUEST, e.getMessage());
+    }
+
+    @ExceptionHandler(PartyExitException.class)
+    public ErrorResponse partyExitExHandle(PartyExitException e) {
+        return new ErrorResponse(StatusCode.FORBIDDEN, e.getMessage());
     }
 
 }
