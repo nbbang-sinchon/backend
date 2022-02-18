@@ -87,14 +87,14 @@ public class PartyController {
         return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_UPDATE_SUCCESS, new PartyIdResponseDto(partyId));
     }
 
-    @Operation(summary = "파티 삭제", description = "파티를 삭제합니다.")
+/*    @Operation(summary = "파티 종료", description = "파티를 종료합니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "403", description = "Not Owner", content = @Content(mediaType = "application/json"))
     @DeleteMapping("/{party-id}")
     public DefaultResponse deleteParty(@PathVariable("party-id") Long partyId) {
-        partyService.deleteParty(partyId);
+        partyService.closeParty(partyId);
         return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_DELETE_SUCCESS);
-    }
+    }*/
 
 
     @Operation(summary = "파티 참여", description = "파티에 참여합니다.")

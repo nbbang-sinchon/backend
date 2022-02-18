@@ -22,7 +22,7 @@ public class PartyRepositorySupportImpl implements PartyRepositorySupport{
         List<Party> parties = query.select(p)
                 .from(p)
                 .where(p.place.eq(party.getPlace()))
-                .where(p.status.eq(PartyStatus.ON))
+                .where(p.status.eq(PartyStatus.OPEN))
                 .where(p.id.ne(party.getId()))
                 .fetch();
         return parties;
