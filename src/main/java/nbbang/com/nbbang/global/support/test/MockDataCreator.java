@@ -49,6 +49,7 @@ public class MockDataCreator implements CommandLineRunner {
         createParty1();
         createParty2();
         createParty3();
+        createParty4();
         for (int i = 0; i < 10; i++) {
             createMessage1();
         }
@@ -144,6 +145,31 @@ public class MockDataCreator implements CommandLineRunner {
                 .place(Place.CHANGCHEON)
                 .deliveryFee(300)
                 .status(PartyStatus.CLOSED)
+                .isBlocked(false)
+                .build();
+        partyRepository.save(party);
+        party3Id = party.getId();
+        //hashtagRepository.save(Hashtag.builder().content("콤보").party(party).build());
+        memberPartyRepository.save(MemberParty.builder()
+                .member(memberRepository.findById(korungId).get())
+                .party(party)
+                .price(1000)
+                .build());
+    }
+
+    @Transactional
+    public void createParty4() {
+        Party party = Party.builder()
+                .title("롯데리아 오늘 9시")
+                .content("뿌링클 넘나 먹구 싶다잉")
+                .createTime(LocalDateTime.of(2022, 02, 10, 15, 40))
+                .cancelTime(LocalDateTime.of(2022, 02, 11, 15, 40))
+                .goalNumber(4)
+                .owner(memberRepository.findById(mock1Id).get())
+                //.hashtags(Arrays.asList(Hashtag.builder().content("콤보").build(), Hashtag.builder().content("배달비").build(),Hashtag.builder().content("야식").build(),Hashtag.builder().content("사이드 가능").build()))
+                .place(Place.CHANGCHEON)
+                .deliveryFee(300)
+                .status(PartyStatus.OPEN)
                 .isBlocked(false)
                 .build();
         partyRepository.save(party);

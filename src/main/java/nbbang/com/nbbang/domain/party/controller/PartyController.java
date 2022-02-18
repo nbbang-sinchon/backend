@@ -10,12 +10,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.service.MemberService;
-import nbbang.com.nbbang.domain.party.domain.Hashtag;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.dto.*;
-import nbbang.com.nbbang.domain.party.exception.PartyExitException;
+import nbbang.com.nbbang.domain.party.exception.PartyExitForbiddenException;
 import nbbang.com.nbbang.domain.party.exception.PartyJoinException;
-import nbbang.com.nbbang.domain.party.service.HashtagService;
 import nbbang.com.nbbang.domain.party.service.ManyPartyService;
 import nbbang.com.nbbang.domain.party.service.PartyService;
 import nbbang.com.nbbang.global.exception.CustomIllegalArgumentException;
@@ -23,8 +21,6 @@ import nbbang.com.nbbang.global.exception.ErrorResponse;
 import nbbang.com.nbbang.global.response.DefaultResponse;
 import nbbang.com.nbbang.global.response.GlobalResponseMessage;
 import nbbang.com.nbbang.global.response.StatusCode;
-import org.springframework.data.domain.Page;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,13 +29,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.springframework.http.HttpStatus.OK;
-
 
 @Tag(name = "party", description = "단일 파티 CRUD")
 @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "OK",
-                content = @Content(mediaType = "application/json", schema = @Schema(implementation = PartyIdResponseDto.class))),
+        //@ApiResponse(responseCode = "200", description = "OK",
+        //        content = @Content(mediaType = "application/json", schema = @Schema(implementation = PartyIdResponseDto.class))),
         @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(mediaType = "application/json")),
         @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(mediaType = "application/json"))
 })
@@ -54,6 +48,8 @@ public class PartyController {
     private final MemberService memberService;
 
     @Operation(summary = "파티 생성", description = "파티를 생성합니다.")
+    @ApiResponse(responseCode = "200", description = "OK",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = PartyIdResponseDto.class)))
     @PostMapping
     public DefaultResponse createParty(@Valid @RequestBody PartyRequestDto partyRequestDtO, BindingResult bindingResult) {
       if (bindingResult.hasErrors()) {
@@ -84,6 +80,8 @@ public class PartyController {
     }
 
     @Operation(summary = "파티 수정", description = "파티를 수정합니다.")
+    @ApiResponse(responseCode = "200", description = "OK",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = PartyIdResponseDto.class)))
     @ApiResponse(responseCode = "403", description = "Not Owner", content = @Content(mediaType = "application/json"))
     @PatchMapping("/{party-id}")
     public DefaultResponse updateParty(@PathVariable("party-id") Long partyId, @RequestBody PartyRequestDto partyRequestDtO) {
@@ -103,7 +101,7 @@ public class PartyController {
 
     @Operation(summary = "파티 참여", description = "파티에 참여합니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
-    @ApiResponse(responseCode = "400", description = "파티에 참여할 수 없습니다.", content = @Content(mediaType = "application/json"))
+    @ApiResponse(responseCode = "400", description = "파티에 참여할 수 없습니다. 이미 참여한 파티이거나 파티가 찼습니다.", content = @Content(mediaType = "application/json"))
     @PostMapping("/{party-id}/join")
     public DefaultResponse joinParty(@PathVariable("party-id") Long partyId) {
         Long memberId = 1L;
@@ -133,8 +131,8 @@ public class PartyController {
         return new ErrorResponse(StatusCode.BAD_REQUEST, e.getMessage());
     }
 
-    @ExceptionHandler(PartyExitException.class)
-    public ErrorResponse partyExitExHandle(PartyExitException e) {
+    @ExceptionHandler(PartyExitForbiddenException.class)
+    public ErrorResponse partyExitExHandle(PartyExitForbiddenException e) {
         return new ErrorResponse(StatusCode.FORBIDDEN, e.getMessage());
     }
 

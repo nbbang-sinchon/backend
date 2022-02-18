@@ -90,6 +90,7 @@ public class Party {
     public void exitMember(Member member) {
         if (owner.equals(member)) {
             isBlocked = true;
+            status = PartyStatus.CLOSED;
         } else {
             boolean removed = memberParties.removeIf(mp -> mp.getMember().getId().equals(member.getId()));
         }

@@ -21,11 +21,12 @@ public class MemberResponseDto {
     private Integer recommends;
 
     public static MemberResponseDto createByEntity(Member member) {
-        MemberResponseDtoBuilder dtoBuilder = MemberResponseDto.builder();
-        dtoBuilder.profileImagePath(member.getAvatar())
+        return MemberResponseDto.builder()
+                .id(member.getId())
+                .profileImagePath(member.getAvatar())
                 .nickname(member.getNickname())
-                .place(member.getPlace().toString());
-        return dtoBuilder.build();
+                .place(member.getPlace().toString())
+                .build();
     }
 
     public static MemberResponseDto createMock() {

@@ -19,6 +19,9 @@ public class PartyResponseMessage {
     public static final String PARTY_JOIN_ERROR = "파티에 참여할 수 없습니다.";
     public static final String PARTY_DUPLICATE_JOIN_ERROR = "이미 참여한 파티입니다.";
     public static final String PARTY_FULL_ERROR = "파티가 이미 찼습니다";
+    public static final String PARTY_JOIN_BLOCKED_ERROR = "블락된 파티에 참여할 수 없습니다.";
+    public static final String PARTY_JOIN_NONOPEN_ERROR = "STATUS 가 OPEN 인 파티만 참여할 수 있습니다.";
+
 
     // 파티 탈퇴에 대한 메시지
     public static final String PARTY_EXIT_SUCCESS = "파티 탈퇴 성공";
