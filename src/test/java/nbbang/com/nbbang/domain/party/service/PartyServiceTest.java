@@ -63,7 +63,7 @@ class PartyServiceTest {
         memberRepository.save(memberA);
         Member memberB = Member.builder().nickname("memberB").build();
         memberRepository.save(memberB);
-        Party partyA = Party.builder().owner(memberA).isBlocked(false).status(PartyStatus.OPEN).build();
+        Party partyA = Party.builder().owner(memberA).isBlocked(false).status(PartyStatus.OPEN).goalNumber(2).build();
         partyRepository.save(partyA);
         // when
         partyService.joinParty(partyA, memberB);
