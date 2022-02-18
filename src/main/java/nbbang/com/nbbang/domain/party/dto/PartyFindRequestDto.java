@@ -2,6 +2,7 @@ package nbbang.com.nbbang.domain.party.dto;
 
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import nbbang.com.nbbang.domain.member.dto.Place;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class PartyFindRequestDto extends PageableDto {

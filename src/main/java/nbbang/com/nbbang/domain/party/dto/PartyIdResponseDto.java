@@ -7,5 +7,5 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class PartyIdResponseDto {
-    private Long PartyId;
+    private Long id;
 }

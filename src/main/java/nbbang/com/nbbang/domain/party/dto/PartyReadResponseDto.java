@@ -28,12 +28,11 @@ public class PartyReadResponseDto {
     // private Integer likeNumber;
     private Boolean isOwner;
     private Boolean isMember;
-
     private String title;
     private String content;
-    private List<Party> parties;
+    private List<PartyFindResponseDto> parties;
 
-    public static PartyReadResponseDto createDto(Party party, Long userId, List<String> hashtags, List<Party> parties) {
+    public static PartyReadResponseDto createDto(Party party, Long userId, List<String> hashtags,  List<PartyFindResponseDto> parties) {
         /* 유저 정보(닉네임, 빵 수), 지역, 모집 현황(참여 인원수/모집 인원수, 모집 상태), 작성 시간, 해시태그, 하트 수,
         작성자와 조회자 일치 여부, 파티 참여 여부, 제목, 내용, 최근 파티 목록을 제공한다.
         */

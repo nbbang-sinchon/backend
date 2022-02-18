@@ -9,6 +9,7 @@ import nbbang.com.nbbang.global.support.validation.ValueOfEnum;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -30,6 +31,7 @@ public class PartyRequestDto {
         Party party = Party.builder()
                 .title(this.title)
                 .content(this.content)
+                .createTime(LocalDateTime.now())
                 .place(place)
                 .goalNumber(this.goalNumber)
                 .build();
