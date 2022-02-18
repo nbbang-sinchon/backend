@@ -22,6 +22,7 @@ import nbbang.com.nbbang.global.response.DefaultResponse;
 import nbbang.com.nbbang.global.response.GlobalResponseMessage;
 import nbbang.com.nbbang.global.response.StatusCode;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -124,6 +125,43 @@ public class PartyController {
 
         partyService.exitParty(party, member);
         return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_EXIT_SUCCESS);
+    }
+
+    @Operation(summary = "파티 상태 변경", description = "방장만 파티를 변경할 수 있습니다. OPEN, FULL, CLOSED")
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
+    @ApiResponse(responseCode = "400", description = "잘못된 요청입니다. Status 를 올바르게 입력하세요.", content = @Content(mediaType = "application/json"))
+    @ApiResponse(responseCode = "403", description = "Not Owner", content = @Content(mediaType = "application/json"))
+    @PatchMapping("/{party-id}/status")
+    public DefaultResponse changeStatus(@PathVariable("party-id") Long partyId,
+                                        @Validated @RequestBody PartyStatusChangeRequestDto partyStatusChangeRequestDto,
+                                        BindingResult bindingResult) {
+        Long memberId = 1L; // 삭제 예정
+        if (bindingResult.hasErrors()) {
+            throw new CustomIllegalArgumentException(PartyResponseMessage.ILLEGAL_PARTY_STATUS, bindingResult);
+        }
+        Party party = partyService.findParty(partyId);
+        Member member = memberService.findById(memberId);
+        partyService.changeStatus(party, member, partyStatusChangeRequestDto.createStatus());
+        return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_UPDATE_SUCCESS);
+    }
+
+    @Operation(summary = "채팅방 최대 참여자 수 변경", description = "방장만 채팅방 속성을 변경할 수 있습니다. MAX 10, MIN 2")
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
+    @ApiResponse(responseCode = "400", description = "잘못된 요청입니다. 참여자 수를 올바르게 입력하세요.", content = @Content(mediaType = "application/json"))
+    @ApiResponse(responseCode = "403", description = "Not Owner", content = @Content(mediaType = "application/json"))
+    @PatchMapping("/{party-id}/number")
+    public DefaultResponse changeGoalNumber(@PathVariable("party-id") Long partyId,
+                                            @Schema(description = "채팅방 최대 참여자 수")
+                                            @Validated @RequestBody PartyChangeGoalNumberRequestDto partyChangeGoalNumberRequestDto,
+                                            BindingResult bindingResult) {
+        Long memberId = 1L;
+        if (bindingResult.hasErrors()) {
+            throw new CustomIllegalArgumentException(PartyResponseMessage.ILLEGAL_PARTY_GOAL_NUMBER, bindingResult);
+        }
+        Party party = partyService.findParty(partyId);
+        Member member = memberService.findById(memberId);
+        partyService.changeGoalNumber(party, member, partyChangeGoalNumberRequestDto.getGoalNumber());
+        return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_UPDATE_SUCCESS);
     }
 
     @ExceptionHandler(PartyJoinException.class)

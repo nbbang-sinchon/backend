@@ -39,6 +39,17 @@ public class PartyService {
         return partyId;
     }
 
+    @Transactional
+    public void changeStatus(Party party, Member member, PartyStatus status) {
+        party.changeStatus(status);
+    }
+
+    @Transactional
+    public void changeGoalNumber(Party party, Member member, Integer goalNumber) {
+        party.changeGoalNumber(goalNumber);
+    }
+
+
     public boolean isPartyOwnerOrMember(Party party, Member member) {
         return party.getOwner().equals(member) || party.getMemberParties().stream().anyMatch(mp -> mp.getMember().equals(member));
     }
