@@ -35,7 +35,7 @@ class PartyServiceTest {
         memberRepository.save(memberB);
         Member memberC = Member.builder().nickname("memberC").build();
         memberRepository.save(memberC);
-        Party partyA = Party.builder().owner(memberA).goalNumber(10).build();
+        Party partyA = Party.builder().owner(memberA).goalNumber(10).isBlocked(false).status(PartyStatus.OPEN).build();
         partyRepository.save(partyA);
         // when
         partyService.joinParty(partyA, memberB);
@@ -50,7 +50,7 @@ class PartyServiceTest {
         // given
         Member memberA = Member.builder().nickname("memberA").build();
         memberRepository.save(memberA);
-        Party partyA = Party.builder().owner(memberA).goalNumber(10).build();
+        Party partyA = Party.builder().owner(memberA).goalNumber(10).isBlocked(false).status(PartyStatus.OPEN).build();
         partyRepository.save(partyA);
         // when // then
         assertThrows(PartyJoinException.class, () -> {partyService.joinParty(partyA, memberA);});
@@ -63,7 +63,7 @@ class PartyServiceTest {
         memberRepository.save(memberA);
         Member memberB = Member.builder().nickname("memberB").build();
         memberRepository.save(memberB);
-        Party partyA = Party.builder().owner(memberA).build();
+        Party partyA = Party.builder().owner(memberA).isBlocked(false).status(PartyStatus.OPEN).build();
         partyRepository.save(partyA);
         // when
         partyService.joinParty(partyA, memberB);
@@ -78,7 +78,7 @@ class PartyServiceTest {
         memberRepository.save(memberA);
         Member memberB = Member.builder().nickname("memberB").build();
         memberRepository.save(memberB);
-        Party partyA = Party.builder().owner(memberA).goalNumber(1).build();
+        Party partyA = Party.builder().owner(memberA).goalNumber(1).isBlocked(false).status(PartyStatus.OPEN).build();
         partyRepository.save(partyA);
         // when
         partyService.joinParty(partyA, memberB);
@@ -94,7 +94,7 @@ class PartyServiceTest {
         memberRepository.save(memberA);
         Member memberB = Member.builder().nickname("memberB").build();
         memberRepository.save(memberB);
-        Party partyA = Party.builder().owner(memberA).goalNumber(3).status(PartyStatus.OPEN).build();
+        Party partyA = Party.builder().owner(memberA).goalNumber(3).isBlocked(false).status(PartyStatus.OPEN).build();
         partyRepository.save(partyA);
         // when
         partyService.joinParty(partyA, memberB);

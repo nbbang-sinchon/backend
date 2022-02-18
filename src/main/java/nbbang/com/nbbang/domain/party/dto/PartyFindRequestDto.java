@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 public class PartyFindRequestDto extends PageableDto {
 
     private List<String> places;
-    @Parameter(description = "true -> ON, SOON 인 파티만, false(null) -> 모든 파티")
+    @Parameter(description = "true -> OPEN 인 파티만, false(null) -> 모든 파티")
     private Boolean isOngoing;
     @Parameter(description = "제목 검색어")
     private String search;

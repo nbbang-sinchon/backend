@@ -41,7 +41,7 @@ public class ManyPartyController {
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PartyListResponseDto.class)))
     @ApiResponse(responseCode = "400", description = "잘못된 요청입니다. 쿼리 파라미터를 올바르게 입력하세요.", content = @Content(mediaType = "application/json"))
     @GetMapping("/parties")
-    public ResponseEntity findParty(@ParameterObject @Validated @ModelAttribute PartyFindRequestDto partyFindRequestDto, BindingResult bindingResult) {
+    public DefaultResponse findParty(@ParameterObject @Validated @ModelAttribute PartyFindRequestDto partyFindRequestDto, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new CustomIllegalArgumentException(ManyPartyResponseMessage.ILLEGAL_PARTY_LIST_REQUEST, bindingResult);
         }
@@ -58,8 +58,8 @@ public class ManyPartyController {
         /**  ==================== 나중에 구현할 것 ==============  */
         Page<Party> queryResults = manyPartyService.findAllByRequestDto(partyFindRequestDto.createPageRequest(),
                 PartyFindRequestFilterDto.createRequestFilterDto(partyFindRequestDto.getIsOngoing(), partyFindRequestDto.getSearch(), partyFindRequestDto.getPlaces()));
-        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_FIND_SUCCESS,
-                PartyListResponseDto.createFromEntity(queryResults.getContent())), OK);
+        return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_FIND_SUCCESS,
+                PartyListResponseDto.createFromEntity(queryResults.getContent()));
     }
 
 }
