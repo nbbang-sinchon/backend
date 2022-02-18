@@ -114,7 +114,7 @@ public class MockDataCreator implements CommandLineRunner {
                 .createTime(LocalDateTime.of(2022, 02, 14, 12, 40))
                 .cancelTime(LocalDateTime.of(2022, 02, 15, 12, 40))
                 .goalNumber(4)
-                .owner(memberRepository.findById(luffyId).get())
+                .owner(memberRepository.findById(korungId).get())
                 //.hashtags(Arrays.asList(Hashtag.builder().content("콤보").build(), Hashtag.builder().content("배달비").build(),Hashtag.builder().content("야식").build(),Hashtag.builder().content("사이드 가능").build()))
                 .place(Place.YEONHUI)
                 .deliveryFee(300)
@@ -125,7 +125,7 @@ public class MockDataCreator implements CommandLineRunner {
         party2Id = party.getId();
         //hashtagRepository.save(Hashtag.builder().content("콤보").party(party).build());
         memberPartyRepository.save(MemberParty.builder()
-                .member(memberRepository.findById(korungId).get())
+                .member(memberRepository.findById(mock1Id).get())
                 .party(party)
                 .price(1000)
                 .build());
@@ -139,7 +139,7 @@ public class MockDataCreator implements CommandLineRunner {
                 .createTime(LocalDateTime.of(2022, 02, 10, 15, 40))
                 .cancelTime(LocalDateTime.of(2022, 02, 11, 15, 40))
                 .goalNumber(4)
-                .owner(memberRepository.findById(luffyId).get())
+                .owner(memberRepository.findById(mock1Id).get())
                 //.hashtags(Arrays.asList(Hashtag.builder().content("콤보").build(), Hashtag.builder().content("배달비").build(),Hashtag.builder().content("야식").build(),Hashtag.builder().content("사이드 가능").build()))
                 .place(Place.CHANGCHEON)
                 .deliveryFee(300)

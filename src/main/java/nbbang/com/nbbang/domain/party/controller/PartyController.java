@@ -104,12 +104,28 @@ public class PartyController {
     @Operation(summary = "파티 참여", description = "파티에 참여합니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "400", description = "파티에 참여할 수 없습니다.", content = @Content(mediaType = "application/json"))
+    @PostMapping("/{party-id}/join")
     public DefaultResponse joinParty(@PathVariable("party-id") Long partyId) {
         Long memberId = 1L;
         Party party = partyService.findParty(partyId);
         Member member = memberService.findById(memberId);
+
         partyService.joinParty(party, member);
         return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_JOIN_SUCCESS);
+    }
+
+    @Operation(summary = "파티 탈퇴", description = "파티에서 탈퇴합니다.")
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
+    @ApiResponse(responseCode = "400", description = "파티에서 탈퇴할 수 없습니다.", content = @Content(mediaType = "application/json"))
+    @ApiResponse(responseCode = "403", description = "Not Member", content = @Content(mediaType = "application/json"))
+    @PostMapping("/{party-id}/exit")
+    public DefaultResponse exitParty(@PathVariable("party-id") Long partyId) {
+        Long memberId = 1L;
+        Party party = partyService.findParty(partyId);
+        Member member = memberService.findById(memberId);
+
+        partyService.exitParty(party, member);
+        return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_EXIT_SUCCESS);
     }
 
     @ExceptionHandler(PartyJoinException.class)

@@ -1,10 +1,7 @@
 package nbbang.com.nbbang.domain.party.dto;
 
 import io.swagger.v3.oas.annotations.Parameter;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import nbbang.com.nbbang.domain.member.dto.Place;
 import nbbang.com.nbbang.global.dto.PageableDto;
 import nbbang.com.nbbang.global.support.validation.ValueOfEnum;
@@ -18,6 +15,7 @@ import java.util.stream.Collectors;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(callSuper=false)
 public class PartyFindRequestDto extends PageableDto {
 
     private List<String> places;
