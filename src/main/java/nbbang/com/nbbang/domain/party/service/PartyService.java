@@ -18,10 +18,12 @@ import nbbang.com.nbbang.domain.party.repository.PartyRepository;
 import nbbang.com.nbbang.global.exception.NotPartyMemberException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.webjars.NotFoundException;
 
+import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 import static nbbang.com.nbbang.domain.party.controller.PartyResponseMessage.PARTY_NOT_FOUND;
 
@@ -39,7 +41,9 @@ public class PartyService {
         Party savedParty = partyRepository.save(party);
         savedParty.changeStatus(PartyStatus.OPEN);
         Long partyId = savedParty.getId();
-        hashtagContents.stream().forEach(content->createHashtag(partyId, content));
+        // https://sigmasabjil.tistory.com/43
+        Optional.ofNullable(hashtagContents).orElseGet(Collections::emptyList).
+                stream().forEach(content->createHashtag(partyId, content));
         return partyId;
     }
 
@@ -104,18 +108,24 @@ public class PartyService {
     }
     
     @Transactional
-    public void updateParty(Long partyId, PartyUpdateServiceDto partyUpdateServiceDto) {
+    public Long updateParty(Long partyId, PartyUpdateServiceDto partyUpdateServiceDto) {
         Party party = findParty(partyId);
         party.update(partyUpdateServiceDto);
         if (partyUpdateServiceDto.getHashtagContents().isPresent()) {
             List<String> oldHashtagContents = party.getHashtagContents();
+            System.out.println("party.getHashtagContents() = " + party.getHashtagContents());
             List<String> newHashtagContents = partyUpdateServiceDto.getHashtagContents().get();
             oldHashtagContents.removeAll(newHashtagContents);
+            System.out.println("newHashtagContents = " + newHashtagContents);
+            System.out.println("party.getHashtagContents() = " + party.getHashtagContents());
             newHashtagContents.removeAll(party.getHashtagContents());
 
-            oldHashtagContents.stream().forEach(content -> deleteHashtag(partyId, content));
-            newHashtagContents.stream().forEach(content -> createHashtag(partyId, content));
+            Optional.ofNullable(oldHashtagContents).orElseGet(Collections::emptyList)
+                    .stream().forEach(content -> deleteHashtag(partyId, content));
+            Optional.ofNullable(newHashtagContents).orElseGet(Collections::emptyList)
+                    .stream().forEach(content -> createHashtag(partyId, content));
         }
+        return partyId;
     }
 
     @Transactional
