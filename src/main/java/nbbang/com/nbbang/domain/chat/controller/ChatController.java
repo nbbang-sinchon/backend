@@ -123,7 +123,7 @@ public class ChatController {
     @Operation(summary = "채팅방 조회-쿠키", description = "채팅방을 파티 id 로 조회합니다. 가장 마지막에 조회한 메시지 id 를 쿠키로 받습니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ChatResponseDto.class)))
     @ApiResponse(responseCode = "403", description = "Not Party Member", content = @Content(mediaType = "application/json"))
-    @GetMapping("/{party-id}/with-cookie")
+    @GetMapping("/{party-id}/develop")
     public DefaultResponse selectWithCookie(@PathVariable("party-id") Long partyId, @RequestParam(required = false) Integer pageSize, HttpServletResponse response) {
         if (pageSize == null) {
             pageSize = 10;
@@ -142,7 +142,7 @@ public class ChatController {
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ChatResponseDto.class)))
     @ApiResponse(responseCode = "400", description = "잘못된 요청입니다.", content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "403", description = "Not Party Member", content = @Content(mediaType = "application/json"))
-    @GetMapping("/{party-id}/messages/with-cookie")
+    @GetMapping("/{party-id}/messages/develop")
     public DefaultResponse selectChatMessagesWithCookie(@PathVariable("party-id") Long partyId, @ParameterObject PageableDto pageableDto, HttpServletRequest request, @CookieValue(value = "cursorId", required = false) Cookie cookie) {
         Party party = partyRepository.findById(partyId).get(); // Party Service 구현 시 바꿔야 할 것 같습니다.
         String [] cookieVals = cookie.getValue().split("=");

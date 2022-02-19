@@ -94,7 +94,7 @@ public class MemberController {
 
     @Operation(summary = "나의 파티", description = "자신이 속한 파티 목록을 조회합니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PartyListResponseDto.class)))
-    @GetMapping("/parties")
+    @GetMapping("/parties/develop")
     public DefaultResponse parties(@ParameterObject PartyListRequestDto requestDto, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new CustomIllegalArgumentException(ManyPartyResponseMessage.ILLEGAL_PARTY_LIST_REQUEST, bindingResult);
