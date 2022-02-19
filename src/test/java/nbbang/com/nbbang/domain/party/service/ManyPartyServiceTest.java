@@ -87,4 +87,13 @@ class ManyPartyServiceTest {
             assertThat(p.getTitle().contains(filterText));
         }
     }
+
+
+
+
+
+
+
+
+
 }

@@ -23,6 +23,74 @@ public class ManyPartyRepositorySupportImpl implements ManyPartyRepositorySuppor
 
     private final JPAQueryFactory query;
 
+
+    /**
+     *
+     * @param pageable
+     * @param filter
+     * @param cursorId
+     * @param memberId
+     * @param partyId
+     * @return
+     */
+    @Override
+    public Page<Party> findAllParties(Pageable pageable, PartyListRequestFilterDto filter, Long cursorId, Long memberId, Long... partyId) {
+        QParty party = QParty.party;
+        JPQLQuery<Party> q = query.selectFrom(party);
+
+        // 제목 검색을 제공합니다
+        String search = filter.getSearch();
+        if (search != null) {
+            q.where(party.title.contains(search));
+        }
+
+        // 위치 필터를 제공합니다
+        List<Place> places = filter.getPlaces();
+        if (places != null) {
+            q.where(placeEquals(places));
+        }
+
+        // 파티 상태 필터를 제공합니다
+        List<PartyStatus> statuses = filter.getStatuses();
+        if (statuses != null) {
+            q.where(statusEquals(statuses));
+        }
+
+        // 커서 페이징을 제공합니다
+        if (cursorId != null) {
+            q.where(party.id.loe(cursorId));
+        }
+
+        // 자신이 속한 파티 필터링을 제공합니다
+        if (memberId != null) {
+            q.where(isMemberOfParty(memberId));
+        }
+
+        // 표시하지 않을 파티를 제공합니다
+        for (Long idBlock : partyId) {
+            if (idBlock != null) {
+                q.where(party.id.ne(idBlock));
+            }
+        }
+
+        // 소팅은 id 기준으로 제공합니다 (비지니스 로직이 그럼)
+        q.orderBy(party.id.desc());
+
+        // 페이징을 제공합니다
+        if (pageable != null) {
+            q.offset(pageable.getOffset())
+                    .limit(pageable.getPageSize());
+        }
+
+        List<Party> res = q.fetch();
+
+        Long count = query.selectFrom(party)
+                .stream().count();
+
+        return new PageImpl<>(res, pageable, count);
+    }
+
+
     @Override
     public Page<Party> findAllByRequestDto(Pageable pageable, PartyFindRequestFilterDto requestFilterDto) {
         System.out.println("===========-=-=-=-=-=-=ㅇㅅㅇ=-=-=-=====================");
@@ -55,6 +123,15 @@ public class ManyPartyRepositorySupportImpl implements ManyPartyRepositorySuppor
         BooleanBuilder builder = new BooleanBuilder();
         for (Place p : places) {
             builder.or(party.place.eq(p));
+        }
+        return builder;
+    }
+
+    private BooleanBuilder statusEquals(List<PartyStatus> statuses) {
+        QParty party = QParty.party;
+        BooleanBuilder builder = new BooleanBuilder();
+        for (PartyStatus s : statuses) {
+            builder.or(party.status.eq(s));
         }
         return builder;
     }

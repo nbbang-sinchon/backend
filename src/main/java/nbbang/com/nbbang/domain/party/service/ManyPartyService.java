@@ -17,6 +17,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class ManyPartyService {
     private final ManyPartyRepository manyPartyRepository;
 
+
+    public Page<Party> findAllParties(Pageable pageable, PartyListRequestFilterDto filter, Long cursorId, Long memberId, Long ... partyId) {
+        return manyPartyRepository.findAllParties(pageable, filter, cursorId, memberId, partyId);
+    }
+
     public Page<Party> findAllByRequestDto(Pageable pageable, PartyFindRequestFilterDto requestFilterDto) {
         return manyPartyRepository.findAllByRequestDto(pageable, requestFilterDto);
     }

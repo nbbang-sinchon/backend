@@ -9,7 +9,7 @@ import java.util.List;
 
 @Data @Builder
 public class PartyListRequestFilterDto {
-    private PartyStatus status;
+    private List<PartyStatus> statuses;
     private String search;
     private List<Place> places;
 }

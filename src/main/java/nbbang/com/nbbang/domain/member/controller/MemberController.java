@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.dto.*;
 import nbbang.com.nbbang.domain.member.service.MemberService;
+import nbbang.com.nbbang.domain.party.controller.ManyPartyResponseMessage;
+import nbbang.com.nbbang.domain.party.controller.PartyResponseMessage;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.dto.PartyListRequestDto;
 import nbbang.com.nbbang.domain.party.dto.PartyListResponseDto;
@@ -20,6 +22,7 @@ import nbbang.com.nbbang.global.response.DefaultResponse;
 import nbbang.com.nbbang.global.response.StatusCode;
 import nbbang.com.nbbang.global.support.FileUpload.FileUploadService;
 import org.springdoc.api.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -95,9 +98,12 @@ public class MemberController {
     @Operation(summary = "나의 파티", description = "자신이 속한 파티 목록을 조회합니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PartyListResponseDto.class)))
     @GetMapping("/parties")
-    public DefaultResponse parties(@ParameterObject PartyListRequestDto partyListRequestDto) {
-        List<Party> myParties = manyPartyService.findMyParties(partyListRequestDto.createPageRequest(), partyListRequestDto.createPartyListRequestFilterDto(), memberId).getContent();
-        return DefaultResponse.res(StatusCode.OK, MemberResponseMessage.READ_MEMBER, PartyListResponseDto.createFromEntity(myParties));
+    public DefaultResponse parties(@ParameterObject PartyListRequestDto requestDto, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            throw new CustomIllegalArgumentException(ManyPartyResponseMessage.ILLEGAL_PARTY_LIST_REQUEST, bindingResult);
+        }
+        Page<Party> res = manyPartyService.findAllParties(requestDto.createPageRequest(), requestDto.createPartyListRequestFilterDto(), requestDto.getCursorId(), memberId);
+        return DefaultResponse.res(StatusCode.OK, MemberResponseMessage.READ_MEMBER, PartyListResponseDto.createFromEntity(res.getContent()));
     }
 
     @Operation(summary = "멤버 위치", description = "멤버의 위치 정보를 제공합니다.")

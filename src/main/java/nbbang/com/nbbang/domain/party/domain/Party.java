@@ -82,8 +82,7 @@ public class Party {
         this.owner = member;
     }
 
-    public void joinMember(Member member) {
-        MemberParty memberParty = MemberParty.createMemberParty(member, this);
+    public void addMemberParty(MemberParty memberParty) {
         this.getMemberParties().add(memberParty);
     }
 
