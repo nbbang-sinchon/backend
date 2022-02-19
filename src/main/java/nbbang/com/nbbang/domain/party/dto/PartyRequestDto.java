@@ -30,11 +30,10 @@ public class PartyRequestDto {
     private Integer goalNumber;
 
     public Party createByDto(){
-        Place place = Place.valueOf(this.place);
         Party party = Party.builder()
                 .title(this.title)
                 .content(this.content)
-                .place(place)
+                .place(Place.valueOf(place.toUpperCase()))
                 .goalNumber(this.goalNumber)
                 .isBlocked(false)
                 .build();
@@ -45,7 +44,7 @@ public class PartyRequestDto {
         return Party.builder()
                 .title(this.title)
                 .content(this.content)
-                .place(Place.valueOf(this.place))
+                .place(Place.valueOf(place.toUpperCase()))
                 .goalNumber(this.goalNumber)
                 .owner(owner)
                 .createTime(LocalDateTime.now())
