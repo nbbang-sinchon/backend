@@ -1,6 +1,7 @@
 package nbbang.com.nbbang.domain.party.service;
 
 import lombok.RequiredArgsConstructor;
+import nbbang.com.nbbang.domain.party.domain.Hashtag;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.dto.PartyFindRequestDto;
 import nbbang.com.nbbang.domain.party.dto.PartyFindRequestFilterDto;
@@ -11,6 +12,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @Transactional(readOnly=true)
 @RequiredArgsConstructor
@@ -18,8 +21,8 @@ public class ManyPartyService {
     private final ManyPartyRepository manyPartyRepository;
 
 
-    public Page<Party> findAllParties(Pageable pageable, PartyListRequestFilterDto filter, Long cursorId, Long memberId, Long ... partyId) {
-        return manyPartyRepository.findAllParties(pageable, filter, cursorId, memberId, partyId);
+    public Page<Party> findAllParties(Pageable pageable, PartyListRequestFilterDto filter, Long cursorId, Long memberId, List<String> hashtags, Long ... partyId) {
+        return manyPartyRepository.findAllParties(pageable, filter, cursorId, memberId, hashtags, partyId);
     }
 
     public Page<Party> findAllByRequestDto(Pageable pageable, PartyFindRequestFilterDto requestFilterDto) {

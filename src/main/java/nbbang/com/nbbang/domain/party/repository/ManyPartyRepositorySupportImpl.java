@@ -7,9 +7,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import nbbang.com.nbbang.domain.bbangpan.domain.QMemberParty;
 import nbbang.com.nbbang.domain.member.dto.Place;
-import nbbang.com.nbbang.domain.party.domain.Party;
-import nbbang.com.nbbang.domain.party.domain.PartyStatus;
-import nbbang.com.nbbang.domain.party.domain.QParty;
+import nbbang.com.nbbang.domain.party.domain.*;
 import nbbang.com.nbbang.domain.party.dto.PartyFindRequestFilterDto;
 import nbbang.com.nbbang.domain.party.dto.PartyListRequestFilterDto;
 import org.springframework.data.domain.Page;
@@ -34,8 +32,9 @@ public class ManyPartyRepositorySupportImpl implements ManyPartyRepositorySuppor
      * @return
      */
     @Override
-    public Page<Party> findAllParties(Pageable pageable, PartyListRequestFilterDto filter, Long cursorId, Long memberId, Long... partyId) {
+    public Page<Party> findAllParties(Pageable pageable, PartyListRequestFilterDto filter, Long cursorId, Long memberId, List<String> hashtags, Long... partyId) {
         QParty party = QParty.party;
+        QPartyHashtag hashtag = QPartyHashtag.partyHashtag;
         JPQLQuery<Party> q = query.selectFrom(party);
 
         // 제목 검색을 제공합니다
@@ -70,6 +69,13 @@ public class ManyPartyRepositorySupportImpl implements ManyPartyRepositorySuppor
         for (Long idBlock : partyId) {
             if (idBlock != null) {
                 q.where(party.id.ne(idBlock));
+            }
+        }
+
+        // 해시태그를 포함한 파티만 조회합니다
+        if (hashtags != null) {
+            for (String content : hashtags) {
+                q.where(party.partyHashtags.any().hashtag.content.eq(content));
             }
         }
 

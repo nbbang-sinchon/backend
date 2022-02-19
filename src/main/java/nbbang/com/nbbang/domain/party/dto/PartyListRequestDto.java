@@ -3,6 +3,7 @@ package nbbang.com.nbbang.domain.party.dto;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.*;
 import nbbang.com.nbbang.domain.member.dto.Place;
+import nbbang.com.nbbang.domain.party.domain.Hashtag;
 import nbbang.com.nbbang.domain.party.domain.PartyStatus;
 import nbbang.com.nbbang.global.dto.PageableDto;
 import nbbang.com.nbbang.global.support.validation.ValueOfEnum;
@@ -27,6 +28,8 @@ public class PartyListRequestDto extends PageableDto {
     private String search;
     @Parameter(description = "커서 아이디를 정하지 않을 경우 가장 최근 파티 기준으로 조회합니다.")
     private Long cursorId;
+    @Parameter(description = "해시태그를 포함하는 파티만 조회합니다.")
+    private List<String> hashtags;
 
     @Parameter(hidden = true)
     public PartyListRequestFilterDto createPartyListRequestFilterDto() {
