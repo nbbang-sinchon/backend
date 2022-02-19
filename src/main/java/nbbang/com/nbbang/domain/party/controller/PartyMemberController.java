@@ -10,7 +10,7 @@ import nbbang.com.nbbang.domain.member.service.MemberService;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.exception.PartyExitForbiddenException;
 import nbbang.com.nbbang.domain.party.exception.PartyJoinException;
-import nbbang.com.nbbang.domain.party.service.MemberPartyService;
+import nbbang.com.nbbang.domain.party.service.PartyMemberService;
 import nbbang.com.nbbang.domain.party.service.PartyService;
 import nbbang.com.nbbang.global.error.ErrorResponse;
 import nbbang.com.nbbang.global.response.DefaultResponse;
@@ -22,10 +22,10 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/parties")
 @RequiredArgsConstructor
-public class MemberPartyController {
+public class PartyMemberController {
     private final PartyService partyService;
     private final MemberService memberService;
-    private final MemberPartyService memberPartyService;
+    private final PartyMemberService partyMemberService;
 
     @Operation(summary = "파티 참여", description = "파티에 참여합니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
@@ -36,7 +36,7 @@ public class MemberPartyController {
         Party party = partyService.findById(partyId);
         Member member = memberService.findById(memberId);
 
-        memberPartyService.joinParty(party, member);
+        partyMemberService.joinParty(party, member);
         return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_JOIN_SUCCESS);
     }
 
@@ -50,7 +50,7 @@ public class MemberPartyController {
         Party party = partyService.findById(partyId);
         Member member = memberService.findById(memberId);
 
-        memberPartyService.exitParty(party, member);
+        partyMemberService.exitParty(party, member);
         return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_EXIT_SUCCESS);
     }
 
