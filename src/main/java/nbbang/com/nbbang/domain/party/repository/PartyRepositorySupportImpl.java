@@ -15,7 +15,6 @@ public class PartyRepositorySupportImpl implements PartyRepositorySupport{
     private final JPAQueryFactory query;
     QParty p = new QParty("p");
 
-
     @Override
     public List<Party> findByPlaceAndNotSelf(Long partyId) {
         Party party = query.selectFrom(p).where(p.id.eq(partyId)).fetchOne();
@@ -24,6 +23,8 @@ public class PartyRepositorySupportImpl implements PartyRepositorySupport{
                 .where(p.place.eq(party.getPlace()))
                 .where(p.status.eq(PartyStatus.OPEN))
                 .where(p.id.ne(party.getId()))
+                .orderBy(p.createTime.desc())
+                .limit(6)
                 .fetch();
         return parties;
     }
