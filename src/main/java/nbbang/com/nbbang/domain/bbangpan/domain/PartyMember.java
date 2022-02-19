@@ -10,7 +10,7 @@ import javax.persistence.*;
 
 @Entity @Getter @Builder
 @AllArgsConstructor
-public class MemberParty {
+public class PartyMember {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -26,14 +26,14 @@ public class MemberParty {
     @JoinColumn(name = "party_id")
     private Party party;
 
-    protected MemberParty() {}
+    protected PartyMember() {}
 
-    public static MemberParty createMemberParty(Member member, Party party) {
-        MemberParty memberParty = MemberParty.builder()
+    public static PartyMember createMemberParty(Member member, Party party) {
+        PartyMember partyMember = PartyMember.builder()
                 .member(member)
                 .party(party)
                 .build();
-        party.getMemberParties().add(memberParty);
-        return memberParty;
+        party.getMemberParties().add(partyMember);
+        return partyMember;
     }
 }

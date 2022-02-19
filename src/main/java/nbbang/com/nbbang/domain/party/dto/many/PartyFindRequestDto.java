@@ -1,4 +1,4 @@
-package nbbang.com.nbbang.domain.party.dto;
+package nbbang.com.nbbang.domain.party.dto.many;
 
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.*;

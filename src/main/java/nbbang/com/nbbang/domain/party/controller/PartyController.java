@@ -12,16 +12,13 @@ import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.service.MemberService;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.dto.*;
-import nbbang.com.nbbang.domain.party.exception.PartyExitForbiddenException;
-import nbbang.com.nbbang.domain.party.exception.PartyJoinException;
-import nbbang.com.nbbang.domain.party.service.ManyPartyService;
+import nbbang.com.nbbang.domain.party.dto.many.PartyFindRequestDto;
+import nbbang.com.nbbang.domain.party.dto.single.*;
 import nbbang.com.nbbang.domain.party.service.PartyService;
-import nbbang.com.nbbang.global.exception.CustomIllegalArgumentException;
-import nbbang.com.nbbang.global.exception.ErrorResponse;
+import nbbang.com.nbbang.global.error.exception.CustomIllegalArgumentException;
 import nbbang.com.nbbang.global.response.DefaultResponse;
-import nbbang.com.nbbang.global.response.GlobalResponseMessage;
+import nbbang.com.nbbang.global.error.GlobalErrorResponseMessage;
 import nbbang.com.nbbang.global.response.StatusCode;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -46,7 +43,6 @@ import java.util.stream.Collectors;
 public class PartyController {
 
     private final PartyService partyService;
-    private final ManyPartyService manyPartyService;
     private final MemberService memberService;
 
     @Operation(summary = "파티 생성", description = "파티를 생성합니다.")
@@ -55,9 +51,9 @@ public class PartyController {
     @PostMapping
     public DefaultResponse createParty(@Valid @RequestBody PartyRequestDto partyRequestDtO, BindingResult bindingResult) {
       if (bindingResult.hasErrors()) {
-            throw new CustomIllegalArgumentException(GlobalResponseMessage.ILLEGAL_ARGUMENT_ERROR, bindingResult);
+            throw new CustomIllegalArgumentException(GlobalErrorResponseMessage.ILLEGAL_ARGUMENT_ERROR, bindingResult);
         }
-       Long partyId = partyService.createParty(partyRequestDtO.createByDto(),partyRequestDtO.getHashtags());
+       Long partyId = partyService.create(partyRequestDtO.createByDto(),partyRequestDtO.getHashtags());
        return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_CREATE_SUCCESS, new PartyIdResponseDto(partyId));
     }
 
@@ -67,10 +63,8 @@ public class PartyController {
     @GetMapping("/{party-id}")
     public DefaultResponse readParty(@PathVariable("party-id") Long partyId){
         Long userId = 1L; //세션 구현 후 수정
-        Party party = partyService.findParty(partyId);
+        Party party = partyService.findById(partyId);
 
-        PartyFindRequestDto partyFindRequestDto = PartyFindRequestDto.builder().places(Arrays.asList("SINCHON"))
-                .isOngoing(true).build();
         List<Party> parties = partyService.findNearAndSimilar(partyId);
         List<PartyFindResponseDto> collect = parties.stream().map(PartyFindResponseDto::createByEntity).collect(Collectors.toList());
         List<String> hashtags = party.getHashtagContents();
@@ -84,45 +78,8 @@ public class PartyController {
     @ApiResponse(responseCode = "403", description = "Not Owner", content = @Content(mediaType = "application/json"))
     @PatchMapping("/{party-id}")
     public DefaultResponse updateParty(@PathVariable("party-id") Long partyId, @Valid @RequestBody PartyRequestDto partyRequestDtO, BindingResult bindingResult) {
-        partyService.updateParty(partyId, PartyUpdateServiceDto.createByPartyRequestDto(partyRequestDtO));
+        partyService.update(partyId, PartyUpdateServiceDto.createByPartyRequestDto(partyRequestDtO));
         return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_UPDATE_SUCCESS, new PartyIdResponseDto(partyId));
-    }
-
-/*    @Operation(summary = "파티 종료", description = "파티를 종료합니다.")
-    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
-    @ApiResponse(responseCode = "403", description = "Not Owner", content = @Content(mediaType = "application/json"))
-    @DeleteMapping("/{party-id}")
-    public DefaultResponse deleteParty(@PathVariable("party-id") Long partyId) {
-        partyService.closeParty(partyId);
-        return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_DELETE_SUCCESS);
-    }*/
-
-
-    @Operation(summary = "파티 참여", description = "파티에 참여합니다.")
-    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
-    @ApiResponse(responseCode = "400", description = "파티에 참여할 수 없습니다. 이미 참여한 파티이거나 파티가 찼습니다.", content = @Content(mediaType = "application/json"))
-    @PostMapping("/{party-id}/join")
-    public DefaultResponse joinParty(@PathVariable("party-id") Long partyId) {
-        Long memberId = 1L;
-        Party party = partyService.findParty(partyId);
-        Member member = memberService.findById(memberId);
-
-        partyService.joinParty(party, member);
-        return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_JOIN_SUCCESS);
-    }
-
-    @Operation(summary = "파티 탈퇴", description = "파티에서 탈퇴합니다.")
-    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
-    @ApiResponse(responseCode = "400", description = "파티에서 탈퇴할 수 없습니다.", content = @Content(mediaType = "application/json"))
-    @ApiResponse(responseCode = "403", description = "Not Member", content = @Content(mediaType = "application/json"))
-    @PostMapping("/{party-id}/exit")
-    public DefaultResponse exitParty(@PathVariable("party-id") Long partyId) {
-        Long memberId = 1L;
-        Party party = partyService.findParty(partyId);
-        Member member = memberService.findById(memberId);
-
-        partyService.exitParty(party, member);
-        return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_EXIT_SUCCESS);
     }
 
     @Operation(summary = "파티 상태 변경", description = "방장만 파티의 상태를 변경할 수 있습니다. OPEN, FULL, CLOSED")
@@ -137,7 +94,7 @@ public class PartyController {
         if (bindingResult.hasErrors()) {
             throw new CustomIllegalArgumentException(PartyResponseMessage.ILLEGAL_PARTY_STATUS, bindingResult);
         }
-        Party party = partyService.findParty(partyId);
+        Party party = partyService.findById(partyId);
         Member member = memberService.findById(memberId);
         partyService.changeStatus(party, member, partyStatusChangeRequestDto.createStatus());
         return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_UPDATE_SUCCESS);
@@ -156,20 +113,11 @@ public class PartyController {
         if (bindingResult.hasErrors()) {
             throw new CustomIllegalArgumentException(PartyResponseMessage.ILLEGAL_PARTY_GOAL_NUMBER, bindingResult);
         }
-        Party party = partyService.findParty(partyId);
+        Party party = partyService.findById(partyId);
         Member member = memberService.findById(memberId);
         partyService.changeGoalNumber(party, member, partyChangeGoalNumberRequestDto.getGoalNumber());
         return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_UPDATE_SUCCESS);
     }
 
-    @ExceptionHandler(PartyJoinException.class)
-    public ErrorResponse partyJoinExHandle(PartyJoinException e) {
-        return new ErrorResponse(StatusCode.BAD_REQUEST, e.getMessage());
-    }
-
-    @ExceptionHandler(PartyExitForbiddenException.class)
-    public ErrorResponse partyExitExHandle(PartyExitForbiddenException e) {
-        return new ErrorResponse(StatusCode.FORBIDDEN, e.getMessage());
-    }
 
 }

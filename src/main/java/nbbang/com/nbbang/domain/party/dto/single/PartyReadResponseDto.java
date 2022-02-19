@@ -1,13 +1,12 @@
-package nbbang.com.nbbang.domain.party.dto;
+package nbbang.com.nbbang.domain.party.dto.single;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import nbbang.com.nbbang.domain.member.dto.MemberResponseDto;
-import nbbang.com.nbbang.domain.party.domain.Hashtag;
 import nbbang.com.nbbang.domain.party.domain.Party;
-import nbbang.com.nbbang.domain.party.service.ManyPartyService;
+import nbbang.com.nbbang.domain.party.dto.PartyFindResponseDto;
 
 import java.time.LocalDateTime;
 import java.util.List;

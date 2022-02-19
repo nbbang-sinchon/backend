@@ -1,4 +1,4 @@
-package nbbang.com.nbbang.global.exception;
+package nbbang.com.nbbang.global.validator;
 
 
 import javax.validation.Constraint;

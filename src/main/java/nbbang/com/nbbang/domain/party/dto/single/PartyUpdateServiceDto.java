@@ -1,16 +1,11 @@
-package nbbang.com.nbbang.domain.party.dto;
+package nbbang.com.nbbang.domain.party.dto.single;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import nbbang.com.nbbang.domain.member.dto.Place;
-import nbbang.com.nbbang.domain.party.domain.Hashtag;
-import nbbang.com.nbbang.global.support.validation.ValueOfEnum;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 
 @Data

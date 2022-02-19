@@ -1,35 +1,23 @@
 package nbbang.com.nbbang.domain.party.service;
 
-import nbbang.com.nbbang.domain.member.dto.Place;
-import nbbang.com.nbbang.domain.party.controller.PartyController;
-import nbbang.com.nbbang.domain.party.domain.Hashtag;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.domain.PartyStatus;
-import nbbang.com.nbbang.domain.party.dto.PartyRequestDto;
-import nbbang.com.nbbang.domain.party.dto.PartyUpdateServiceDto;
+import nbbang.com.nbbang.domain.party.dto.single.PartyRequestDto;
+import nbbang.com.nbbang.domain.party.dto.single.PartyUpdateServiceDto;
 import nbbang.com.nbbang.domain.party.repository.PartyRepository;
-import nbbang.com.nbbang.global.response.DefaultResponse;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
-import javax.validation.Valid;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import static nbbang.com.nbbang.domain.member.dto.Place.SINCHON;
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
@@ -46,7 +34,7 @@ class OnePartyServiceTest {
         List<String> hashtagContents = Arrays.asList("old1", "old2");
         Party party = Party.builder().title("tempParty").place(SINCHON).goalNumber(3).build();
         // when
-        Long createdPartyId = partyService.createParty(party, hashtagContents);
+        Long createdPartyId = partyService.create(party, hashtagContents);
         // then
         Party findParty = partyRepository.findById(createdPartyId).orElse(null);
         assertThat(findParty).isEqualTo(party);
@@ -58,9 +46,9 @@ class OnePartyServiceTest {
         // given
         List<String> hashtagContents = Arrays.asList("old1", "old2");
         Party party = Party.builder().title("tempParty").place(SINCHON).goalNumber(3).build();
-        Long createdPartyId = partyService.createParty(party, hashtagContents);
+        Long createdPartyId = partyService.create(party, hashtagContents);
         // when
-        Party findParty = partyService.findParty(createdPartyId);
+        Party findParty = partyService.findById(createdPartyId);
         // then
         assertThat(findParty).isEqualTo(party);
     }
@@ -70,13 +58,13 @@ class OnePartyServiceTest {
         // given
         List<String> hashtagContents = Arrays.asList("old1", "old2");
         Party party = Party.builder().title("tempParty").place(SINCHON).goalNumber(3).build();
-        Long createdPartyId = partyService.createParty(party, hashtagContents);
+        Long createdPartyId = partyService.create(party, hashtagContents);
         PartyRequestDto partyRequestDto = PartyRequestDto.builder().title("new title").content("hello world!").hashtags(new ArrayList<>(Arrays.asList("old1", "new1"))).build();
         // https://kkwonsy.tistory.com/14
         // when
-        Long updatePartyId = partyService.updateParty(createdPartyId, PartyUpdateServiceDto.createByPartyRequestDto(partyRequestDto));
+        Long updatePartyId = partyService.update(createdPartyId, PartyUpdateServiceDto.createByPartyRequestDto(partyRequestDto));
         // then
-        Party updatedParty = partyService.findParty(updatePartyId);
+        Party updatedParty = partyService.findById(updatePartyId);
         assertThat(updatedParty.getTitle()).isEqualTo("new title");
         assertThat(updatedParty.getContent()).isEqualTo("hello world!");
         assertThat(updatedParty.getHashtagContents()).contains("old1", "new1");
@@ -86,7 +74,7 @@ class OnePartyServiceTest {
     @Test
     void findNearAndSimilar() {
         Party party = Party.builder().title("tempParty").place(SINCHON).goalNumber(3).build();
-        Long createdPartyId = partyService.createParty(party, null);
+        Long createdPartyId = partyService.create(party, null);
 
         // when
         List<Party> findParties = partyService.findNearAndSimilar(createdPartyId);

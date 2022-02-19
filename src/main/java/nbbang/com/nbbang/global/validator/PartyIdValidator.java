@@ -1,4 +1,6 @@
-package nbbang.com.nbbang.global.exception;
+package nbbang.com.nbbang.global.validator;
+
+import nbbang.com.nbbang.global.validator.PartyId;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;

@@ -1,4 +1,4 @@
-package nbbang.com.nbbang.global.exception;
+package nbbang.com.nbbang.global.error.exception;
 
 public class NotPartyMemberException extends RuntimeException {
 }

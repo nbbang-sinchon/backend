@@ -1,13 +1,9 @@
-package nbbang.com.nbbang.domain.party.dto;
+package nbbang.com.nbbang.domain.party.dto.many;
 
 import lombok.Builder;
 import lombok.Data;
 import nbbang.com.nbbang.domain.member.dto.Place;
-import nbbang.com.nbbang.global.dto.PageableDto;
 
-import java.awt.print.Pageable;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 /**
  * Service layer 에 필터를 적용한 파티리스트 조회하기 위한 dto 입니다.

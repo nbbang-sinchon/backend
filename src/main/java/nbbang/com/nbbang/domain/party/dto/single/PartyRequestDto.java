@@ -1,4 +1,4 @@
-package nbbang.com.nbbang.domain.party.dto;
+package nbbang.com.nbbang.domain.party.dto.single;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -42,7 +42,7 @@ public class PartyRequestDto {
         return party;
     }
 
-    public Party createByDto(Member owner) {
+    public Party createByDtoWithMember(Member owner) {
         return Party.builder()
                 .title(this.title)
                 .content(this.content)

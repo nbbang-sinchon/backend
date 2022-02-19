@@ -1,8 +1,10 @@
-package nbbang.com.nbbang.domain.party.dto;
+package nbbang.com.nbbang.domain.party.dto.many;
 
 import lombok.Builder;
 import lombok.Data;
 import nbbang.com.nbbang.domain.party.domain.Party;
+import nbbang.com.nbbang.domain.party.dto.PartyFindResponseDto;
+
 import java.util.List;
 import java.util.stream.Collectors;
 

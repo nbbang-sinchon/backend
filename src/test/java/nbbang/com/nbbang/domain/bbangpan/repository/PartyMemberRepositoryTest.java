@@ -1,6 +1,6 @@
 package nbbang.com.nbbang.domain.bbangpan.repository;
 
-import nbbang.com.nbbang.domain.bbangpan.domain.MemberParty;
+import nbbang.com.nbbang.domain.bbangpan.domain.PartyMember;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.repository.MemberRepository;
 import nbbang.com.nbbang.domain.party.domain.Party;
@@ -18,8 +18,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @SpringBootTest
 @ActiveProfiles("test")
 @Transactional
-class MemberPartyRepositoryTest {
-    @Autowired MemberPartyRepository memberPartyRepository;
+class PartyMemberRepositoryTest {
+    @Autowired
+    PartyMemberRepository memberPartyRepository;
     @Autowired MemberRepository memberRepository;
     @Autowired PartyRepository partyRepository;
 
@@ -30,12 +31,12 @@ class MemberPartyRepositoryTest {
         memberRepository.save(member);
         Party party = Party.builder().owner(member).goalNumber(10).isBlocked(false).status(PartyStatus.OPEN).title("party").build();
         partyRepository.save(party);
-        MemberParty saveMemberParty = MemberParty.createMemberParty(member, party);
-        memberPartyRepository.save(saveMemberParty);
+        PartyMember savePartyMember = PartyMember.createMemberParty(member, party);
+        memberPartyRepository.save(savePartyMember);
         // when
-        MemberParty findMemberParty = memberPartyRepository.findByMemberIdAndPartyId(member.getId(), party.getId());
+        PartyMember findPartyMember = memberPartyRepository.findByMemberIdAndPartyId(member.getId(), party.getId());
         // then
-        assertThat(saveMemberParty).isEqualTo(findMemberParty);
+        assertThat(savePartyMember).isEqualTo(findPartyMember);
 
     }
 }

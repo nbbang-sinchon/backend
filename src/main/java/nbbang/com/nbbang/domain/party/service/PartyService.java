@@ -1,24 +1,18 @@
 package nbbang.com.nbbang.domain.party.service;
 
 import lombok.RequiredArgsConstructor;
-import nbbang.com.nbbang.domain.bbangpan.domain.MemberParty;
-import nbbang.com.nbbang.domain.bbangpan.repository.MemberPartyRepository;
+import nbbang.com.nbbang.domain.bbangpan.repository.PartyMemberRepository;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.dto.Place;
-import nbbang.com.nbbang.domain.party.controller.PartyResponseMessage;
 import nbbang.com.nbbang.domain.party.domain.Hashtag;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.domain.PartyHashtag;
 import nbbang.com.nbbang.domain.party.domain.PartyStatus;
-import nbbang.com.nbbang.domain.party.dto.PartyUpdateServiceDto;
-import nbbang.com.nbbang.domain.party.exception.PartyExitForbiddenException;
-import nbbang.com.nbbang.domain.party.exception.PartyJoinException;
+import nbbang.com.nbbang.domain.party.dto.single.PartyUpdateServiceDto;
 import nbbang.com.nbbang.domain.party.repository.PartyHashtagRepository;
 import nbbang.com.nbbang.domain.party.repository.PartyRepository;
-import nbbang.com.nbbang.global.exception.NotPartyMemberException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 import org.webjars.NotFoundException;
 
 import java.util.Collections;
@@ -34,16 +28,50 @@ public class PartyService {
     private final PartyRepository partyRepository;
     private final PartyHashtagRepository partyHashtagRepository;
     private final HashtagService hashtagService;
-    private final MemberPartyRepository memberPartyRepository;
+    private final PartyMemberRepository memberPartyRepository;
 
     @Transactional
-    public Long createParty(Party party, List<String> hashtagContents) {
+    public Long create(Party party, List<String> hashtagContents) {
         Party savedParty = partyRepository.save(party);
         savedParty.changeStatus(PartyStatus.OPEN);
         Long partyId = savedParty.getId();
         // https://sigmasabjil.tistory.com/43
         Optional.ofNullable(hashtagContents).orElseGet(Collections::emptyList).
-                stream().forEach(content->createHashtag(partyId, content));
+                stream().forEach(content-> addHashtag(partyId, content));
+        return partyId;
+    }
+
+    public Party findById(Long partyId) {
+        Party party = partyRepository.findById(partyId).orElseThrow(() -> new NotFoundException(PARTY_NOT_FOUND));
+        return party;
+    }
+
+    // 현재 Near, ON, 스스로 아님만 구현. Hashtag로 찾는 기능 추가하기.
+    public List<Party> findNearAndSimilar(Long partyId) {
+        Party party = findById(partyId);
+        Place place = party.getPlace();
+        List<Party> parties = partyRepository.findByPlaceAndNotSelf(partyId);
+        return parties;
+    }
+    
+    @Transactional
+    public Long update(Long partyId, PartyUpdateServiceDto partyUpdateServiceDto) {
+        Party party = findById(partyId);
+        party.update(partyUpdateServiceDto);
+        if (partyUpdateServiceDto.getHashtagContents().isPresent()) {
+            List<String> oldHashtagContents = party.getHashtagContents();
+            System.out.println("party.getHashtagContents() = " + party.getHashtagContents());
+            List<String> newHashtagContents = partyUpdateServiceDto.getHashtagContents().get();
+            oldHashtagContents.removeAll(newHashtagContents);
+            System.out.println("newHashtagContents = " + newHashtagContents);
+            System.out.println("party.getHashtagContents() = " + party.getHashtagContents());
+            newHashtagContents.removeAll(party.getHashtagContents());
+
+            Optional.ofNullable(oldHashtagContents).orElseGet(Collections::emptyList)
+                    .stream().forEach(content -> removeHashtag(partyId, content));
+            Optional.ofNullable(newHashtagContents).orElseGet(Collections::emptyList)
+                    .stream().forEach(content -> addHashtag(partyId, content));
+        }
         return partyId;
     }
 
@@ -57,110 +85,25 @@ public class PartyService {
         party.changeGoalNumber(goalNumber);
     }
 
-
-    public boolean isPartyOwnerOrMember(Party party, Member member) {
-        return party.getOwner().equals(member) || party.getMemberParties().stream().anyMatch(mp -> mp.getMember().equals(member));
-    }
-
     @Transactional
-    public void joinParty(Party party, Member member) {
-        // 이미 참여한 파티일 경우
-        if (isPartyOwnerOrMember(party, member)) {
-            throw new PartyJoinException(PartyResponseMessage.PARTY_DUPLICATE_JOIN_ERROR);
-        }
-        // 파티가 찼을 경우
-        if (party.getGoalNumber().equals(party.getMemberParties().size())) {
-            throw new PartyJoinException(PartyResponseMessage.PARTY_FULL_ERROR);
-        }
-        // 파티가 isBlocked 일 경우
-        if (party.getIsBlocked()) {
-            throw new PartyJoinException(PartyResponseMessage.PARTY_JOIN_BLOCKED_ERROR);
-        }
-        // 파티 STATUS 가 full 또는 closed 일 경우
-        if (party.getStatus().equals(PartyStatus.FULL) || party.getStatus().equals(PartyStatus.CLOSED)) {
-            throw new PartyJoinException(PartyResponseMessage.PARTY_JOIN_NONOPEN_ERROR);
-        }
-        // 이 부분 빵판 로직이 들어가야 할 거 같아서 나중에 bbangpan service 로 메소드를 만들어야 할 거 같습니다.
-        MemberParty memberParty = MemberParty.createMemberParty(member, party);
-        //party.addMemberParty(memberParty);
-        memberPartyRepository.save(memberParty);
-    }
-
-    @Transactional
-    public void exitParty(Party party, Member member) {
-        // 참여하지 않은 파티일 경우
-        if (!isPartyOwnerOrMember(party, member)) {
-            throw new NotPartyMemberException();
-        }
-        // 방장이 탈퇴하려 했을 경우
-        if (party.getOwner().equals(member)) {
-            throw new PartyExitForbiddenException(PartyResponseMessage.PARTY_OWNER_EXIT_ERROR);
-        }
-        // 이 부분 빵판 로직이 들어가야 할 거 같아서 나중에 bbangpan service 로 메소드를 만들어야 할 거 같습니다.
-        MemberParty memberParty = memberPartyRepository.findByMemberIdAndPartyId(member.getId(), party.getId());
-        party.exitMemberParty(memberParty);
-        memberPartyRepository.delete(memberParty);
-    }
-
-    public Party findParty(Long partyId) {
-        Party party = partyRepository.findById(partyId).orElseThrow(() -> new NotFoundException(PARTY_NOT_FOUND));
-        return party;
-    }
-    
-    @Transactional
-    public Long updateParty(Long partyId, PartyUpdateServiceDto partyUpdateServiceDto) {
-        Party party = findParty(partyId);
-        party.update(partyUpdateServiceDto);
-        if (partyUpdateServiceDto.getHashtagContents().isPresent()) {
-            List<String> oldHashtagContents = party.getHashtagContents();
-            System.out.println("party.getHashtagContents() = " + party.getHashtagContents());
-            List<String> newHashtagContents = partyUpdateServiceDto.getHashtagContents().get();
-            oldHashtagContents.removeAll(newHashtagContents);
-            System.out.println("newHashtagContents = " + newHashtagContents);
-            System.out.println("party.getHashtagContents() = " + party.getHashtagContents());
-            newHashtagContents.removeAll(party.getHashtagContents());
-
-            Optional.ofNullable(oldHashtagContents).orElseGet(Collections::emptyList)
-                    .stream().forEach(content -> deleteHashtag(partyId, content));
-            Optional.ofNullable(newHashtagContents).orElseGet(Collections::emptyList)
-                    .stream().forEach(content -> createHashtag(partyId, content));
-        }
-        return partyId;
-    }
-
-    @Transactional
-    public void closeParty(Long partyId) {
-        Party party = findParty(partyId);
-        party.changeStatus(PartyStatus.CLOSED);
-     }
-
-    @Transactional
-    public void createHashtag(Long partyId, String content){
-        Party party = findParty(partyId);
+    public void addHashtag(Long partyId, String content){
+        Party party = findById(partyId);
         Hashtag hashtag = hashtagService.findOrCreateByContent(content);
         PartyHashtag.createPartyHashtag(party, hashtag);
     }
 
     @Transactional // ************** 구현 필요(쿼리 최적화) ************** /
-    public void createHashtags(Long partyId, List<String> hashtagContents){
-        Party party = findParty(partyId);
+    public void addHashtags(Long partyId, List<String> hashtagContents){
+        Party party = findById(partyId);
         List<Hashtag> hashtags = hashtagService.findOrCreateByContent(hashtagContents);
         PartyHashtag.createPartyHashtags(party, hashtags);
     }
 
-    private void deleteHashtag(Long partyId, String content) {
-        Party party = findParty(partyId);
+    private void removeHashtag(Long partyId, String content) {
+        Party party = findById(partyId);
         PartyHashtag partyHashtag = party.deletePartyHashtag(content);
         partyHashtagRepository.delete(partyHashtag);
         hashtagService.deleteIfNotReferred(partyHashtag.getHashtag());
     }
 
-
-    // 현재 Near, ON, 스스로 아님만 구현. Hashtag로 찾는 기능 추가하기.
-    public List<Party> findNearAndSimilar(Long partyId) {
-        Party party = findParty(partyId);
-        Place place = party.getPlace();
-        List<Party> parties = partyRepository.findByPlaceAndNotSelf(partyId);
-        return parties;
-    }
 }

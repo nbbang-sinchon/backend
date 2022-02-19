@@ -3,15 +3,11 @@ package nbbang.com.nbbang.domain.party.domain;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import nbbang.com.nbbang.domain.bbangpan.domain.MemberParty;
+import nbbang.com.nbbang.domain.bbangpan.domain.PartyMember;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.dto.Place;
-import nbbang.com.nbbang.domain.party.dto.PartyUpdateServiceDto;
-import nbbang.com.nbbang.global.support.validation.ValueOfEnum;
-import org.springframework.data.annotation.CreatedBy;
+import nbbang.com.nbbang.domain.party.dto.single.PartyUpdateServiceDto;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.webjars.NotFoundException;
 
@@ -20,7 +16,6 @@ import java.time.LocalDateTime;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static javax.persistence.EnumType.STRING;
@@ -70,7 +65,7 @@ public class Party {
 
     @Builder.Default
     @OneToMany(mappedBy = "party")
-    private List<MemberParty> memberParties = new ArrayList<>();
+    private List<PartyMember> memberParties = new ArrayList<>();
 
     protected Party() {}
 
@@ -93,16 +88,16 @@ public class Party {
         this.owner = member;
     }
 
-    public void addMemberParty(MemberParty memberParty) {
-        this.getMemberParties().add(memberParty);
+    public void addMemberParty(PartyMember partyMember) {
+        this.getMemberParties().add(partyMember);
     }
 
-    public void exitMemberParty(MemberParty memberParty) {
+    public void exitMemberParty(PartyMember partyMember) {
         //if (owner.equals(memberParty.getMember())) {
         //    isBlocked = true;
         //    status = PartyStatus.CLOSED;
         //} else {
-            boolean removed = memberParties.removeIf(mp -> mp.equals(memberParty));
+            boolean removed = memberParties.removeIf(mp -> mp.equals(partyMember));
         //}
     }
 

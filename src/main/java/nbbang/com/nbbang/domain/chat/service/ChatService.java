@@ -1,7 +1,7 @@
 package nbbang.com.nbbang.domain.chat.service;
 
 import lombok.RequiredArgsConstructor;
-import nbbang.com.nbbang.domain.bbangpan.domain.MemberParty;
+import nbbang.com.nbbang.domain.bbangpan.domain.PartyMember;
 import nbbang.com.nbbang.domain.chat.controller.ChatResponseMessage;
 import nbbang.com.nbbang.domain.chat.domain.Message;
 import nbbang.com.nbbang.domain.chat.repository.MessageRepository;
@@ -10,7 +10,7 @@ import nbbang.com.nbbang.domain.member.service.MemberService;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.domain.PartyStatus;
 import nbbang.com.nbbang.domain.party.repository.PartyRepository;
-import nbbang.com.nbbang.global.exception.NotPartyMemberException;
+import nbbang.com.nbbang.global.error.exception.NotPartyMemberException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -125,7 +125,7 @@ public class ChatService {
             isMember = true;
         }
         if (party.getMemberParties() != null) {
-            for (MemberParty mp : party.getMemberParties()) {
+            for (PartyMember mp : party.getMemberParties()) {
                 if (mp.getMember().getId() == memberId) {
                     isMember = true;
                 }

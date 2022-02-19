@@ -12,27 +12,24 @@ import nbbang.com.nbbang.domain.member.dto.*;
 import nbbang.com.nbbang.domain.member.repository.MemberRepository;
 import nbbang.com.nbbang.domain.member.service.MemberService;
 import nbbang.com.nbbang.domain.party.controller.ManyPartyResponseMessage;
-import nbbang.com.nbbang.domain.party.controller.PartyResponseMessage;
 import nbbang.com.nbbang.domain.party.domain.Party;
-import nbbang.com.nbbang.domain.party.dto.*;
+import nbbang.com.nbbang.domain.party.dto.many.PartyListRequestDto;
+import nbbang.com.nbbang.domain.party.dto.many.PartyListResponseDto;
+import nbbang.com.nbbang.domain.party.dto.my.MyClosedPartyListRequestDto;
+import nbbang.com.nbbang.domain.party.dto.my.MyOnPartyListRequestDto;
+import nbbang.com.nbbang.domain.party.dto.my.MyPartyListResponseDto;
 import nbbang.com.nbbang.domain.party.service.ManyPartyService;
-import nbbang.com.nbbang.global.dto.PageableDto;
-import nbbang.com.nbbang.global.exception.CustomIllegalArgumentException;
+import nbbang.com.nbbang.global.error.exception.CustomIllegalArgumentException;
 import nbbang.com.nbbang.global.response.DefaultResponse;
 import nbbang.com.nbbang.global.response.StatusCode;
 import nbbang.com.nbbang.global.support.FileUpload.FileUploadService;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
-import java.util.Locale;
 
 
 @Tag(name = "Member", description = "회원 관리 api (로그인 구현시 올바른 토큰을 보내지 않을 경우 401 Unauthorized 메시지를 받습니다.)")
