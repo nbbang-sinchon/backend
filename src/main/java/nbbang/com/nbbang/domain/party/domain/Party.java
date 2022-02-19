@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.*;
@@ -71,6 +72,10 @@ public class Party {
         partyHashtags.add(partyHashtag);
     }
 
+    public List<String> getHashtagContents() {
+        return partyHashtags.stream().map(h -> h.getHashtag().getContent()).collect(Collectors.toList());
+    }
+
     public PartyHashtag deletePartyHashtag(String content){
         PartyHashtag findPartyHashtag = partyHashtags.stream().filter(partyHashtag -> partyHashtag.getHashtag().getContent() == content)
                 .findAny().orElseThrow(() -> new NotFoundException(HASHTAG_NOT_FOUND));
@@ -82,18 +87,17 @@ public class Party {
         this.owner = member;
     }
 
-    public void joinMember(Member member) {
-        MemberParty memberParty = MemberParty.createMemberParty(member, this);
+    public void addMemberParty(MemberParty memberParty) {
         this.getMemberParties().add(memberParty);
     }
 
-    public void exitMember(Member member) {
-        if (owner.equals(member)) {
-            isBlocked = true;
-            status = PartyStatus.CLOSED;
-        } else {
-            boolean removed = memberParties.removeIf(mp -> mp.getMember().getId().equals(member.getId()));
-        }
+    public void exitMemberParty(MemberParty memberParty) {
+        //if (owner.equals(memberParty.getMember())) {
+        //    isBlocked = true;
+        //    status = PartyStatus.CLOSED;
+        //} else {
+            boolean removed = memberParties.removeIf(mp -> mp.equals(memberParty));
+        //}
     }
 
 
@@ -111,4 +115,5 @@ public class Party {
         partyUpdateServiceDto.getPlace().ifPresent(place->this.place=place);
         partyUpdateServiceDto.getGoalNumber().ifPresent(goalNumber->this.goalNumber=goalNumber);
     }
+
 }

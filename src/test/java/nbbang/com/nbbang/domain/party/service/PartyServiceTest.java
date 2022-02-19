@@ -4,6 +4,7 @@ import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.repository.MemberRepository;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.domain.PartyStatus;
+import nbbang.com.nbbang.domain.party.exception.PartyExitForbiddenException;
 import nbbang.com.nbbang.domain.party.exception.PartyJoinException;
 import nbbang.com.nbbang.domain.party.repository.PartyRepository;
 import org.assertj.core.api.Assertions;
@@ -99,8 +100,9 @@ class PartyServiceTest {
         // when
         partyService.joinParty(partyA, memberB);
         // then
-        partyService.exitParty(partyA, memberA); // 방장이 나가는 경우
-        assertThat(partyA.getIsBlocked()).isEqualTo(true);
+        //partyService.exitParty(partyA, memberA); // 방장이 나가는 경우
+        //assertThat(partyA.getIsBlocked()).isEqualTo(true);
+        assertThrows(PartyExitForbiddenException.class, () ->partyService.exitParty(partyA, memberA)); // 로직 변경; 방장은 나갈 수 없습니다.
     }
 
 
