@@ -21,6 +21,7 @@ import nbbang.com.nbbang.global.exception.ErrorResponse;
 import nbbang.com.nbbang.global.response.DefaultResponse;
 import nbbang.com.nbbang.global.response.GlobalResponseMessage;
 import nbbang.com.nbbang.global.response.StatusCode;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;

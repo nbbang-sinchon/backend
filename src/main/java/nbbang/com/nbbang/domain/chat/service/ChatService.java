@@ -96,10 +96,6 @@ public class ChatService {
         return messageRepository.findAllByPartyId(party.getId(), pageable);
     }
 
-    public Page<Message> findMessages(Party party, Pageable pageable, Long startId) {
-        return messageRepository.findAllByPartyId(party.getId(), pageable);
-    }
-
     public Page<Message> findMessagesByCursorId(Party party, Pageable pageable, Long cursorId) {
         return messageRepository.findAllByCursorId(party.getId(), pageable, cursorId);
     }

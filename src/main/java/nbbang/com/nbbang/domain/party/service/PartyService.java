@@ -1,6 +1,8 @@
 package nbbang.com.nbbang.domain.party.service;
 
 import lombok.RequiredArgsConstructor;
+import nbbang.com.nbbang.domain.bbangpan.domain.MemberParty;
+import nbbang.com.nbbang.domain.bbangpan.repository.MemberPartyRepository;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.dto.Place;
 import nbbang.com.nbbang.domain.party.controller.PartyResponseMessage;
@@ -30,6 +32,7 @@ public class PartyService {
     private final PartyRepository partyRepository;
     private final PartyHashtagRepository partyHashtagRepository;
     private final HashtagService hashtagService;
+    private final MemberPartyRepository memberPartyRepository;
 
     @Transactional
     public Long createParty(Party party, List<String> hashtagContents) {
@@ -73,7 +76,10 @@ public class PartyService {
         if (party.getStatus().equals(PartyStatus.FULL) || party.getStatus().equals(PartyStatus.CLOSED)) {
             throw new PartyJoinException(PartyResponseMessage.PARTY_JOIN_NONOPEN_ERROR);
         }
-        party.joinMember(member);
+        // 이 부분 빵판 로직이 들어가야 할 거 같아서 나중에 bbangpan service 로 메소드를 만들어야 할 거 같습니다.
+        MemberParty memberParty = MemberParty.createMemberParty(member, party);
+        //party.addMemberParty(memberParty);
+        memberPartyRepository.save(memberParty);
     }
 
     @Transactional
@@ -82,11 +88,14 @@ public class PartyService {
         if (!isPartyOwnerOrMember(party, member)) {
             throw new NotPartyMemberException();
         }
-        // 파티 STATUS 가 FULL 또는 CLOSED 인데 방장이 탈퇴하려 했을 경우
-        if (party.getOwner().equals(member) && !party.getStatus().equals(PartyStatus.OPEN)) {
+        // 방장이 탈퇴하려 했을 경우
+        if (party.getOwner().equals(member)) {
             throw new PartyExitForbiddenException(PartyResponseMessage.PARTY_OWNER_EXIT_ERROR);
         }
-        party.exitMember(member);
+        // 이 부분 빵판 로직이 들어가야 할 거 같아서 나중에 bbangpan service 로 메소드를 만들어야 할 거 같습니다.
+        MemberParty memberParty = memberPartyRepository.findByMemberIdAndPartyId(member.getId(), party.getId());
+        party.exitMemberParty(memberParty);
+        memberPartyRepository.delete(memberParty);
     }
 
     public Party findParty(Long partyId) {

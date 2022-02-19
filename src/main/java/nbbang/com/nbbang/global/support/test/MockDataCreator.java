@@ -8,9 +8,13 @@ import nbbang.com.nbbang.domain.member.dto.Place;
 import nbbang.com.nbbang.domain.member.repository.MemberRepository;
 import nbbang.com.nbbang.domain.party.domain.Hashtag;
 import nbbang.com.nbbang.domain.party.domain.Party;
+import nbbang.com.nbbang.domain.party.domain.PartyHashtag;
 import nbbang.com.nbbang.domain.party.domain.PartyStatus;
 import nbbang.com.nbbang.domain.party.repository.HashtagRepository;
+import nbbang.com.nbbang.domain.party.repository.PartyHashtagRepository;
 import nbbang.com.nbbang.domain.party.repository.PartyRepository;
+import nbbang.com.nbbang.domain.party.service.HashtagService;
+import nbbang.com.nbbang.domain.party.service.PartyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
@@ -21,6 +25,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+
+import java.util.List;
 
 @Component
 @Transactional
@@ -33,15 +39,28 @@ public class MockDataCreator implements CommandLineRunner {
     @Autowired HashtagRepository hashtagRepository;
     @Autowired MemberPartyRepository memberPartyRepository;
     @Autowired ChatService chatService;
+    @Autowired HashtagService hashtagService;
+    @Autowired PartyService partyService;
+    @Autowired PartyHashtagRepository partyHashtagRepository;
 
     private Long luffyId;
     private Long korungId;
     private Long mock1Id;
+    private Long mock2Id;
+    private Long mock3Id;
+    private Long mock4Id;
 
 
     private Long party1Id;
     private Long party2Id;
     private Long party3Id;
+    private Long party4Id;
+    private Long party5Id;
+    private Long party6Id;
+    private Long party7Id;
+
+
+
 
     @Override
     public void run(String... args) throws Exception {
@@ -50,6 +69,11 @@ public class MockDataCreator implements CommandLineRunner {
         createParty2();
         createParty3();
         createParty4();
+        createParty5();
+        createParty6();
+        createParty7();
+
+
         for (int i = 0; i < 10; i++) {
             createMessage1();
         }
@@ -80,6 +104,46 @@ public class MockDataCreator implements CommandLineRunner {
         memberRepository.save(mock1);
         mock1Id = mock1.getId();
 
+        Member mock2 = Member.builder()
+                .nickname("고영희")
+                .place(Place.SINCHON)
+                .build();
+        memberRepository.save(mock2);
+        mock2Id = mock2.getId();
+
+        Member mock3 = Member.builder()
+                .nickname("철수2")
+                .place(Place.YEONHUI)
+                .build();
+        memberRepository.save(mock3);
+        mock3Id = mock3.getId();
+
+        Member mock4 = Member.builder()
+                .nickname("잼민")
+                .place(Place.CHANGCHEON)
+                .build();
+        memberRepository.save(mock4);
+        mock4Id = mock4.getId();
+
+    }
+
+    // 해시태그 추가 임시 메소드
+    public void addHashtags(Party party, String ... contents) {
+        Arrays.asList(contents).stream().forEach(hc -> {
+            Hashtag h = Hashtag.createHashtag(hc);
+            hashtagRepository.save(h);
+            PartyHashtag ph = PartyHashtag.createPartyHashtag(party, h);
+            party.addPartyHashtag(ph);
+            partyHashtagRepository.save(ph);
+        });
+    }
+
+    public void addMember(Party party, Long memberId) {
+        memberPartyRepository.save(MemberParty.builder()
+                .member(memberRepository.findById(memberId).get())
+                .party(party)
+                .price(1000)
+                .build());
     }
 
     @Transactional
@@ -88,10 +152,9 @@ public class MockDataCreator implements CommandLineRunner {
                 .title("BHC 뿌링클 오늘 7시")
                 .content("오늘 연대 서문에서 치킨 같이 시켜 먹을 파티 구해요 또는 각자 시키고 배달비만 n빵 하실분?? 2~3명 모아봅니다 ㅎㅎ 뿌링클 교촌 다 좋아요 ㅎㅎ")
                 .createTime(LocalDateTime.of(2022, 02, 12, 12, 40))
-                //.cancelTime(LocalDateTime.of(2022, 02, 13, 12, 40))
+                .cancelTime(LocalDateTime.of(2022, 02, 13, 12, 40))
                 .goalNumber(4)
                 .owner(memberRepository.findById(luffyId).get())
-                //.hashtags(Arrays.asList(Hashtag.builder().content("콤보").build(), Hashtag.builder().content("배달비").build(),Hashtag.builder().content("야식").build(),Hashtag.builder().content("사이드 가능").build()))
                 .place(Place.SINCHON)
                 .deliveryFee(300)
                 .status(PartyStatus.OPEN)
@@ -99,7 +162,7 @@ public class MockDataCreator implements CommandLineRunner {
                 .build();
         partyRepository.save(party);
         party1Id = party.getId();
-        //hashtagRepository.save(Hashtag.builder().content("콤보").party(party).build());
+        addHashtags(party, "치킨", "배달비", "BHC", "뿌링클");
         memberPartyRepository.save(MemberParty.builder()
                 .member(memberRepository.findById(korungId).get())
                 .party(party)
@@ -111,9 +174,9 @@ public class MockDataCreator implements CommandLineRunner {
     public void createParty2() {
         Party party = Party.builder()
                 .title("BHC 맛초킹 내일 8시")
-                .content("뿌링클 넘나 먹구 싶다잉")
+                .content("뿌링클 넘나 먹구 싶다잉 근데 돈없")
                 .createTime(LocalDateTime.of(2022, 02, 14, 12, 40))
-                //.cancelTime(LocalDateTime.of(2022, 02, 15, 12, 40))
+                .cancelTime(LocalDateTime.of(2022, 02, 15, 12, 40))
                 .goalNumber(4)
                 .owner(memberRepository.findById(korungId).get())
                 //.hashtags(Arrays.asList(Hashtag.builder().content("콤보").build(), Hashtag.builder().content("배달비").build(),Hashtag.builder().content("야식").build(),Hashtag.builder().content("사이드 가능").build()))
@@ -125,6 +188,7 @@ public class MockDataCreator implements CommandLineRunner {
         partyRepository.save(party);
         party2Id = party.getId();
         //hashtagRepository.save(Hashtag.builder().content("콤보").party(party).build());
+        addHashtags(party, "치킨", "배달비", "BHC", "뿌링클", "맛초킹");
         memberPartyRepository.save(MemberParty.builder()
                 .member(memberRepository.findById(mock1Id).get())
                 .party(party)
@@ -136,9 +200,9 @@ public class MockDataCreator implements CommandLineRunner {
     public void createParty3() {
         Party party = Party.builder()
                 .title("롯데리아 오늘 8시")
-                .content("뿌링클 넘나 먹구 싶다잉")
+                .content("롯데리아 넘나 먹구 싶다잉")
                 .createTime(LocalDateTime.of(2022, 02, 10, 15, 40))
-                //.cancelTime(LocalDateTime.of(2022, 02, 11, 15, 40))
+                .cancelTime(LocalDateTime.of(2022, 02, 11, 15, 40))
                 .goalNumber(4)
                 .owner(memberRepository.findById(mock1Id).get())
                 //.hashtags(Arrays.asList(Hashtag.builder().content("콤보").build(), Hashtag.builder().content("배달비").build(),Hashtag.builder().content("야식").build(),Hashtag.builder().content("사이드 가능").build()))
@@ -150,6 +214,7 @@ public class MockDataCreator implements CommandLineRunner {
         partyRepository.save(party);
         party3Id = party.getId();
         //hashtagRepository.save(Hashtag.builder().content("콤보").party(party).build());
+        addHashtags(party, "롯데리아", "배달비", "롯데", "햄버거");
         memberPartyRepository.save(MemberParty.builder()
                 .member(memberRepository.findById(korungId).get())
                 .party(party)
@@ -160,26 +225,104 @@ public class MockDataCreator implements CommandLineRunner {
     @Transactional
     public void createParty4() {
         Party party = Party.builder()
-                .title("롯데리아 오늘 9시")
-                .content("뿌링클 넘나 먹구 싶다잉")
+                .title("내일 점심에 버거킹 드실분")
+                .content("내일 점심에 버거킹 드실분 구함")
                 .createTime(LocalDateTime.of(2022, 02, 10, 15, 40))
-                //.cancelTime(LocalDateTime.of(2022, 02, 11, 15, 40))
-                .goalNumber(4)
+                .cancelTime(LocalDateTime.of(2022, 02, 11, 15, 40))
+                .goalNumber(3)
                 .owner(memberRepository.findById(mock1Id).get())
                 //.hashtags(Arrays.asList(Hashtag.builder().content("콤보").build(), Hashtag.builder().content("배달비").build(),Hashtag.builder().content("야식").build(),Hashtag.builder().content("사이드 가능").build()))
-                .place(Place.CHANGCHEON)
+                .place(Place.YEONHUI)
                 .deliveryFee(300)
                 .status(PartyStatus.OPEN)
                 .isBlocked(false)
                 .build();
+
         partyRepository.save(party);
         party3Id = party.getId();
+        addHashtags(party, "버거킹", "햄버거");
         //hashtagRepository.save(Hashtag.builder().content("콤보").party(party).build());
         memberPartyRepository.save(MemberParty.builder()
                 .member(memberRepository.findById(korungId).get())
                 .party(party)
                 .price(1000)
                 .build());
+        addMember(party, luffyId);
+    }
+
+    @Transactional
+    public void createParty5() {
+        Party party = Party.builder()
+                .title("푸라닭 콘소메이징 맛있어요ㅛㅛㅛㅛㅛㅛ")
+                .content("푸라닭 콘소메이징 맛있어요ㅛㅛㅛㅛㅛㅛ")
+                .createTime(LocalDateTime.of(2022, 02, 10, 15, 40))
+                .cancelTime(LocalDateTime.of(2022, 02, 11, 15, 40))
+                .goalNumber(8)
+                .owner(memberRepository.findById(luffyId).get())
+                //.hashtags(Arrays.asList(Hashtag.builder().content("콤보").build(), Hashtag.builder().content("배달비").build(),Hashtag.builder().content("야식").build(),Hashtag.builder().content("사이드 가능").build()))
+                .place(Place.CHANGCHEON)
+                .deliveryFee(300)
+                .status(PartyStatus.FULL)
+                .isBlocked(false)
+                .build();
+
+        partyRepository.save(party);
+        party5Id = party.getId();
+        addHashtags(party, "치킨", "푸라닭");
+        addMember(party, mock1Id);
+        addMember(party, mock2Id);
+        addMember(party, mock3Id);
+        addMember(party, mock4Id);
+    }
+
+    @Transactional
+    public void createParty6() {
+        Party party = Party.builder()
+                .title("초밥 시켜먹어요")
+                .content("초밥 맛있어요ㅛㅛㅛㅛㅛㅛ")
+                .createTime(LocalDateTime.of(2022, 02, 10, 15, 40))
+                .cancelTime(LocalDateTime.of(2022, 02, 11, 15, 40))
+                .goalNumber(4)
+                .owner(memberRepository.findById(korungId).get())
+                //.hashtags(Arrays.asList(Hashtag.builder().content("콤보").build(), Hashtag.builder().content("배달비").build(),Hashtag.builder().content("야식").build(),Hashtag.builder().content("사이드 가능").build()))
+                .place(Place.CHANGCHEON)
+                .deliveryFee(300)
+                .status(PartyStatus.CLOSED)
+                .isBlocked(false)
+                .build();
+
+        partyRepository.save(party);
+        party5Id = party.getId();
+        //hashtagRepository.save(Hashtag.builder().content("콤보").party(party).build());
+        addHashtags(party, "초밥", "스시");
+        addMember(party, luffyId);
+        addMember(party, mock1Id);
+        addMember(party, mock2Id);
+    }
+
+    @Transactional
+    public void createParty7() {
+        Party party = Party.builder()
+                .title("떡복이 ㄱ?")
+                .content("떡복이 드실분")
+                .createTime(LocalDateTime.of(2022, 02, 10, 15, 40))
+                .cancelTime(LocalDateTime.of(2022, 02, 11, 15, 40))
+                .goalNumber(4)
+                .owner(memberRepository.findById(luffyId).get())
+                //.hashtags(Arrays.asList(Hashtag.builder().content("콤보").build(), Hashtag.builder().content("배달비").build(),Hashtag.builder().content("야식").build(),Hashtag.builder().content("사이드 가능").build()))
+                .place(Place.CHANGCHEON)
+                .deliveryFee(300)
+                .status(PartyStatus.OPEN)
+                .isBlocked(false)
+                .build();
+
+        partyRepository.save(party);
+        party5Id = party.getId();
+        //hashtagRepository.save(Hashtag.builder().content("콤보").party(party).build());
+        addHashtags(party, "떡복이", "엽떡", "국대");
+        addMember(party, luffyId);
+        addMember(party, mock1Id);
+        addMember(party, mock2Id);
     }
 
     @Transactional
