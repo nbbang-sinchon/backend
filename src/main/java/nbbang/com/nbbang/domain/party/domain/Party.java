@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.*;
@@ -69,6 +70,10 @@ public class Party {
 
     public void addPartyHashtag(PartyHashtag partyHashtag){
         partyHashtags.add(partyHashtag);
+    }
+
+    public List<String> getHashtagContents() {
+        return partyHashtags.stream().map(h -> h.getHashtag().getContent()).collect(Collectors.toList());
     }
 
     public PartyHashtag deletePartyHashtag(String content){

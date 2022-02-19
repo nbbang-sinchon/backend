@@ -9,12 +9,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.dto.*;
+import nbbang.com.nbbang.domain.member.repository.MemberRepository;
 import nbbang.com.nbbang.domain.member.service.MemberService;
 import nbbang.com.nbbang.domain.party.controller.ManyPartyResponseMessage;
 import nbbang.com.nbbang.domain.party.controller.PartyResponseMessage;
 import nbbang.com.nbbang.domain.party.domain.Party;
-import nbbang.com.nbbang.domain.party.dto.PartyListRequestDto;
-import nbbang.com.nbbang.domain.party.dto.PartyListResponseDto;
+import nbbang.com.nbbang.domain.party.dto.*;
 import nbbang.com.nbbang.domain.party.service.ManyPartyService;
 import nbbang.com.nbbang.global.dto.PageableDto;
 import nbbang.com.nbbang.global.exception.CustomIllegalArgumentException;
@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Locale;
 
 
 @Tag(name = "Member", description = "회원 관리 api (로그인 구현시 올바른 토큰을 보내지 않을 경우 401 Unauthorized 메시지를 받습니다.)")
@@ -44,17 +45,11 @@ public class MemberController {
 
     private final FileUploadService fileUploadService;
     private final MemberService memberService;
+    private final MemberRepository memberRepository;
     private final ManyPartyService manyPartyService;
     private Long memberId = 1L; // 로그인 기능 구현 후 삭제 예정
 
-    @Operation(summary = "테스트 용도 멤버 생성")
-    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
-    @PostMapping("/create")
-    public DefaultResponse create() {
-        memberId = memberService.saveMember("루피", Place.SINCHON);
-        return DefaultResponse.res(StatusCode.OK, "테스트 멤버가 생성되었습니다.");
-    }
-    
+
     @Operation(summary = "마이페이지 정보 조회", description = "자신의 정보를 조회합니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MemberResponseDto.class)))
     @GetMapping
@@ -95,6 +90,8 @@ public class MemberController {
         return DefaultResponse.res(StatusCode.OK, MemberResponseMessage.UPDATE_MEMBER, MemberProfileImageUploadResponseDto.createMock());
     }
 
+    // 나중에 컨트롤러 따로 파는 것은 어떨까요? path 가 다 /members/parties ===========================
+
     @Operation(summary = "나의 파티", description = "자신이 속한 파티 목록을 조회합니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PartyListResponseDto.class)))
     @GetMapping("/parties")
@@ -103,8 +100,32 @@ public class MemberController {
             throw new CustomIllegalArgumentException(ManyPartyResponseMessage.ILLEGAL_PARTY_LIST_REQUEST, bindingResult);
         }
         Page<Party> res = manyPartyService.findAllParties(requestDto.createPageRequest(), requestDto.createPartyListRequestFilterDto(), requestDto.getCursorId(), memberId);
-        return DefaultResponse.res(StatusCode.OK, MemberResponseMessage.READ_MEMBER, PartyListResponseDto.createFromEntity(res.getContent()));
+        return DefaultResponse.res(StatusCode.OK, MemberResponseMessage.READ_MEMBER, MyPartyListResponseDto.createFromEntity(res.getContent(), memberId));
     }
+
+    @Operation(summary = "나의 파티", description = "자신이 속한 참여 중(OPEN, FULL)인 파티 목록을 조회합니다.")
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PartyListResponseDto.class)))
+    @GetMapping("/parties/on")
+    public DefaultResponse partiesOn(@ParameterObject MyOnPartyListRequestDto requestDto, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            throw new CustomIllegalArgumentException(ManyPartyResponseMessage.ILLEGAL_PARTY_LIST_REQUEST, bindingResult);
+        }
+        Page<Party> res = manyPartyService.findAllParties(requestDto.createPageRequest(), requestDto.createPartyListRequestFilterDto(), requestDto.getCursorId(), memberId);
+        return DefaultResponse.res(StatusCode.OK, MemberResponseMessage.READ_MEMBER, MyPartyListResponseDto.createFromEntity(res.getContent(), memberId));
+    }
+
+    @Operation(summary = "나의 파티", description = "자신이 속한 종료된 파티 목록을 조회합니다.")
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PartyListResponseDto.class)))
+    @GetMapping("/parties/closed")
+    public DefaultResponse partiesClosed(@ParameterObject MyClosedPartyListRequestDto requestDto, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            throw new CustomIllegalArgumentException(ManyPartyResponseMessage.ILLEGAL_PARTY_LIST_REQUEST, bindingResult);
+        }
+        Page<Party> res = manyPartyService.findAllParties(requestDto.createPageRequest(), requestDto.createPartyListRequestFilterDto(), requestDto.getCursorId(), memberId);
+        return DefaultResponse.res(StatusCode.OK, MemberResponseMessage.READ_MEMBER, MyPartyListResponseDto.createFromEntity(res.getContent(), memberId));
+    }
+
+    // ===========================
 
     @Operation(summary = "멤버 위치", description = "멤버의 위치 정보를 제공합니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PlaceResponseDto.class)))
