@@ -40,22 +40,3 @@ public class ManyPartyController {
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
