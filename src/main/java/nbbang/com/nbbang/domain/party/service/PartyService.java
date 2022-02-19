@@ -78,7 +78,7 @@ public class PartyService {
         }
         // 이 부분 빵판 로직이 들어가야 할 거 같아서 나중에 bbangpan service 로 메소드를 만들어야 할 거 같습니다.
         MemberParty memberParty = MemberParty.createMemberParty(member, party);
-        party.addMemberParty(memberParty);
+        //party.addMemberParty(memberParty);
         memberPartyRepository.save(memberParty);
     }
 
