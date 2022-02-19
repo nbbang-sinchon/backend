@@ -53,7 +53,7 @@ public class Party {
     @Enumerated(STRING)
     private Place place;
 
-    private LocalDateTime cancelTime;
+    // private LocalDateTime cancelTime;
 
     private Integer deliveryFee;
 

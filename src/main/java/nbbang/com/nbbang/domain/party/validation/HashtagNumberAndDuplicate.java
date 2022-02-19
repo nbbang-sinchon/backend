@@ -1,4 +1,4 @@
-package nbbang.com.nbbang.global.support.validation;
+package nbbang.com.nbbang.domain.party.validation;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -8,14 +8,13 @@ import java.lang.annotation.Target;
 
 import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
-import static nbbang.com.nbbang.global.response.GlobalResponseMessage.HASHTAG_NUMBER_ERROR;
 
 @Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE})
 @Retention(RUNTIME)
-@Constraint(validatedBy = HashtagNumberValidator.class)
+@Constraint(validatedBy = HashtagNumberAndDuplicateValidator.class)
 @Documented
-public @interface HashtagNumber{
-    String message() default HASHTAG_NUMBER_ERROR;
+public @interface HashtagNumberAndDuplicate{
+    String message() default "";
 
     Class<?>[] groups() default {};
 
@@ -25,6 +24,6 @@ public @interface HashtagNumber{
     @Retention(RUNTIME)
     @Documented
     @interface List{
-        HashtagNumber[] value();
+        HashtagNumberAndDuplicate[] value();
     }
 }

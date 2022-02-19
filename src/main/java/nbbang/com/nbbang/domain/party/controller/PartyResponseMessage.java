@@ -30,4 +30,8 @@ public class PartyResponseMessage {
     // 파티 변경에 대한 메시지
     public static final String ILLEGAL_PARTY_STATUS = "파티 상태를 올바르게 입력하세요.";
     public static final String ILLEGAL_PARTY_GOAL_NUMBER = "파티 모집 회원 수를 올바르게 입력하세요.";
+
+
+    public static final String HASHTAG_NUMBER_ERROR = "해시태그는 최대 10개까지 가능합니다.";
+    public static final String HASHTAG_DUPLICATE_ERROR = "해시태그는 중복이 허용되지 않습니다.";
 }
