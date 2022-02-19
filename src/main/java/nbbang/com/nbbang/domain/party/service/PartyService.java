@@ -1,7 +1,10 @@
 package nbbang.com.nbbang.domain.party.service;
 
 import lombok.RequiredArgsConstructor;
+import nbbang.com.nbbang.domain.bbangpan.domain.MemberParty;
+import nbbang.com.nbbang.domain.bbangpan.repository.MemberPartyRepository;
 import nbbang.com.nbbang.domain.member.domain.Member;
+import nbbang.com.nbbang.domain.member.dto.Place;
 import nbbang.com.nbbang.domain.party.controller.PartyResponseMessage;
 import nbbang.com.nbbang.domain.party.domain.Hashtag;
 import nbbang.com.nbbang.domain.party.domain.Party;
@@ -29,6 +32,7 @@ public class PartyService {
     private final PartyRepository partyRepository;
     private final PartyHashtagRepository partyHashtagRepository;
     private final HashtagService hashtagService;
+    private final MemberPartyRepository memberPartyRepository;
 
     @Transactional
     public Long createParty(Party party, List<String> hashtagContents) {
@@ -72,7 +76,9 @@ public class PartyService {
         if (party.getStatus().equals(PartyStatus.FULL) || party.getStatus().equals(PartyStatus.CLOSED)) {
             throw new PartyJoinException(PartyResponseMessage.PARTY_JOIN_NONOPEN_ERROR);
         }
-        party.joinMember(member);
+        MemberParty memberParty = MemberParty.createMemberParty(member, party);
+        memberPartyRepository.save(memberParty);
+        party.addMemberParty(memberParty);
     }
 
     @Transactional
