@@ -73,7 +73,7 @@ public class PartyController {
                 .isOngoing(true).build();
         List<Party> parties = partyService.findNearAndSimilar(partyId);
         List<PartyFindResponseDto> collect = parties.stream().map(PartyFindResponseDto::createByEntity).collect(Collectors.toList());
-        List<String> hashtags = partyService.findHashtagContentsByParty(party);
+        List<String> hashtags = party.getHashtagContents();
         PartyReadResponseDto partyReadResponseDto = PartyReadResponseDto.createDto(party, userId,  hashtags, collect);
         return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_READ_SUCCESS, partyReadResponseDto);
     }
