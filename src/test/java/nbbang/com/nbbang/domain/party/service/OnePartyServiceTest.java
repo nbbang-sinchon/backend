@@ -2,7 +2,7 @@ package nbbang.com.nbbang.domain.party.service;
 
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.domain.PartyStatus;
-import nbbang.com.nbbang.domain.party.dto.single.PartyRequestDto;
+import nbbang.com.nbbang.domain.party.dto.single.request.PartyRequestDto;
 import nbbang.com.nbbang.domain.party.dto.single.PartyUpdateServiceDto;
 import nbbang.com.nbbang.domain.party.repository.PartyRepository;
 import org.junit.jupiter.api.Test;

@@ -1,4 +1,4 @@
-package nbbang.com.nbbang.domain.party.dto.single;
+package nbbang.com.nbbang.domain.party.dto.single.response;
 
 
 import lombok.AllArgsConstructor;

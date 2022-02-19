@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import nbbang.com.nbbang.domain.member.dto.Place;
+import nbbang.com.nbbang.domain.party.dto.single.request.PartyRequestDto;
 
 import java.util.List;
 import java.util.Optional;

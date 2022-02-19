@@ -1,4 +1,4 @@
-package nbbang.com.nbbang.domain.party.dto.single;
+package nbbang.com.nbbang.domain.party.dto.single.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
