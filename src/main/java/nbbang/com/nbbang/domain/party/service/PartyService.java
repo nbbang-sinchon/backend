@@ -2,6 +2,7 @@ package nbbang.com.nbbang.domain.party.service;
 
 import lombok.RequiredArgsConstructor;
 import nbbang.com.nbbang.domain.member.domain.Member;
+import nbbang.com.nbbang.domain.member.dto.Place;
 import nbbang.com.nbbang.domain.party.controller.PartyResponseMessage;
 import nbbang.com.nbbang.domain.party.domain.Hashtag;
 import nbbang.com.nbbang.domain.party.domain.Party;
@@ -105,17 +106,14 @@ public class PartyService {
 
             oldHashtagContents.stream().forEach(content -> deleteHashtag(partyId, content));
             newHashtagContents.stream().forEach(content -> createHashtag(partyId, content));
-
         }
     }
 
     @Transactional
-    public void deleteParty(Long partyId) {
+    public void closeParty(Long partyId) {
         Party party = findParty(partyId);
-        partyRepository.delete(party);
-        partyHashtagRepository.deleteAll(party.getPartyHashtags());
-        party.getPartyHashtags().stream().forEach(partyHashtag -> hashtagService.deleteIfNotReferred(partyHashtag.getHashtag()));
-    }
+        party.changeStatus(PartyStatus.CLOSED);
+     }
 
     @Transactional
     public void createHashtag(Long partyId, String content){

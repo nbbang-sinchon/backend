@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.dto.Place;
 import nbbang.com.nbbang.domain.party.domain.Party;
+import nbbang.com.nbbang.global.support.validation.HashtagNumber;
 import nbbang.com.nbbang.global.support.validation.ValueOfEnum;
 
 import javax.validation.constraints.NotBlank;
@@ -20,6 +21,7 @@ public class PartyRequestDto {
     @NotBlank(message = "파티의 제목은 공백일 수 없습니다.")
     private String title;
     private String content;
+    @HashtagNumber
     private List<String> hashtags; // 해시태그 개수 검증기 만들기
     @NotNull(message = "파티의 위치는 필수 값입니다.")
     @ValueOfEnum(enumClass = Place.class)
