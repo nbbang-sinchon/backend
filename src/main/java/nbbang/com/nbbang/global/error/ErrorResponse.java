@@ -1,12 +1,9 @@
-package nbbang.com.nbbang.global.exception;
+package nbbang.com.nbbang.global.error;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import nbbang.com.nbbang.global.response.DefaultResponse;
-
-import java.util.List;
 
 @Data
 @NoArgsConstructor

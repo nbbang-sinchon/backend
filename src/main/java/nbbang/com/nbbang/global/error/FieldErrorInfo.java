@@ -1,4 +1,4 @@
-package nbbang.com.nbbang.global.exception;
+package nbbang.com.nbbang.global.error;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

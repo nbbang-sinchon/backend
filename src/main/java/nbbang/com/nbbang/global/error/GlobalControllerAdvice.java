@@ -1,13 +1,10 @@
-package nbbang.com.nbbang.global.exception;
+package nbbang.com.nbbang.global.error;
 
 
 import io.swagger.v3.oas.annotations.Hidden;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import nbbang.com.nbbang.global.response.DefaultResponse;
-import nbbang.com.nbbang.global.response.GlobalResponseMessage;
+import nbbang.com.nbbang.global.error.exception.*;
 import nbbang.com.nbbang.global.response.StatusCode;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -18,8 +15,6 @@ import org.webjars.NotFoundException;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static nbbang.com.nbbang.global.response.GlobalResponseMessage.INTERNAL_SERVER_ERROR;
 
 @Hidden
 @Slf4j
@@ -69,31 +64,31 @@ public class GlobalControllerAdvice {
     @ExceptionHandler
     public ErrorResponse exHandle(Exception e) {
         log.error("[ExceptionHandle] Exception: ", e);
-        return new ErrorResponse(StatusCode.INTERNAL_SERVER_ERROR, GlobalResponseMessage.INTERNAL_SERVER_ERROR);
+        return new ErrorResponse(StatusCode.INTERNAL_SERVER_ERROR, GlobalErrorResponseMessage.INTERNAL_SERVER_ERROR);
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ErrorResponse exHandle(MethodArgumentTypeMismatchException e) {
-        return new ErrorResponse(StatusCode.INTERNAL_SERVER_ERROR, GlobalResponseMessage.ILLEGAL_TYPE_CONVERSION_ERROR);
+        return new ErrorResponse(StatusCode.INTERNAL_SERVER_ERROR, GlobalErrorResponseMessage.ILLEGAL_TYPE_CONVERSION_ERROR);
     }
 
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(NotOwnerException.class)
     public ErrorResponse exHandle(NotOwnerException e) {
-        return new ErrorResponse(StatusCode.FORBIDDEN, GlobalResponseMessage.NOT_OWNER_ERROR);
+        return new ErrorResponse(StatusCode.FORBIDDEN, GlobalErrorResponseMessage.NOT_OWNER_ERROR);
     }
 
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(NotPartyMemberException.class)
     public ErrorResponse exHandle(NotPartyMemberException e) {
-        return new ErrorResponse(StatusCode.FORBIDDEN, GlobalResponseMessage.NOT_PARTY_MEMBER_ERROR);
+        return new ErrorResponse(StatusCode.FORBIDDEN, GlobalErrorResponseMessage.NOT_PARTY_MEMBER_ERROR);
     }
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(UnauthorizedException.class)
     public ErrorResponse exHandle(UnauthorizedException e) {
-        return new ErrorResponse(StatusCode.UNAUTHORIZED, GlobalResponseMessage.UNAUTHORIZED_ERROR);
+        return new ErrorResponse(StatusCode.UNAUTHORIZED, GlobalErrorResponseMessage.UNAUTHORIZED_ERROR);
     }
 }
 

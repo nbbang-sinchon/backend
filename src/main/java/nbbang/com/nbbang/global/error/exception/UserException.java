@@ -1,4 +1,4 @@
-package nbbang.com.nbbang.global.exception;
+package nbbang.com.nbbang.global.error.exception;
 
 
 // MVC 2 275p

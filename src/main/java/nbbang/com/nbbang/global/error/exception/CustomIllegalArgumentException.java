@@ -1,9 +1,6 @@
-package nbbang.com.nbbang.global.exception;
+package nbbang.com.nbbang.global.error.exception;
 
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
-
-import java.util.List;
 
 public class CustomIllegalArgumentException extends IllegalArgumentException {
     private BindingResult bindingResult;
