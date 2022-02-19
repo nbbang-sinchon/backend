@@ -108,24 +108,21 @@ public class PartyService {
         Party party = findParty(partyId);
         party.update(partyUpdateServiceDto);
         if (partyUpdateServiceDto.getHashtagContents().isPresent()) {
-            List<String> oldHashtagContents = findHashtagContentsByParty(party);
+            List<String> oldHashtagContents = party.getHashtagContents();
             List<String> newHashtagContents = partyUpdateServiceDto.getHashtagContents().get();
             oldHashtagContents.removeAll(newHashtagContents);
-            newHashtagContents.removeAll(findHashtagContentsByParty(party));
+            newHashtagContents.removeAll(party.getHashtagContents());
 
             oldHashtagContents.stream().forEach(content -> deleteHashtag(partyId, content));
             newHashtagContents.stream().forEach(content -> createHashtag(partyId, content));
-
         }
     }
 
     @Transactional
-    public void deleteParty(Long partyId) {
+    public void closeParty(Long partyId) {
         Party party = findParty(partyId);
-        partyRepository.delete(party);
-        partyHashtagRepository.deleteAll(party.getPartyHashtags());
-        party.getPartyHashtags().stream().forEach(partyHashtag -> hashtagService.deleteIfNotReferred(partyHashtag.getHashtag()));
-    }
+        party.changeStatus(PartyStatus.CLOSED);
+     }
 
     @Transactional
     public void createHashtag(Long partyId, String content){
@@ -148,12 +145,6 @@ public class PartyService {
         hashtagService.deleteIfNotReferred(partyHashtag.getHashtag());
     }
 
-    public List<String> findHashtagContentsByParty(Party party) {
-        List<String> hashtagContents = party.getPartyHashtags().stream()
-                .map(partyHashtag -> partyHashtag.getHashtag().getContent())
-                .collect(Collectors.toList());
-        return hashtagContents;
-    }
 
     // 현재 Near, ON, 스스로 아님만 구현. Hashtag로 찾는 기능 추가하기.
     public List<Party> findNearAndSimilar(Long partyId) {

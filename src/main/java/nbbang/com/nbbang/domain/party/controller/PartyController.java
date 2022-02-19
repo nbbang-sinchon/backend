@@ -73,7 +73,7 @@ public class PartyController {
                 .isOngoing(true).build();
         List<Party> parties = partyService.findNearAndSimilar(partyId);
         List<PartyFindResponseDto> collect = parties.stream().map(PartyFindResponseDto::createByEntity).collect(Collectors.toList());
-        List<String> hashtags = partyService.findHashtagContentsByParty(party);
+        List<String> hashtags = party.getHashtagContents();
         PartyReadResponseDto partyReadResponseDto = PartyReadResponseDto.createDto(party, userId,  hashtags, collect);
         return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_READ_SUCCESS, partyReadResponseDto);
     }
@@ -83,7 +83,7 @@ public class PartyController {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = PartyIdResponseDto.class)))
     @ApiResponse(responseCode = "403", description = "Not Owner", content = @Content(mediaType = "application/json"))
     @PatchMapping("/{party-id}")
-    public DefaultResponse updateParty(@PathVariable("party-id") Long partyId, @RequestBody PartyRequestDto partyRequestDtO) {
+    public DefaultResponse updateParty(@PathVariable("party-id") Long partyId, @Valid @RequestBody PartyRequestDto partyRequestDtO, BindingResult bindingResult) {
         partyService.updateParty(partyId, PartyUpdateServiceDto.createByPartyRequestDto(partyRequestDtO));
         return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_UPDATE_SUCCESS, new PartyIdResponseDto(partyId));
     }

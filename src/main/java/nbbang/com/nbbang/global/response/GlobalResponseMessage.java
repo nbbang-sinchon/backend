@@ -10,4 +10,6 @@ public class GlobalResponseMessage {
     public static final String NOT_OWNER_ERROR = "방장이 아닙니다.";
     public static final String NOT_PARTY_MEMBER_ERROR = "파티의 멤버가 아닙니다.";
     public static final String UNAUTHORIZED_ERROR = "로그인이 필요합니다.";
+
+
 }

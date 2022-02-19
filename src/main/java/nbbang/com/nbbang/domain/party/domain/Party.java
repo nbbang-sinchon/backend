@@ -9,7 +9,10 @@ import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.dto.Place;
 import nbbang.com.nbbang.domain.party.dto.PartyUpdateServiceDto;
 import nbbang.com.nbbang.global.support.validation.ValueOfEnum;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.crossstore.ChangeSetPersister;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.webjars.NotFoundException;
 
 import javax.persistence.*;
@@ -24,6 +27,7 @@ import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.*;
 import static nbbang.com.nbbang.domain.party.controller.PartyResponseMessage.HASHTAG_NOT_FOUND;
 
+@EntityListeners(AuditingEntityListener.class)
 @Entity @Getter @Builder
 @AllArgsConstructor
 public class Party {
@@ -36,6 +40,8 @@ public class Party {
     @Column(columnDefinition = "TEXT")
     private String content;
 
+    @CreatedDate
+    @Column(updatable = false)
     private LocalDateTime createTime;
 
     private Integer goalNumber;
@@ -48,7 +54,7 @@ public class Party {
     @Enumerated(STRING)
     private Place place;
 
-    private LocalDateTime cancelTime;
+    // private LocalDateTime cancelTime;
 
     private Integer deliveryFee;
 
