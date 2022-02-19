@@ -1,6 +1,7 @@
 package nbbang.com.nbbang.domain.party.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import nbbang.com.nbbang.domain.member.domain.Member;
@@ -17,6 +18,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class PartyRequestDto {
     @NotBlank(message = "파티의 제목은 공백일 수 없습니다.")
     private String title;
