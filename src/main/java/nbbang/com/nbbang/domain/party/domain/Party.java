@@ -86,12 +86,12 @@ public class Party {
         this.getMemberParties().add(memberParty);
     }
 
-    public void exitMember(Member member) {
-        if (owner.equals(member)) {
+    public void exitMemberParty(MemberParty memberParty) {
+        if (owner.equals(memberParty.getMember())) {
             isBlocked = true;
             status = PartyStatus.CLOSED;
         } else {
-            boolean removed = memberParties.removeIf(mp -> mp.getMember().getId().equals(member.getId()));
+            boolean removed = memberParties.removeIf(mp -> mp.equals(memberParty));
         }
     }
 
@@ -110,4 +110,5 @@ public class Party {
         partyUpdateServiceDto.getPlace().ifPresent(place->this.place=place);
         partyUpdateServiceDto.getGoalNumber().ifPresent(goalNumber->this.goalNumber=goalNumber);
     }
+
 }
