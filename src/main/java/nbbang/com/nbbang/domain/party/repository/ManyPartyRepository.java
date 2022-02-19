@@ -1,10 +1,8 @@
 package nbbang.com.nbbang.domain.party.repository;
 
-import nbbang.com.nbbang.domain.party.domain.Hashtag;
 import nbbang.com.nbbang.domain.party.domain.Party;
-import nbbang.com.nbbang.domain.party.dto.PartyFindRequestDto;
-import nbbang.com.nbbang.domain.party.dto.PartyFindRequestFilterDto;
-import nbbang.com.nbbang.domain.party.dto.PartyListRequestFilterDto;
+import nbbang.com.nbbang.domain.party.dto.many.PartyFindRequestFilterDto;
+import nbbang.com.nbbang.domain.party.dto.many.PartyListRequestFilterDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

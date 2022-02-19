@@ -13,5 +13,6 @@ import java.util.List;
 
 public interface PartyRepository extends JpaRepository<Party, Long>, PartyRepositorySupport{
     Page<Party> findAll(Pageable pageable);
+    Party findByTitle(String title);
 
 }

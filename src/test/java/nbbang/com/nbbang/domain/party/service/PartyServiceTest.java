@@ -7,7 +7,6 @@ import nbbang.com.nbbang.domain.party.domain.PartyStatus;
 import nbbang.com.nbbang.domain.party.exception.PartyExitForbiddenException;
 import nbbang.com.nbbang.domain.party.exception.PartyJoinException;
 import nbbang.com.nbbang.domain.party.repository.PartyRepository;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,6 +24,8 @@ class PartyServiceTest {
     @Autowired PartyService partyService;
     @Autowired MemberRepository memberRepository;
     @Autowired PartyRepository partyRepository;
+    @Autowired
+    PartyMemberService partyMemberService;
 
 
     @Test
@@ -39,8 +40,8 @@ class PartyServiceTest {
         Party partyA = Party.builder().owner(memberA).goalNumber(10).isBlocked(false).status(PartyStatus.OPEN).build();
         partyRepository.save(partyA);
         // when
-        partyService.joinParty(partyA, memberB);
-        partyService.joinParty(partyA, memberC);
+        partyMemberService.joinParty(partyA, memberB);
+        partyMemberService.joinParty(partyA, memberC);
         // then
         assertThat(partyA.getMemberParties().size()).isEqualTo(2);
         assertThat(partyA.getMemberParties().get(0).getMember().equals(memberB));
@@ -54,7 +55,8 @@ class PartyServiceTest {
         Party partyA = Party.builder().owner(memberA).goalNumber(10).isBlocked(false).status(PartyStatus.OPEN).build();
         partyRepository.save(partyA);
         // when // then
-        assertThrows(PartyJoinException.class, () -> {partyService.joinParty(partyA, memberA);});
+        assertThrows(PartyJoinException.class, () -> {
+            partyMemberService.joinParty(partyA, memberA);});
     }
 
     @Test
@@ -67,9 +69,10 @@ class PartyServiceTest {
         Party partyA = Party.builder().owner(memberA).isBlocked(false).status(PartyStatus.OPEN).goalNumber(2).build();
         partyRepository.save(partyA);
         // when
-        partyService.joinParty(partyA, memberB);
+        partyMemberService.joinParty(partyA, memberB);
         // then
-        assertThrows(PartyJoinException.class, () -> {partyService.joinParty(partyA, memberB);});
+        assertThrows(PartyJoinException.class, () -> {
+            partyMemberService.joinParty(partyA, memberB);});
     }
 
     @Test
@@ -82,9 +85,10 @@ class PartyServiceTest {
         Party partyA = Party.builder().owner(memberA).goalNumber(1).isBlocked(false).status(PartyStatus.OPEN).build();
         partyRepository.save(partyA);
         // when
-        partyService.joinParty(partyA, memberB);
+        partyMemberService.joinParty(partyA, memberB);
         // then
-        assertThrows(PartyJoinException.class, () -> {partyService.joinParty(partyA, memberB);});
+        assertThrows(PartyJoinException.class, () -> {
+            partyMemberService.joinParty(partyA, memberB);});
     }
 
 
@@ -98,11 +102,11 @@ class PartyServiceTest {
         Party partyA = Party.builder().owner(memberA).goalNumber(3).isBlocked(false).status(PartyStatus.OPEN).build();
         partyRepository.save(partyA);
         // when
-        partyService.joinParty(partyA, memberB);
+        partyMemberService.joinParty(partyA, memberB);
         // then
         //partyService.exitParty(partyA, memberA); // 방장이 나가는 경우
         //assertThat(partyA.getIsBlocked()).isEqualTo(true);
-        assertThrows(PartyExitForbiddenException.class, () ->partyService.exitParty(partyA, memberA)); // 로직 변경; 방장은 나갈 수 없습니다.
+        assertThrows(PartyExitForbiddenException.class, () -> partyMemberService.exitParty(partyA, memberA)); // 로직 변경; 방장은 나갈 수 없습니다.
     }
 
 
@@ -116,9 +120,9 @@ class PartyServiceTest {
         Party partyA = Party.builder().owner(memberA).goalNumber(3).status(PartyStatus.OPEN).isBlocked(false).build();
         partyRepository.save(partyA);
         // when
-        partyService.joinParty(partyA, memberB);
+        partyMemberService.joinParty(partyA, memberB);
         // then
-        partyService.exitParty(partyA, memberB);
+        partyMemberService.exitParty(partyA, memberB);
         assertThat(partyA.getMemberParties().size()).isEqualTo(0);
         assertThat(partyA.getIsBlocked()).isEqualTo(false);
     }

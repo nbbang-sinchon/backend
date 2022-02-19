@@ -1,15 +1,14 @@
 package nbbang.com.nbbang.domain.party.repository;
 
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import nbbang.com.nbbang.domain.bbangpan.domain.QMemberParty;
 import nbbang.com.nbbang.domain.member.dto.Place;
 import nbbang.com.nbbang.domain.party.domain.*;
-import nbbang.com.nbbang.domain.party.dto.PartyFindRequestFilterDto;
-import nbbang.com.nbbang.domain.party.dto.PartyListRequestFilterDto;
+import nbbang.com.nbbang.domain.party.dto.many.PartyFindRequestFilterDto;
+import nbbang.com.nbbang.domain.party.dto.many.PartyListRequestFilterDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;

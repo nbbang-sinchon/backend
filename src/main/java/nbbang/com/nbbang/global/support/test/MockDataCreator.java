@@ -1,7 +1,7 @@
 package nbbang.com.nbbang.global.support.test;
 
-import nbbang.com.nbbang.domain.bbangpan.domain.MemberParty;
-import nbbang.com.nbbang.domain.bbangpan.repository.MemberPartyRepository;
+import nbbang.com.nbbang.domain.bbangpan.domain.PartyMember;
+import nbbang.com.nbbang.domain.bbangpan.repository.PartyMemberRepository;
 import nbbang.com.nbbang.domain.chat.service.ChatService;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.dto.Place;
@@ -26,8 +26,6 @@ import javax.persistence.PersistenceContext;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 
-import java.util.List;
-
 @Component
 @Transactional
 @Profile("!test")
@@ -37,7 +35,8 @@ public class MockDataCreator implements CommandLineRunner {
     @Autowired MemberRepository memberRepository;
     @Autowired PartyRepository partyRepository;
     @Autowired HashtagRepository hashtagRepository;
-    @Autowired MemberPartyRepository memberPartyRepository;
+    @Autowired
+    PartyMemberRepository memberPartyRepository;
     @Autowired ChatService chatService;
     @Autowired HashtagService hashtagService;
     @Autowired PartyService partyService;
@@ -139,7 +138,7 @@ public class MockDataCreator implements CommandLineRunner {
     }
 
     public void addMember(Party party, Long memberId) {
-        memberPartyRepository.save(MemberParty.builder()
+        memberPartyRepository.save(PartyMember.builder()
                 .member(memberRepository.findById(memberId).get())
                 .party(party)
                 .price(1000)
@@ -162,7 +161,7 @@ public class MockDataCreator implements CommandLineRunner {
         partyRepository.save(party);
         party1Id = party.getId();
         addHashtags(party, "치킨", "배달비", "BHC", "뿌링클");
-        memberPartyRepository.save(MemberParty.builder()
+        memberPartyRepository.save(PartyMember.builder()
                 .member(memberRepository.findById(korungId).get())
                 .party(party)
                 .price(1000)
@@ -187,7 +186,7 @@ public class MockDataCreator implements CommandLineRunner {
         party2Id = party.getId();
         //hashtagRepository.save(Hashtag.builder().content("콤보").party(party).build());
         addHashtags(party, "치킨", "배달비", "BHC", "뿌링클", "맛초킹");
-        memberPartyRepository.save(MemberParty.builder()
+        memberPartyRepository.save(PartyMember.builder()
                 .member(memberRepository.findById(mock1Id).get())
                 .party(party)
                 .price(1000)
@@ -212,7 +211,7 @@ public class MockDataCreator implements CommandLineRunner {
         party3Id = party.getId();
         //hashtagRepository.save(Hashtag.builder().content("콤보").party(party).build());
         addHashtags(party, "롯데리아", "배달비", "롯데", "햄버거");
-        memberPartyRepository.save(MemberParty.builder()
+        memberPartyRepository.save(PartyMember.builder()
                 .member(memberRepository.findById(korungId).get())
                 .party(party)
                 .price(1000)
@@ -238,7 +237,7 @@ public class MockDataCreator implements CommandLineRunner {
         party3Id = party.getId();
         addHashtags(party, "버거킹", "햄버거");
         //hashtagRepository.save(Hashtag.builder().content("콤보").party(party).build());
-        memberPartyRepository.save(MemberParty.builder()
+        memberPartyRepository.save(PartyMember.builder()
                 .member(memberRepository.findById(korungId).get())
                 .party(party)
                 .price(1000)

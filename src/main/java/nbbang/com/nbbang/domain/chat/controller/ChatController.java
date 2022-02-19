@@ -1,6 +1,5 @@
 package nbbang.com.nbbang.domain.chat.controller;
 
-import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -11,16 +10,11 @@ import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.domain.chat.domain.Message;
 import nbbang.com.nbbang.domain.chat.dto.*;
 import nbbang.com.nbbang.domain.chat.service.ChatService;
-import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.service.MemberService;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.repository.PartyRepository;
 import nbbang.com.nbbang.domain.party.service.PartyService;
-import nbbang.com.nbbang.global.dto.CursorPageableDto;
 import nbbang.com.nbbang.global.dto.PageableDto;
-import nbbang.com.nbbang.global.exception.CustomIllegalArgumentException;
-import nbbang.com.nbbang.global.exception.ErrorResponse;
-import nbbang.com.nbbang.global.exception.PartyId;
 import nbbang.com.nbbang.global.response.DefaultResponse;
 import nbbang.com.nbbang.global.response.StatusCode;
 import nbbang.com.nbbang.global.support.FileUpload.FileUploadService;
@@ -28,20 +22,13 @@ import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Stream;
 
 @Tag(name = "Chat", description = "채팅방 api, 채팅 기능은 미구현입니다. (로그인 구현시 올바른 토큰을 보내지 않을 경우 401 Unauthorized 메시지를 받습니다.).")
 @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(mediaType = "application/json"))
