@@ -45,7 +45,6 @@ public class ChatController {
     private Long memberId = 1L; // 로그인 기능 구현시 삭제 예정
 
 
-
     @Operation(summary = "채팅방 조회", description = "채팅방을 파티 id 로 조회합니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ChatResponseDto.class)))
     @ApiResponse(responseCode = "403", description = "Not Party Member", content = @Content(mediaType = "application/json"))

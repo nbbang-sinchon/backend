@@ -6,7 +6,7 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 
-@Controller
+/*@Controller
 public class ChatSocketController {
     @MessageMapping("/receive")
     @SendTo("/send")
@@ -14,4 +14,4 @@ public class ChatSocketController {
         return vo;
     }
 
-}
+}*/
