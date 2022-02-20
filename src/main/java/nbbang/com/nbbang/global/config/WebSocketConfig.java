@@ -2,7 +2,7 @@ package nbbang.com.nbbang.global.config;
 
 import lombok.RequiredArgsConstructor;
 import nbbang.com.nbbang.domain.chat.handler.ChatHandler;
-import nbbang.com.nbbang.global.handler.ReplyEchoHandler;
+import nbbang.com.nbbang.domain.chat.handler.ReplyEchoHandler;
 import org.springframework.context.annotation.Configuration;
 //import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 //import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
@@ -38,17 +38,4 @@ public class WebSocketConfig implements WebSocketConfigurer { // WebSocketMessag
 
         // 사실 STOMP 방식을 가장 많이 사용함. 구독 방식이므로 하나의 토픽만 보고있으면 된다. 핸드폰에 푸시 보내는 것처럼 구독 방식
     }
-
-/*
-@Override
-    public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/send");
-    }
-
-    @Override
-    public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/").setAllowedOrigins("*").withSockJS();
-    }
-
- */
 }

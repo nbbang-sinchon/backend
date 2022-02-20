@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.party.domain.Party;
+import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -18,6 +19,8 @@ public class Message {
     @Column(name = "message_id")
     private Long id;
 
+    @CreatedDate
+    @Column(updatable = false)
     private LocalDateTime createTime;
 
     private Integer readNumber;

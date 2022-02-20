@@ -12,4 +12,5 @@ public interface MessageRepository extends JpaRepository<Message, Long>, Message
     @Override
     Page<Message> findAllByCursorId(Long partyId, Pageable pageable, Long cursorId);
 
+
 }

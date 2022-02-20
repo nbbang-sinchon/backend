@@ -30,13 +30,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 
-@Tag(name = "Chat", description = "채팅방 api, 채팅 기능은 미구현입니다. (로그인 구현시 올바른 토큰을 보내지 않을 경우 401 Unauthorized 메시지를 받습니다.).")
+@Tag(name = "ChatRoom", description = "채팅방 api, 채팅 기능은 미구현입니다. (로그인 구현시 올바른 토큰을 보내지 않을 경우 401 Unauthorized 메시지를 받습니다.).")
 @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(mediaType = "application/json"))
 @Slf4j
 @RestController
 @RequestMapping("/chats")
 @RequiredArgsConstructor
-public class ChatController {
+public class ChatRoomController {
     private final FileUploadService fileUploadService;
     private final ChatService chatService;
     private final MemberService memberService;
@@ -72,27 +72,6 @@ public class ChatController {
         return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.READ_CHAT, ChatMessageListResponseDto.createByEntity(messages.getContent()));
     }
 
-
-    @Operation(summary = "채팅 메시지 전송", description = "채팅 메시지를 전송합니다.")
-    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
-    @ApiResponse(responseCode = "403", description = "Not Party Member", content = @Content(mediaType = "application/json"))
-    @PostMapping("/{party-id}/messages")
-    public DefaultResponse sendMessage(@PathVariable("party-id") Long partyId, @RequestBody ChatMessageSendRequestDto chatMessageSendRequestDto) {
-        chatService.sendMessage(memberId, partyId, chatMessageSendRequestDto.getContent(), LocalDateTime.now());
-        return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.UPLOADED_MESSAGE);
-    }
-
-    @Operation(summary = "메시지 사진 업로드", description = "메시지 사진을 업로드합니다.")
-    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ChatMessageImageUploadResponseDto.class)))
-    @ApiResponse(responseCode = "400", description = "잘못된 요청입니다.", content = @Content(mediaType = "application/json"))
-    @PostMapping(path = "/{party-id}/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public DefaultResponse sendImage(@PathVariable("party-id") Long partyId,
-                                     @Schema(description = "이미지 파일을 업로드합니다.")
-                                     @RequestPart MultipartFile imgFile) {
-        String filePath = fileUploadService.fileUpload(imgFile);
-        return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.UPLOADED_MESSAGE, new ChatMessageImageUploadResponseDto(filePath));
-    }
-
     @Operation(summary = "채팅방에서 나가기", description = "채팅방에서 나갑니다. 소켓 종료 용도로 쓰일 것 같습니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "400", description = "잘못된 요청입니다.", content = @Content(mediaType = "application/json"))
@@ -101,7 +80,6 @@ public class ChatController {
     public DefaultResponse exitChat(@PathVariable("party-id") Long partyId) {
         return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.EXIT_CHAT);
     }
-
 
     /**
      * 무한 스크롤을 쿠키로 구현한 메소드입니다.
@@ -130,7 +108,7 @@ public class ChatController {
     @ApiResponse(responseCode = "403", description = "Not Party Member", content = @Content(mediaType = "application/json"))
     @GetMapping("/{party-id}/messages/develop")
     public DefaultResponse selectChatMessagesWithCookie(@PathVariable("party-id") Long partyId, @ParameterObject PageableDto pageableDto, HttpServletRequest request, @CookieValue(value = "cursorId", required = false) Cookie cookie) {
-        Party party = partyRepository.findById(partyId).get(); // Party Service 구현 시 바꿔야 할 것 같습니다.
+        Party party = partyService.findById(partyId); // Party Service 구현 시 바꿔야 할 것 같습니다.
         String [] cookieVals = cookie.getValue().split("=");
         Long cookiePartyId = Long.parseLong(cookieVals[0]);
         Long cursorId = Long.parseLong(cookieVals[1]);
