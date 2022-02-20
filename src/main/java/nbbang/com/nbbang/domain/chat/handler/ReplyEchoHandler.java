@@ -4,6 +4,7 @@ package nbbang.com.nbbang.domain.chat.handler;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketMessage;
@@ -15,10 +16,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
-
-// 얘를 어디 연결
 @Slf4j
+@Component
 public class ReplyEchoHandler extends TextWebSocketHandler {
     // Map<WebSocketSession, Long> sessions = new ArrayList<>();
     Map<String, WebSocketSession> userSessions = new HashMap<>();

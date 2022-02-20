@@ -23,6 +23,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
+
 
 @Tag(name = "Chat", description = "채팅 메시지 전송")
 @ApiResponses(value = {
@@ -33,7 +35,6 @@ import org.springframework.web.multipart.MultipartFile;
 })
 @Controller
 @Slf4j
-@RestController
 @RequestMapping("/chats/{party-id}")
 @RequiredArgsConstructor
 public class MessageController {
@@ -45,25 +46,29 @@ public class MessageController {
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "403", description = "Not Party Member", content = @Content(mediaType = "application/json"))
     @PostMapping
-    public DefaultResponse<Object> sendMessage(@PathVariable("party-id") Long partyId, @RequestBody ChatSendRequestDto chatSendRequestDto, BindingResult bindingResult) {
+    @ResponseBody
+    public DefaultResponse<Object> sendMessage(@PathVariable("party-id") Long partyId, @Valid @RequestBody ChatSendRequestDto chatSendRequestDto, BindingResult bindingResult) {
         Long memberId = 1L;
         Long messageId = messageService.send(partyId, memberId, chatSendRequestDto.getContent());
+        publishSendMessage(messageId);
         return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.UPLOADED_MESSAGE);
     }
 
+
     @SendTo("/topic/{party-id}")
     public ChatSendResponseDto publishSendMessage(Long messageId){
+        log.info("message Id in ChatSendResponseDto: {}", messageId);
         Message message = messageService.findById(messageId);
         ChatSendResponseDto.createByMessage(message);
-
         return ChatSendResponseDto.builder().context("hello").build();
     }
+
 
 
     @Operation(summary = "메시지 사진 업로드", description = "메시지 사진을 업로드합니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ChatMessageImageUploadResponseDto.class)))
     @ApiResponse(responseCode = "400", description = "잘못된 요청입니다.", content = @Content(mediaType = "application/json"))
-    @PostMapping(path = "/{party-id}/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(path = "/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public DefaultResponse sendImage(@PathVariable("party-id") Long partyId,
                                      @Schema(description = "이미지 파일을 업로드합니다.")
                                      @RequestPart MultipartFile imgFile) {
