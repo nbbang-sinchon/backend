@@ -1,5 +1,7 @@
 package nbbang.com.nbbang.global.filter;
 
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.*;
@@ -8,6 +10,7 @@ import java.io.IOException;
 import java.sql.PreparedStatement;
 
 @Component
+@Order(Ordered.HIGHEST_PRECEDENCE)
 public class CorsFilter implements Filter {
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
