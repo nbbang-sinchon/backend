@@ -9,9 +9,9 @@ name: Sprinb boot Gradle ci/cd
 
 on:
   push:
-    branches: [ feature/login-google-start ]
+    branches: [ dev ]
   pull_request:
-    branches: [ feature/login-google-start ]
+    branches: [ dev ]
 
 jobs:
   build:
