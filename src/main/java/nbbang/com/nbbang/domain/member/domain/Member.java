@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import nbbang.com.nbbang.domain.member.dto.Place;
+import nbbang.com.nbbang.global.security.Role;
 
 import javax.persistence.*;
 
@@ -19,8 +20,35 @@ public class Member {
     @Column(name = "member_id")
     private Long id;
 
+    @Column(nullable = false)
     private String nickname;
 
+    @Column(nullable = false)
+    private String email;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role;
+
+    @Builder
+    public Member(String name, String email, String picture, Role role) {
+        this.nickname = name;
+        this.email = email;
+        this.avatar = picture;
+        this.role = role;
+    }
+
+    public Member update(String name, String picture) {
+        this.nickname = name;
+        this.avatar = picture;
+        return this;
+    }
+
+    public String getRoleKey() {
+        return this.role.getKey();
+    }
+
+    @Column
     private String avatar;
 
     private Boolean isLeaved;
