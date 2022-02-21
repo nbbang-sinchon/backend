@@ -360,6 +360,7 @@ public class MockDataCreator implements CommandLineRunner {
                 .owner(memberRepository.findById(ownerId).get())
                 .place(place)
                 .status(partyStatus)
+                .activeNumber(0)
                 .build();
         partyRepository.save(party);
         addHashtags(party, hashtags);

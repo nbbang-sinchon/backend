@@ -15,7 +15,7 @@ public class ChatSendListResponseDto {
     public static ChatSendListResponseDto createByEntity(List<Message> messages) {
         return ChatSendListResponseDto.builder()
                 .messages(messages.stream()
-                        .map(ChatSendResponseDto::createByMessage)
+                        .map(message -> ChatSendResponseDto.createByMessage(message, 0))
                         .collect(Collectors.toList()))
                 .build();
     }
@@ -24,7 +24,7 @@ public class ChatSendListResponseDto {
         return ChatSendListResponseDto.builder()
                 .messages(messages.stream()
                         .map((m) ->
-                            ChatSendResponseDto.createByMessage(m)
+                            ChatSendResponseDto.createByMessage(m, 0)
                         )
                         .collect(Collectors.toList()))
                 .build();

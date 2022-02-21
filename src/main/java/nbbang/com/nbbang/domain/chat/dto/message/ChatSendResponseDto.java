@@ -18,17 +18,17 @@ import java.time.LocalDateTime;
 public class ChatSendResponseDto {
     private Long id;
     private LocalDateTime createTime;
-    private Integer readNumber;
+    private Integer notReadNumber;
     private MessageType type;
     private String content;
     private ChatSendResponseSenderDto sender;
 
 
-    public static ChatSendResponseDto createByMessage(Message message) {
+    public static ChatSendResponseDto createByMessage(Message message, Integer partyMembernumber) {
         return ChatSendResponseDto.builder()
                 .id(message.getId())
                 .createTime(message.getCreateTime())
-                .readNumber(message.getReadNumber())
+                .notReadNumber(partyMembernumber - message.getReadNumber())
                 .type(message.getType())
                 .content(message.getContent())
                 .sender(message.getSender()!=null?

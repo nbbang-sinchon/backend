@@ -13,6 +13,7 @@ import nbbang.com.nbbang.domain.chat.dto.ChatMessageImageUploadResponseDto;
 import nbbang.com.nbbang.domain.chat.dto.message.ChatSendRequestDto;
 import nbbang.com.nbbang.domain.chat.dto.message.ChatSendResponseDto;
 import nbbang.com.nbbang.domain.chat.service.MessageService;
+import nbbang.com.nbbang.domain.party.service.PartyService;
 import nbbang.com.nbbang.global.error.GlobalErrorResponseMessage;
 import nbbang.com.nbbang.global.error.exception.CustomIllegalArgumentException;
 import nbbang.com.nbbang.global.response.DefaultResponse;
@@ -40,6 +41,7 @@ public class MessageController {
     private final MessageService messageService;
     private final FileUploadService fileUploadService;
     private final SimpMessagingTemplate simpMessagingTemplate;
+    private final PartyService partyService;
 
     @Operation(summary = "채팅 메시지 전송", description = "채팅 메시지를 전송합니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ChatSendResponseDto.class)))
@@ -52,18 +54,12 @@ public class MessageController {
         Long memberId = 1L;
         Long messageId = messageService.send(partyId, memberId, chatSendRequestDto.getContent());
         Message message = messageService.findById(messageId);
-        ChatSendResponseDto chatSendResponseDto = ChatSendResponseDto.createByMessage(message);
+        Integer partyMemberNumber = partyService.countPartyMemberNumber(partyId);
+        ChatSendResponseDto chatSendResponseDto = ChatSendResponseDto.createByMessage(message, partyMemberNumber);
         simpMessagingTemplate.convertAndSend("/topic/" + partyId, chatSendResponseDto);
         return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.UPLOADED_MESSAGE, chatSendResponseDto);
     }
 
-/*    @SendTo("/topic/{party-id}")
-    public ChatSendResponseDto publishSendMessage(Long messageId){
-        log.info("message Id in ChatSendResponseDto: {}", messageId);
-        Message message = messageService.findById(messageId);
-        ChatSendResponseDto.createByMessage(message);
-        return ChatSendResponseDto.builder().context("hello").build();
-    }*/
 
     @Operation(summary = "메시지 사진 업로드", description = "메시지 사진을 업로드합니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ChatMessageImageUploadResponseDto.class)))

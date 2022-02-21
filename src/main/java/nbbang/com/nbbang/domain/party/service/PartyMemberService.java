@@ -26,7 +26,7 @@ public class PartyMemberService {
 
 
     public boolean isPartyOwnerOrMember(Party party, Member member) {
-        return party.getOwner().equals(member) || party.getMemberParties().stream().anyMatch(mp -> mp.getMember().equals(member));
+        return party.getOwner().equals(member) || party.getPartyMembers().stream().anyMatch(mp -> mp.getMember().equals(member));
     }
 
 
@@ -37,7 +37,7 @@ public class PartyMemberService {
             throw new PartyJoinException(PartyResponseMessage.PARTY_DUPLICATE_JOIN_ERROR);
         }
         // 파티가 찼을 경우
-        if (party.getGoalNumber().equals(party.getMemberParties().size())) {
+        if (party.getGoalNumber().equals(party.getPartyMembers().size())) {
             throw new PartyJoinException(PartyResponseMessage.PARTY_FULL_ERROR);
         }
         // 파티가 isBlocked 일 경우

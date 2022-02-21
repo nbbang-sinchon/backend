@@ -38,8 +38,6 @@ public class Message {
     @JoinColumn(name = "member_id")
     private Member sender;
 
-    private Long orderInChat;
-
     @Enumerated(value = EnumType.STRING)
     private MessageType type;
 

@@ -66,7 +66,7 @@ public class Party {
 
     @Builder.Default
     @OneToMany(mappedBy = "party")
-    private List<PartyMember> memberParties = new ArrayList<>();
+    private List<PartyMember> partyMembers = new ArrayList<>();
 
     @Builder.Default
     @OneToMany(mappedBy = "party")
@@ -95,7 +95,7 @@ public class Party {
     }
 
     public void addMemberParty(PartyMember partyMember) {
-        this.getMemberParties().add(partyMember);
+        this.getPartyMembers().add(partyMember);
     }
 
     public void exitMemberParty(PartyMember partyMember) {
@@ -103,7 +103,7 @@ public class Party {
         //    isBlocked = true;
         //    status = PartyStatus.CLOSED;
         //} else {
-            boolean removed = memberParties.removeIf(mp -> mp.equals(partyMember));
+            boolean removed = partyMembers.removeIf(mp -> mp.equals(partyMember));
         //}
     }
 
@@ -130,5 +130,9 @@ public class Party {
     public Long removeChatSession(ChatSession chatSession) {
         chatSessions.remove(chatSession);
         return id;
+    }
+
+    public Integer countPartyMemberNumber() {
+        return partyMembers.size();
     }
 }

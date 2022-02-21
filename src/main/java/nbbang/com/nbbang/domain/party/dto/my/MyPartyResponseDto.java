@@ -31,7 +31,7 @@ public class MyPartyResponseDto{
                 .title(party.getTitle())
                 .createTime(party.getCreateTime())
                 .goalNumber(party.getGoalNumber())
-                .joinNumber(party.getMemberParties().size() + 1)
+                .joinNumber(party.getPartyMembers().size() + 1)
                 .status(party.getStatus()!=null?party.getStatus().toString():null)
                 .hashtags(party.getHashtagContents())
                 .isOwner(memberId == party.getOwner().getId())

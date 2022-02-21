@@ -125,8 +125,8 @@ public class ChatService {
         if (party.getOwner().getId() == memberId) {
             isMember = true;
         }
-        if (party.getMemberParties() != null) {
-            for (PartyMember mp : party.getMemberParties()) {
+        if (party.getPartyMembers() != null) {
+            for (PartyMember mp : party.getPartyMembers()) {
                 if (mp.getMember().getId() == memberId) {
                     isMember = true;
                 }

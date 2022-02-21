@@ -113,4 +113,9 @@ public class PartyService {
         System.out.println("PartyService.updateActiveNumber");
     }
 
+    public Integer countPartyMemberNumber(Long partyId) {
+        Party party = findById(partyId);
+        Integer partyMemberNumber = party.countPartyMemberNumber();
+        return partyMemberNumber;
+    }
 }

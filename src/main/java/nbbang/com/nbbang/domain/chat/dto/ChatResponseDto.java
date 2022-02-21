@@ -5,12 +5,9 @@ import lombok.Data;
 import nbbang.com.nbbang.domain.chat.domain.Message;
 import nbbang.com.nbbang.domain.chat.dto.message.ChatSendResponseDto;
 import nbbang.com.nbbang.domain.member.dto.MemberResponseDto;
-import nbbang.com.nbbang.domain.member.dto.MemberResponseDto;
 import nbbang.com.nbbang.domain.party.domain.Party;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,12 +29,11 @@ public class ChatResponseDto {
                 .title(party.getTitle())
                 .createTime(party.getCreateTime())
                 .owner(MemberResponseDto.createByEntity(party.getOwner()))
-                .members(party.getMemberParties().stream().map(m -> MemberResponseDto.createByEntity(m.getMember())).collect(Collectors.toList()))
+                .members(party.getPartyMembers().stream().map(m -> MemberResponseDto.createByEntity(m.getMember())).collect(Collectors.toList()))
                 .goalNumber(party.getGoalNumber())
-                .joinNumber(party.getMemberParties().size())
+                .joinNumber(party.getPartyMembers().size())
                 .status(party.getStatus().toString())
-                .messages(messages.stream().map(ChatSendResponseDto::createByMessage).collect(Collectors.toList()))
+                .messages(messages.stream().map(message->ChatSendResponseDto.createByMessage(message, party.countPartyMemberNumber())).collect(Collectors.toList()))
                 .build();
     }
-
 }

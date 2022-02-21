@@ -36,8 +36,9 @@ public class MessageService {
         Party party = partyService.findById(partyId);
         Member sender = memberService.findById(senderId);
         Long orderInChat = countByPartyId(partyId);
-        Message message = Message.builder().readNumber(0).content(content).type(MessageType.CHAT).
-                party(party).sender(sender).orderInChat(orderInChat).build();
+        Integer readNumber = party.getActiveNumber();
+        Message message = Message.builder().readNumber(0).content(content).type(MessageType.CHAT).readNumber(readNumber)
+                .party(party).sender(sender).build();
         Message savedMessage = messageRepository.save(message);
         return savedMessage.getId();
     }
