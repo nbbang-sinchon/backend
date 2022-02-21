@@ -33,7 +33,7 @@ public class ChatSendResponseDto {
                 .content(message.getContent())
                 .sender(message.getSender()!=null?
                         ChatSendResponseSenderDto.builder().id(message.getSender().getId())
-                                .nickName(message.getSender().getNickname()).build() :null)
+                                .nickname(message.getSender().getNickname()).build() :null)
                 .build();
     }
 
