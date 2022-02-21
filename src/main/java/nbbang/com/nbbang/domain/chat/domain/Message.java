@@ -40,6 +40,8 @@ public class Message {
     @JoinColumn(name = "member_id")
     private Member sender;
 
+    private Long orderInChat;
+
     protected Message() {}
 
     public static Message createMessage(Member member, Party party, String content, LocalDateTime createTime) {

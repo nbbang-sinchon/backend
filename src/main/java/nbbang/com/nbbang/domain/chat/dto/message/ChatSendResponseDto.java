@@ -17,8 +17,9 @@ public class ChatSendResponseDto {
     private Long id;
     private LocalDateTime createTime;
     private Integer readNumber;
-    private String content;
     private Boolean isPicture;
+    private String content;
+    private Long orderInChat;
     private ChatSendResponseSenderDto sender;
 
     public static ChatSendResponseDto createByMessage(Message message) {
@@ -26,8 +27,9 @@ public class ChatSendResponseDto {
                 .id(message.getId())
                 .createTime(message.getCreateTime())
                 .readNumber(message.getReadNumber())
-                .content(message.getContent())
                 .isPicture(message.getIsPicture())
+                .content(message.getContent())
+                .orderInChat(message.getOrderInChat())
                 .sender(message.getSender()!=null?
                         ChatSendResponseSenderDto.builder().id(message.getSender().getId())
                                 .nickName(message.getSender().getNickname()).build() :null)

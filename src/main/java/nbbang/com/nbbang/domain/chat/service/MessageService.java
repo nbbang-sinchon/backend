@@ -30,11 +30,13 @@ public class MessageService {
     private final PartyService partyService;
     private final MemberService memberService;
 
+    @Transactional
     public Long send(Long partyId, Long senderId, String content) {
         Party party = partyService.findById(partyId);
         Member sender = memberService.findById(senderId);
+        Long orderInChat = countByPartyId(partyId);
         Message message = Message.builder().readNumber(0).content(content).isPicture(false).
-                party(party).sender(sender).build();
+                party(party).sender(sender).orderInChat(orderInChat).build();
         Message savedMessage = messageRepository.save(message);
         return savedMessage.getId();
     }
@@ -43,4 +45,8 @@ public class MessageService {
         return messageRepository.findById(id).orElseThrow(()->new NotFoundException(MESSAGE_NOT_FOUND));
     }
 
+    private Long countByPartyId(Long partyId){
+        Long count = messageRepository.countByPartyId(partyId);
+        return count;
+    }
 }

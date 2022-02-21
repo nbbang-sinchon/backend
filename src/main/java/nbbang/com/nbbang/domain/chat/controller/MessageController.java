@@ -19,27 +19,22 @@ import nbbang.com.nbbang.global.response.DefaultResponse;
 import nbbang.com.nbbang.global.response.StatusCode;
 import nbbang.com.nbbang.global.support.FileUpload.FileUploadService;
 import org.springframework.http.MediaType;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 
-
 @Tag(name = "Chat", description = "채팅 메시지 전송")
 @ApiResponses(value = {
-        //@ApiResponse(responseCode = "200", description = "OK",
-        //        content = @Content(mediaType = "application/json", schema = @Schema(implementation = PartyIdResponseDto.class))),
         @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(mediaType = "application/json")),
         @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(mediaType = "application/json"))
 })
-@Controller
 @Slf4j
-@RequestMapping("/chats/{party-id}")
 @RequiredArgsConstructor
+@RestController
+@RequestMapping("/chats/{party-id}")
 public class MessageController {
 
     private final MessageService messageService;
@@ -50,7 +45,6 @@ public class MessageController {
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ChatSendResponseDto.class)))
     @ApiResponse(responseCode = "403", description = "Not Party Member", content = @Content(mediaType = "application/json"))
     @PostMapping
-    @ResponseBody
     public DefaultResponse sendMessage(@PathVariable("party-id") Long partyId, @Valid @RequestBody ChatSendRequestDto chatSendRequestDto, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new CustomIllegalArgumentException(GlobalErrorResponseMessage.ILLEGAL_ARGUMENT_ERROR, bindingResult);
