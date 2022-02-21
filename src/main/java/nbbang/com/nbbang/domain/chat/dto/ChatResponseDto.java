@@ -3,6 +3,7 @@ package nbbang.com.nbbang.domain.chat.dto;
 import lombok.Builder;
 import lombok.Data;
 import nbbang.com.nbbang.domain.chat.domain.Message;
+import nbbang.com.nbbang.domain.chat.dto.message.ChatSendResponseDto;
 import nbbang.com.nbbang.domain.member.dto.MemberResponseDto;
 import nbbang.com.nbbang.domain.member.dto.MemberResponseDto;
 import nbbang.com.nbbang.domain.party.domain.Party;
@@ -22,8 +23,8 @@ public class ChatResponseDto {
     private Integer goalNumber;
     private String status;
     private MemberResponseDto owner;
-    private List<MemberResponseDto> participants;
-    private List<ChatMessageResponseDto> messages;
+    private List<MemberResponseDto> members;
+    private List<ChatSendResponseDto> messages;
 
     public static ChatResponseDto createByPartyAndMessagesEntity(Party party, List<Message> messages) {
         return ChatResponseDto.builder()
@@ -31,25 +32,12 @@ public class ChatResponseDto {
                 .title(party.getTitle())
                 .createTime(party.getCreateTime())
                 .owner(MemberResponseDto.createByEntity(party.getOwner()))
-                .participants(party.getMemberParties().stream().map(m -> MemberResponseDto.createByEntity(m.getMember())).collect(Collectors.toList()))
+                .members(party.getMemberParties().stream().map(m -> MemberResponseDto.createByEntity(m.getMember())).collect(Collectors.toList()))
                 .goalNumber(party.getGoalNumber())
                 .joinNumber(party.getMemberParties().size())
                 .status(party.getStatus().toString())
-                .messages(messages.stream().map(ChatMessageResponseDto::createByEntity).collect(Collectors.toList()))
+                .messages(messages.stream().map(ChatSendResponseDto::createByMessage).collect(Collectors.toList()))
                 .build();
     }
 
-    public static ChatResponseDto createMock() {
-        ChatResponseDto dto = ChatResponseDto.builder()
-                .title("뿌링클 오늘 7시")
-                .status("모집 중")
-                .joinNumber(3)
-                .goalNumber(4)
-                .owner(MemberResponseDto.createLuffy())
-                .participants(Arrays.asList(MemberResponseDto.createKorung(), MemberResponseDto.createHyungKyung()))
-                .createTime(LocalDateTime.of(2022, 02, 12, 12, 40))
-                //.chatMessages(Arrays.asList(ChatMessageResponseDto.createMock1(), ChatMessageResponseDto.createMock2()))
-                .build();
-        return dto;
-    }
 }

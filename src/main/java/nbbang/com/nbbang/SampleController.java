@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 //@RestController
 public class SampleController {
 
-    @Operation(summary = "샘플 조회", description = "id 를 이용하여 샘플을 조회합니다.")
+    @Operation(summary = "샘플 조회.", description = "id 를 이용하여 샘플을 조회합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "샘플 조회 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = SampleDto.class))),
             @ApiResponse(responseCode = "400", description = "샘플 조회 실패", content = @Content(mediaType = "application/json"))
