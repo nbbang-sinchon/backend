@@ -169,7 +169,6 @@ public class MockDataCreator implements CommandLineRunner {
                 .place(Place.SINCHON)
                 .deliveryFee(300)
                 .status(PartyStatus.OPEN)
-                .isBlocked(false)
                 .build();
         partyRepository.save(party);
         party1Id = party.getId();
@@ -193,7 +192,6 @@ public class MockDataCreator implements CommandLineRunner {
                 .place(Place.YEONHUI)
                 .deliveryFee(300)
                 .status(PartyStatus.FULL)
-                .isBlocked(false)
                 .build();
         partyRepository.save(party);
         party2Id = party.getId();
@@ -218,7 +216,6 @@ public class MockDataCreator implements CommandLineRunner {
                 .place(Place.CHANGCHEON)
                 .deliveryFee(300)
                 .status(PartyStatus.CLOSED)
-                .isBlocked(false)
                 .build();
         partyRepository.save(party);
         party3Id = party.getId();
@@ -243,7 +240,6 @@ public class MockDataCreator implements CommandLineRunner {
                 .place(Place.YEONHUI)
                 .deliveryFee(300)
                 .status(PartyStatus.OPEN)
-                .isBlocked(false)
                 .build();
 
         partyRepository.save(party);
@@ -270,7 +266,6 @@ public class MockDataCreator implements CommandLineRunner {
                 .place(Place.CHANGCHEON)
                 .deliveryFee(300)
                 .status(PartyStatus.FULL)
-                .isBlocked(false)
                 .build();
 
         partyRepository.save(party);
@@ -294,7 +289,6 @@ public class MockDataCreator implements CommandLineRunner {
                 .place(Place.CHANGCHEON)
                 .deliveryFee(300)
                 .status(PartyStatus.CLOSED)
-                .isBlocked(false)
                 .build();
 
         partyRepository.save(party);
@@ -318,7 +312,6 @@ public class MockDataCreator implements CommandLineRunner {
                 .place(Place.CHANGCHEON)
                 .deliveryFee(300)
                 .status(PartyStatus.OPEN)
-                .isBlocked(false)
                 .build();
 
         partyRepository.save(party);

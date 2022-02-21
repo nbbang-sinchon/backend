@@ -31,10 +31,10 @@ class ManyPartyServiceTest {
         Member memberA = Member.builder().nickname("memberA").build();
         memberRepository.save(memberA);
         for (int i = 0; i < 20; i++) {
-            Party party = Party.builder().owner(memberA).goalNumber(10).isBlocked(false).status(PartyStatus.OPEN).title("party " + i).build();
+            Party party = Party.builder().owner(memberA).goalNumber(10).status(PartyStatus.OPEN).title("party " + i).build();
             partyRepository.save(party);
         }
-        Party saveLastParty = Party.builder().owner(memberA).goalNumber(10).isBlocked(false).status(PartyStatus.OPEN).title("last party").build();
+        Party saveLastParty = Party.builder().owner(memberA).goalNumber(10).status(PartyStatus.OPEN).title("last party").build();
         partyRepository.save(saveLastParty);
         // when
         Party findLastParty = manyPartyService.findLastParty();
@@ -48,13 +48,13 @@ class ManyPartyServiceTest {
         Member memberA = Member.builder().nickname("memberA").build();
         memberRepository.save(memberA);
         for (int i = 0; i < 20; i++) {
-            Party party = Party.builder().owner(memberA).goalNumber(10).isBlocked(false).status(PartyStatus.OPEN).title("party " + i).build();
+            Party party = Party.builder().owner(memberA).goalNumber(10).status(PartyStatus.OPEN).title("party " + i).build();
             partyRepository.save(party);
         }
-        Party saveCursorParty = Party.builder().owner(memberA).goalNumber(10).isBlocked(false).status(PartyStatus.OPEN).title("target").build();
+        Party saveCursorParty = Party.builder().owner(memberA).goalNumber(10).status(PartyStatus.OPEN).title("target").build();
         partyRepository.save(saveCursorParty);
         for (int i = 21; i < 40; i++) {
-            Party party = Party.builder().owner(memberA).goalNumber(10).isBlocked(false).status(PartyStatus.OPEN).title("party " + i).build();
+            Party party = Party.builder().owner(memberA).goalNumber(10).status(PartyStatus.OPEN).title("party " + i).build();
             partyRepository.save(party);
         }
         // when
@@ -70,15 +70,15 @@ class ManyPartyServiceTest {
         Member memberA = Member.builder().nickname("memberA").build();
         memberRepository.save(memberA);
         for (int i = 0; i < 20; i++) {
-            Party party = Party.builder().owner(memberA).goalNumber(10).isBlocked(false).status(PartyStatus.OPEN).title(filterText + i).build();
+            Party party = Party.builder().owner(memberA).goalNumber(10).status(PartyStatus.OPEN).title(filterText + i).build();
             partyRepository.save(party);
         }
 
         for (int i = 21; i < 40; i++) {
-            Party party = Party.builder().owner(memberA).goalNumber(10).isBlocked(false).status(PartyStatus.OPEN).title("ppurinkle " + i).build();
+            Party party = Party.builder().owner(memberA).goalNumber(10).status(PartyStatus.OPEN).title("ppurinkle " + i).build();
             partyRepository.save(party);
         }
-        Party cursor = Party.builder().owner(memberA).goalNumber(10).isBlocked(false).status(PartyStatus.OPEN).title("target").build();
+        Party cursor = Party.builder().owner(memberA).goalNumber(10).status(PartyStatus.OPEN).title("target").build();
         partyRepository.save(cursor);
         // when
         Page<Party> findPartyList = manyPartyService.findAllByCursoredFilterDto(PageRequest.of(0, 10), PartyFindRequestFilterDto.createRequestFilterDto(filterText), cursor.getId());

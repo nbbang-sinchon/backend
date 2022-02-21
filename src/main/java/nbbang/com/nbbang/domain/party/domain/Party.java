@@ -57,8 +57,6 @@ public class Party {
     @JoinColumn(name = "member_id")
     private Member owner;
 
-    private Boolean isBlocked;
-
     @Builder.Default // https://www.inflearn.com/questions/151658
     @OneToMany(mappedBy = "party", cascade = CascadeType.ALL)
     private List<PartyHashtag> partyHashtags = new ArrayList<>();

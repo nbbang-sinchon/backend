@@ -32,10 +32,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 
-@Tag(name = "party", description = "단일 파티 CRUD")
+@Tag(name = "Party", description = "단일 파티 생성, 수정, 조회를 지원합니다. ")
 @ApiResponses(value = {
-        //@ApiResponse(responseCode = "200", description = "OK",
-        //        content = @Content(mediaType = "application/json", schema = @Schema(implementation = PartyIdResponseDto.class))),
         @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(mediaType = "application/json")),
         @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(mediaType = "application/json"))
 })

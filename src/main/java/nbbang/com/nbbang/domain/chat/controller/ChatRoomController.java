@@ -27,7 +27,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@Tag(name = "ChatRoom", description = "채팅방 api, 채팅 기능은 미구현입니다. (로그인 구현시 올바른 토큰을 보내지 않을 경우 401 Unauthorized 메시지를 받습니다.).")
+@Tag(name = "ChatRoom", description = "채팅방 api(로그인 구현시 올바른 토큰을 보내지 않을 경우 401 Unauthorized 메시지를 받습니다.).")
 @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(mediaType = "application/json"))
 @Slf4j
 @RestController
@@ -40,7 +40,6 @@ public class ChatRoomController {
     private final PartyService partyService;
     private final PartyRepository partyRepository;
     private Long memberId = 1L; // 로그인 기능 구현시 삭제 예정
-
 
     @Operation(summary = "채팅방 조회", description = "채팅방을 파티 id 로 조회합니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ChatResponseDto.class)))

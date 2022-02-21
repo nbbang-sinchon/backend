@@ -30,8 +30,6 @@ public class Message {
     @Column(columnDefinition = "TEXT")
     private String content;
 
-    private Boolean isPicture;
-
     @ManyToOne
     @JoinColumn(name = "party_id")
     private Party party;
@@ -41,6 +39,9 @@ public class Message {
     private Member sender;
 
     private Long orderInChat;
+
+    @Enumerated(value = EnumType.STRING)
+    private MessageType type;
 
     protected Message() {}
 
