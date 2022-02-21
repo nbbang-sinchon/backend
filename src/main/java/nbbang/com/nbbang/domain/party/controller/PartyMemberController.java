@@ -3,6 +3,7 @@ package nbbang.com.nbbang.domain.party.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.domain.member.domain.Member;
@@ -18,6 +19,7 @@ import nbbang.com.nbbang.global.response.StatusCode;
 import org.springframework.web.bind.annotation.*;
 
 
+@Tag(name = "PartyMember", description = "파티 참여/탈퇴")
 @Slf4j
 @RestController
 @RequestMapping("/parties")
