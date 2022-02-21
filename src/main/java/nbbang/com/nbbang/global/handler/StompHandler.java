@@ -1,9 +1,10 @@
-/*
-package nbbang.com.nbbang.domain.chat.handler;
+
+package nbbang.com.nbbang.global.handler;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.domain.chat.service.ChatService;
+import nbbang.com.nbbang.domain.party.service.PartyService;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.stomp.StompCommand;
@@ -11,6 +12,9 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.stereotype.Component;
 
+import javax.print.DocFlavor;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 // https://daddyprogrammer.org/post/5290/spring-websocket-chatting-server-enter-qut-event-view-user-count/
@@ -22,6 +26,7 @@ public class StompHandler implements ChannelInterceptor {
 
     // private final ChatRoomRepository chatRoomRepository;
     private final ChatService chatService;
+    private final PartyService partyService;
 
     // websocket을 통해 들어온 요청이 처리 되기전 실행된다.
     @Override
@@ -34,30 +39,21 @@ public class StompHandler implements ChannelInterceptor {
             // jwtTokenProvider.validateToken(jwtToken);
         } else if (StompCommand.SUBSCRIBE == accessor.getCommand()) { // 채팅룸 구독요청
             // header정보에서 구독 destination정보를 얻고, roomId를 추출한다.
-            String roomId = chatService.getRoomId(Optional.ofNullable((String) message.getHeaders().get("simpDestination")).orElse("InvalidRoomId"));
-            // 채팅방에 들어온 클라이언트 sessionId를 roomId와 맵핑해 놓는다.(나중에 특정 세션이 어떤 채팅방에 들어가 있는지 알기 위함)
-            String sessionId = (String) message.getHeaders().get("simpSessionId");
-            chatRoomRepository.setUserEnterInfo(sessionId, roomId);
-            // 채팅방의 인원수를 +1한다.
-            chatRoomRepository.plusUserCount(roomId);
-            // 클라이언트 입장 메시지를 채팅방에 발송한다.(redis publish)
-            String name = Optional.ofNullable((Principal) message.getHeaders().get("simpUser")).map(Principal::getName).orElse("UnknownUser");
-            chatService.sendChatMessage(ChatMessage.builder().type(ChatMessage.MessageType.ENTER).roomId(roomId).sender(name).build());
-            log.info("SUBSCRIBED {}, {}", name, roomId);
+
+            System.out.println("CONNECT message = " + message);
+            Map<String, List<String>> nativeHeaders = (Map) message.getHeaders().get("nativeHeaders");
+            String destination = ((nativeHeaders.get("destination")).get(0)).substring(7);
+            Long roomId = Long.valueOf(destination).longValue();
+            partyService.updateActiveNumber(roomId, 1);
+            log.info("SUBSCRIBED RoomId{}", roomId);
         } else if (StompCommand.DISCONNECT == accessor.getCommand()) { // Websocket 연결 종료
-            // 연결이 종료된 클라이언트 sesssionId로 채팅방 id를 얻는다.
-            String sessionId = (String) message.getHeaders().get("simpSessionId");
-            String roomId = chatRoomRepository.getUserEnterRoomId(sessionId);
-            // 채팅방의 인원수를 -1한다.
-            chatRoomRepository.minusUserCount(roomId);
-            // 클라이언트 퇴장 메시지를 채팅방에 발송한다.(redis publish)
-            String name = Optional.ofNullable((Principal) message.getHeaders().get("simpUser")).map(Principal::getName).orElse("UnknownUser");
-            chatService.sendChatMessage(ChatMessage.builder().type(ChatMessage.MessageType.QUIT).roomId(roomId).sender(name).build());
-            // 퇴장한 클라이언트의 roomId 맵핑 정보를 삭제한다.
-            chatRoomRepository.removeUserEnterInfo(sessionId);
-            log.info("DISCONNECTED {}, {}", sessionId, roomId);
+/*            System.out.println("DISCONNECT message = " + message);
+            Map<String, List<String>> nativeHeaders = (Map) message.getHeaders().get("nativeHeaders");
+            String destination = ((nativeHeaders.get("destination")).get(0)).substring(7);
+            Long roomId = Long.valueOf(destination).longValue();
+            partyService.updateActiveNumber(roomId, -1);
+            log.info("DISCONNECTED RoomId {}", roomId);*/
         }
         return message;
     }
 }
-*/

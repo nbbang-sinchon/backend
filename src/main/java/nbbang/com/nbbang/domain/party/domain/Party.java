@@ -53,6 +53,8 @@ public class Party {
 
     private Integer deliveryFee;
 
+    private Integer activeNumber=0;
+
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "member_id")
     private Member owner;
@@ -113,6 +115,10 @@ public class Party {
         partyUpdateServiceDto.getContent().ifPresent(content->this.content=content);
         partyUpdateServiceDto.getPlace().ifPresent(place->this.place=place);
         partyUpdateServiceDto.getGoalNumber().ifPresent(goalNumber->this.goalNumber=goalNumber);
+    }
+
+    public void updateActiveNumber(Integer updateNumbder){
+        activeNumber +=updateNumbder;
     }
 
 }
