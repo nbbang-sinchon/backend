@@ -26,7 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 
-@Tag(name = "Chat", description = "채팅 메시지 전송")
+@Tag(name = "Chat", description = "채팅 메시지를 전송합니다. ")
 @ApiResponses(value = {
         @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(mediaType = "application/json")),
         @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(mediaType = "application/json"))

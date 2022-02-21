@@ -1,4 +1,4 @@
-package nbbang.com.nbbang.domain.chat.handler;
+package nbbang.com.nbbang.global.handler;
 // https://www.youtube.com/watch?v=gQyRxPjssWg
 
 

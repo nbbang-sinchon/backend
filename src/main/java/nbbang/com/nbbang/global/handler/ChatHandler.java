@@ -1,4 +1,4 @@
-package nbbang.com.nbbang.domain.chat.handler;
+package nbbang.com.nbbang.global.handler;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

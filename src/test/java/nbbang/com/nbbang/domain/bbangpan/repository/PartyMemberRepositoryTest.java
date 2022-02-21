@@ -29,7 +29,7 @@ class PartyMemberRepositoryTest {
         // given
         Member member = Member.builder().nickname("member").build();
         memberRepository.save(member);
-        Party party = Party.builder().owner(member).goalNumber(10).isBlocked(false).status(PartyStatus.OPEN).title("party").build();
+        Party party = Party.builder().owner(member).goalNumber(10).status(PartyStatus.OPEN).title("party").build();
         partyRepository.save(party);
         PartyMember savePartyMember = PartyMember.createMemberParty(member, party);
         memberPartyRepository.save(savePartyMember);

@@ -1,8 +1,8 @@
 package nbbang.com.nbbang.global.config;
 
 import lombok.RequiredArgsConstructor;
-import nbbang.com.nbbang.domain.chat.handler.ChatHandler;
-import nbbang.com.nbbang.domain.chat.handler.ReplyEchoHandler;
+import nbbang.com.nbbang.global.handler.ChatHandler;
+import nbbang.com.nbbang.global.handler.ReplyEchoHandler;
 import org.springframework.context.annotation.Configuration;
 //import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 //import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
