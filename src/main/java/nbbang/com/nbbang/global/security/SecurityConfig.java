@@ -18,40 +18,30 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        /*http.csrf().disable()
-                .headers().frameOptions().disable()
-                .and()
-                .authorizeRequests()
-                .antMatchers("/parties/**").hasRole(Role.USER.name())
-                .antMatchers(HttpMethod.GET, "/parties").permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .logout().logoutUrl("/members/logout")
-                .and()
-                .oauth2Login()
-                .userInfoEndpoint()
-                .userService(customOAuth2UserService);*/
-        http.csrf().disable()
-                .headers().frameOptions().disable()
-                .and()
-                .authorizeRequests()
-                .antMatchers(HttpMethod.GET, "/parties").permitAll()
-                .antMatchers("/login/oauth2/code/google").permitAll()
-                .antMatchers("/swagger-ui/**").permitAll()
-                .antMatchers("/**").permitAll()
-                .anyRequest().authenticated()
 
+        http.csrf().disable()
+                .cors()
                 .and()
-                .httpBasic().disable().cors()
+                .headers().frameOptions().disable()
                 .and()
+
+                /*.authorizeRequests()
+                //.antMatchers(HttpMethod.GET, "/parties").permitAll()
+                //.antMatchers("/login/oauth2/code/google").permitAll()
+                //.antMatchers("/swagger-ui/**").permitAll()
+                .antMatchers("/**").permitAll()
+                .antMatchers("/*").permitAll()
+                .anyRequest().authenticated()
+                .and()*/
+
                 .logout().logoutUrl("/members/logout");
 
     }
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        //configuration.addAllowedOrigin("*");
         configuration.addAllowedOriginPattern("*");
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");

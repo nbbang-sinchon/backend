@@ -22,7 +22,7 @@ public class ChatResponseDto {
     private Integer goalNumber;
     private String status;
     private MemberResponseDto owner;
-    private List<MemberResponseDto> participants;
+    private List<MemberResponseDto> members;
     private List<ChatMessageResponseDto> messages;
 
     public static ChatResponseDto createByPartyAndMessagesEntity(Party party, List<Message> messages) {
@@ -31,7 +31,7 @@ public class ChatResponseDto {
                 .title(party.getTitle())
                 .createTime(party.getCreateTime())
                 .owner(MemberResponseDto.createByEntity(party.getOwner()))
-                .participants(party.getMemberParties().stream().map(m -> MemberResponseDto.createByEntity(m.getMember())).collect(Collectors.toList()))
+                .members(party.getMemberParties().stream().map(m -> MemberResponseDto.createByEntity(m.getMember())).collect(Collectors.toList()))
                 .goalNumber(party.getGoalNumber())
                 .joinNumber(party.getMemberParties().size())
                 .status(party.getStatus().toString())
@@ -39,17 +39,4 @@ public class ChatResponseDto {
                 .build();
     }
 
-    public static ChatResponseDto createMock() {
-        ChatResponseDto dto = ChatResponseDto.builder()
-                .title("뿌링클 오늘 7시")
-                .status("모집 중")
-                .joinNumber(3)
-                .goalNumber(4)
-                .owner(MemberResponseDto.createLuffy())
-                .participants(Arrays.asList(MemberResponseDto.createKorung(), MemberResponseDto.createHyungKyung()))
-                .createTime(LocalDateTime.of(2022, 02, 12, 12, 40))
-                //.chatMessages(Arrays.asList(ChatMessageResponseDto.createMock1(), ChatMessageResponseDto.createMock2()))
-                .build();
-        return dto;
-    }
 }

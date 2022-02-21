@@ -13,11 +13,6 @@ public class ChatMessageListResponseDto {
     List<ChatMessageResponseDto> messages;
 
     public static ChatMessageListResponseDto createByEntity(List<Message> messages) {
-        /*ChatMessageListResponseDtoBuilder dto = ChatMessageListResponseDto.builder();
-        dto.messages(messages.stream()
-                .map(m -> ChatMessageResponseDto.createByEntity(m))
-                .collect(Collectors.toList()));
-        return dto.build();*/
         return ChatMessageListResponseDto.builder()
                 .messages(messages.stream()
                         .map(ChatMessageResponseDto::createByEntity)
