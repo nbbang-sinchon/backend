@@ -15,6 +15,7 @@ import nbbang.com.nbbang.domain.party.repository.PartyHashtagRepository;
 import nbbang.com.nbbang.domain.party.repository.PartyRepository;
 import nbbang.com.nbbang.domain.party.service.HashtagService;
 import nbbang.com.nbbang.domain.party.service.PartyService;
+import nbbang.com.nbbang.global.security.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
@@ -84,6 +85,8 @@ public class MockDataCreator implements CommandLineRunner {
                 .nickname("루피")
                 .avatar("https://w.namu.la/s/bbff81cb4fd4d3f97d245a28a360b5cb665745b2cb434287f9cbd3423978919ce5377ef034f150277564c1798660ae95825fe2bfda50baa970f97d999a81c31401c0eb130e3bae0f9e1a2d3aea2a10769e564b0fbce08a8f23360382fd6e5425")
                 .place(Place.SINCHON)
+                .email("test1eqjklasdj@gamil.com")
+                .role(Role.BLOCKED)
                 .build();
         memberRepository.save(luffy);
         luffyId = luffy.getId();
@@ -92,6 +95,8 @@ public class MockDataCreator implements CommandLineRunner {
                 .nickname("코렁")
                 .avatar("https://w.namu.la/s/bc75175b063a43a123523fba625ed9d185f6a180a3c1e9ae9409db0c110266e4f69e7aa434253687819b7dd5b36cccf4bd508977f6f76e3b9353db545d75168bfde624ca06dbf51818304d0bddc8c11cd1bdea60c7fb56113091172d05dd2dd5")
                 .place(Place.YEONHUI)
+                .email("test2fjasdiofj@gamil.com")
+                .role(Role.USER)
                 .build();
         memberRepository.save(korung);
         korungId = korung.getId();
@@ -99,6 +104,8 @@ public class MockDataCreator implements CommandLineRunner {
         Member mock1 = Member.builder()
                 .nickname("철수")
                 .place(Place.CHANGCHEON)
+                .email("test3djsiaoljdlask@gamil.com")
+                .role(Role.USER)
                 .build();
         memberRepository.save(mock1);
         mock1Id = mock1.getId();
@@ -106,6 +113,8 @@ public class MockDataCreator implements CommandLineRunner {
         Member mock2 = Member.builder()
                 .nickname("고영희")
                 .place(Place.SINCHON)
+                .email("test4qejioasjd@gamil.com")
+                .role(Role.USER)
                 .build();
         memberRepository.save(mock2);
         mock2Id = mock2.getId();
@@ -113,6 +122,8 @@ public class MockDataCreator implements CommandLineRunner {
         Member mock3 = Member.builder()
                 .nickname("철수2")
                 .place(Place.YEONHUI)
+                .email("test5pqwoieopasdj@gamil.com")
+                .role(Role.USER)
                 .build();
         memberRepository.save(mock3);
         mock3Id = mock3.getId();
@@ -120,6 +131,8 @@ public class MockDataCreator implements CommandLineRunner {
         Member mock4 = Member.builder()
                 .nickname("잼민")
                 .place(Place.CHANGCHEON)
+                .email("test6dsaildjuoisa@gamil.com")
+                .role(Role.USER)
                 .build();
         memberRepository.save(mock4);
         mock4Id = mock4.getId();

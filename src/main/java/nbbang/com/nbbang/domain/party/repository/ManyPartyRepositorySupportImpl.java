@@ -4,7 +4,7 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import nbbang.com.nbbang.domain.bbangpan.domain.QMemberParty;
+import nbbang.com.nbbang.domain.bbangpan.domain.QPartyMember;
 import nbbang.com.nbbang.domain.member.dto.Place;
 import nbbang.com.nbbang.domain.party.domain.*;
 import nbbang.com.nbbang.domain.party.dto.many.PartyFindRequestFilterDto;
@@ -143,7 +143,7 @@ public class ManyPartyRepositorySupportImpl implements ManyPartyRepositorySuppor
 
     private BooleanBuilder isMemberOfParty(Long memberId) {
         QParty party = QParty.party;
-        QMemberParty mp = QMemberParty.memberParty;
+        QPartyMember mp = QPartyMember.partyMember;
         BooleanBuilder builder = new BooleanBuilder();
         builder.or(party.owner.id.eq(memberId));
         builder.or(party.memberParties.any().member.id.eq(memberId));

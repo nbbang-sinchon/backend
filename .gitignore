@@ -38,3 +38,4 @@ out/
 
 ### Customize
 src/test/java/nbbang/com/nbbang/mytest
+application-oauth.properties
