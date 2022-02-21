@@ -22,7 +22,7 @@ import static org.assertj.core.api.Assertions.*;
 @SpringBootTest
 @Transactional
 // @Rollback(false)
-class OnePartyServiceTest {
+class SinglePartyServiceTest {
 
     @Autowired PartyService partyService;
     @Autowired PartyRepository partyRepository;
@@ -70,7 +70,6 @@ class OnePartyServiceTest {
         assertThat(updatedParty.getHashtagContents()).contains("old1", "new1");
     }
 
-
     @Test
     void findNearAndSimilar() {
         Party party = Party.builder().title("tempParty").place(SINCHON).goalNumber(3).build();
@@ -84,5 +83,4 @@ class OnePartyServiceTest {
         findParties.stream().forEach(findParty->assertThat(findParty.getStatus()).isEqualTo(PartyStatus.OPEN));
 
     }
-    // run - debug run all in test Ctrl+Shift+F10
 }
