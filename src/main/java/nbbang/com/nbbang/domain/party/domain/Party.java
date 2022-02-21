@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import nbbang.com.nbbang.domain.bbangpan.domain.PartyMember;
+import nbbang.com.nbbang.domain.chat.domain.ChatSession;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.dto.Place;
 import nbbang.com.nbbang.domain.party.dto.single.PartyUpdateServiceDto;
@@ -67,6 +68,11 @@ public class Party {
     @OneToMany(mappedBy = "party")
     private List<PartyMember> memberParties = new ArrayList<>();
 
+    @Builder.Default
+    @OneToMany(mappedBy = "party")
+    private List<ChatSession> chatSessions = new ArrayList<>();
+
+
     protected Party() {}
 
     public void addPartyHashtag(PartyHashtag partyHashtag){
@@ -121,4 +127,8 @@ public class Party {
         activeNumber +=updateNumbder;
     }
 
+    public Long removeChatSession(ChatSession chatSession) {
+        chatSessions.remove(chatSession);
+        return id;
+    }
 }
