@@ -43,8 +43,8 @@ class PartyServiceTest {
         partyMemberService.joinParty(partyA, memberB);
         partyMemberService.joinParty(partyA, memberC);
         // then
-        assertThat(partyA.getMemberParties().size()).isEqualTo(2);
-        assertThat(partyA.getMemberParties().get(0).getMember().equals(memberB));
+        assertThat(partyA.getPartyMembers().size()).isEqualTo(2);
+        assertThat(partyA.getPartyMembers().get(0).getMember().equals(memberB));
     }
 
     @Test
@@ -123,6 +123,6 @@ class PartyServiceTest {
         partyMemberService.joinParty(partyA, memberB);
         // then
         partyMemberService.exitParty(partyA, memberB);
-        assertThat(partyA.getMemberParties().size()).isEqualTo(0);
+        assertThat(partyA.getPartyMembers().size()).isEqualTo(0);
     }
 }

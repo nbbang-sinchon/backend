@@ -146,7 +146,7 @@ public class ManyPartyRepositorySupportImpl implements ManyPartyRepositorySuppor
         QPartyMember mp = QPartyMember.partyMember;
         BooleanBuilder builder = new BooleanBuilder();
         builder.or(party.owner.id.eq(memberId));
-        builder.or(party.memberParties.any().member.id.eq(memberId));
+        builder.or(party.partyMembers.any().member.id.eq(memberId));
         return builder;
     }
 

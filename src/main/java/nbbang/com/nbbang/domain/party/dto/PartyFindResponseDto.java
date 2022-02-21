@@ -6,11 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import nbbang.com.nbbang.domain.party.domain.Party;
 
-import javax.servlet.http.Part;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Data @Builder
 @NoArgsConstructor
@@ -31,7 +28,7 @@ public class PartyFindResponseDto{
                 .title(party.getTitle())
                 .createTime(party.getCreateTime())
                 .goalNumber(party.getGoalNumber())
-                .joinNumber(party.getMemberParties().size() + 1)
+                .joinNumber(party.getPartyMembers().size() + 1)
                 .status(party.getStatus()!=null?party.getStatus().toString():null)
                 .hashtags(party.getHashtagContents())
                 .place(party.getPlace().toString())

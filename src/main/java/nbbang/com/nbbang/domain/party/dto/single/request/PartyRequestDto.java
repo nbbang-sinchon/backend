@@ -37,6 +37,7 @@ public class PartyRequestDto {
                 .content(this.content)
                 .place(Place.valueOf(place.toUpperCase()))
                 .goalNumber(this.goalNumber)
+                .activeNumber(0)
                 .build();
         return party;
     }

@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import nbbang.com.nbbang.domain.bbangpan.domain.PartyMember;
+import nbbang.com.nbbang.domain.chat.domain.ChatSession;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.dto.Place;
 import nbbang.com.nbbang.domain.party.dto.single.PartyUpdateServiceDto;
@@ -53,6 +54,8 @@ public class Party {
 
     private Integer deliveryFee;
 
+    private Integer activeNumber=0;
+
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "member_id")
     private Member owner;
@@ -63,7 +66,12 @@ public class Party {
 
     @Builder.Default
     @OneToMany(mappedBy = "party")
-    private List<PartyMember> memberParties = new ArrayList<>();
+    private List<PartyMember> partyMembers = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "party")
+    private List<ChatSession> chatSessions = new ArrayList<>();
+
 
     protected Party() {}
 
@@ -87,7 +95,7 @@ public class Party {
     }
 
     public void addMemberParty(PartyMember partyMember) {
-        this.getMemberParties().add(partyMember);
+        this.getPartyMembers().add(partyMember);
     }
 
     public void exitMemberParty(PartyMember partyMember) {
@@ -95,7 +103,7 @@ public class Party {
         //    isBlocked = true;
         //    status = PartyStatus.CLOSED;
         //} else {
-            boolean removed = memberParties.removeIf(mp -> mp.equals(partyMember));
+            boolean removed = partyMembers.removeIf(mp -> mp.equals(partyMember));
         //}
     }
 
@@ -115,4 +123,16 @@ public class Party {
         partyUpdateServiceDto.getGoalNumber().ifPresent(goalNumber->this.goalNumber=goalNumber);
     }
 
+    public void updateActiveNumber(Integer updateNumbder){
+        activeNumber +=updateNumbder;
+    }
+
+    public Long removeChatSession(ChatSession chatSession) {
+        chatSessions.remove(chatSession);
+        return id;
+    }
+
+    public Integer countPartyMemberNumber() {
+        return partyMembers.size();
+    }
 }

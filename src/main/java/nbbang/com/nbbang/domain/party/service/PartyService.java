@@ -99,11 +99,23 @@ public class PartyService {
         PartyHashtag.createPartyHashtags(party, hashtags);
     }
 
-    private void removeHashtag(Long partyId, String content) {
+    public void removeHashtag(Long partyId, String content) {
         Party party = findById(partyId);
         PartyHashtag partyHashtag = party.deletePartyHashtag(content);
         partyHashtagRepository.delete(partyHashtag);
         hashtagService.deleteIfNotReferred(partyHashtag.getHashtag());
     }
 
+    @Transactional
+    public void updateActiveNumber(Long partyId, Integer cnt){
+        System.out.println("partyId = " + partyId);
+        findById(partyId).updateActiveNumber(cnt);
+        System.out.println("PartyService.updateActiveNumber");
+    }
+
+    public Integer countPartyMemberNumber(Long partyId) {
+        Party party = findById(partyId);
+        Integer partyMemberNumber = party.countPartyMemberNumber();
+        return partyMemberNumber;
+    }
 }

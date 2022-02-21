@@ -1,6 +1,7 @@
 package nbbang.com.nbbang.global.config;
 
 import lombok.RequiredArgsConstructor;
+import nbbang.com.nbbang.global.handler.StompHandler;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
@@ -13,8 +14,7 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @RequiredArgsConstructor
 public class StompWebSocketMessageBrokerConfig implements WebSocketMessageBrokerConfigurer {
 
-
-    // private final StompHandler stompHandler;
+    private final StompHandler stompHandler;
 
     //end point, message broker 걸어줘야함
     @Override
@@ -38,8 +38,8 @@ public class StompWebSocketMessageBrokerConfig implements WebSocketMessageBroker
 *
 * */
     }
-/*    @Override
+    @Override
     public void configureClientInboundChannel(ChannelRegistration registration) {
         registration.interceptors(stompHandler);
-    }*/
+    }
 }

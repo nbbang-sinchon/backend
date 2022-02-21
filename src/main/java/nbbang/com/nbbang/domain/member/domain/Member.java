@@ -20,14 +20,14 @@ public class Member {
     @Column(name = "member_id")
     private Long id;
 
-    @Column(nullable = false)
+    //@Column(nullable = false)
     private String nickname;
 
-    @Column(nullable = false)
+    //@Column(nullable = false)
     private String email;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    //@Column(nullable = false)
     private Role role;
 
     @Builder
