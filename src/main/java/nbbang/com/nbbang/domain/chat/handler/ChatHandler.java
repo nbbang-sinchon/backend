@@ -10,7 +10,7 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 import java.util.ArrayList;
 import java.util.List;
 
-
+// handler 파일 3개는 참고용으로 넣어둔 것이고, 저희 프로젝트에서는 stomp 방식을 사용하기 때문에 handler는 사용하지 않을 것 같습니다.
 // https://dev-gorany.tistory.com/212
 @Component
 @Slf4j
