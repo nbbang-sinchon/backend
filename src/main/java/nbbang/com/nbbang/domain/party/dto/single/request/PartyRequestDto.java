@@ -37,7 +37,6 @@ public class PartyRequestDto {
                 .content(this.content)
                 .place(Place.valueOf(place.toUpperCase()))
                 .goalNumber(this.goalNumber)
-                .isBlocked(false)
                 .build();
         return party;
     }

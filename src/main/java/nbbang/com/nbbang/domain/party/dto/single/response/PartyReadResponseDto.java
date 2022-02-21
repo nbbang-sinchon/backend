@@ -27,7 +27,6 @@ public class PartyReadResponseDto {
     // private Integer likeNumber;
     private Boolean isOwner;
     private Boolean isMember;
-    private Boolean isBlocked;
     private String title;
     private String content;
     private List<PartyFindResponseDto> parties;
@@ -52,7 +51,6 @@ public class PartyReadResponseDto {
                 .hashtags(hashtags)
                 .isOwner((party.getOwner()!=null)?((party.getOwner().getId())==userId):false)
                 .isMember(isMember)
-                .isBlocked(party.getIsBlocked())
                 .title(party.getTitle())
                 .content(party.getContent())
                 .parties(parties)

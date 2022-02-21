@@ -41,9 +41,9 @@ public class PartyMemberService {
             throw new PartyJoinException(PartyResponseMessage.PARTY_FULL_ERROR);
         }
         // 파티가 isBlocked 일 경우
-        if (party.getIsBlocked()) {
+/*        if (party.getIsBlocked()) {
             throw new PartyJoinException(PartyResponseMessage.PARTY_JOIN_BLOCKED_ERROR);
-        }
+        }*/
         // 파티 STATUS 가 full 또는 closed 일 경우
         if (party.getStatus().equals(PartyStatus.FULL) || party.getStatus().equals(PartyStatus.CLOSED)) {
             throw new PartyJoinException(PartyResponseMessage.PARTY_JOIN_NONOPEN_ERROR);
