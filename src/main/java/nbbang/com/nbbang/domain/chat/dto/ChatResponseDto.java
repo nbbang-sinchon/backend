@@ -3,6 +3,7 @@ package nbbang.com.nbbang.domain.chat.dto;
 import lombok.Builder;
 import lombok.Data;
 import nbbang.com.nbbang.domain.chat.domain.Message;
+import nbbang.com.nbbang.domain.chat.dto.message.ChatSendResponseDto;
 import nbbang.com.nbbang.domain.member.dto.MemberResponseDto;
 import nbbang.com.nbbang.domain.member.dto.MemberResponseDto;
 import nbbang.com.nbbang.domain.party.domain.Party;
@@ -23,7 +24,7 @@ public class ChatResponseDto {
     private String status;
     private MemberResponseDto owner;
     private List<MemberResponseDto> members;
-    private List<ChatMessageResponseDto> messages;
+    private List<ChatSendResponseDto> messages;
 
     public static ChatResponseDto createByPartyAndMessagesEntity(Party party, List<Message> messages) {
         return ChatResponseDto.builder()
@@ -35,7 +36,7 @@ public class ChatResponseDto {
                 .goalNumber(party.getGoalNumber())
                 .joinNumber(party.getMemberParties().size())
                 .status(party.getStatus().toString())
-                .messages(messages.stream().map(ChatMessageResponseDto::createByEntity).collect(Collectors.toList()))
+                .messages(messages.stream().map(ChatSendResponseDto::createByMessage).collect(Collectors.toList()))
                 .build();
     }
 
