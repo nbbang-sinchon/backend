@@ -132,4 +132,16 @@ public class MemberController {
         return DefaultResponse.res(StatusCode.OK, MemberResponseMessage.MEMBER_LOCATION_SUCCESS, PlaceResponseDto.create(member.getPlace()));
     }
 
+    @GetMapping("/login")
+    public DefaultResponse memberLogin() {
+        System.out.println("login");
+        return DefaultResponse.res(StatusCode.OK, "로그인");
+    }
+
+    @GetMapping("/logout")
+    public DefaultResponse memberLogout() {
+        System.out.println("logout");
+        return DefaultResponse.res(StatusCode.OK, "로그아웃");
+    }
+
 }

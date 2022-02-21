@@ -1,28 +1,25 @@
 package nbbang.com.nbbang.domain.member.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Builder;
 import nbbang.com.nbbang.domain.member.domain.Member;
 
-@Data @Builder
+@Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MemberResponseDto {
+public class MemberSimpleResponseDto {
     private Long id;
     private String avatar;
     private String nickname;
-    private Integer breadNumber;
-    private String place;
 
-    public static MemberResponseDto createByEntity(Member member) {
-        return MemberResponseDto.builder()
+    public static MemberSimpleResponseDto createByEntity(Member member) {
+        return MemberSimpleResponseDto.builder()
                 .id(member.getId())
                 .avatar(member.getAvatar())
                 .nickname(member.getNickname())
-                .place(member.getPlace().toString())
                 .build();
     }
-
 }

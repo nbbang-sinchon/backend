@@ -7,5 +7,5 @@ import lombok.Data;
 @Builder
 public class ChatSendResponseSenderDto {
     private Long id;
-    private String nickName;
+    private String nickname;
 }

@@ -21,7 +21,7 @@ import java.util.List;
 import static org.springframework.http.HttpStatus.OK;
 
 
-@Tag(name = "bbangpan", description = "빵판과 관련된 API입니다.")
+@Tag(name = "Bbangpan", description = "빵판과 관련된 API입니다.")
 @RestController
 @RequestMapping("/bbangpans/{party-id}")
 @ApiResponses(value = {

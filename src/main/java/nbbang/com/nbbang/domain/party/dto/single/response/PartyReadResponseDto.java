@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import nbbang.com.nbbang.domain.member.dto.MemberResponseDto;
+import nbbang.com.nbbang.domain.member.dto.MemberSimpleResponseDto;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.dto.PartyFindResponseDto;
 
@@ -16,15 +17,13 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PartyReadResponseDto {
-    private String ownerNickname;
-    // private Integer ownerBreadNumber;
+    private MemberResponseDto owner;
     private String place;
     private String status;
     private Integer joinNumber;
     private Integer goalNumber;
     private LocalDateTime createTime;
     private List<String> hashtags;
-    // private Integer likeNumber;
     private Boolean isOwner;
     private Boolean isMember;
     private String title;
@@ -38,11 +37,8 @@ public class PartyReadResponseDto {
         */
         boolean isMember = party.getMemberParties().stream()
                 .anyMatch(memberParty -> memberParty.getMember().getId().equals(userId));
-/*        List<String> hashtagsDto = hashtags.stream()
-                .map(hashtag -> new String(hashtag.getContent()))
-                .collect(Collectors.toList());*/
         PartyReadResponseDto partyReadResponseDto =  PartyReadResponseDto.builder()
-                .ownerNickname((party.getOwner()!=null)?party.getOwner().getNickname():null)
+                .owner(MemberResponseDto.createByEntity(party.getOwner()))
                 .place(party.getPlace().name())
                 .status((party.getStatus()!=null)?party.getStatus().name():null)
                 .joinNumber((party.getMemberParties()!=null)?party.getMemberParties().size():null)
@@ -54,9 +50,7 @@ public class PartyReadResponseDto {
                 .title(party.getTitle())
                 .content(party.getContent())
                 .parties(parties)
-
                 .members(party.getMemberParties().stream().map(m -> MemberResponseDto.createByEntity(m.getMember())).collect(Collectors.toList()))
-
                 .build();
         return partyReadResponseDto;
     }
