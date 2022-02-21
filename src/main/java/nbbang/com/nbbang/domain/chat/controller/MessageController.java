@@ -13,11 +13,14 @@ import nbbang.com.nbbang.domain.chat.dto.ChatMessageImageUploadResponseDto;
 import nbbang.com.nbbang.domain.chat.dto.message.ChatSendRequestDto;
 import nbbang.com.nbbang.domain.chat.dto.message.ChatSendResponseDto;
 import nbbang.com.nbbang.domain.chat.service.MessageService;
+import nbbang.com.nbbang.global.error.GlobalErrorResponseMessage;
+import nbbang.com.nbbang.global.error.exception.CustomIllegalArgumentException;
 import nbbang.com.nbbang.global.response.DefaultResponse;
 import nbbang.com.nbbang.global.response.StatusCode;
 import nbbang.com.nbbang.global.support.FileUpload.FileUploadService;
 import org.springframework.http.MediaType;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -41,29 +44,32 @@ public class MessageController {
 
     private final MessageService messageService;
     private final FileUploadService fileUploadService;
+    private final SimpMessagingTemplate simpMessagingTemplate;
 
     @Operation(summary = "채팅 메시지 전송", description = "채팅 메시지를 전송합니다.")
-    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ChatSendResponseDto.class)))
     @ApiResponse(responseCode = "403", description = "Not Party Member", content = @Content(mediaType = "application/json"))
     @PostMapping
     @ResponseBody
-    public DefaultResponse<Object> sendMessage(@PathVariable("party-id") Long partyId, @Valid @RequestBody ChatSendRequestDto chatSendRequestDto, BindingResult bindingResult) {
+    public DefaultResponse sendMessage(@PathVariable("party-id") Long partyId, @Valid @RequestBody ChatSendRequestDto chatSendRequestDto, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            throw new CustomIllegalArgumentException(GlobalErrorResponseMessage.ILLEGAL_ARGUMENT_ERROR, bindingResult);
+        }
         Long memberId = 1L;
         Long messageId = messageService.send(partyId, memberId, chatSendRequestDto.getContent());
-        publishSendMessage(messageId);
-        return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.UPLOADED_MESSAGE);
+        Message message = messageService.findById(messageId);
+        ChatSendResponseDto chatSendResponseDto = ChatSendResponseDto.createByMessage(message);
+        simpMessagingTemplate.convertAndSend("/topic/" + partyId, chatSendResponseDto);
+        return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.UPLOADED_MESSAGE, chatSendResponseDto);
     }
 
-
-    @SendTo("/topic/{party-id}")
+/*    @SendTo("/topic/{party-id}")
     public ChatSendResponseDto publishSendMessage(Long messageId){
         log.info("message Id in ChatSendResponseDto: {}", messageId);
         Message message = messageService.findById(messageId);
         ChatSendResponseDto.createByMessage(message);
         return ChatSendResponseDto.builder().context("hello").build();
-    }
-
-
+    }*/
 
     @Operation(summary = "메시지 사진 업로드", description = "메시지 사진을 업로드합니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ChatMessageImageUploadResponseDto.class)))

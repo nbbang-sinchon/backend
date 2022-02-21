@@ -15,9 +15,9 @@ public class StompWebSocketMessageBrokerConfig implements WebSocketMessageBroker
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         WebSocketMessageBrokerConfigurer.super.registerStompEndpoints(registry);
-        registry.addEndpoint("/stompTest").setAllowedOrigins("*").withSockJS();
+        registry.addEndpoint("/chat").setAllowedOrigins("*").withSockJS();
+        // var sock = new SockJS("/chat") 처럼 end point로 소켓을 연결함
         //stomp는 sockJS 기반으로 돌기 때문에 마지막에 꼭 붙여줘야함.
-        // var sock = new SockJS("/stompTest") 처럼 end point로 소켓을 연결함
     }
 
     @Override
