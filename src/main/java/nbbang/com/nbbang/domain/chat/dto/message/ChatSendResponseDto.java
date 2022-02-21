@@ -3,6 +3,7 @@ package nbbang.com.nbbang.domain.chat.dto.message;
 import lombok.Builder;
 import lombok.Data;
 import nbbang.com.nbbang.domain.chat.domain.Message;
+import nbbang.com.nbbang.domain.chat.domain.MessageType;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.dto.MemberDto;
 import nbbang.com.nbbang.domain.party.domain.Party;
@@ -17,7 +18,7 @@ public class ChatSendResponseDto {
     private Long id;
     private LocalDateTime createTime;
     private Integer readNumber;
-    private Boolean isPicture;
+    private MessageType type;
     private String content;
     private Long orderInChat;
     private ChatSendResponseSenderDto sender;
@@ -27,7 +28,7 @@ public class ChatSendResponseDto {
                 .id(message.getId())
                 .createTime(message.getCreateTime())
                 .readNumber(message.getReadNumber())
-                .isPicture(message.getIsPicture())
+                .type(message.getType())
                 .content(message.getContent())
                 .orderInChat(message.getOrderInChat())
                 .sender(message.getSender()!=null?

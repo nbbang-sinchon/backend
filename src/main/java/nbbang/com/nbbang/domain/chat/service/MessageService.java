@@ -2,6 +2,7 @@ package nbbang.com.nbbang.domain.chat.service;
 
 import lombok.RequiredArgsConstructor;
 import nbbang.com.nbbang.domain.chat.domain.Message;
+import nbbang.com.nbbang.domain.chat.domain.MessageType;
 import nbbang.com.nbbang.domain.chat.repository.MessageRepository;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.service.MemberService;
@@ -35,7 +36,7 @@ public class MessageService {
         Party party = partyService.findById(partyId);
         Member sender = memberService.findById(senderId);
         Long orderInChat = countByPartyId(partyId);
-        Message message = Message.builder().readNumber(0).content(content).isPicture(false).
+        Message message = Message.builder().readNumber(0).content(content).type(MessageType.CHAT).
                 party(party).sender(sender).orderInChat(orderInChat).build();
         Message savedMessage = messageRepository.save(message);
         return savedMessage.getId();
