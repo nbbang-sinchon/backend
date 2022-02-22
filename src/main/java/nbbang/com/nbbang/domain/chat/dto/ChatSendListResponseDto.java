@@ -12,21 +12,12 @@ import java.util.stream.Collectors;
 public class ChatSendListResponseDto {
     List<ChatSendResponseDto> messages;
 
-    public static ChatSendListResponseDto createByEntity(List<Message> messages) {
+    public static ChatSendListResponseDto createByEntity(List<Message> messages, Long memberId) {
         return ChatSendListResponseDto.builder()
                 .messages(messages.stream()
-                        .map(message -> ChatSendResponseDto.createByMessage(message, 0))
+                        .map(message -> ChatSendResponseDto.createByMessage(message, 0, memberId))
                         .collect(Collectors.toList()))
                 .build();
     }
 
-    public static ChatSendListResponseDto createByEntityAndMemberId(List<Message> messages, Long memberId) {
-        return ChatSendListResponseDto.builder()
-                .messages(messages.stream()
-                        .map((m) ->
-                            ChatSendResponseDto.createByMessage(m, 0)
-                        )
-                        .collect(Collectors.toList()))
-                .build();
-    }
 }

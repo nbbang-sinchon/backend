@@ -55,7 +55,7 @@ public class MessageController {
         Long messageId = messageService.send(partyId, memberId, chatSendRequestDto.getContent());
         Message message = messageService.findById(messageId);
         Integer partyMemberNumber = partyService.countPartyMemberNumber(partyId);
-        ChatSendResponseDto chatSendResponseDto = ChatSendResponseDto.createByMessage(message, partyMemberNumber);
+        ChatSendResponseDto chatSendResponseDto = ChatSendResponseDto.createByMessage(message, partyMemberNumber, memberId);
         simpMessagingTemplate.convertAndSend("/topic/" + partyId, chatSendResponseDto);
         return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.UPLOADED_MESSAGE, chatSendResponseDto);
     }
