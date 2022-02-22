@@ -32,6 +32,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -55,10 +57,11 @@ public class PartyController {
     @ApiResponse(responseCode = "200", description = "OK",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = PartyIdResponseDto.class)))
     @PostMapping
-    public DefaultResponse createParty(@Parameter @Valid @RequestBody PartyRequestDto partyRequestDtO, BindingResult bindingResult) {
+    public DefaultResponse createParty(@Parameter @Valid @RequestBody PartyRequestDto partyRequestDtO, BindingResult bindingResult, HttpServletRequest request) {
       if (bindingResult.hasErrors()) {
             throw new CustomIllegalArgumentException(GlobalErrorResponseMessage.ILLEGAL_ARGUMENT_ERROR, bindingResult);
         }
+        System.out.println(request.getCharacterEncoding());
        Long partyId = partyService.create(partyRequestDtO.createByDto(),partyRequestDtO.getHashtags());
        return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_CREATE_SUCCESS, new PartyIdResponseDto(partyId));
     }

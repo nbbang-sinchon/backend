@@ -13,7 +13,7 @@ import nbbang.com.nbbang.domain.member.service.MemberService;
 import nbbang.com.nbbang.domain.party.service.ManyPartyService;
 import nbbang.com.nbbang.global.response.DefaultResponse;
 import nbbang.com.nbbang.global.response.StatusCode;
-import nbbang.com.nbbang.global.support.FileUpload.FileUploadService;
+import nbbang.com.nbbang.global.FileUpload.FileUploadService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

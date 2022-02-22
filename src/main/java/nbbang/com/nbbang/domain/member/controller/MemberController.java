@@ -22,7 +22,7 @@ import nbbang.com.nbbang.domain.party.service.ManyPartyService;
 import nbbang.com.nbbang.global.error.exception.CustomIllegalArgumentException;
 import nbbang.com.nbbang.global.response.DefaultResponse;
 import nbbang.com.nbbang.global.response.StatusCode;
-import nbbang.com.nbbang.global.support.FileUpload.FileUploadService;
+import nbbang.com.nbbang.global.FileUpload.FileUploadService;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;

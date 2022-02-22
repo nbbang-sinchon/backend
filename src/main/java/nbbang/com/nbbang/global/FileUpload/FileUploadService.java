@@ -1,4 +1,4 @@
-package nbbang.com.nbbang.global.support.FileUpload;
+package nbbang.com.nbbang.global.FileUpload;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;

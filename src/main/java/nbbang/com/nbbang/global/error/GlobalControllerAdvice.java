@@ -65,6 +65,7 @@ public class GlobalControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ErrorResponse converterExHandle(HttpMessageNotReadableException e) {
+        log.error("", e.getMessage());
         return ErrorResponse.res(StatusCode.BAD_REQUEST, GlobalErrorResponseMessage.ILLEGAL_REQUEST_TYPE_ERROR);
     }
 
