@@ -99,9 +99,7 @@ public class MockDataCreator implements CommandLineRunner {
         createManyParties();
 
 
-        for (int i = 0; i < 10; i++) {
-            createMessage1();
-        }
+        createMessage1();
     }
 
     @Transactional
@@ -189,7 +187,7 @@ public class MockDataCreator implements CommandLineRunner {
                 .title("BHC 뿌링클 오늘 7시")
                 .content("오늘 연대 서문에서 치킨 같이 시켜 먹을 파티 구해요 또는 각자 시키고 배달비만 n빵 하실분?? 2~3명 모아봅니다 ㅎㅎ 뿌링클 교촌 다 좋아요 ㅎㅎ")
                 .createTime(LocalDateTime.of(2022, 02, 12, 12, 40))
-                .goalNumber(4)
+                .goalNumber(6)
                 .owner(memberRepository.findById(luffyId).get())
                 .place(SINCHON)
                 .deliveryFee(300)
@@ -198,11 +196,36 @@ public class MockDataCreator implements CommandLineRunner {
         partyRepository.save(party);
         party1Id = party.getId();
         addHashtags(party, "치킨", "배달비", "BHC", "뿌링클");
-        memberPartyRepository.save(PartyMember.builder()
-                .member(memberRepository.findById(korungId).get())
-                .party(party)
-                .price(1000)
-                .build());
+        addMember(party, korungId);
+        addMember(party, mock1Id);
+        addMember(party, mock2Id);
+
+    }
+
+    @Transactional
+    public void createMessage1() {
+        chatService.sendMessage(luffyId, party1Id, "뿌링클 넘나 먹고 싶다.", LocalDateTime.of(2022, 02, 10, 16, 40));
+        chatService.sendMessage(korungId, party1Id, "내일 점심에 버거킹 드실분", LocalDateTime.of(2022, 02, 10, 16, 45));
+        chatService.sendMessage(luffyId, party1Id, "뿌링클 너무너무 먹고 싶다.", LocalDateTime.of(2022, 02, 10, 16, 46));
+        chatService.sendMessage(luffyId, party1Id, "뿌링클 너무너무너무 먹고 싶다.", LocalDateTime.of(2022, 02, 10, 16, 47));
+        chatService.sendMessage(luffyId, party1Id, "뿌링클 너무너무너무너무 먹고 싶다.", LocalDateTime.of(2022, 02, 10, 16, 48));
+        chatService.sendMessage(luffyId, party1Id, "뿌링클 너무너무너무너무너무 먹고 싶다.", LocalDateTime.of(2022, 02, 10, 16, 49));
+        chatService.sendMessage(mock1Id, party1Id, "테스트 메시지 입니다. 1", LocalDateTime.of(2022, 02, 10, 16, 50));
+        chatService.sendMessage(mock1Id, party1Id, "테스트 메시지 입니다. 2", LocalDateTime.of(2022, 02, 10, 16, 51));
+        chatService.sendMessage(luffyId, party1Id, "테스트 메시지 입니다. 3", LocalDateTime.of(2022, 02, 10, 16, 52));
+        chatService.sendMessage(mock1Id, party1Id, "테스트 메시지 입니다. 4", LocalDateTime.of(2022, 02, 10, 16, 53));
+        chatService.sendMessage(mock1Id, party1Id, "테스트 메시지 입니다. 5", LocalDateTime.of(2022, 02, 10, 16, 54));
+        chatService.sendMessage(mock1Id, party1Id, "테스트 메시지 입니다. 6", LocalDateTime.of(2022, 02, 10, 16, 55));
+        chatService.sendMessage(mock2Id, party1Id, "테스트 메시지 입니다. 7", LocalDateTime.of(2022, 02, 10, 16, 56));
+        chatService.sendMessage(mock2Id, party1Id, "테스트 메시지 입니다. 8", LocalDateTime.of(2022, 02, 10, 16, 57));
+        chatService.sendMessage(luffyId, party1Id, "테스트 메시지 입니다. 9", LocalDateTime.of(2022, 02, 10, 16, 58));
+        chatService.sendMessage(luffyId, party1Id, "뿌링클 너무너무 먹고 싶다.", LocalDateTime.of(2022, 02, 10, 16, 59));
+        chatService.sendMessage(luffyId, party1Id, "뿌링클 너무너무너무 먹고 싶다.", LocalDateTime.of(2022, 02, 10, 17, 0));
+        chatService.sendMessage(luffyId, party1Id, "뿌링클 너무너무너무너무 먹고 싶다.", LocalDateTime.of(2022, 02, 10, 17, 1));
+        chatService.sendMessage(luffyId, party1Id, "뿌링클 너무너무너무너무너무 먹고 싶다.", LocalDateTime.of(2022, 02, 10, 17, 2));
+        chatService.sendMessage(mock2Id, party1Id, "테스트 메시지 입니다. 07", LocalDateTime.of(2022, 02, 10, 17, 3));
+        chatService.sendMessage(mock2Id, party1Id, "테스트 메시지 입니다. 08", LocalDateTime.of(2022, 02, 10, 17, 4));
+        chatService.sendMessage(luffyId, party1Id, "테스트 메시지 입니다. 09", LocalDateTime.of(2022, 02, 10, 17, 5));
     }
 
     @Transactional
@@ -376,10 +399,6 @@ public class MockDataCreator implements CommandLineRunner {
 
     }
 
-    @Transactional
-    public void createMessage1() {
-        chatService.sendMessage(luffyId, party1Id, "뿌링클 넘나 먹고 싶다.", LocalDateTime.of(2022, 02, 10, 16, 40));
-        chatService.sendMessage(korungId, party1Id, "내일 점심에 버거킹 드실분", LocalDateTime.of(2022, 02, 10, 16, 45));
-    }
+
 
 }
