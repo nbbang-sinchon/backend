@@ -80,10 +80,10 @@ public class ChatService {
             throw new NotPartyMemberException();
         }
 
-        Message message = Message.createMessage(member, party, content, localDateTime);
-        messageRepository.save(message);
+          messageRepository.save(message);
         return message.getId();
     }*/
+
 
     public Message findLastMessage(Party party) {
         return messageRepository.findLastMessage(party.getId());
@@ -94,7 +94,7 @@ public class ChatService {
     }
 
     public Page<Message> findMessages(Party party, Pageable pageable) {
-        return messageRepository.findAllByPartyId(party.getId(), pageable);
+        return messageRepository.findAllByPartyIdOrderByIdDesc(party.getId(), pageable);
     }
 
     public Page<Message> findMessagesByCursorId(Party party, Pageable pageable, Long cursorId) {

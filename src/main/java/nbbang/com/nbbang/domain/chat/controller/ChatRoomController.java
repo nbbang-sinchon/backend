@@ -51,7 +51,7 @@ public class ChatRoomController {
         }
         Party party = partyRepository.findById(partyId).get(); // Party Service 구현 시 바꿔야 할 것 같습니다.
         Page<Message> messages = chatService.findMessages(party, PageRequest.of(0, pageSize));
-        return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.READ_CHAT, ChatResponseDto.createByPartyAndMessagesEntity(party, messages.getContent()));
+        return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.READ_CHAT, ChatResponseDto.createByPartyAndMessagesEntity(party, messages.getContent(), memberId));
     }
 
     @Operation(summary = "채팅 메시지 조회", description = "페이징이 적용된 채팅 메시지를 조회합니다. 쿼리 파라미터로 커서 id 를 전송하면 쿼리에 커서 페이징이 적용됩니다.")
@@ -65,7 +65,7 @@ public class ChatRoomController {
             cursorId = chatService.findLastMessage(party).getId();
         }
         Page<Message> messages = chatService.findMessagesByCursorId(party, pageableDto.createPageRequest(), cursorId);
-        return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.READ_CHAT, ChatSendListResponseDto.createByEntity(messages.getContent()));
+        return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.READ_CHAT, ChatSendListResponseDto.createByEntity(messages.getContent(), memberId));
     }
 
     @Operation(summary = "채팅방에서 나가기", description = "채팅방에서 나갑니다. 소켓 종료 용도로 쓰일 것 같습니다.")
@@ -95,7 +95,7 @@ public class ChatRoomController {
         cursorIdCookie.setPath("/");
         cursorIdCookie.setMaxAge(1000000);
         response.addCookie(cursorIdCookie);
-        return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.READ_CHAT, ChatResponseDto.createByPartyAndMessagesEntity(party, messages.getContent()));
+        return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.READ_CHAT, ChatResponseDto.createByPartyAndMessagesEntity(party, messages.getContent(), memberId));
     }
 
     @Operation(summary = "채팅 메시지 조회-쿠키", description = "커서 페이징이 적용된 채팅 메시지를 조회합니다. 클라이언트는 쿠키로 커서 id 를 전송합니다.")
@@ -110,7 +110,7 @@ public class ChatRoomController {
         Long cursorId = Long.parseLong(cookieVals[1]);
         if (cookiePartyId != partyId) throw new RuntimeException();
         Page<Message> messages = chatService.findMessagesByCursorId(party, pageableDto.createPageRequest(), cursorId);
-        return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.READ_CHAT, ChatSendListResponseDto.createByEntity(messages.getContent()));
+        return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.READ_CHAT, ChatSendListResponseDto.createByEntity(messages.getContent(), memberId));
     }
 
 }

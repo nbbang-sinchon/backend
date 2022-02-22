@@ -52,18 +52,20 @@ public class PartyController {
 
     private final PartyService partyService;
     private final MemberService memberService;
+    private Long memberId = 1L;
 
     @Operation(summary = "파티 생성", description = "파티를 생성합니다.")
     @ApiResponse(responseCode = "200", description = "OK",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = PartyIdResponseDto.class)))
     @PostMapping
-    public DefaultResponse createParty(@Parameter @Valid @RequestBody PartyRequestDto partyRequestDtO, BindingResult bindingResult, HttpServletRequest request) {
-      if (bindingResult.hasErrors()) {
+    public DefaultResponse createParty(@Parameter @Valid @RequestBody PartyRequestDto partyRequestDto, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
             throw new CustomIllegalArgumentException(GlobalErrorResponseMessage.ILLEGAL_ARGUMENT_ERROR, bindingResult);
         }
-        System.out.println(request.getCharacterEncoding());
-       Long partyId = partyService.create(partyRequestDtO.createByDto(),partyRequestDtO.getHashtags());
-       return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_CREATE_SUCCESS, new PartyIdResponseDto(partyId));
+        Member member = memberService.findById(memberId);
+        Party party = partyRequestDto.createByDtoWithMember(member);
+        Long partyId = partyService.create(party, partyRequestDto.getHashtags());
+        return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_CREATE_SUCCESS, new PartyIdResponseDto(partyId));
     }
 
     @Operation(summary = "파티 상세", description = "파티의 상세 정보입니다.")
@@ -77,7 +79,7 @@ public class PartyController {
         List<Party> parties = partyService.findNearAndSimilar(partyId);
         List<PartyFindResponseDto> collect = parties.stream().map(PartyFindResponseDto::createByEntity).collect(Collectors.toList());
         List<String> hashtags = party.getHashtagContents();
-        PartyReadResponseDto partyReadResponseDto = PartyReadResponseDto.createDto(party, userId,  hashtags, collect);
+        PartyReadResponseDto partyReadResponseDto = PartyReadResponseDto.createDto(party, userId, hashtags, collect);
         return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_READ_SUCCESS, partyReadResponseDto);
     }
 

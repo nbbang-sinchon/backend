@@ -23,7 +23,7 @@ public class ChatResponseDto {
     private List<MemberResponseDto> members;
     private List<ChatSendResponseDto> messages;
 
-    public static ChatResponseDto createByPartyAndMessagesEntity(Party party, List<Message> messages) {
+    public static ChatResponseDto createByPartyAndMessagesEntity(Party party, List<Message> messages, Long memberId) {
         return ChatResponseDto.builder()
                 .id(party.getId())
                 .title(party.getTitle())
@@ -33,7 +33,7 @@ public class ChatResponseDto {
                 .goalNumber(party.getGoalNumber())
                 .joinNumber(party.getPartyMembers().size())
                 .status(party.getStatus().toString())
-                .messages(messages.stream().map(message->ChatSendResponseDto.createByMessage(message, party.countPartyMemberNumber())).collect(Collectors.toList()))
+                .messages(messages.stream().map(message->ChatSendResponseDto.createByMessage(message, party.countPartyMemberNumber(), memberId)).collect(Collectors.toList()))
                 .build();
     }
 }
