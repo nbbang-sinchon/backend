@@ -9,7 +9,7 @@ name: Spring Boot Gradle ci/cd
 
 on:
   push:
-    branches: [ dev, feature/file-upload ]
+    branches: [ dev ]
   pull_request:
     branches: [ dev ]
 
