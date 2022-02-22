@@ -1,6 +1,7 @@
 package nbbang.com.nbbang.domain.party.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -19,10 +20,14 @@ import nbbang.com.nbbang.domain.party.dto.single.request.PartyStatusChangeReques
 import nbbang.com.nbbang.domain.party.dto.single.response.PartyIdResponseDto;
 import nbbang.com.nbbang.domain.party.dto.single.response.PartyReadResponseDto;
 import nbbang.com.nbbang.domain.party.service.PartyService;
+import nbbang.com.nbbang.global.error.ErrorResponse;
 import nbbang.com.nbbang.global.error.exception.CustomIllegalArgumentException;
 import nbbang.com.nbbang.global.response.DefaultResponse;
 import nbbang.com.nbbang.global.error.GlobalErrorResponseMessage;
 import nbbang.com.nbbang.global.response.StatusCode;
+import org.springdoc.api.ErrorMessage;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -50,7 +55,7 @@ public class PartyController {
     @ApiResponse(responseCode = "200", description = "OK",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = PartyIdResponseDto.class)))
     @PostMapping
-    public DefaultResponse createParty(@Valid @RequestBody PartyRequestDto partyRequestDtO, BindingResult bindingResult) {
+    public DefaultResponse createParty(@Parameter @Valid @RequestBody PartyRequestDto partyRequestDtO, BindingResult bindingResult) {
       if (bindingResult.hasErrors()) {
             throw new CustomIllegalArgumentException(GlobalErrorResponseMessage.ILLEGAL_ARGUMENT_ERROR, bindingResult);
         }

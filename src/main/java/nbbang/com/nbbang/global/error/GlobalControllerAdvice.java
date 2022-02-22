@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.global.error.exception.*;
 import nbbang.com.nbbang.global.response.StatusCode;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -26,13 +27,13 @@ public class GlobalControllerAdvice {
     public static final int FORBIDDEN = 403;
     public static final int NOT_FOUND = 404;*/
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(NotFoundException.class)
+    //@ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(value = NotFoundException.class)
     public ErrorResponse illegalExHandle(NotFoundException e) {
         // 사용 예시:Party party = partyRepository.findById(partyId)
         //                       .orElseThrow(() -> new NotFoundException("There is no party"));
         log.error("[ExceptionHandle] NotFoundException: ", e);
-        return new ErrorResponse(StatusCode.BAD_REQUEST, e.getMessage());
+        return new ErrorResponse(StatusCode.NOT_FOUND, e.getMessage());
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -53,11 +54,18 @@ public class GlobalControllerAdvice {
         return new ErrorResponse(StatusCode.BAD_REQUEST, e.getMessage());
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+
     @ExceptionHandler
     public ErrorResponse userExHandle(UserException e) {
         log.error("[ExceptionHandle] UserException: ", e);
         return new ErrorResponse(StatusCode.BAD_REQUEST, e.getMessage());
+    }
+
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ErrorResponse converterExHandle(HttpMessageNotReadableException e) {
+        return ErrorResponse.res(StatusCode.BAD_REQUEST, GlobalErrorResponseMessage.ILLEGAL_REQUEST_TYPE_ERROR);
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -67,7 +75,7 @@ public class GlobalControllerAdvice {
         return new ErrorResponse(StatusCode.INTERNAL_SERVER_ERROR, GlobalErrorResponseMessage.INTERNAL_SERVER_ERROR);
     }
 
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ErrorResponse exHandle(MethodArgumentTypeMismatchException e) {
         return new ErrorResponse(StatusCode.INTERNAL_SERVER_ERROR, GlobalErrorResponseMessage.ILLEGAL_TYPE_CONVERSION_ERROR);

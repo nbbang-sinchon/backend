@@ -25,7 +25,7 @@ public class PartyUpdateServiceDto {
                 .title(Optional.ofNullable(partyRequestDto.getTitle()))
                 .content(Optional.ofNullable(partyRequestDto.getContent()))
                 .hashtagContents(Optional.ofNullable(partyRequestDto.getHashtags()))
-                .place(Optional.ofNullable(partyRequestDto.getPlace()!=null?Place.valueOf(partyRequestDto.getPlace().toUpperCase()):null))
+                .place(Optional.ofNullable(partyRequestDto.getPlace()!=null?(Place.valueOf(partyRequestDto.getPlace().toUpperCase())):null))
                 .goalNumber(Optional.ofNullable(partyRequestDto.getGoalNumber()))
                 .build();
     }
