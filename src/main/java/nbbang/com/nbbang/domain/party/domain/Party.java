@@ -99,12 +99,7 @@ public class Party {
     }
 
     public void exitMemberParty(PartyMember partyMember) {
-        //if (owner.equals(memberParty.getMember())) {
-        //    isBlocked = true;
-        //    status = PartyStatus.CLOSED;
-        //} else {
-            boolean removed = partyMembers.removeIf(mp -> mp.equals(partyMember));
-        //}
+        partyMembers.removeIf(mp -> mp.equals(partyMember));
     }
 
 

@@ -75,7 +75,6 @@ public class PartyController {
     public DefaultResponse readParty(@PathVariable("party-id") Long partyId){
         Long userId = 1L; //세션 구현 후 수정
         Party party = partyService.findById(partyId);
-
         List<Party> parties = partyService.findNearAndSimilar(partyId);
         List<PartyFindResponseDto> collect = parties.stream().map(PartyFindResponseDto::createByEntity).collect(Collectors.toList());
         List<String> hashtags = party.getHashtagContents();
@@ -89,7 +88,7 @@ public class PartyController {
     @ApiResponse(responseCode = "403", description = "Not Owner", content = @Content(mediaType = "application/json"))
     @PatchMapping("/{party-id}")
     public DefaultResponse updateParty(@PathVariable("party-id") Long partyId, @Valid @RequestBody PartyRequestDto partyRequestDtO, BindingResult bindingResult) {
-        partyService.update(partyId, PartyUpdateServiceDto.createByPartyRequestDto(partyRequestDtO));
+        partyService.update(partyId, PartyUpdateServiceDto.createByPartyRequestDto(partyRequestDtO), memberId);
         return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_UPDATE_SUCCESS, new PartyIdResponseDto(partyId));
     }
 

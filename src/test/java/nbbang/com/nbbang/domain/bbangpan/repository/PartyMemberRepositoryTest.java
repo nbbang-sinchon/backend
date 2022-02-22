@@ -37,7 +37,5 @@ class PartyMemberRepositoryTest {
         PartyMember findPartyMember = memberPartyRepository.findByMemberIdAndPartyId(member.getId(), party.getId());
         // then
         assertThat(savePartyMember).isEqualTo(findPartyMember);
-        assertThat(1).isEqualTo(2);
-
     }
 }
