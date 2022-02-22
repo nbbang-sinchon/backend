@@ -6,9 +6,11 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CharacterEncodingFilter;
 
 @RequiredArgsConstructor
 @EnableWebSecurity
@@ -19,21 +21,27 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-        http.csrf().disable()
+        CharacterEncodingFilter encodingFilter = new CharacterEncodingFilter();
+        encodingFilter.setEncoding("UTF-8");
+        encodingFilter.setForceEncoding(true);
+        http
+                .addFilterBefore(encodingFilter, WebAsyncManagerIntegrationFilter.class)
+
+                .csrf().disable()
                 .cors()
                 .and()
                 .headers().frameOptions().disable()
                 .and()
 
-                /*.authorizeRequests()
+                //.authorizeRequests()
                 //.antMatchers(HttpMethod.GET, "/parties").permitAll()
                 //.antMatchers("/login/oauth2/code/google").permitAll()
                 //.antMatchers("/swagger-ui/**").permitAll()
-                .antMatchers("/**").permitAll()
-                .antMatchers("/*").permitAll()
-                .anyRequest().authenticated()
-                .and()*/
-
+                //.antMatchers("/**").permitAll()
+                //.antMatchers("/*").permitAll()
+                //.anyRequest().authenticated()
+                //.and()
+                //.oauth2Login().and()
                 .logout().logoutUrl("/members/logout");
 
     }
