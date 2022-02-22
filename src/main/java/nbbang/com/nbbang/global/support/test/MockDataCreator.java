@@ -41,8 +41,7 @@ public class MockDataCreator implements CommandLineRunner {
     @Autowired MemberRepository memberRepository;
     @Autowired PartyRepository partyRepository;
     @Autowired HashtagRepository hashtagRepository;
-    @Autowired
-    PartyMemberRepository memberPartyRepository;
+    @Autowired PartyMemberRepository memberPartyRepository;
     @Autowired ChatService chatService;
     @Autowired HashtagService hashtagService;
     @Autowired PartyService partyService;
@@ -165,7 +164,7 @@ public class MockDataCreator implements CommandLineRunner {
     // 해시태그 추가 임시 메소드
     public void addHashtags(Party party, String ... contents) {
         Arrays.asList(contents).stream().forEach(hc -> {
-            Hashtag h = Hashtag.createHashtag(hc);
+            Hashtag h = hashtagService.findOrCreateByContent(hc);
             hashtagRepository.save(h);
             PartyHashtag ph = PartyHashtag.createPartyHashtag(party, h);
             party.addPartyHashtag(ph);
