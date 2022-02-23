@@ -54,7 +54,7 @@ public class PartyController {
     private final MemberService memberService;
     private Long memberId = 1L;
 
-    @Operation(summary = "파티 생성", description = "파티를 생성합니다.")
+    @Operation(summary = "파티 생성", description = "파티를 생성합니다. Place 는 none, sinchon, yeonhui, changcheon 중 하나, 모집 인원은 2~10, 해시태그는 중복 없이 10개 이하")
     @ApiResponse(responseCode = "200", description = "OK",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = PartyIdResponseDto.class)))
     @PostMapping
@@ -82,7 +82,7 @@ public class PartyController {
         return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_READ_SUCCESS, partyReadResponseDto);
     }
 
-    @Operation(summary = "파티 수정", description = "파티를 수정합니다.")
+    @Operation(summary = "파티 수정", description = "파티를 수정합니다. Place 는 none, sinchon, yeonhui, changcheon 중 하나, 모집 인원은 2~10, 해시태그는 중복 없이 10개 이하")
     @ApiResponse(responseCode = "200", description = "OK",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = PartyIdResponseDto.class)))
     @ApiResponse(responseCode = "403", description = "Not Owner", content = @Content(mediaType = "application/json"))

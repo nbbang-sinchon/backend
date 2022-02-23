@@ -50,7 +50,6 @@ public class MockDataCreator implements CommandLineRunner {
     @Autowired PartyHashtagRepository partyHashtagRepository;
     @Autowired PartyMemberService partyMemberService;
     @Autowired MemberService memberService;
-    @Autowired CustomOAuth2MemberService oAuth2MemberService;
 
     private Long luffyId;
     private Long korungId;
@@ -149,6 +148,11 @@ public class MockDataCreator implements CommandLineRunner {
         createMockParty("멕시카나 양념 치킨 드실분", "양념치킨 17500원인데 같이 드실분", 2, luffyId, YEONHUI, FULL, mock1Id,null, null, "멕시카나", "양념");
         createMockParty("BBQ 황금올리브 같이 드실 분", "비비큐 황금올리브 같이 먹어요", 4, mock1Id, CHANGCHEON, OPEN, luffyId, null, null, "BBQ", "황금올리브", "배달");
         createMockParty("멕도날드 같이 드실 분", "멕도날드 같이 드실 분 있으세요?", 4, luffyId, SINCHON, CLOSED, mock1Id, mock2Id, null, "멕도날드");
+        createMockParty("마라탕탕탕", "마라탕탕탕", 4, luffyId, SINCHON, OPEN, null, null, null, "마라","탕","좋아");
+        createMockParty("스타벅스 배달", "스타벅스 배달", 4, luffyId, YEONHUI, OPEN, null, null, null, "커피","아메리카노","좋아");
+        createMockParty("족발 보쌈 파뤼투나잇", "족발 보쌈 파뤼투나잇", 6, luffyId, YEONHUI, OPEN, null, null, null, "족발", "보쌈");
+        createMockParty("빵먹고싶다", "빵먹고싶다", 2, luffyId, SINCHON, OPEN, null, null, null, "단팥빵", "호빵", "붕어빵");
+        createMockParty("빵먹고싶다", "빵먹고싶다", 3, luffyId, CHANGCHEON, OPEN, null, null, null, "단팥빵", "호빵", "붕어빵");
     }
 
 

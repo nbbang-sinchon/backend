@@ -59,7 +59,7 @@ public class MemberController {
         return DefaultResponse.res(StatusCode.OK, MemberResponseMessage.READ_MEMBER, dto);
     }
 
-    @Operation(summary = "마이페이지 정보 업데이트", description = "자신의 정보를 업데이트합니다.")
+    @Operation(summary = "마이페이지 정보 업데이트", description = "자신의 정보를 업데이트합니다. 닉네임은 1~16자, ")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "400", description = "회원 정보를 올바르게 입력하세요.", content = @Content(mediaType = "application/json"))
     @PatchMapping

@@ -32,7 +32,7 @@ public class ChatSendResponseDto {
                 //.notReadNumber(partyMembernumber - message.getReadNumber())
                 .notReadNumber(0)
                 //.type(message.getType())
-                .type(MessageType.CHAT)
+                .type(message.getType()!=null?message.getType():MessageType.CHAT)
                 .content(message.getContent())
                 .sender(message.getSender()!=null?
                         ChatSendResponseSenderDto.builder().id(message.getSender().getId())
