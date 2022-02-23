@@ -19,6 +19,7 @@ import nbbang.com.nbbang.domain.party.dto.my.MyClosedPartyListRequestDto;
 import nbbang.com.nbbang.domain.party.dto.my.MyOnPartyListRequestDto;
 import nbbang.com.nbbang.domain.party.dto.my.MyPartyListResponseDto;
 import nbbang.com.nbbang.domain.party.service.ManyPartyService;
+import nbbang.com.nbbang.global.FileUpload.S3Uploader;
 import nbbang.com.nbbang.global.error.exception.CustomIllegalArgumentException;
 import nbbang.com.nbbang.global.response.DefaultResponse;
 import nbbang.com.nbbang.global.response.StatusCode;
@@ -30,6 +31,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.UUID;
 
 
 @Tag(name = "Member", description = "회원 관리 api (로그인 구현시 올바른 토큰을 보내지 않을 경우 401 Unauthorized 메시지를 받습니다.)")
@@ -77,14 +81,14 @@ public class MemberController {
         return DefaultResponse.res(StatusCode.OK, MemberResponseMessage.DELETE_MEMBER);
     }
 
-    @Operation(summary = "프로필 사진 업로드(미구현)", description = "프로필 사진을 업로드합니다.")
+    @Operation(summary = "프로필 사진 업로드", description = "프로필 사진을 업로드하여 기존 프로필 사진이 있으면 대체합니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(type = "string", implementation = MemberProfileImageUploadResponseDto.class)))
     @ApiResponse(responseCode = "400", description = "프로필 사진 업로드 실패, 잘못된 요청입니다. 사진이 올바른지 확인하세요.", content = @Content(mediaType = "application/json"))
     @PostMapping(path = "/profile-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public DefaultResponse uploadProfileImage(@Schema(description = "이미지 파일을 업로드합니다.")
-                                             @RequestPart MultipartFile imgFile) {
-        String filePath = fileUploadService.fileUpload(imgFile);
-        return DefaultResponse.res(StatusCode.OK, MemberResponseMessage.UPDATE_MEMBER, MemberProfileImageUploadResponseDto.createMock());
+    public DefaultResponse uploadAndUpdateAvatar(@Schema(description = "이미지 파일을 업로드합니다.")
+                                             @RequestPart MultipartFile imgFile) throws IOException {
+        String avatarUrl = memberService.uploadAndUpdateAvatar(memberId, imgFile);
+        return DefaultResponse.res(StatusCode.OK, MemberResponseMessage.UPDATE_MEMBER, MemberProfileImageUploadResponseDto.createByString(avatarUrl));
     }
 
     // 나중에 컨트롤러 따로 파는 것은 어떨까요? path 가 다 /members/parties ===========================

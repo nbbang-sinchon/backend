@@ -63,6 +63,10 @@ public class Member {
         this.place = place;
     }
 
+    public void updateMember(String avatar) {
+        this.avatar = avatar;
+    }
+
     public void leaveMember() {
         this.isLeaved = true;
     }
