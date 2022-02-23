@@ -61,7 +61,7 @@ public class MessageController {
     }
 
 
-    @Operation(summary = "메시지 사진 업로드", description = "메시지 사진을 업로드합니다.")
+    @Operation(summary = "메시지 사진 업로드(미구현)", description = "메시지 사진을 업로드합니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ChatMessageImageUploadResponseDto.class)))
     @ApiResponse(responseCode = "400", description = "잘못된 요청입니다.", content = @Content(mediaType = "application/json"))
     @PostMapping(path = "/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

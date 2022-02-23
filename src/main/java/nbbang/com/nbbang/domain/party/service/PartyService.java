@@ -113,6 +113,7 @@ public class PartyService {
         PartyHashtag.createPartyHashtags(party, hashtags);
     }
 
+    @Transactional
     public void removeHashtag(Long partyId, String content) {
         Party party = findById(partyId);
         PartyHashtag partyHashtag = party.deletePartyHashtag(content);

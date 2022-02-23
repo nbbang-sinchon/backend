@@ -17,6 +17,7 @@ public class HashtagService {
     private final HashtagRepository hashtagRepository;
     private final PartyHashtagRepository partyHashtagRepository;
 
+    @Transactional
     public Hashtag createHashtag(String content) {
         Hashtag hashtag = Hashtag.createHashtag(content);
         hashtagRepository.save(hashtag);
@@ -27,16 +28,20 @@ public class HashtagService {
         return hashtagRepository.findByContent(content);
     }
 
+    @Transactional
     public void deleteIfNotReferred(Hashtag hashtag) {
         if (partyHashtagRepository.findByHashtagId(hashtag.getId()).size()==0){
             hashtagRepository.delete(hashtag);
         }
     }
-
+    @Transactional
     public Hashtag findOrCreateByContent(String content) {
         Hashtag hashtag = findByContent(content);
         if(hashtag==null){
             hashtag = createHashtag(content);
+        }
+        else {
+            System.out.println(content + ":" + hashtag.getContent());
         }
         return hashtag;
     }

@@ -96,6 +96,7 @@ public class MockDataCreator implements CommandLineRunner {
         Long pid = party.getId();
         addMember(party, korungId);
         createMockMessage(luffyId, pid, "안녕하세요");
+        createMockMessage(luffyId, pid, "hello");
         createMockMessage(luffyId, pid, "뿌링클 넘나 먹고 싶다.");
         addMember(party, mock1Id);
         createMockMessage(luffyId, pid, "안녕하세요");

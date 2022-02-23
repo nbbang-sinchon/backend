@@ -75,6 +75,9 @@ public class ManyPartyRepositorySupportImpl implements ManyPartyRepositorySuppor
         if (hashtags != null) {
             for (String content : hashtags) {
                 q.where(party.partyHashtags.any().hashtag.content.eq(content));
+                //q.where(party.partyHashtags.any().hashtag.content.eq(content));
+                //byte[] bytes = content.getBytes();
+                //q.where(party.partyHashtags.any().hashtag.content.castToNum( (byte[]).class).eq(bytes));
             }
         }
 
