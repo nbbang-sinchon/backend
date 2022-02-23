@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.webjars.NotFoundException;
 
 import java.util.ArrayList;
@@ -35,6 +36,13 @@ public class GlobalControllerAdvice {
         log.error("[ExceptionHandle] NotFoundException: ", e);
         return new ErrorResponse(StatusCode.NOT_FOUND, e.getMessage());
     }
+
+    @ExceptionHandler(value = MaxUploadSizeExceededException.class)
+    public ErrorResponse maxFileSizeExHandle(MaxUploadSizeExceededException e) {
+        log.error("[ExceptionHandle] MaxUploadSizeExceededException: ", e);
+        return new ErrorResponse(StatusCode.BAD_REQUEST, GlobalErrorResponseMessage.MAX_FILE_SIZE_ERROR);
+    }
+
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(CustomIllegalArgumentException.class)
