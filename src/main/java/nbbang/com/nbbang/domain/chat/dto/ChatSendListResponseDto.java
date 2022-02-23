@@ -5,6 +5,9 @@ import lombok.Data;
 import nbbang.com.nbbang.domain.chat.domain.Message;
 import nbbang.com.nbbang.domain.chat.dto.message.ChatSendResponseDto;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -13,8 +16,10 @@ public class ChatSendListResponseDto {
     List<ChatSendResponseDto> messages;
 
     public static ChatSendListResponseDto createByEntity(List<Message> messages, Long memberId) {
+        List<Message> ms = new ArrayList<>(messages);
+        Collections.sort(ms);
         return ChatSendListResponseDto.builder()
-                .messages(messages.stream()
+                .messages(ms.stream()
                         .map(message -> ChatSendResponseDto.createByMessage(message, 0, memberId))
                         .collect(Collectors.toList()))
                 .build();

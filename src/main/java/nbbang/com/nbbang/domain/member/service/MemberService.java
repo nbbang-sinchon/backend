@@ -60,12 +60,10 @@ public class MemberService {
     public String uploadAndUpdateAvatar(Long memberId, MultipartFile imgFile) throws IOException {
         Member member = findById(memberId);
         String oldAvatarUrl = member.getAvatar();
-        String oldFileName = oldAvatarUrl.substring(oldAvatarUrl.lastIndexOf("/") + 1);
-
-        if (oldFileName != null) {
+        if (oldAvatarUrl != null) {
+            String oldFileName = oldAvatarUrl.substring(oldAvatarUrl.lastIndexOf("/") + 1);
             s3Uploader.delete("profile-images", oldFileName);
         }
-        //String originalFileName = imgFile.getOriginalFilename();
         String savedFileName = UUID.randomUUID().toString();
         String avatarUrl = s3Uploader.upload(imgFile, "profile-images", savedFileName);
 
