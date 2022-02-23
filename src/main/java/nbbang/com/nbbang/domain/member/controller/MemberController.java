@@ -33,7 +33,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.UUID;
 
 
 @Tag(name = "Member", description = "회원 관리 api (로그인 구현시 올바른 토큰을 보내지 않을 경우 401 Unauthorized 메시지를 받습니다.)")
@@ -84,49 +83,13 @@ public class MemberController {
     @Operation(summary = "프로필 사진 업로드", description = "프로필 사진을 업로드하여 기존 프로필 사진이 있으면 대체합니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(type = "string", implementation = MemberProfileImageUploadResponseDto.class)))
     @ApiResponse(responseCode = "400", description = "프로필 사진 업로드 실패, 잘못된 요청입니다. 사진이 올바른지 확인하세요.", content = @Content(mediaType = "application/json"))
-    @PostMapping(path = "/profile-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(path = "/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public DefaultResponse uploadAndUpdateAvatar(@Schema(description = "이미지 파일을 업로드합니다.")
                                              @RequestPart MultipartFile imgFile) throws IOException {
         String avatarUrl = memberService.uploadAndUpdateAvatar(memberId, imgFile);
         return DefaultResponse.res(StatusCode.OK, MemberResponseMessage.UPDATE_MEMBER, MemberProfileImageUploadResponseDto.createByString(avatarUrl));
     }
 
-    // 나중에 컨트롤러 따로 파는 것은 어떨까요? path 가 다 /members/parties ===========================
-
-    @Operation(summary = "나의 파티", description = "자신이 속한 파티 목록을 조회합니다.")
-    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PartyListResponseDto.class)))
-    @GetMapping("/parties/develop")
-    public DefaultResponse parties(@ParameterObject PartyListRequestDto requestDto, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            throw new CustomIllegalArgumentException(ManyPartyResponseMessage.ILLEGAL_PARTY_LIST_REQUEST, bindingResult);
-        }
-        Page<Party> res = manyPartyService.findAllParties(requestDto.createPageRequest(), requestDto.createPartyListRequestFilterDto(), requestDto.getCursorId(), memberId, null);
-        return DefaultResponse.res(StatusCode.OK, MemberResponseMessage.READ_MEMBER, MyPartyListResponseDto.createFromEntity(res.getContent(), memberId));
-    }
-
-    @Operation(summary = "나의 참여중인 파티", description = "자신이 속한 참여 중(OPEN, FULL)인 파티 목록을 조회합니다.")
-    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PartyListResponseDto.class)))
-    @GetMapping("/parties/on")
-    public DefaultResponse partiesOn(@ParameterObject MyOnPartyListRequestDto requestDto, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            throw new CustomIllegalArgumentException(ManyPartyResponseMessage.ILLEGAL_PARTY_LIST_REQUEST, bindingResult);
-        }
-        Page<Party> res = manyPartyService.findAllParties(requestDto.createPageRequest(), requestDto.createPartyListRequestFilterDto(), requestDto.getCursorId(), memberId, null);
-        return DefaultResponse.res(StatusCode.OK, MemberResponseMessage.READ_MEMBER, MyPartyListResponseDto.createFromEntity(res.getContent(), memberId));
-    }
-
-    @Operation(summary = "나의 종료된 파티", description = "자신이 속한 종료된 파티 목록을 조회합니다.")
-    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PartyListResponseDto.class)))
-    @GetMapping("/parties/closed")
-    public DefaultResponse partiesClosed(@ParameterObject MyClosedPartyListRequestDto requestDto, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            throw new CustomIllegalArgumentException(ManyPartyResponseMessage.ILLEGAL_PARTY_LIST_REQUEST, bindingResult);
-        }
-        Page<Party> res = manyPartyService.findAllParties(requestDto.createPageRequest(), requestDto.createPartyListRequestFilterDto(), requestDto.getCursorId(), memberId, null);
-        return DefaultResponse.res(StatusCode.OK, MemberResponseMessage.READ_MEMBER, MyPartyListResponseDto.createFromEntity(res.getContent(), memberId));
-    }
-
-    // ===========================
 
     @Operation(summary = "멤버 위치", description = "멤버의 위치 정보를 제공합니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PlaceResponseDto.class)))
