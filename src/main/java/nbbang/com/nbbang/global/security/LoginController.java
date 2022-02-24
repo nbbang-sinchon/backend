@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class LoginController {
 
-    @Operation(summary = "구글 로그인", description = "로그인 페이지로 이동합니다(구글). 올바른 요청 시 자신의 정보를 리턴합니다. 직접 주소로 GET 을 보내세요.")
+    @Operation(summary = "구글 로그인", description = "로그인 페이지로 이동합니다(구글). 올바른 요청 시 자신의 정보를 리턴합니다. 직접 DNS 주소로 GET 을 보내세요. (IP 주소가 아닌 DNS 주소)")
     @GetMapping("/oauth2/authorization/google")
     public void memberLogin() {
         System.out.println("login");
