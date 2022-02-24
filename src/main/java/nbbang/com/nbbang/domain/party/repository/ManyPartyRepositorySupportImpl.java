@@ -56,7 +56,7 @@ public class ManyPartyRepositorySupportImpl implements ManyPartyRepositorySuppor
 
         // 커서 페이징을 제공합니다
         if (cursorId != null) {
-            q.where(party.id.loe(cursorId));
+            q.where(party.id.lt(cursorId));
         }
 
         // 자신이 속한 파티 필터링을 제공합니다
