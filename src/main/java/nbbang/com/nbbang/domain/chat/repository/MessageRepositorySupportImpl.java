@@ -37,7 +37,7 @@ public class MessageRepositorySupportImpl implements MessageRepositorySupport {
         QMessage message = QMessage.message;
         JPQLQuery<Message> q = query.selectFrom(message)
                 .where(message.party.id.eq(partyId))
-                .where(message.id.loe(cursorId))
+                .where(message.id.lt(cursorId))
                 .orderBy(message.id.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize());
