@@ -25,7 +25,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         encodingFilter.setForceEncoding(true);
         http
                 .addFilterBefore(encodingFilter, WebAsyncManagerIntegrationFilter.class)
-
+                .authorizeRequests()
+                .antMatchers("/**").permitAll()
+                .anyRequest().authenticated()
+                .and()
                 .csrf().disable()
                 .cors()
                 .and()
@@ -40,7 +43,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 //.antMatchers("/*").permitAll()
                 //.anyRequest().authenticated()
                 //.and()
-                //.oauth2Login().and()
+                .oauth2Login().and()
                 .logout().logoutUrl("/members/logout");
 
     }

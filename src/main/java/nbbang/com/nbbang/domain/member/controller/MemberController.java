@@ -20,10 +20,12 @@ import nbbang.com.nbbang.domain.party.dto.my.MyOnPartyListRequestDto;
 import nbbang.com.nbbang.domain.party.dto.my.MyPartyListResponseDto;
 import nbbang.com.nbbang.domain.party.service.ManyPartyService;
 import nbbang.com.nbbang.global.FileUpload.S3Uploader;
+import nbbang.com.nbbang.global.aop.MemberIdCheck;
 import nbbang.com.nbbang.global.error.exception.CustomIllegalArgumentException;
 import nbbang.com.nbbang.global.response.DefaultResponse;
 import nbbang.com.nbbang.global.response.StatusCode;
 import nbbang.com.nbbang.global.FileUpload.FileUploadService;
+import nbbang.com.nbbang.global.security.SessionMember;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
@@ -32,6 +34,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 
@@ -52,8 +56,14 @@ public class MemberController {
 
     @Operation(summary = "마이페이지 정보 조회", description = "자신의 정보를 조회합니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MemberResponseDto.class)))
+    @MemberIdCheck
     @GetMapping
-    public DefaultResponse select() {
+    public DefaultResponse select(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            SessionMember store = (SessionMember) session.getAttribute("member");
+            memberId = store.getId();
+        }
         Member member = memberService.findById(memberId);
         MemberResponseDto dto = MemberResponseDto.createByEntity(member);
         return DefaultResponse.res(StatusCode.OK, MemberResponseMessage.READ_MEMBER, dto);

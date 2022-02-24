@@ -8,6 +8,8 @@ import nbbang.com.nbbang.domain.member.dto.MemberResponseDto;
 import nbbang.com.nbbang.domain.party.domain.Party;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,9 +23,11 @@ public class ChatResponseDto {
     private String status;
     private MemberResponseDto owner;
     private List<MemberResponseDto> members;
-    private ChatSendListResponseDto messages;
+    private List<ChatSendResponseDto> messages;
 
     public static ChatResponseDto createByPartyAndMessagesEntity(Party party, List<Message> messages, Long memberId) {
+        List<Message> ms = new ArrayList<>(messages);
+        Collections.sort(ms);
         return ChatResponseDto.builder()
                 .id(party.getId())
                 .title(party.getTitle())
@@ -33,7 +37,10 @@ public class ChatResponseDto {
                 .goalNumber(party.getGoalNumber())
                 .joinNumber(party.getPartyMembers().size())
                 .status(party.getStatus().toString())
-                .messages(ChatSendListResponseDto.createByEntity(messages, memberId))
+                .messages(ms.stream()
+                        .map(message -> ChatSendResponseDto.createByMessage(message, 0, memberId))
+                        .collect(Collectors.toList()))
                 .build();
     }
+
 }
