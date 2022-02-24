@@ -2,6 +2,7 @@ package nbbang.com.nbbang.global.interceptor;
 
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.global.security.SessionMember;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -10,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class LoginInterceptor implements HandlerInterceptor {
@@ -25,6 +27,7 @@ public class LoginInterceptor implements HandlerInterceptor {
         catch (Exception e) {
             this.currentMember.setMemberId(1L);
         }
+        System.out.print("Member :" + currentMember.id() + " ");
         return true;
     }
 }

@@ -40,9 +40,9 @@ public class HashtagService {
         if(hashtag==null){
             hashtag = createHashtag(content);
         }
-        else {
-            System.out.println(content + ":" + hashtag.getContent());
-        }
+        //else {
+        //    System.out.println(content + ":" + hashtag.getContent());
+        //}
         return hashtag;
     }
 

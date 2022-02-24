@@ -18,7 +18,6 @@ import nbbang.com.nbbang.global.dto.PageableDto;
 import nbbang.com.nbbang.global.interceptor.CurrentMember;
 import nbbang.com.nbbang.global.response.DefaultResponse;
 import nbbang.com.nbbang.global.response.StatusCode;
-import nbbang.com.nbbang.global.FileUpload.FileUploadService;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -28,9 +27,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import java.util.Collections;
-import java.util.List;
-
 @Tag(name = "ChatRoom", description = "채팅방 api 로그인을 하지 않은 경우 ID=1 인 회원(루피)으로 표시됩니다.")
 @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(mediaType = "application/json"))
 @Slf4j
@@ -38,7 +34,7 @@ import java.util.List;
 @RequestMapping("/chats")
 @RequiredArgsConstructor
 public class ChatRoomController {
-    private final FileUploadService fileUploadService;
+
     private final ChatService chatService;
     private final MemberService memberService;
     private final PartyService partyService;

@@ -18,13 +18,13 @@ import nbbang.com.nbbang.global.error.exception.CustomIllegalArgumentException;
 import nbbang.com.nbbang.global.interceptor.CurrentMember;
 import nbbang.com.nbbang.global.response.DefaultResponse;
 import nbbang.com.nbbang.global.response.StatusCode;
-import nbbang.com.nbbang.global.FileUpload.FileUploadService;
 import org.springframework.http.MediaType;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 
@@ -36,10 +36,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class MemberController {
 
-    private final FileUploadService fileUploadService;
     private final MemberService memberService;
-    private final MemberRepository memberRepository;
-    private final ManyPartyService manyPartyService;
     private final CurrentMember currentMember;
 
     @Operation(summary = "마이페이지 정보 조회", description = "자신의 정보를 조회합니다.")
@@ -95,15 +92,6 @@ public class MemberController {
     @GetMapping("/loginFail")
     public ErrorResponse memberLoginFail() {
         return ErrorResponse.res(StatusCode.UNAUTHORIZED, "로그인 실패");
-    }
-
-
-    @Hidden
-    @Operation(summary = "로그인 페이지로 이동(구글)", description = "로그인 페이지로 이동합니다(구글). 올바른 요청 시 자신의 정보를 리턴합니다.")
-    @GetMapping("oauth2/authorization/google")
-    public DefaultResponse memberLogin() {
-        System.out.println("login");
-        return DefaultResponse.res(StatusCode.OK, "로그인");
     }
 
 

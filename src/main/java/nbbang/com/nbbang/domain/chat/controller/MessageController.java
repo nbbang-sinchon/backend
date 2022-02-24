@@ -19,7 +19,6 @@ import nbbang.com.nbbang.global.error.exception.CustomIllegalArgumentException;
 import nbbang.com.nbbang.global.interceptor.CurrentMember;
 import nbbang.com.nbbang.global.response.DefaultResponse;
 import nbbang.com.nbbang.global.response.StatusCode;
-import nbbang.com.nbbang.global.FileUpload.FileUploadService;
 import org.springframework.http.MediaType;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.validation.BindingResult;
@@ -40,7 +39,6 @@ import javax.validation.Valid;
 public class MessageController {
 
     private final MessageService messageService;
-    private final FileUploadService fileUploadService;
     private final SimpMessagingTemplate simpMessagingTemplate;
     private final PartyService partyService;
     private final CurrentMember currentMember;
@@ -69,7 +67,6 @@ public class MessageController {
     public DefaultResponse sendImage(@PathVariable("party-id") Long partyId,
                                      @Schema(description = "이미지 파일을 업로드합니다.")
                                      @RequestPart MultipartFile imgFile) {
-        String filePath = fileUploadService.fileUpload(imgFile);
-        return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.UPLOADED_MESSAGE, new ChatMessageImageUploadResponseDto(filePath));
+        return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.UPLOADED_MESSAGE, new ChatMessageImageUploadResponseDto(""));
     }
 }
