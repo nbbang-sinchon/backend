@@ -22,6 +22,7 @@ import nbbang.com.nbbang.domain.party.dto.single.response.PartyReadResponseDto;
 import nbbang.com.nbbang.domain.party.service.PartyService;
 import nbbang.com.nbbang.global.error.ErrorResponse;
 import nbbang.com.nbbang.global.error.exception.CustomIllegalArgumentException;
+import nbbang.com.nbbang.global.interceptor.CurrentMember;
 import nbbang.com.nbbang.global.response.DefaultResponse;
 import nbbang.com.nbbang.global.error.GlobalErrorResponseMessage;
 import nbbang.com.nbbang.global.response.StatusCode;
@@ -39,7 +40,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 
-@Tag(name = "Party", description = "단일 파티 생성, 수정, 조회를 지원합니다. ")
+@Tag(name = "Party", description = "단일 파티 생성, 수정, 조회를 지원합니다. 로그인을 하지 않은 경우 ID=1 인 회원(루피)으로 표시됩니다.")
 @ApiResponses(value = {
         @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(mediaType = "application/json")),
         @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(mediaType = "application/json"))
@@ -52,7 +53,7 @@ public class PartyController {
 
     private final PartyService partyService;
     private final MemberService memberService;
-    private Long memberId = 1L;
+    private final CurrentMember currentMember;
 
     @Operation(summary = "파티 생성", description = "파티를 생성합니다. Place 는 none, sinchon, yeonhui, changcheon 중 하나, 모집 인원은 2~10, 해시태그는 중복 없이 10개 이하")
     @ApiResponse(responseCode = "200", description = "OK",
@@ -62,7 +63,7 @@ public class PartyController {
         if (bindingResult.hasErrors()) {
             throw new CustomIllegalArgumentException(GlobalErrorResponseMessage.ILLEGAL_ARGUMENT_ERROR, bindingResult);
         }
-        Member member = memberService.findById(memberId);
+        Member member = memberService.findById(currentMember.id());
         Party party = partyRequestDto.createByDtoWithMember(member);
         Long partyId = partyService.create(party, partyRequestDto.getHashtags());
         return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_CREATE_SUCCESS, new PartyIdResponseDto(partyId));
@@ -73,12 +74,11 @@ public class PartyController {
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = PartyReadResponseDto.class)))
     @GetMapping("/{party-id}")
     public DefaultResponse readParty(@PathVariable("party-id") Long partyId){
-        Long userId = 1L; //세션 구현 후 수정
         Party party = partyService.findById(partyId);
         List<Party> parties = partyService.findNearAndSimilar(partyId);
         List<PartyFindResponseDto> collect = parties.stream().map(PartyFindResponseDto::createByEntity).collect(Collectors.toList());
         List<String> hashtags = party.getHashtagContents();
-        PartyReadResponseDto partyReadResponseDto = PartyReadResponseDto.createDto(party, userId, hashtags, collect);
+        PartyReadResponseDto partyReadResponseDto = PartyReadResponseDto.createDto(party, currentMember.id(), hashtags, collect);
         return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_READ_SUCCESS, partyReadResponseDto);
     }
 
@@ -88,7 +88,7 @@ public class PartyController {
     @ApiResponse(responseCode = "403", description = "Not Owner", content = @Content(mediaType = "application/json"))
     @PatchMapping("/{party-id}")
     public DefaultResponse updateParty(@PathVariable("party-id") Long partyId, @Valid @RequestBody PartyRequestDto partyRequestDtO, BindingResult bindingResult) {
-        partyService.update(partyId, PartyUpdateServiceDto.createByPartyRequestDto(partyRequestDtO), memberId);
+        partyService.update(partyId, PartyUpdateServiceDto.createByPartyRequestDto(partyRequestDtO), currentMember.id());
         return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_UPDATE_SUCCESS, new PartyIdResponseDto(partyId));
     }
 
@@ -100,12 +100,11 @@ public class PartyController {
     public DefaultResponse changeStatus(@PathVariable("party-id") Long partyId,
                                         @Validated @RequestBody PartyStatusChangeRequestDto partyStatusChangeRequestDto,
                                         BindingResult bindingResult) {
-        Long memberId = 1L; // 삭제 예정
         if (bindingResult.hasErrors()) {
             throw new CustomIllegalArgumentException(PartyResponseMessage.ILLEGAL_PARTY_STATUS, bindingResult);
         }
         Party party = partyService.findById(partyId);
-        Member member = memberService.findById(memberId);
+        Member member = memberService.findById(currentMember.id());
         partyService.changeStatus(party, member, partyStatusChangeRequestDto.createStatus());
         return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_UPDATE_SUCCESS);
     }
@@ -119,12 +118,11 @@ public class PartyController {
                                             @Schema(description = "파티 최대 참여자 수")
                                             @Validated @RequestBody PartyChangeGoalNumberRequestDto partyChangeGoalNumberRequestDto,
                                             BindingResult bindingResult) {
-        Long memberId = 1L;
         if (bindingResult.hasErrors()) {
             throw new CustomIllegalArgumentException(PartyResponseMessage.ILLEGAL_PARTY_GOAL_NUMBER, bindingResult);
         }
         Party party = partyService.findById(partyId);
-        Member member = memberService.findById(memberId);
+        Member member = memberService.findById(currentMember.id());
         partyService.changeGoalNumber(party, member, partyChangeGoalNumberRequestDto.getGoalNumber());
         return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_UPDATE_SUCCESS);
     }

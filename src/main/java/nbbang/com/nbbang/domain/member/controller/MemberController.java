@@ -1,5 +1,6 @@
 package nbbang.com.nbbang.domain.member.controller;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -11,35 +12,23 @@ import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.dto.*;
 import nbbang.com.nbbang.domain.member.repository.MemberRepository;
 import nbbang.com.nbbang.domain.member.service.MemberService;
-import nbbang.com.nbbang.domain.party.controller.ManyPartyResponseMessage;
-import nbbang.com.nbbang.domain.party.domain.Party;
-import nbbang.com.nbbang.domain.party.dto.many.PartyListRequestDto;
-import nbbang.com.nbbang.domain.party.dto.many.PartyListResponseDto;
-import nbbang.com.nbbang.domain.party.dto.my.MyClosedPartyListRequestDto;
-import nbbang.com.nbbang.domain.party.dto.my.MyOnPartyListRequestDto;
-import nbbang.com.nbbang.domain.party.dto.my.MyPartyListResponseDto;
 import nbbang.com.nbbang.domain.party.service.ManyPartyService;
-import nbbang.com.nbbang.global.FileUpload.S3Uploader;
-import nbbang.com.nbbang.global.aop.MemberIdCheck;
+import nbbang.com.nbbang.global.error.ErrorResponse;
 import nbbang.com.nbbang.global.error.exception.CustomIllegalArgumentException;
+import nbbang.com.nbbang.global.interceptor.CurrentMember;
 import nbbang.com.nbbang.global.response.DefaultResponse;
 import nbbang.com.nbbang.global.response.StatusCode;
 import nbbang.com.nbbang.global.FileUpload.FileUploadService;
-import nbbang.com.nbbang.global.security.SessionMember;
-import org.springdoc.api.annotations.ParameterObject;
-import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 
-@Tag(name = "Member", description = "회원 관리 api (로그인 구현시 올바른 토큰을 보내지 않을 경우 401 Unauthorized 메시지를 받습니다.)")
+@Tag(name = "Member", description = "회원 관리 api, 로그인을 하지 않은 경우 ID=1 인 회원(루피)으로 표시됩니다.")
 @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(mediaType = "application/json"))
 @Slf4j
 @RestController
@@ -51,20 +40,13 @@ public class MemberController {
     private final MemberService memberService;
     private final MemberRepository memberRepository;
     private final ManyPartyService manyPartyService;
-    private Long memberId = 1L; // 로그인 기능 구현 후 삭제 예정
-
+    private final CurrentMember currentMember;
 
     @Operation(summary = "마이페이지 정보 조회", description = "자신의 정보를 조회합니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MemberResponseDto.class)))
-    @MemberIdCheck
     @GetMapping
-    public DefaultResponse select(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        if (session != null) {
-            SessionMember store = (SessionMember) session.getAttribute("member");
-            memberId = store.getId();
-        }
-        Member member = memberService.findById(memberId);
+    public DefaultResponse select() {
+        Member member = memberService.findById(currentMember.id());
         MemberResponseDto dto = MemberResponseDto.createByEntity(member);
         return DefaultResponse.res(StatusCode.OK, MemberResponseMessage.READ_MEMBER, dto);
     }
@@ -77,7 +59,7 @@ public class MemberController {
         if (bindingResult.hasErrors()) {
             throw new CustomIllegalArgumentException(MemberResponseMessage.ILLEGAL_MEMBER_UPDATE_REQUEST, bindingResult);
         }
-        memberService.updateMember(memberId, memberUpdateRequestDto.getNickname(), memberUpdateRequestDto.getPlace());
+        memberService.updateMember(currentMember.id(), memberUpdateRequestDto.getNickname(), memberUpdateRequestDto.getPlace());
         return DefaultResponse.res(StatusCode.OK, MemberResponseMessage.UPDATE_MEMBER);
     }
 
@@ -86,7 +68,7 @@ public class MemberController {
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
     @DeleteMapping
     public DefaultResponse delete() {
-        memberService.deleteMember(memberId);
+        memberService.deleteMember(currentMember.id());
         return DefaultResponse.res(StatusCode.OK, MemberResponseMessage.DELETE_MEMBER);
     }
 
@@ -96,7 +78,7 @@ public class MemberController {
     @PostMapping(path = "/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public DefaultResponse uploadAndUpdateAvatar(@Schema(description = "이미지 파일을 업로드합니다.")
                                              @RequestPart MultipartFile imgFile) throws IOException {
-        String avatarUrl = memberService.uploadAndUpdateAvatar(memberId, imgFile);
+        String avatarUrl = memberService.uploadAndUpdateAvatar(currentMember.id(), imgFile);
         return DefaultResponse.res(StatusCode.OK, MemberResponseMessage.UPDATE_MEMBER, MemberProfileImageUploadResponseDto.createByString(avatarUrl));
     }
 
@@ -105,20 +87,24 @@ public class MemberController {
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PlaceResponseDto.class)))
     @GetMapping("/place")
     public DefaultResponse memberPlace() {
-        Member member = memberService.findById(memberId);
+        Member member = memberService.findById(currentMember.id());
         return DefaultResponse.res(StatusCode.OK, MemberResponseMessage.MEMBER_LOCATION_SUCCESS, PlaceResponseDto.create(member.getPlace()));
     }
 
-    @GetMapping("/login")
+    @Hidden
+    @GetMapping("/loginFail")
+    public ErrorResponse memberLoginFail() {
+        return ErrorResponse.res(StatusCode.UNAUTHORIZED, "로그인 실패");
+    }
+
+
+    @Hidden
+    @Operation(summary = "로그인 페이지로 이동(구글)", description = "로그인 페이지로 이동합니다(구글). 올바른 요청 시 자신의 정보를 리턴합니다.")
+    @GetMapping("oauth2/authorization/google")
     public DefaultResponse memberLogin() {
         System.out.println("login");
         return DefaultResponse.res(StatusCode.OK, "로그인");
     }
 
-    @GetMapping("/logout")
-    public DefaultResponse memberLogout() {
-        System.out.println("logout");
-        return DefaultResponse.res(StatusCode.OK, "로그아웃");
-    }
 
 }

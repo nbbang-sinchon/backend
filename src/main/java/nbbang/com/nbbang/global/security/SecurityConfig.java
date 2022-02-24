@@ -43,8 +43,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 //.antMatchers("/*").permitAll()
                 //.anyRequest().authenticated()
                 //.and()
-                .oauth2Login().and()
-                .logout().logoutUrl("/members/logout");
+                .oauth2Login()
+                .defaultSuccessUrl("/members")
+                .failureUrl("/members/loginFail")
+                .and()
+                .logout().logoutUrl("/logout")
+                .invalidateHttpSession(true)
+        ;
 
     }
 

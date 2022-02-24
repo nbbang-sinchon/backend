@@ -16,6 +16,7 @@ import nbbang.com.nbbang.domain.chat.service.MessageService;
 import nbbang.com.nbbang.domain.party.service.PartyService;
 import nbbang.com.nbbang.global.error.GlobalErrorResponseMessage;
 import nbbang.com.nbbang.global.error.exception.CustomIllegalArgumentException;
+import nbbang.com.nbbang.global.interceptor.CurrentMember;
 import nbbang.com.nbbang.global.response.DefaultResponse;
 import nbbang.com.nbbang.global.response.StatusCode;
 import nbbang.com.nbbang.global.FileUpload.FileUploadService;
@@ -27,7 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 
-@Tag(name = "Chat", description = "채팅 메시지를 전송합니다. ")
+@Tag(name = "Chat", description = "채팅 메시지를 전송합니다. 로그인을 하지 않은 경우 ID=1 인 회원(루피)으로 표시됩니다.")
 @ApiResponses(value = {
         @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(mediaType = "application/json")),
         @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(mediaType = "application/json"))
@@ -42,6 +43,7 @@ public class MessageController {
     private final FileUploadService fileUploadService;
     private final SimpMessagingTemplate simpMessagingTemplate;
     private final PartyService partyService;
+    private final CurrentMember currentMember;
 
     @Operation(summary = "채팅 메시지 전송", description = "채팅 메시지를 전송합니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ChatSendResponseDto.class)))
@@ -51,11 +53,10 @@ public class MessageController {
         if (bindingResult.hasErrors()) {
             throw new CustomIllegalArgumentException(GlobalErrorResponseMessage.ILLEGAL_ARGUMENT_ERROR, bindingResult);
         }
-        Long memberId = 1L;
-        Long messageId = messageService.send(partyId, memberId, chatSendRequestDto.getContent());
+        Long messageId = messageService.send(partyId, currentMember.id(), chatSendRequestDto.getContent());
         Message message = messageService.findById(messageId);
         Integer partyMemberNumber = partyService.countPartyMemberNumber(partyId);
-        ChatSendResponseDto chatSendResponseDto = ChatSendResponseDto.createByMessage(message, partyMemberNumber, memberId);
+        ChatSendResponseDto chatSendResponseDto = ChatSendResponseDto.createByMessage(message, partyMemberNumber, currentMember.id());
         simpMessagingTemplate.convertAndSend("/topic/" + partyId, chatSendResponseDto);
         return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.UPLOADED_MESSAGE, chatSendResponseDto);
     }
