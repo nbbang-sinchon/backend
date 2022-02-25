@@ -24,8 +24,7 @@ class PartyServiceTest {
     @Autowired PartyService partyService;
     @Autowired MemberRepository memberRepository;
     @Autowired PartyRepository partyRepository;
-    @Autowired
-    PartyMemberService partyMemberService;
+    @Autowired PartyMemberService partyMemberService;
 
 
     @Test
@@ -43,8 +42,8 @@ class PartyServiceTest {
         partyMemberService.joinParty(partyA, memberB);
         partyMemberService.joinParty(partyA, memberC);
         // then
-        assertThat(partyA.getMemberParties().size()).isEqualTo(2);
-        assertThat(partyA.getMemberParties().get(0).getMember().equals(memberB));
+        assertThat(partyA.getPartyMembers().size()).isEqualTo(2);
+        assertThat(partyA.getPartyMembers().get(0).getMember().equals(memberB));
     }
 
     @Test
@@ -123,6 +122,19 @@ class PartyServiceTest {
         partyMemberService.joinParty(partyA, memberB);
         // then
         partyMemberService.exitParty(partyA, memberB);
-        assertThat(partyA.getMemberParties().size()).isEqualTo(0);
+        assertThat(partyA.getPartyMembers().size()).isEqualTo(0);
     }
+
+    @Test
+    public void partyFindTest() {
+        Member memberA = Member.builder().nickname("memberA").build();
+        memberRepository.save(memberA);
+        Party partyA = Party.builder().title("partyA").owner(memberA).goalNumber(3).status(PartyStatus.OPEN).build();
+        partyRepository.save(partyA);
+
+        Party find = partyRepository.findById(partyA.getId()).get();
+        assertThat(find).isEqualTo(partyA);
+        assertThat(find.getTitle()).isEqualTo("partyA");
+    }
+
 }

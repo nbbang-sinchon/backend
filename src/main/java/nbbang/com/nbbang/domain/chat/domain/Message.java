@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @EntityListeners(AuditingEntityListener.class)
 @Entity @Getter @Builder
 @AllArgsConstructor
-public class Message {
+public class Message implements Comparable<Message> {
     @Id
     @GeneratedValue
     @Column(name = "message_id")
@@ -38,8 +38,6 @@ public class Message {
     @JoinColumn(name = "member_id")
     private Member sender;
 
-    private Long orderInChat;
-
     @Enumerated(value = EnumType.STRING)
     private MessageType type;
 
@@ -53,5 +51,16 @@ public class Message {
                 .createTime(createTime)
                 .build();
     }
+
+
+    public int compareTo(Message o) {
+        if (this.id < o.getId()) {
+            return -1;
+        } else if (this.id > o.getId()) {
+            return 1;
+        }
+        return 0;
+    }
+
 
 }

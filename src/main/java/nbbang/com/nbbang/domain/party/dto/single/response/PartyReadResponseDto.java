@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import nbbang.com.nbbang.domain.member.dto.MemberResponseDto;
-import nbbang.com.nbbang.domain.member.dto.MemberSimpleResponseDto;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.dto.PartyFindResponseDto;
 
@@ -35,13 +34,13 @@ public class PartyReadResponseDto {
         /* 유저 정보(닉네임, 빵 수), 지역, 모집 현황(참여 인원수/모집 인원수, 모집 상태), 작성 시간, 해시태그, 하트 수,
         작성자와 조회자 일치 여부, 파티 참여 여부, 제목, 내용, 최근 파티 목록을 제공한다.
         */
-        boolean isMember = party.getMemberParties().stream()
+        boolean isMember = party.getPartyMembers().stream()
                 .anyMatch(memberParty -> memberParty.getMember().getId().equals(userId));
         PartyReadResponseDto partyReadResponseDto =  PartyReadResponseDto.builder()
                 .owner(MemberResponseDto.createByEntity(party.getOwner()))
                 .place(party.getPlace().name())
                 .status((party.getStatus()!=null)?party.getStatus().name():null)
-                .joinNumber((party.getMemberParties()!=null)?party.getMemberParties().size():null)
+                .joinNumber((party.getPartyMembers()!=null)?party.getPartyMembers().size():null)
                 .goalNumber(party.getGoalNumber())
                 .createTime(party.getCreateTime())
                 .hashtags(hashtags)
@@ -50,7 +49,7 @@ public class PartyReadResponseDto {
                 .title(party.getTitle())
                 .content(party.getContent())
                 .parties(parties)
-                .members(party.getMemberParties().stream().map(m -> MemberResponseDto.createByEntity(m.getMember())).collect(Collectors.toList()))
+                .members(party.getPartyMembers().stream().map(m -> MemberResponseDto.createByEntity(m.getMember())).collect(Collectors.toList()))
                 .build();
         return partyReadResponseDto;
     }

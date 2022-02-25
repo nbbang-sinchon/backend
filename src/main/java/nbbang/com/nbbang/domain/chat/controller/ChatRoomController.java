@@ -15,9 +15,9 @@ import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.repository.PartyRepository;
 import nbbang.com.nbbang.domain.party.service.PartyService;
 import nbbang.com.nbbang.global.dto.PageableDto;
+import nbbang.com.nbbang.global.interceptor.CurrentMember;
 import nbbang.com.nbbang.global.response.DefaultResponse;
 import nbbang.com.nbbang.global.response.StatusCode;
-import nbbang.com.nbbang.global.support.FileUpload.FileUploadService;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -27,21 +27,21 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@Tag(name = "ChatRoom", description = "채팅방 api(로그인 구현시 올바른 토큰을 보내지 않을 경우 401 Unauthorized 메시지를 받습니다.).")
+@Tag(name = "ChatRoom", description = "채팅방 api 로그인을 하지 않은 경우 ID=1 인 회원(루피)으로 표시됩니다.")
 @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(mediaType = "application/json"))
 @Slf4j
 @RestController
 @RequestMapping("/chats")
 @RequiredArgsConstructor
 public class ChatRoomController {
-    private final FileUploadService fileUploadService;
+
     private final ChatService chatService;
     private final MemberService memberService;
     private final PartyService partyService;
     private final PartyRepository partyRepository;
-    private Long memberId = 1L; // 로그인 기능 구현시 삭제 예정
+    private final CurrentMember currentMember;
 
-    @Operation(summary = "채팅방 조회", description = "채팅방을 파티 id 로 조회합니다.")
+    @Operation(summary = "채팅방 조회", description = "채팅방을 파티 id 로 조회합니다. ")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ChatResponseDto.class)))
     @ApiResponse(responseCode = "403", description = "Not Party Member", content = @Content(mediaType = "application/json"))
     @GetMapping("/{party-id}")
@@ -51,7 +51,7 @@ public class ChatRoomController {
         }
         Party party = partyRepository.findById(partyId).get(); // Party Service 구현 시 바꿔야 할 것 같습니다.
         Page<Message> messages = chatService.findMessages(party, PageRequest.of(0, pageSize));
-        return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.READ_CHAT, ChatResponseDto.createByPartyAndMessagesEntity(party, messages.getContent()));
+        return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.READ_CHAT, ChatResponseDto.createByPartyAndMessagesEntity(party, messages.getContent(), currentMember.id()));
     }
 
     @Operation(summary = "채팅 메시지 조회", description = "페이징이 적용된 채팅 메시지를 조회합니다. 쿼리 파라미터로 커서 id 를 전송하면 쿼리에 커서 페이징이 적용됩니다.")
@@ -65,7 +65,7 @@ public class ChatRoomController {
             cursorId = chatService.findLastMessage(party).getId();
         }
         Page<Message> messages = chatService.findMessagesByCursorId(party, pageableDto.createPageRequest(), cursorId);
-        return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.READ_CHAT, ChatSendListResponseDto.createByEntity(messages.getContent()));
+        return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.READ_CHAT, ChatSendListResponseDto.createByEntity(messages.getContent(), currentMember.id()));
     }
 
     @Operation(summary = "채팅방에서 나가기", description = "채팅방에서 나갑니다. 소켓 종료 용도로 쓰일 것 같습니다.")
@@ -95,7 +95,7 @@ public class ChatRoomController {
         cursorIdCookie.setPath("/");
         cursorIdCookie.setMaxAge(1000000);
         response.addCookie(cursorIdCookie);
-        return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.READ_CHAT, ChatResponseDto.createByPartyAndMessagesEntity(party, messages.getContent()));
+        return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.READ_CHAT, ChatResponseDto.createByPartyAndMessagesEntity(party, messages.getContent(), currentMember.id()));
     }
 
     @Operation(summary = "채팅 메시지 조회-쿠키", description = "커서 페이징이 적용된 채팅 메시지를 조회합니다. 클라이언트는 쿠키로 커서 id 를 전송합니다.")
@@ -110,7 +110,7 @@ public class ChatRoomController {
         Long cursorId = Long.parseLong(cookieVals[1]);
         if (cookiePartyId != partyId) throw new RuntimeException();
         Page<Message> messages = chatService.findMessagesByCursorId(party, pageableDto.createPageRequest(), cursorId);
-        return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.READ_CHAT, ChatSendListResponseDto.createByEntity(messages.getContent()));
+        return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.READ_CHAT, ChatSendListResponseDto.createByEntity(messages.getContent(), currentMember.id()));
     }
 
 }

@@ -33,7 +33,7 @@ public class PartyMember {
                 .member(member)
                 .party(party)
                 .build();
-        party.getMemberParties().add(partyMember);
+        party.getPartyMembers().add(partyMember);
         return partyMember;
     }
 }

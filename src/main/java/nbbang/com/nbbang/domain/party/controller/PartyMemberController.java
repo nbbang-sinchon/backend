@@ -6,6 +6,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import nbbang.com.nbbang.domain.chat.domain.Message;
+import nbbang.com.nbbang.domain.chat.dto.message.ChatSendResponseDto;
+import nbbang.com.nbbang.domain.chat.service.MessageService;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.service.MemberService;
 import nbbang.com.nbbang.domain.party.domain.Party;
@@ -14,12 +17,14 @@ import nbbang.com.nbbang.domain.party.exception.PartyJoinException;
 import nbbang.com.nbbang.domain.party.service.PartyMemberService;
 import nbbang.com.nbbang.domain.party.service.PartyService;
 import nbbang.com.nbbang.global.error.ErrorResponse;
+import nbbang.com.nbbang.global.interceptor.CurrentMember;
 import nbbang.com.nbbang.global.response.DefaultResponse;
 import nbbang.com.nbbang.global.response.StatusCode;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 
-@Tag(name = "PartyMember", description = "파티 참여/탈퇴")
+@Tag(name = "PartyMember", description = "파티 참여/탈퇴 로그인을 하지 않은 경우 ID=1 인 회원(루피)으로 표시됩니다.")
 @Slf4j
 @RestController
 @RequestMapping("/parties")
@@ -28,17 +33,23 @@ public class PartyMemberController {
     private final PartyService partyService;
     private final MemberService memberService;
     private final PartyMemberService partyMemberService;
+    private final SimpMessagingTemplate simpMessagingTemplate;
+    private final MessageService messageService;
+    private final CurrentMember currentMember;
 
     @Operation(summary = "파티 참여", description = "파티에 참여합니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "400", description = "파티에 참여할 수 없습니다. 이미 참여한 파티이거나 파티가 찼습니다.", content = @Content(mediaType = "application/json"))
     @PostMapping("/{party-id}/join")
     public DefaultResponse joinParty(@PathVariable("party-id") Long partyId) {
-        Long memberId = 1L;
         Party party = partyService.findById(partyId);
-        Member member = memberService.findById(memberId);
+        Member member = memberService.findById(currentMember.id());
 
-        partyMemberService.joinParty(party, member);
+        Long messageId = partyMemberService.joinParty(party, member);
+        Message message = messageService.findById(messageId);
+        ChatSendResponseDto chatSendResponseDto = ChatSendResponseDto.createByMessage(message, 0, currentMember.id());
+        simpMessagingTemplate.convertAndSend("/topic/" + partyId, chatSendResponseDto);
+
         return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_JOIN_SUCCESS);
     }
 
@@ -48,11 +59,13 @@ public class PartyMemberController {
     @ApiResponse(responseCode = "403", description = "Not Member", content = @Content(mediaType = "application/json"))
     @PostMapping("/{party-id}/exit")
     public DefaultResponse exitParty(@PathVariable("party-id") Long partyId) {
-        Long memberId = 1L;
         Party party = partyService.findById(partyId);
-        Member member = memberService.findById(memberId);
+        Member member = memberService.findById(currentMember.id());
 
-        partyMemberService.exitParty(party, member);
+        Long messageId = partyMemberService.exitParty(party, member);
+        Message message = messageService.findById(messageId);
+        ChatSendResponseDto chatSendResponseDto = ChatSendResponseDto.createByMessage(message, 0, currentMember.id());
+        simpMessagingTemplate.convertAndSend("/topic/" + partyId, chatSendResponseDto);
         return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_EXIT_SUCCESS);
     }
 

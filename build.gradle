@@ -38,15 +38,19 @@ dependencies {
 
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 
-	// implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-	// implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
-	// implementation 'org.springframework.boot:spring-boot-starter-security'
-	// implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
-	// testImplementation 'org.springframework.security:spring-security-test'
-	// compile group: 'org.thymeleaf.extras', name: 'thymeleaf-extras-java8time'
+
+	//implementation "org.springframework.boot:spring-boot-starter-data-redis"
+	//implementation 'org.springframework.session:spring-session-data-redis'
+	//implementation 'org.springframework.session:spring-session-core'
+
+	implementation platform('com.amazonaws:aws-java-sdk-bom:1.11.1000')
+	implementation 'com.amazonaws:aws-java-sdk-s3'
+	//implementation 'org.springframework.cloud:spring-cloud-starter-aws'
+
+	implementation 'org.springframework.boot:spring-boot-starter-aop'
 
 
-	// https://chung-develop.tistory.com/3
+
 }
 
 tasks.named('test') {

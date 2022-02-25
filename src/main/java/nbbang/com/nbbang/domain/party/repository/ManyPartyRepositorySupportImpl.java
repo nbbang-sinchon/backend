@@ -56,7 +56,7 @@ public class ManyPartyRepositorySupportImpl implements ManyPartyRepositorySuppor
 
         // 커서 페이징을 제공합니다
         if (cursorId != null) {
-            q.where(party.id.loe(cursorId));
+            q.where(party.id.lt(cursorId));
         }
 
         // 자신이 속한 파티 필터링을 제공합니다
@@ -75,6 +75,9 @@ public class ManyPartyRepositorySupportImpl implements ManyPartyRepositorySuppor
         if (hashtags != null) {
             for (String content : hashtags) {
                 q.where(party.partyHashtags.any().hashtag.content.eq(content));
+                //q.where(party.partyHashtags.any().hashtag.content.eq(content));
+                //byte[] bytes = content.getBytes();
+                //q.where(party.partyHashtags.any().hashtag.content.castToNum( (byte[]).class).eq(bytes));
             }
         }
 
@@ -146,7 +149,7 @@ public class ManyPartyRepositorySupportImpl implements ManyPartyRepositorySuppor
         QPartyMember mp = QPartyMember.partyMember;
         BooleanBuilder builder = new BooleanBuilder();
         builder.or(party.owner.id.eq(memberId));
-        builder.or(party.memberParties.any().member.id.eq(memberId));
+        builder.or(party.partyMembers.any().member.id.eq(memberId));
         return builder;
     }
 

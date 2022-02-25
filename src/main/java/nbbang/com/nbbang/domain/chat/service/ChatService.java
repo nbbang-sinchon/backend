@@ -23,6 +23,7 @@ import java.time.LocalDateTime;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ChatService {
+    // 최초 입장 시, 탈퇴시 메시지 보내는게 있어야함
     private final MessageRepository messageRepository;
     private final MemberService memberService;
     private final PartyRepository partyRepository;
@@ -79,10 +80,10 @@ public class ChatService {
             throw new NotPartyMemberException();
         }
 
-        Message message = Message.createMessage(member, party, content, localDateTime);
-        messageRepository.save(message);
+          messageRepository.save(message);
         return message.getId();
     }*/
+
 
     public Message findLastMessage(Party party) {
         return messageRepository.findLastMessage(party.getId());
@@ -93,7 +94,7 @@ public class ChatService {
     }
 
     public Page<Message> findMessages(Party party, Pageable pageable) {
-        return messageRepository.findAllByPartyId(party.getId(), pageable);
+        return messageRepository.findAllByPartyIdOrderByIdDesc(party.getId(), pageable);
     }
 
     public Page<Message> findMessagesByCursorId(Party party, Pageable pageable, Long cursorId) {
@@ -124,8 +125,8 @@ public class ChatService {
         if (party.getOwner().getId() == memberId) {
             isMember = true;
         }
-        if (party.getMemberParties() != null) {
-            for (PartyMember mp : party.getMemberParties()) {
+        if (party.getPartyMembers() != null) {
+            for (PartyMember mp : party.getPartyMembers()) {
                 if (mp.getMember().getId() == memberId) {
                     isMember = true;
                 }

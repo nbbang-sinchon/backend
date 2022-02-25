@@ -15,9 +15,11 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpSession;
 import java.util.Collections;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @Service
-public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
+public class CustomOAuth2MemberService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
     private final MemberRepository memberRepository;
     private final HttpSession httpSession;
 
@@ -32,7 +34,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
         OAuthAttributes attributes = OAuthAttributes.
                 of(registrationId, userNameAttributeName, oAuth2User.getAttributes());
-        Member member = saveOrUpdate(attributes);
+        Member member = saveOrSelect(attributes);
         httpSession.setAttribute("member", new SessionMember(member));
 
         return new DefaultOAuth2User(
@@ -41,10 +43,12 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
                 attributes.getNameAttributeKey());
     }
 
-    private Member saveOrUpdate(OAuthAttributes attributes) {
-        Member member = memberRepository.findByEmail(attributes.getEmail())
-                .map(entity -> entity.update(attributes.getNickname(),attributes.getAvatar()))
-                .orElse(attributes.toEntity());
-        return memberRepository.save(member);
+    private Member saveOrSelect(OAuthAttributes attributes) {
+        Member member = memberRepository.findByEmail(attributes.getEmail());
+        if (member == null) {
+            member = attributes.toEntity();
+            memberRepository.save(member);
+        }
+        return member;
     }
 }

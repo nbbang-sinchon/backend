@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import nbbang.com.nbbang.domain.bbangpan.repository.PartyMemberRepository;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.dto.Place;
+import nbbang.com.nbbang.domain.member.service.MemberService;
 import nbbang.com.nbbang.domain.party.domain.Hashtag;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.domain.PartyHashtag;
@@ -11,6 +12,7 @@ import nbbang.com.nbbang.domain.party.domain.PartyStatus;
 import nbbang.com.nbbang.domain.party.dto.single.PartyUpdateServiceDto;
 import nbbang.com.nbbang.domain.party.repository.PartyHashtagRepository;
 import nbbang.com.nbbang.domain.party.repository.PartyRepository;
+import nbbang.com.nbbang.global.error.exception.NotOwnerException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
@@ -29,6 +31,7 @@ public class PartyService {
     private final PartyHashtagRepository partyHashtagRepository;
     private final HashtagService hashtagService;
     private final PartyMemberRepository memberPartyRepository;
+    private final MemberService memberService;
 
     @Transactional
     public Long create(Party party, List<String> hashtagContents) {
@@ -55,8 +58,13 @@ public class PartyService {
     }
     
     @Transactional
-    public Long update(Long partyId, PartyUpdateServiceDto partyUpdateServiceDto) {
+    //public Long update(Long partyId, PartyUpdateServiceDto partyUpdateServiceDto) {
+    public Long update(Long partyId, PartyUpdateServiceDto partyUpdateServiceDto, Long memberId) {
+        Member member = memberService.findById(memberId);
         Party party = findById(partyId);
+        if (!party.getOwner().equals(member)) {
+            throw new NotOwnerException();
+        }
         party.update(partyUpdateServiceDto);
         if (partyUpdateServiceDto.getHashtagContents().isPresent()) {
             List<String> oldHashtagContents = party.getHashtagContents();
@@ -77,11 +85,17 @@ public class PartyService {
 
     @Transactional
     public void changeStatus(Party party, Member member, PartyStatus status) {
+        if (!party.getOwner().equals(member)) {
+            throw new NotOwnerException();
+        }
         party.changeStatus(status);
     }
 
     @Transactional
     public void changeGoalNumber(Party party, Member member, Integer goalNumber) {
+        if (!party.getOwner().equals(member)) {
+            throw new NotOwnerException();
+        }
         party.changeGoalNumber(goalNumber);
     }
 
@@ -99,11 +113,24 @@ public class PartyService {
         PartyHashtag.createPartyHashtags(party, hashtags);
     }
 
-    private void removeHashtag(Long partyId, String content) {
+    @Transactional
+    public void removeHashtag(Long partyId, String content) {
         Party party = findById(partyId);
         PartyHashtag partyHashtag = party.deletePartyHashtag(content);
         partyHashtagRepository.delete(partyHashtag);
         hashtagService.deleteIfNotReferred(partyHashtag.getHashtag());
     }
 
+    @Transactional
+    public void updateActiveNumber(Long partyId, Integer cnt){
+        System.out.println("partyId = " + partyId);
+        findById(partyId).updateActiveNumber(cnt);
+        System.out.println("PartyService.updateActiveNumber");
+    }
+
+    public Integer countPartyMemberNumber(Long partyId) {
+        Party party = findById(partyId);
+        Integer partyMemberNumber = party.countPartyMemberNumber();
+        return partyMemberNumber;
+    }
 }
