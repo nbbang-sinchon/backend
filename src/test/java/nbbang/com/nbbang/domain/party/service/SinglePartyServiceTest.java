@@ -32,27 +32,27 @@ class SinglePartyServiceTest {
 
     @Test
     public void createParty(){
-        /*// given
+        // given
         List<String> hashtagContents = Arrays.asList("old1", "old2");
         Party party = Party.builder().title("tempParty").place(SINCHON).goalNumber(3).build();
         // when
         Long createdPartyId = partyService.create(party, hashtagContents);
         // then
         Party findParty = partyRepository.findById(createdPartyId).orElse(null);
-        assertThat(findParty).isEqualTo(party);*/
+        assertThat(findParty).isEqualTo(party);
     }
 
 
     @Test
     void findParty() {
         // given
-        /*List<String> hashtagContents = Arrays.asList("old1", "old2");
+        List<String> hashtagContents = Arrays.asList("old1", "old2");
         Party party = Party.builder().title("tempParty").place(SINCHON).goalNumber(3).build();
         Long createdPartyId = partyService.create(party, hashtagContents);
         // when
         Party findParty = partyService.findById(createdPartyId);
         // then
-        assertThat(findParty).isEqualTo(party);*/
+        assertThat(findParty).isEqualTo(party);
     }
 
     /*@Test
