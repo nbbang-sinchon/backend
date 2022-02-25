@@ -23,6 +23,7 @@ public class PartyRequestDto {
     @NotBlank(message = "파티의 제목은 공백일 수 없습니다.")
     private String title;
     private String content;
+    @NotBlank(message="해시태그는 공백일 수 없습니다.")
     @HashtagNumberAndDuplicate
     private List<String> hashtags;
     @NotNull(message = "파티의 위치는 필수 값입니다.")
