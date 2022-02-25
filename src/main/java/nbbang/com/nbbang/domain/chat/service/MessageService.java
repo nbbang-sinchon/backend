@@ -63,4 +63,11 @@ public class MessageService {
         Long count = messageRepository.countByPartyId(partyId);
         return count;
     }
+
+
+    public Message findLastMessageAndUpdateReadNumber(Long partyId) {
+        Message lastMessage = messageRepository.findLastMessage(partyId);
+        messageRepository.bulkReadNumberPlus(lastMessage.getId(), partyId);
+        return lastMessage;
+    }
 }

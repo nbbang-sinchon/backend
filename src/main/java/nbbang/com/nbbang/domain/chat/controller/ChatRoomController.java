@@ -21,6 +21,7 @@ import nbbang.com.nbbang.global.response.StatusCode;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
@@ -40,6 +41,7 @@ public class ChatRoomController {
     private final PartyService partyService;
     private final PartyRepository partyRepository;
     private final CurrentMember currentMember;
+    private final SimpMessagingTemplate simpMessagingTemplate;
 
     @Operation(summary = "채팅방 조회", description = "채팅방을 파티 id 로 조회합니다. ")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ChatResponseDto.class)))
@@ -65,8 +67,17 @@ public class ChatRoomController {
             cursorId = chatService.findLastMessage(party).getId();
         }
         Page<Message> messages = chatService.findMessagesByCursorId(party, pageableDto.createPageRequest(), cursorId);
+        Long memberId = 1L;
+        readMessage(currentMember.getMemberId(), partyId); // 채팅방에 처음 들어올 때 메시지 조회를 부를 것 같아서, 여기서 메시지 읽는 기능을 부릅니다.
         return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.READ_CHAT, ChatSendListResponseDto.createByEntity(messages.getContent(), currentMember.id()));
     }
+
+    public void readMessage(Long memberId, Long partyId){
+        Long lastReadMessageId = chatService.readMessage(memberId, partyId);
+        ChatReadSocketDto chatReadSocketDto = ChatReadSocketDto.builder().lastReadMessageId(lastReadMessageId).build();
+        simpMessagingTemplate.convertAndSend("/topic/" + partyId, chatReadSocketDto);
+    }
+
 
     @Operation(summary = "채팅방에서 나가기", description = "채팅방에서 나갑니다. 소켓 종료 용도로 쓰일 것 같습니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))

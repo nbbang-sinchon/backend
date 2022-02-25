@@ -1,11 +1,11 @@
 package nbbang.com.nbbang.domain.member.service;
 
 import lombok.RequiredArgsConstructor;
+import nbbang.com.nbbang.domain.chat.domain.Message;
 import nbbang.com.nbbang.domain.member.controller.MemberResponseMessage;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.dto.Place;
 import nbbang.com.nbbang.domain.member.repository.MemberRepository;
-import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.global.FileUpload.S3Uploader;
 import nbbang.com.nbbang.global.security.Role;
 import org.springframework.stereotype.Service;
@@ -76,6 +76,5 @@ public class MemberService {
         Member member = findById(memberId);
         member.leaveMember();
     }
-
 
 }

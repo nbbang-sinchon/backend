@@ -2,6 +2,7 @@ package nbbang.com.nbbang.domain.chat.service;
 
 import lombok.RequiredArgsConstructor;
 import nbbang.com.nbbang.domain.bbangpan.domain.PartyMember;
+import nbbang.com.nbbang.domain.bbangpan.repository.PartyMemberRepository;
 import nbbang.com.nbbang.domain.chat.controller.ChatResponseMessage;
 import nbbang.com.nbbang.domain.chat.domain.Message;
 import nbbang.com.nbbang.domain.chat.repository.MessageRepository;
@@ -10,6 +11,7 @@ import nbbang.com.nbbang.domain.member.service.MemberService;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.domain.PartyStatus;
 import nbbang.com.nbbang.domain.party.repository.PartyRepository;
+import nbbang.com.nbbang.domain.party.service.PartyService;
 import nbbang.com.nbbang.global.error.exception.NotPartyMemberException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,6 +29,9 @@ public class ChatService {
     private final MessageRepository messageRepository;
     private final MemberService memberService;
     private final PartyRepository partyRepository;
+    private final PartyService partyService;
+    private final PartyMemberRepository partyMemberRepository;
+    private final MessageService messageService;
 
     /*public Long findLastMessageId(Long partyId) {
         return messageRepository.findLastMessageId(partyId);
@@ -141,4 +146,13 @@ public class ChatService {
         return message.getId();
     }
 
+    @Transactional
+    public Long readMessage(Long memberId, Long partyId) {
+        Party party = partyService.findById(partyId);
+        PartyMember partyMember = partyMemberRepository.findByMemberIdAndPartyId(memberId, partyId);
+        Long lastReadMessageId = partyMember.getLastReadMessage().getId();
+        Message message = messageService.findLastMessageAndUpdateReadNumber(partyId);
+        partyMember.changeLastReadMessage(message);
+        return lastReadMessageId;
+    }
 }
