@@ -7,9 +7,11 @@ import nbbang.com.nbbang.domain.member.service.MemberService;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.domain.PartyStatus;
 import nbbang.com.nbbang.domain.party.service.PartyService;
+import nbbang.com.nbbang.global.interceptor.CurrentMember;
 import nbbang.com.nbbang.global.response.DefaultResponse;
 import nbbang.com.nbbang.global.security.CustomOAuth2MemberService;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -44,6 +46,8 @@ class PartyControllerTest {
     @MockBean
     private CustomOAuth2MemberService customOAuth2MemberService;
 
+    @MockBean
+    private CurrentMember currentMember;
 
     private Map toData(MvcResult res) throws Exception {
         if (res == null) {
