@@ -25,7 +25,7 @@ public class PartyResponseMessage {
 
     // 파티 탈퇴에 대한 메시지
     public static final String PARTY_EXIT_SUCCESS = "파티 탈퇴 성공";
-    public static final String PARTY_OWNER_EXIT_ERROR = "파티 상태에 따라 방장은 탈퇴할 수 없습니다.";
+    public static final String PARTY_OWNER_EXIT_ERROR = "방장은 탈퇴할 수 없습니다.";
 
     // 파티 변경에 대한 메시지
     public static final String ILLEGAL_PARTY_STATUS = "파티 상태를 올바르게 입력하세요.";

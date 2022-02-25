@@ -43,6 +43,18 @@ public class MessageService {
         return savedMessage.getId();
     }
 
+    @Transactional
+    public Long send(Long partyId, Long senderId, String content, MessageType type) {
+        Party party = partyService.findById(partyId);
+        Member sender = memberService.findById(senderId);
+        Long orderInChat = countByPartyId(partyId);
+        Integer readNumber = party.getActiveNumber();
+        Message message = Message.builder().readNumber(0).content(content).type(type).readNumber(readNumber)
+                .party(party).sender(sender).build();
+        Message savedMessage = messageRepository.save(message);
+        return savedMessage.getId();
+    }
+
     public Message findById(Long id){
         return messageRepository.findById(id).orElseThrow(()->new NotFoundException(MESSAGE_NOT_FOUND));
     }

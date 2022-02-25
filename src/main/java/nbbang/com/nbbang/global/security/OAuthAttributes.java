@@ -48,7 +48,6 @@ public class OAuthAttributes {
         return Member.builder()
                 .nickname(nickname)
                 .email(email)
-                .avatar(avatar)
                 .role(Role.USER)
                 .place(Place.NONE)
                 .build();

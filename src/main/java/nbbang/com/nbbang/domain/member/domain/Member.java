@@ -31,8 +31,8 @@ public class Member {
     private Role role;
 
     @Builder
-    public Member(String name, String email, String picture, Role role) {
-        this.nickname = name;
+    public Member(String nickname, String email, String picture, Role role) {
+        this.nickname = nickname;
         this.email = email;
         this.avatar = picture;
         this.role = role;
@@ -61,6 +61,10 @@ public class Member {
     public void updateMember(String nickname, Place place) {
         this.nickname = nickname;
         this.place = place;
+    }
+
+    public void updateMember(String avatar) {
+        this.avatar = avatar;
     }
 
     public void leaveMember() {

@@ -8,6 +8,7 @@ import nbbang.com.nbbang.domain.party.repository.PartyRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
@@ -21,6 +22,7 @@ import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
+@ActiveProfiles("test")
 // @Rollback(false)
 class SinglePartyServiceTest {
 
@@ -53,7 +55,7 @@ class SinglePartyServiceTest {
         assertThat(findParty).isEqualTo(party);
     }
 
-    @Test
+    /*@Test
     void updateParty() {
         // given
         List<String> hashtagContents = Arrays.asList("old1", "old2");
@@ -68,7 +70,7 @@ class SinglePartyServiceTest {
         assertThat(updatedParty.getTitle()).isEqualTo("new title");
         assertThat(updatedParty.getContent()).isEqualTo("hello world!");
         assertThat(updatedParty.getHashtagContents()).contains("old1", "new1");
-    }
+    }*/
 
     @Test
     void findNearAndSimilar() {

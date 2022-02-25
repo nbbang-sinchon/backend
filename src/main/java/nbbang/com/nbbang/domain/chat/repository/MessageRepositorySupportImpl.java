@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
+import java.util.Collections;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -36,7 +37,7 @@ public class MessageRepositorySupportImpl implements MessageRepositorySupport {
         QMessage message = QMessage.message;
         JPQLQuery<Message> q = query.selectFrom(message)
                 .where(message.party.id.eq(partyId))
-                .where(message.id.loe(cursorId))
+                .where(message.id.lt(cursorId))
                 .orderBy(message.id.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize());
