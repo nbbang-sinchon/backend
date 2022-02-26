@@ -51,7 +51,7 @@ public class ChatRoomController {
         if (pageSize == null) {
             pageSize = 10;
         }
-        Party party = partyRepository.findById(partyId).get(); // Party Service 구현 시 바꿔야 할 것 같습니다.
+        Party party = partyService.findById(partyId);
         Page<Message> messages = chatService.findMessages(party, PageRequest.of(0, pageSize));
         return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.READ_CHAT, ChatResponseDto.createByPartyAndMessagesEntity(party, messages.getContent(), currentMember.id()));
     }
@@ -62,7 +62,7 @@ public class ChatRoomController {
     @ApiResponse(responseCode = "403", description = "Not Party Member", content = @Content(mediaType = "application/json"))
     @GetMapping("/{party-id}/messages")
     public DefaultResponse selectChatMessages(@PathVariable("party-id") Long partyId, @ParameterObject PageableDto pageableDto, @RequestParam(required = false) Long cursorId) {
-        readMessage(partyId,1L); // 채팅방에 들어오면 읽음을 처리합니다. 위치를 수정해도 될 것 같습니다.
+        readMessage(partyId,currentMember.id()); // 채팅방에 들어오면 읽음을 처리합니다. 위치를 수정해도 될 것 같습니다.
         Party party = partyService.findById(partyId);
         if (cursorId == null) {
             cursorId = chatService.findLastMessage(party).getId();
