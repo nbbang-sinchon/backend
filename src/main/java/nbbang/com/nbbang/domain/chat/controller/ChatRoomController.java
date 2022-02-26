@@ -62,24 +62,13 @@ public class ChatRoomController {
     @ApiResponse(responseCode = "403", description = "Not Party Member", content = @Content(mediaType = "application/json"))
     @GetMapping("/{party-id}/messages")
     public DefaultResponse selectChatMessages(@PathVariable("party-id") Long partyId, @ParameterObject PageableDto pageableDto, @RequestParam(required = false) Long cursorId) {
-        Party party = partyRepository.findById(partyId).get(); // Party Service 구현 시 바꿔야 할 것 같습니다.
-
-        readMessage(2L, partyId); // 채팅방에 처음 들어올 때 메시지 조회를 부를 것 같아서, 여기서 메시지 읽는 기능을 부릅니다.
-
+        Party party = partyService.findById(partyId);
         if (cursorId == null) {
             cursorId = chatService.findLastMessage(party).getId();
         }
         Page<Message> messages = chatService.findMessagesByCursorId(party, pageableDto.createPageRequest(), cursorId);
         return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.READ_CHAT, ChatSendListResponseDto.createByEntity(messages.getContent(), currentMember.id()));
     }
-
-    public void readMessage(Long memberId, Long partyId){
-        Long lastReadMessageId = chatService.readMessage(memberId, partyId);
-        ChatReadSocketDto chatReadSocketDto = ChatReadSocketDto.builder().lastReadMessageId(lastReadMessageId).build();
-        simpMessagingTemplate.convertAndSend("/topic/" + partyId, chatReadSocketDto);
-        log.info("[Socket] lastReadMessageId: {}, partyId: {}", lastReadMessageId, partyId);
-    }
-
 
     @Operation(summary = "채팅방에서 나가기", description = "채팅방에서 나갑니다. 소켓 종료 용도로 쓰일 것 같습니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))

@@ -6,6 +6,7 @@ import nbbang.com.nbbang.domain.bbangpan.domain.PartyMember;
 import nbbang.com.nbbang.domain.bbangpan.repository.PartyMemberRepository;
 import nbbang.com.nbbang.domain.chat.controller.ChatResponseMessage;
 import nbbang.com.nbbang.domain.chat.domain.Message;
+import nbbang.com.nbbang.domain.chat.dto.ChatReadSocketDto;
 import nbbang.com.nbbang.domain.chat.repository.MessageRepository;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.service.MemberService;
@@ -16,6 +17,8 @@ import nbbang.com.nbbang.domain.party.service.PartyService;
 import nbbang.com.nbbang.global.error.exception.NotPartyMemberException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
@@ -28,7 +31,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Slf4j
 public class ChatService {
-    // 최초 입장 시, 탈퇴시 메시지 보내는게 있어야함
     private final MessageRepository messageRepository;
     private final MemberService memberService;
     private final PartyRepository partyRepository;
@@ -110,11 +112,6 @@ public class ChatService {
     }
 
     @Transactional
-    public void exitChat(Party party, Member member) {
-
-    }
-
-    @Transactional
     public void changeStatus(Party party, Member member, PartyStatus status) {
         party.changeStatus(status);
     }
@@ -150,14 +147,21 @@ public class ChatService {
     }
 
     @Transactional
-    public Long readMessage(Long memberId, Long partyId) {
-        Party party = partyService.findById(partyId);
-        log.info("memberId: {}, partyId: {}", memberId, partyId);
+    public Long readMessageForEnterChat(Long memberId, Long partyId) {
         PartyMember partyMember = partyMemberRepository.findByMemberIdAndPartyId(memberId, partyId);
-
         Long lastReadMessageId = (Optional.ofNullable(partyMember.getLastReadMessage()).orElse(Message.builder().id(-1L).build())).getId();
-        Message message = messageService.findLastMessageAndUpdateReadNumber(partyId);
-        partyMember.changeLastReadMessage(message);
+        messageRepository.bulkReadNumberPlus(lastReadMessageId, partyId);
+        Message currentlastMessage = partyService.findLastMessage(partyId);
+        partyMember.changeLastReadMessage(currentlastMessage);
         return lastReadMessageId;
     }
+
+    @Transactional
+    public void readMessageForExitChat(Long memberId, Long partyId) {
+        PartyMember partyMember = partyMemberRepository.findByMemberIdAndPartyId(memberId, partyId);
+        messageRepository.bulkReadNumberPlus(partyMember.getLastReadMessage().getId(), partyId);
+        Message lastMessage = partyService.findLastMessage(partyId);
+        partyMember.changeLastReadMessage(lastMessage);
+    }
+
 }

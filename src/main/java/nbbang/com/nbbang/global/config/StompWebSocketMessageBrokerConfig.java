@@ -30,16 +30,10 @@ public class StompWebSocketMessageBrokerConfig implements WebSocketMessageBroker
         WebSocketMessageBrokerConfigurer.super.configureMessageBroker(registry);
         registry.enableSimpleBroker("/topic"); //토픽, 큐 방식이 있는데 보통 토픽으로함
         registry.setApplicationDestinationPrefixes("/");
-        // client.send('/TTT', {}, ) 컨트롤러에 요청함! /TTT로. 컨트롤러가 받음. 프론트에서 받을때는 토픽을 구독
-/*        컨트롤러 코드는
-          @MessageMapping("/TTT")
-          @SendTo("/topic/message")<- 여기 보내줌
-          public String tttMessage(string message)
-*
-* */
     }
     @Override
     public void configureClientInboundChannel(ChannelRegistration registration) {
         registration.interceptors(stompHandler);
     }
+
 }

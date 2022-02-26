@@ -2,6 +2,8 @@ package nbbang.com.nbbang.domain.party.service;
 
 import lombok.RequiredArgsConstructor;
 import nbbang.com.nbbang.domain.bbangpan.repository.PartyMemberRepository;
+import nbbang.com.nbbang.domain.chat.domain.Message;
+import nbbang.com.nbbang.domain.chat.repository.MessageRepository;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.dto.Place;
 import nbbang.com.nbbang.domain.member.service.MemberService;
@@ -33,6 +35,7 @@ public class PartyService {
     private final PartyMemberRepository memberPartyRepository;
     private final MemberService memberService;
     private final PartyMemberService partyMemberService;
+    private final MessageRepository messageRepository;
 
     @Transactional
     public Long create(Party party, Long memberId, List<String> hashtagContents) {
@@ -136,5 +139,10 @@ public class PartyService {
         Party party = findById(partyId);
         Integer partyMemberNumber = party.countPartyMemberNumber();
         return partyMemberNumber;
+    }
+
+    public Message findLastMessage(Long partyId) {
+        Message lastMessage = messageRepository.findLastMessage(partyId);
+        return lastMessage;
     }
 }

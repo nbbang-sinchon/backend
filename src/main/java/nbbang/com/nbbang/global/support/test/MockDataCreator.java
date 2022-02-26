@@ -59,16 +59,6 @@ public class MockDataCreator implements CommandLineRunner {
     private Long mock3Id;
     private Long mock4Id;
 
-
-    private Long party1Id;
-    private Long party2Id;
-    private Long party3Id;
-    private Long party4Id;
-    private Long party5Id;
-    private Long party6Id;
-    private Long party7Id;
-
-
     private LocalDateTime initTime = LocalDateTime.of(2022, 02, 10, 16, 30);
 
     private LocalDateTime nextTime() {

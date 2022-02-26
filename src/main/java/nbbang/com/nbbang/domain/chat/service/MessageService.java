@@ -58,16 +58,4 @@ public class MessageService {
         return count;
     }
 
-    @Transactional
-    public Message findLastMessageAndUpdateReadNumber(Long partyId) {
-        Message lastMessage = messageRepository.findLastMessage(partyId);
-        messageRepository.bulkReadNumberPlus(lastMessage.getId(), partyId);
-        return lastMessage;
-    }
-
-    public Message findLastByPartyId(Long partyId) {
-        Message lastMessage = messageRepository.findLastMessage(partyId);
-        return lastMessage;
-    }
-
 }

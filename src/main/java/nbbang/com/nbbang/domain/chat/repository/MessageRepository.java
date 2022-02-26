@@ -22,4 +22,5 @@ public interface MessageRepository extends JpaRepository<Message, Long>, Message
     @Query(value="update Message m set m.read_number = m.read_number + 1 " +
             "where m.message_id > :lastReadId and m.party_id = :partyId", nativeQuery=true)
     int bulkReadNumberPlus(@Param("lastReadId") Long lastReadId, @Param("partyId") Long partyId);
+
 }

@@ -22,14 +22,15 @@ class ChatReadTest {
     @Autowired PartyService partyService;
     @Autowired MemberService memberService;
     @Autowired PartyMemberService partyMemberService;
+    @Autowired MessageService messageService;
 
     @Test
     void readMessageTest() {
-        join(1L, 1L);
-        join(1L, 4L);
-        join(1L, 5L);
-        join(1L, 6L);
-        // SIX MEMBERS IN PARTY 1
+
+        Long partyId = 1L;
+        join(partyId, 4L); // 파티 1번에는 1~4까지 4명이 존재함
+        Long messageId = messageService.send(partyId, 3L, "hello");
+
 
     }
 
