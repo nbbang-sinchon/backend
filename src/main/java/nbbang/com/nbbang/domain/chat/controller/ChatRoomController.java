@@ -71,7 +71,7 @@ public class ChatRoomController {
         return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.READ_CHAT, ChatSendListResponseDto.createByEntity(messages.getContent(), currentMember.id()));
     }
     public void readMessage(Long partyId, Long memberId){
-        Long lastReadMessageId = chatService.readMessage(memberId, partyId);
+        Long lastReadMessageId = chatService.readMessage(partyId, memberId);
         ChatReadSocketDto chatReadSocketDto = ChatReadSocketDto.builder().lastReadMessageId(lastReadMessageId).build();
         simpMessagingTemplate.convertAndSend("/topic/" + partyId, chatReadSocketDto);
         log.info("[Socket] lastReadMessageId: {}, partyId: {}", lastReadMessageId, partyId);
@@ -83,7 +83,7 @@ public class ChatRoomController {
     @ApiResponse(responseCode = "403", description = "Not Party Member", content = @Content(mediaType = "application/json"))
     @PostMapping("/{party-id}/out")
     public DefaultResponse exitChat(@PathVariable("party-id") Long partyId) {
-        chatService.exitChat(partyId, 1L);
+        chatService.exitChatRoom(partyId, 1L);
         return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.EXIT_CHAT);
     }
 
