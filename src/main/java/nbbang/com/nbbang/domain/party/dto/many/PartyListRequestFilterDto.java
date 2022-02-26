@@ -12,4 +12,5 @@ public class PartyListRequestFilterDto {
     private List<PartyStatus> statuses;
     private String search;
     private List<Place> places;
+    private Boolean isWishlist;
 }

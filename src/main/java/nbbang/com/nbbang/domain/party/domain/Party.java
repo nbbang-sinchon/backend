@@ -72,6 +72,9 @@ public class Party {
     @OneToMany(mappedBy = "party")
     private List<ChatSession> chatSessions = new ArrayList<>();
 
+    @Builder.Default
+    @OneToMany(mappedBy = "party")
+    private List<PartyWishlist> wishlists = new ArrayList<>();
 
     protected Party() {}
 
@@ -129,5 +132,13 @@ public class Party {
 
     public Integer countPartyMemberNumber() {
         return partyMembers.size();
+    }
+
+    public Boolean isWishlistOf(Member member) {
+        return wishlists.stream().anyMatch(w -> w.getMember().equals(member));
+    }
+
+    public Boolean isWishlistOf(Long memberId) {
+        return wishlists.stream().anyMatch(w -> w.getMember().getId().equals(memberId));
     }
 }
