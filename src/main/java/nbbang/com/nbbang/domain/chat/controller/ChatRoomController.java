@@ -62,12 +62,12 @@ public class ChatRoomController {
     @ApiResponse(responseCode = "403", description = "Not Party Member", content = @Content(mediaType = "application/json"))
     @GetMapping("/{party-id}/messages")
     public DefaultResponse selectChatMessages(@PathVariable("party-id") Long partyId, @ParameterObject PageableDto pageableDto, @RequestParam(required = false) Long cursorId) {
+        readMessage(partyId,1L); // 채팅방에 들어오면 읽음을 처리합니다. 위치를 수정해도 될 것 같습니다.
         Party party = partyService.findById(partyId);
         if (cursorId == null) {
             cursorId = chatService.findLastMessage(party).getId();
         }
         Page<Message> messages = chatService.findMessagesByCursorId(party, pageableDto.createPageRequest(), cursorId);
-        readMessage(partyId,1L); // 채팅방에서 들어오는 api가 없어서 여기 넣어둡니다.
         return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.READ_CHAT, ChatSendListResponseDto.createByEntity(messages.getContent(), currentMember.id()));
     }
     public void readMessage(Long partyId, Long memberId){
@@ -113,7 +113,7 @@ public class ChatRoomController {
     @ApiResponse(responseCode = "403", description = "Not Party Member", content = @Content(mediaType = "application/json"))
     @GetMapping("/{party-id}/messages/develop")
     public DefaultResponse selectChatMessagesWithCookie(@PathVariable("party-id") Long partyId, @ParameterObject PageableDto pageableDto, HttpServletRequest request, @CookieValue(value = "cursorId", required = false) Cookie cookie) {
-        Party party = partyService.findById(partyId); // Party Service 구현 시 바꿔야 할 것 같습니다.
+        Party party = partyService.findById(partyId);
         String [] cookieVals = cookie.getValue().split("=");
         Long cookiePartyId = Long.parseLong(cookieVals[0]);
         Long cursorId = Long.parseLong(cookieVals[1]);
