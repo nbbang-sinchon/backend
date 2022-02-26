@@ -1,6 +1,7 @@
 package nbbang.com.nbbang.domain.party.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.domain.bbangpan.domain.PartyMember;
 import nbbang.com.nbbang.domain.bbangpan.repository.PartyMemberRepository;
 import nbbang.com.nbbang.domain.chat.domain.MessageType;
@@ -11,8 +12,6 @@ import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.domain.PartyStatus;
 import nbbang.com.nbbang.domain.party.exception.PartyExitForbiddenException;
 import nbbang.com.nbbang.domain.party.exception.PartyJoinException;
-import nbbang.com.nbbang.domain.party.repository.PartyHashtagRepository;
-import nbbang.com.nbbang.domain.party.repository.PartyRepository;
 import nbbang.com.nbbang.global.error.exception.NotPartyMemberException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,11 +19,15 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly=true)
 @RequiredArgsConstructor
+@Slf4j
 public class PartyMemberService {
     private final PartyMemberRepository memberPartyRepository;
     private final MessageService messageService;
 
     public boolean isPartyOwnerOrMember(Party party, Member member) {
+        log.info("ownerId: {}",party.getOwner().getId());
+        party.getPartyMembers().stream().forEach(m->log.info("memberId: {}", m.getId()));
+        log.info("******************");
         return party.getOwner().equals(member) || party.getPartyMembers().stream().anyMatch(mp -> mp.getMember().equals(member));
     }
 
@@ -43,7 +46,7 @@ public class PartyMemberService {
             throw new PartyJoinException(PartyResponseMessage.PARTY_JOIN_NONOPEN_ERROR);
         }
         // 이 부분 빵판 로직이 들어가야 할 거 같아서 나중에 bbangpan service 로 메소드를 만들어야 할 거 같습니다.
-        PartyMember partyMember = PartyMember.createMemberParty(member, party);
+        PartyMember partyMember = PartyMember.createMemberParty(member, party, messageService.findLastByPartyId(party.getId()));
         memberPartyRepository.save(partyMember);
 
         return messageService.send(party.getId(), member.getId(), member.getNickname() + " 님이 입장하셨습니다.", MessageType.ENTER);

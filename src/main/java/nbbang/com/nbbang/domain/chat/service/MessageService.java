@@ -7,18 +7,10 @@ import nbbang.com.nbbang.domain.chat.repository.MessageRepository;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.service.MemberService;
 import nbbang.com.nbbang.domain.party.domain.Party;
-import nbbang.com.nbbang.domain.party.repository.PartyRepository;
 import nbbang.com.nbbang.domain.party.service.PartyService;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.webjars.NotFoundException;
-
-import javax.persistence.Column;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import java.time.LocalDateTime;
 
 import static nbbang.com.nbbang.domain.chat.controller.ChatResponseMessage.MESSAGE_NOT_FOUND;
 
@@ -64,10 +56,16 @@ public class MessageService {
         return count;
     }
 
-
+    @Transactional
     public Message findLastMessageAndUpdateReadNumber(Long partyId) {
         Message lastMessage = messageRepository.findLastMessage(partyId);
         messageRepository.bulkReadNumberPlus(lastMessage.getId(), partyId);
         return lastMessage;
     }
+
+    public Message findLastByPartyId(Long partyId) {
+        Message lastMessage = messageRepository.findLastMessage(partyId);
+        return lastMessage;
+    }
+
 }

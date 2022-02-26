@@ -33,10 +33,11 @@ public class PartyMember {
 
     protected PartyMember() {}
 
-    public static PartyMember createMemberParty(Member member, Party party) {
+    public static PartyMember createMemberParty(Member member, Party party, Message lastReadMessage) {
         PartyMember partyMember = PartyMember.builder()
                 .member(member)
                 .party(party)
+                .lastReadMessage(lastReadMessage)
                 .build();
         party.getPartyMembers().add(partyMember);
         return partyMember;

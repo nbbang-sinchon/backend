@@ -1,6 +1,7 @@
 package nbbang.com.nbbang.domain.chat.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.domain.bbangpan.domain.PartyMember;
 import nbbang.com.nbbang.domain.bbangpan.repository.PartyMemberRepository;
 import nbbang.com.nbbang.domain.chat.controller.ChatResponseMessage;
@@ -20,10 +21,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
+@Slf4j
 public class ChatService {
     // 최초 입장 시, 탈퇴시 메시지 보내는게 있어야함
     private final MessageRepository messageRepository;
@@ -149,8 +152,10 @@ public class ChatService {
     @Transactional
     public Long readMessage(Long memberId, Long partyId) {
         Party party = partyService.findById(partyId);
+        log.info("memberId: {}, partyId: {}", memberId, partyId);
         PartyMember partyMember = partyMemberRepository.findByMemberIdAndPartyId(memberId, partyId);
-        Long lastReadMessageId = partyMember.getLastReadMessage().getId();
+
+        Long lastReadMessageId = (Optional.ofNullable(partyMember.getLastReadMessage()).orElse(Message.builder().id(-1L).build())).getId();
         Message message = messageService.findLastMessageAndUpdateReadNumber(partyId);
         partyMember.changeLastReadMessage(message);
         return lastReadMessageId;
