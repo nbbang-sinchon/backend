@@ -33,24 +33,36 @@ public class StompHandler implements ChannelInterceptor {
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
         if (StompCommand.CONNECT == accessor.getCommand()) { // websocket 연결요청
+            log.info("CONNECT message = {}",message);
             //************ 검증 로직 필요 **********************//
         } else if (StompCommand.SUBSCRIBE == accessor.getCommand()) { // 채팅룸 구독요청
-            log.info("CONNECT message = {}",message);
+            log.info("SUBSCRIBED message = {}",message);
             String destination = ((String) message.getHeaders().get("simpDestination")).substring(7);
             Long partyId = Long.valueOf(destination).longValue();
             String sessionId = (String) message.getHeaders().get("simpSessionId");
             chatSessionService.createBySessionIdAndPartyId(sessionId, partyId);
             partyService.updateActiveNumber(partyId, 1);
             log.info("SUBSCRIBED RoomId{}", partyId);
-
-        } else if (StompCommand.DISCONNECT == accessor.getCommand()) { // Websocket 연결 종료
+        } else if (StompCommand.UNSUBSCRIBE == accessor.getCommand()) { //
+            log.info("UNSUBSCRIBE message = {}",message);
+            Long partyId = deleteIfExistBySessionId(message);
+            log.info("UNSUBSCRIBE RoomId{}", partyId);
+        } else if (StompCommand.DISCONNECT == accessor.getCommand()) { // Websocket 연결 종료 : DISCONNECT
             log.info("DISCONNECT message = {}",message);
-            String sessionId = (String) message.getHeaders().get("simpSessionId");
-            Long partyId =  chatSessionService.deleteBySessionId(sessionId);
-            partyService.updateActiveNumber(partyId, -1);
+            Long partyId = deleteIfExistBySessionId(message);
             log.info("DISCONNECT RoomId{}", partyId);
         }
         return message;
     }
+
+    private Long deleteIfExistBySessionId(Message<?> message) {
+        String sessionId = (String) message.getHeaders().get("simpSessionId");
+        Long partyId =  chatSessionService.deleteIfExistBySessionId(sessionId);
+        if (partyId!=-1) {
+            partyService.updateActiveNumber(partyId, -1);
+        }
+        return partyId;
+    }
+
 
 }
