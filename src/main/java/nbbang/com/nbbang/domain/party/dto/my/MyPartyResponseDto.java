@@ -5,10 +5,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import nbbang.com.nbbang.domain.member.dto.MemberSimpleResponseDto;
 import nbbang.com.nbbang.domain.party.domain.Party;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @Builder
@@ -24,6 +26,7 @@ public class MyPartyResponseDto{
     private String place;
     private Boolean isOwner;
     private List<String> hashtags;
+    private List<MemberSimpleResponseDto> members;
 
     public static MyPartyResponseDto createByEntity(Party party, Long memberId) {
         return MyPartyResponseDto.builder()
@@ -35,6 +38,7 @@ public class MyPartyResponseDto{
                 .status(party.getStatus()!=null?party.getStatus().toString():null)
                 .hashtags(party.getHashtagContents())
                 .isOwner(memberId == party.getOwner().getId())
+                .members(party.getPartyMembers().stream().map(mp -> MemberSimpleResponseDto.createByEntity(mp.getMember())).collect(Collectors.toList()))
                 .place(party.getPlace().toString())
                 .build();
     }
