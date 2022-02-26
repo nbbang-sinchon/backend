@@ -1,5 +1,6 @@
 package nbbang.com.nbbang.domain.chat.service;
 
+import nbbang.com.nbbang.domain.chat.controller.ChatRoomController;
 import nbbang.com.nbbang.domain.chat.domain.Message;
 import nbbang.com.nbbang.domain.chat.repository.MessageRepository;
 import nbbang.com.nbbang.domain.member.domain.Member;
@@ -27,6 +28,7 @@ class ChatServiceTest {
     @Autowired ChatService chatService;
     @Autowired PartyRepository partyRepository;
     @Autowired MemberRepository memberRepository;
+
 
     @Test
     public void sendAndFindMessageTest() {

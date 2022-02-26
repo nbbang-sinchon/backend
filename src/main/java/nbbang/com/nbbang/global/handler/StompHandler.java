@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.domain.chat.dto.ChatReadSocketDto;
 import nbbang.com.nbbang.domain.chat.service.ChatService;
 import nbbang.com.nbbang.domain.chat.service.ChatSessionService;
+import nbbang.com.nbbang.domain.party.service.PartyMemberService;
 import nbbang.com.nbbang.domain.party.service.PartyService;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
@@ -25,7 +26,8 @@ public class StompHandler implements ChannelInterceptor {
     private final ChatService chatService;
     private final PartyService partyService;
     private final ChatSessionService chatSessionService;
-    private final SimpMessagingTemplate simpMessagingTemplate;
+    private final PartyMemberService partyMemberService;
+
 
     // websocket을 통해 들어온 요청이 처리 되기전 실행된다.
     @Override
@@ -41,7 +43,6 @@ public class StompHandler implements ChannelInterceptor {
             chatSessionService.createBySessionIdAndPartyId(sessionId, partyId);
             partyService.updateActiveNumber(partyId, 1);
             log.info("SUBSCRIBED RoomId{}", partyId);
-            readMessage(partyId,1L); // 멤버가 누구인지 검증해야함
 
         } else if (StompCommand.DISCONNECT == accessor.getCommand()) { // Websocket 연결 종료
             log.info("DISCONNECT message = {}",message);
@@ -49,16 +50,8 @@ public class StompHandler implements ChannelInterceptor {
             Long partyId =  chatSessionService.deleteBySessionId(sessionId);
             partyService.updateActiveNumber(partyId, -1);
             log.info("DISCONNECT RoomId{}", partyId);
-            chatService.readMessageForExitChat(partyId,1L); // 멤버가 누구인지 검증해야함
         }
         return message;
-    }
-
-    public void readMessage(Long partyId, Long memberId){
-        Long lastReadMessageId = chatService.readMessageForEnterChat(memberId, partyId);
-        ChatReadSocketDto chatReadSocketDto = ChatReadSocketDto.builder().lastReadMessageId(lastReadMessageId).build();
-        simpMessagingTemplate.convertAndSend("/topic/" + partyId, chatReadSocketDto);
-        log.info("[Socket] lastReadMessageId: {}, partyId: {}", lastReadMessageId, partyId);
     }
 
 }

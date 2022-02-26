@@ -67,7 +67,14 @@ public class ChatRoomController {
             cursorId = chatService.findLastMessage(party).getId();
         }
         Page<Message> messages = chatService.findMessagesByCursorId(party, pageableDto.createPageRequest(), cursorId);
+        readMessage(partyId,1L); // 채팅방에서 들어오는 api가 없어서 여기 넣어둡니다.
         return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.READ_CHAT, ChatSendListResponseDto.createByEntity(messages.getContent(), currentMember.id()));
+    }
+    public void readMessage(Long partyId, Long memberId){
+        Long lastReadMessageId = chatService.readMessage(memberId, partyId);
+        ChatReadSocketDto chatReadSocketDto = ChatReadSocketDto.builder().lastReadMessageId(lastReadMessageId).build();
+        simpMessagingTemplate.convertAndSend("/topic/" + partyId, chatReadSocketDto);
+        log.info("[Socket] lastReadMessageId: {}, partyId: {}", lastReadMessageId, partyId);
     }
 
     @Operation(summary = "채팅방에서 나가기", description = "채팅방에서 나갑니다. 소켓 종료 용도로 쓰일 것 같습니다.")
@@ -76,6 +83,7 @@ public class ChatRoomController {
     @ApiResponse(responseCode = "403", description = "Not Party Member", content = @Content(mediaType = "application/json"))
     @PostMapping("/{party-id}/out")
     public DefaultResponse exitChat(@PathVariable("party-id") Long partyId) {
+        chatService.exitChat(partyId, 1L);
         return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.EXIT_CHAT);
     }
 

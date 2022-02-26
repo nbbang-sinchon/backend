@@ -36,7 +36,6 @@ public class ChatService {
     private final PartyRepository partyRepository;
     private final PartyService partyService;
     private final PartyMemberRepository partyMemberRepository;
-    private final MessageService messageService;
 
     /*public Long findLastMessageId(Long partyId) {
         return messageRepository.findLastMessageId(partyId);
@@ -147,21 +146,21 @@ public class ChatService {
     }
 
     @Transactional
-    public Long readMessageForEnterChat(Long memberId, Long partyId) {
+    public Long readMessage(Long partyId, Long memberId) {
+        log.info("*****************");
         PartyMember partyMember = partyMemberRepository.findByMemberIdAndPartyId(memberId, partyId);
+        log.info("partyMemberId: {}", partyMember.getId());
+        log.info("*****************");
         Long lastReadMessageId = (Optional.ofNullable(partyMember.getLastReadMessage()).orElse(Message.builder().id(-1L).build())).getId();
         messageRepository.bulkReadNumberPlus(lastReadMessageId, partyId);
-        Message currentlastMessage = partyService.findLastMessage(partyId);
-        partyMember.changeLastReadMessage(currentlastMessage);
+        Message currentLastMessage = partyService.findLastMessage(partyId);
+        partyMember.changeLastReadMessage(currentLastMessage);
         return lastReadMessageId;
     }
 
-    @Transactional
-    public void readMessageForExitChat(Long memberId, Long partyId) {
+    public void exitChat(Long partyId, Long memberId) {
         PartyMember partyMember = partyMemberRepository.findByMemberIdAndPartyId(memberId, partyId);
-        messageRepository.bulkReadNumberPlus(partyMember.getLastReadMessage().getId(), partyId);
-        Message lastMessage = partyService.findLastMessage(partyId);
-        partyMember.changeLastReadMessage(lastMessage);
+        Message currentLastMessage = partyService.findLastMessage(partyId);
+        partyMember.changeLastReadMessage(currentLastMessage);
     }
-
 }
