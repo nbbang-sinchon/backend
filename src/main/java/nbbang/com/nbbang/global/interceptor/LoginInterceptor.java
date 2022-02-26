@@ -32,7 +32,6 @@ public class LoginInterceptor implements HandlerInterceptor {
         catch (Exception e) {
             this.currentMember.setMemberId(1L);
         }
-        System.out.print("Member :" + currentMember.id() + " ");
         return true;
     }
 }

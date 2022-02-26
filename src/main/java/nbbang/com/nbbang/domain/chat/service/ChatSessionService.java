@@ -22,10 +22,13 @@ public class ChatSessionService {
     }
 
     @Transactional
-    public Long deleteBySessionId(String sessionId) {
+    public Long deleteIfExistBySessionId(String sessionId) {
         ChatSession chatSession = chatSessionRepository.findBySessionId(sessionId);
-        chatSessionRepository.delete(chatSession);
-        Long partyId = chatSession.getParty().removeChatSession(chatSession);
+        Long partyId = -1L;
+        if(chatSession!=null){
+            chatSessionRepository.delete(chatSession);
+            partyId = chatSession.getParty().removeChatSession(chatSession);
+        }
         return partyId;
     }
 }

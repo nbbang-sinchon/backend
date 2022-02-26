@@ -21,6 +21,7 @@ import nbbang.com.nbbang.global.response.StatusCode;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
@@ -40,6 +41,7 @@ public class ChatRoomController {
     private final PartyService partyService;
     private final PartyRepository partyRepository;
     private final CurrentMember currentMember;
+    private final SimpMessagingTemplate simpMessagingTemplate;
 
     @Operation(summary = "채팅방 조회", description = "채팅방을 파티 id 로 조회합니다. ")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ChatResponseDto.class)))
@@ -49,7 +51,7 @@ public class ChatRoomController {
         if (pageSize == null) {
             pageSize = 10;
         }
-        Party party = partyRepository.findById(partyId).get(); // Party Service 구현 시 바꿔야 할 것 같습니다.
+        Party party = partyService.findById(partyId);
         Page<Message> messages = chatService.findMessages(party, PageRequest.of(0, pageSize));
         return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.READ_CHAT, ChatResponseDto.createByPartyAndMessagesEntity(party, messages.getContent(), currentMember.id()));
     }
@@ -60,15 +62,22 @@ public class ChatRoomController {
     @ApiResponse(responseCode = "403", description = "Not Party Member", content = @Content(mediaType = "application/json"))
     @GetMapping("/{party-id}/messages")
     public DefaultResponse selectChatMessages(@PathVariable("party-id") Long partyId, @ParameterObject PageableDto pageableDto, @RequestParam(required = false) Long cursorId) {
-        Party party = partyRepository.findById(partyId).get(); // Party Service 구현 시 바꿔야 할 것 같습니다.
+        readMessage(partyId,currentMember.id()); // 채팅방에 들어오면 읽음을 처리합니다. 위치를 수정해도 될 것 같습니다.
+        Party party = partyService.findById(partyId);
         if (cursorId == null) {
             cursorId = chatService.findLastMessage(party).getId();
         }
         Page<Message> messages = chatService.findMessagesByCursorId(party, pageableDto.createPageRequest(), cursorId);
         return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.READ_CHAT, ChatSendListResponseDto.createByEntity(messages.getContent(), currentMember.id()));
     }
+    public void readMessage(Long partyId, Long memberId){
+        Long lastReadMessageId = chatService.readMessage(partyId, memberId);
+        ChatReadSocketDto chatReadSocketDto = ChatReadSocketDto.builder().lastReadMessageId(lastReadMessageId).build();
+        simpMessagingTemplate.convertAndSend("/topic/" + partyId, chatReadSocketDto);
+        log.info("[Socket] lastReadMessageId: {}, partyId: {}", lastReadMessageId, partyId);
+    }
 
-    @Operation(summary = "채팅방에서 나가기", description = "채팅방에서 나갑니다. 소켓 종료 용도로 쓰일 것 같습니다.")
+    @Operation(summary = "채팅방에서 나가기", description = "채팅방에서 나갑니다. 소켓 종료 용도로 쓰일 것 같습니다. ")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "400", description = "잘못된 요청입니다.", content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "403", description = "Not Party Member", content = @Content(mediaType = "application/json"))
@@ -104,7 +113,7 @@ public class ChatRoomController {
     @ApiResponse(responseCode = "403", description = "Not Party Member", content = @Content(mediaType = "application/json"))
     @GetMapping("/{party-id}/messages/develop")
     public DefaultResponse selectChatMessagesWithCookie(@PathVariable("party-id") Long partyId, @ParameterObject PageableDto pageableDto, HttpServletRequest request, @CookieValue(value = "cursorId", required = false) Cookie cookie) {
-        Party party = partyService.findById(partyId); // Party Service 구현 시 바꿔야 할 것 같습니다.
+        Party party = partyService.findById(partyId);
         String [] cookieVals = cookie.getValue().split("=");
         Long cookiePartyId = Long.parseLong(cookieVals[0]);
         Long cursorId = Long.parseLong(cookieVals[1]);
