@@ -77,13 +77,12 @@ public class ChatRoomController {
         log.info("[Socket] lastReadMessageId: {}, partyId: {}", lastReadMessageId, partyId);
     }
 
-    @Operation(summary = "채팅방에서 나가기", description = "채팅방에서 나갑니다. 소켓 종료 용도로 쓰일 것 같습니다.")
+    @Operation(summary = "채팅방에서 나가기", description = "채팅방에서 나갑니다. 소켓 종료 용도로 쓰일 것 같습니다. ")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "400", description = "잘못된 요청입니다.", content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "403", description = "Not Party Member", content = @Content(mediaType = "application/json"))
     @PostMapping("/{party-id}/out")
     public DefaultResponse exitChat(@PathVariable("party-id") Long partyId) {
-        chatService.exitChatRoom(partyId, 1L);
         return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.EXIT_CHAT);
     }
 

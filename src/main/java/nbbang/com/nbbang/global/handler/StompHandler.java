@@ -3,14 +3,12 @@ package nbbang.com.nbbang.global.handler;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import nbbang.com.nbbang.domain.chat.dto.ChatReadSocketDto;
 import nbbang.com.nbbang.domain.chat.service.ChatService;
 import nbbang.com.nbbang.domain.chat.service.ChatSessionService;
 import nbbang.com.nbbang.domain.party.service.PartyMemberService;
 import nbbang.com.nbbang.domain.party.service.PartyService;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
@@ -42,27 +40,27 @@ public class StompHandler implements ChannelInterceptor {
             String sessionId = (String) message.getHeaders().get("simpSessionId");
             chatSessionService.createBySessionIdAndPartyId(sessionId, partyId);
             partyService.updateActiveNumber(partyId, 1);
-            log.info("SUBSCRIBED RoomId{}", partyId);
+            log.info("SUBSCRIBED RoomId: {}", partyId);
         } else if (StompCommand.UNSUBSCRIBE == accessor.getCommand()) { //
             log.info("UNSUBSCRIBE message = {}",message);
-            Long partyId = deleteIfExistBySessionId(message);
-            log.info("UNSUBSCRIBE RoomId{}", partyId);
+            Long partyId = exitChatRoomIfExist(message);
+            log.info("UNSUBSCRIBE RoomId: {}", partyId);
         } else if (StompCommand.DISCONNECT == accessor.getCommand()) { // Websocket 연결 종료 : DISCONNECT
             log.info("DISCONNECT message = {}",message);
-            Long partyId = deleteIfExistBySessionId(message);
-            log.info("DISCONNECT RoomId{}", partyId);
+            Long partyId = exitChatRoomIfExist(message);
+            log.info("DISCONNECT RoomId: {}", partyId);
         }
         return message;
     }
 
-    private Long deleteIfExistBySessionId(Message<?> message) {
+    private Long exitChatRoomIfExist(Message<?> message) {
         String sessionId = (String) message.getHeaders().get("simpSessionId");
         Long partyId =  chatSessionService.deleteIfExistBySessionId(sessionId);
         if (partyId!=-1) {
             partyService.updateActiveNumber(partyId, -1);
+            //************* memberId 넣는 로직 추가해야함 *************
+            chatService.exitChatRoom(partyId, 1L);
         }
         return partyId;
     }
-
-
 }
