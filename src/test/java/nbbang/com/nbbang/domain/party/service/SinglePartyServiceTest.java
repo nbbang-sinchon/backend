@@ -1,5 +1,7 @@
 package nbbang.com.nbbang.domain.party.service;
 
+import nbbang.com.nbbang.domain.member.domain.Member;
+import nbbang.com.nbbang.domain.member.service.MemberService;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.domain.PartyStatus;
 import nbbang.com.nbbang.domain.party.dto.single.request.PartyRequestDto;
@@ -29,6 +31,8 @@ class SinglePartyServiceTest {
     @Autowired PartyService partyService;
     @Autowired PartyRepository partyRepository;
     @Autowired EntityManager em;
+    @Autowired
+    MemberService memberService;
 
     @Test
     public void createParty(){
@@ -36,7 +40,7 @@ class SinglePartyServiceTest {
         List<String> hashtagContents = Arrays.asList("old1", "old2");
         Party party = Party.builder().title("tempParty").place(SINCHON).goalNumber(3).build();
         // when
-        Long createdPartyId = partyService.create(party, hashtagContents);
+        Long createdPartyId = partyService.create(party, 3L, hashtagContents);
         // then
         Party findParty = partyRepository.findById(createdPartyId).orElse(null);
         assertThat(findParty).isEqualTo(party);
@@ -48,7 +52,7 @@ class SinglePartyServiceTest {
         // given
         List<String> hashtagContents = Arrays.asList("old1", "old2");
         Party party = Party.builder().title("tempParty").place(SINCHON).goalNumber(3).build();
-        Long createdPartyId = partyService.create(party, hashtagContents);
+        Long createdPartyId = partyService.create(party, 4L, hashtagContents);
         // when
         Party findParty = partyService.findById(createdPartyId);
         // then
@@ -75,7 +79,7 @@ class SinglePartyServiceTest {
     @Test
     void findNearAndSimilar() {
         Party party = Party.builder().title("tempParty").place(SINCHON).goalNumber(3).build();
-        Long createdPartyId = partyService.create(party, null);
+        Long createdPartyId = partyService.create(party,4L, null);
 
         // when
         List<Party> findParties = partyService.findNearAndSimilar(createdPartyId);

@@ -16,6 +16,8 @@ import nbbang.com.nbbang.global.error.exception.NotPartyMemberException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 @Transactional(readOnly=true)
 @RequiredArgsConstructor
@@ -25,11 +27,9 @@ public class PartyMemberService {
     private final MessageService messageService;
 
     public boolean isPartyOwnerOrMember(Party party, Member member) {
-        log.info("ownerId: {}",party.getOwner().getId());
-        party.getPartyMembers().stream().forEach(m->log.info("memberId: {}", m.getId()));
-        log.info("******************");
-        return party.getOwner().equals(member) || party.getPartyMembers().stream().anyMatch(mp -> mp.getMember().equals(member));
+        return Optional.ofNullable(party.getOwner()).equals(member) || party.getPartyMembers().stream().anyMatch(mp -> mp.getMember().equals(member));
     }
+
 
     @Transactional
     public Long joinParty(Party party, Member member) {

@@ -91,6 +91,7 @@ public class Party {
     }
 
     public void addOwner(Member member) {
+
         this.owner = member;
     }
 

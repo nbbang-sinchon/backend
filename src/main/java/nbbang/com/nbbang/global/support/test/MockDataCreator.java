@@ -11,6 +11,7 @@ import nbbang.com.nbbang.domain.party.domain.Hashtag;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.domain.PartyHashtag;
 import nbbang.com.nbbang.domain.party.domain.PartyStatus;
+import nbbang.com.nbbang.domain.party.dto.single.request.PartyRequestDto;
 import nbbang.com.nbbang.domain.party.repository.HashtagRepository;
 import nbbang.com.nbbang.domain.party.repository.PartyHashtagRepository;
 import nbbang.com.nbbang.domain.party.repository.PartyRepository;
@@ -193,12 +194,10 @@ public class MockDataCreator implements CommandLineRunner {
                 .content(content)
                 .createTime(nextTime())
                 .goalNumber(goalNumber)
-                .owner(memberRepository.findById(ownerId).get())
                 .place(place)
-                .status(OPEN)
                 .activeNumber(0)
                 .build();
-        partyRepository.save(party);
+        partyService.create(party, ownerId, null);
         addHashtags(party, hashtags);
         if (member1 != null) {
             addMember(party, member1);
@@ -212,7 +211,6 @@ public class MockDataCreator implements CommandLineRunner {
         party.changeStatus(partyStatus);
         return party;
     }
-
 
 
 }
