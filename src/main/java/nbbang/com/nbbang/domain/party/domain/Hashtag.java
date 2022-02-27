@@ -15,7 +15,6 @@ public class Hashtag {
     @Column(name = "hashtag_id")
     private Long id;
 
-    @Column(columnDefinition="VARCHAR(20) BINARY")
     private String content;
 
     protected Hashtag() {}
