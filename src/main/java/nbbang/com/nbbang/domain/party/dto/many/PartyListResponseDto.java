@@ -17,15 +17,15 @@ import java.util.stream.Collectors;
 public class PartyListResponseDto implements Serializable {
     List<PartyFindResponseDto> parties;
 
-    public static PartyListResponseDto createByEntity(List<Party> partyList) {
+    public static PartyListResponseDto createByEntity(List<Party> parties) {
         return PartyListResponseDto.builder()
-                .parties(partyList.stream().map(PartyFindResponseDto::createByEntity).collect(Collectors.toList()))
+                .parties(parties.stream().map(PartyFindResponseDto::createByEntity).collect(Collectors.toList()))
                 .build();
     }
 
-    public static PartyListResponseDto createByEntity(List<Party> partyList, Member member) {
+    public static PartyListResponseDto createByEntity(List<Party> parties, Member member) {
         return PartyListResponseDto.builder()
-                .parties(partyList.stream().map(p -> PartyFindResponseDto.createByEntity(p, member)).collect(Collectors.toList()))
+                .parties(parties.stream().map(p -> PartyFindResponseDto.createByEntity(p, member)).collect(Collectors.toList()))
                 .build();
     }
 }

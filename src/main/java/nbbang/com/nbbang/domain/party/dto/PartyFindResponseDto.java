@@ -47,7 +47,7 @@ public class PartyFindResponseDto{
                 .status(party.getStatus()!=null?party.getStatus().toString():null)
                 .hashtags(party.getHashtagContents())
                 .place(party.getPlace().toString())
-                .isWishlist(party.isWishlistOf(member))
+                .isWishlist(party.isWishlistOf(member.getId()))
                 .build();
     }
 
