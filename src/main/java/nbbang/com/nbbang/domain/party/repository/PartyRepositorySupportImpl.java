@@ -11,7 +11,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PartyRepositorySupportImpl implements PartyRepositorySupport{
     private final JPAQueryFactory query;
-    // QParty p = new QParty("p");
 
     @Override
     public List<Party> findByPlaceAndNotSelf(Long partyId) {
