@@ -1,5 +1,6 @@
 package nbbang.com.nbbang.global.support.test;
 
+import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.domain.bbangpan.domain.PartyMember;
 import nbbang.com.nbbang.domain.bbangpan.repository.PartyMemberRepository;
 import nbbang.com.nbbang.domain.chat.service.ChatService;
@@ -30,6 +31,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 import static nbbang.com.nbbang.domain.member.dto.Place.*;
@@ -38,6 +40,7 @@ import static nbbang.com.nbbang.domain.party.domain.PartyStatus.*;
 @Component
 @Transactional
 @Profile("!test")
+@Slf4j
 public class MockDataCreator implements CommandLineRunner {
 
     @PersistenceContext EntityManager em;
@@ -119,7 +122,8 @@ public class MockDataCreator implements CommandLineRunner {
     }
 
     private void createMockParties() {
-        createMockParty("BHC 맛초킹 내일 8시", "뿌링클 넘나 먹구 싶다잉 근데 돈없", 4, korungId, YEONHUI, CLOSED, mock3Id, mock2Id, null, "치킨", "배달비", "BHC", "뿌링클", "맛초킹");
+        log.info("**********create mock parties*************");
+        createMockParty("BHC 맛초킹 내일 8시 드실분", "뿌링클 넘나 먹구 싶다잉 근데 돈없", 4, korungId, YEONHUI, CLOSED, mock3Id, mock2Id, null, "치킨", "배달비", "BHC", "bhc","뿌링클", "맛초킹");
         createMockParty("롯데리아 오늘 8시", "롯데리아 넘나 먹구 싶다잉", 4, mock4Id, SINCHON, OPEN, mock1Id, mock2Id, null, "롯데리아", "배달비", "롯데", "햄버거");
         createMockParty("내일 점심에 버거킹 드실분", "내일 점심에 버거킹 드실분 구함", 3, mock1Id, CHANGCHEON, CLOSED, luffyId, mock2Id, null, "버거킹", "햄버거");
         createMockParty("푸라닭 콘소메이징 맛있어요ㅛㅛㅛㅛㅛㅛ", "푸라닭 콘소메이징 맛있어요ㅛㅛㅛㅛㅛㅛ", 8, luffyId, CHANGCHEON, FULL, mock1Id, mock2Id, mock4Id, "치킨", "푸라닭");
@@ -129,7 +133,8 @@ public class MockDataCreator implements CommandLineRunner {
         createMockParty("설빙 드실분", "설빙 먹어요", 4, mock1Id, CHANGCHEON, FULL, mock3Id, mock2Id, null, "설빙", "빙수");
         createMockParty("아메리카나 드실분", "이게 무슨 음식인진 모르겠어요", 8, luffyId, YEONHUI, CLOSED, mock1Id,null, null, "멕시카나", "양념");
         createMockParty("DDQ 치킨 같이 드실 분", "디디큐 황금올리브 같이 먹어요", 4, mock1Id, CHANGCHEON, CLOSED, luffyId, null, null, "BBQ", "황금올리브", "배달");
-        createMockParty("핵도날드 같이 드실 분", "해도날드 같이 드실 분 있으세요?", 4, luffyId, SINCHON, CLOSED, mock1Id, mock2Id, null, "멕도날드");createMockParty("족발 먹으실 분", "오늘 먹었는데 맛있어요", 4, luffyId, SINCHON, OPEN, mock1Id, mock4Id, null, "족발", "배달");
+        createMockParty("핵도날드 같이 드실 분", "해도날드 같이 드실 분 있으세요?", 4, luffyId, SINCHON, CLOSED, mock1Id, mock2Id, null, "멕도날드");
+        createMockParty("족발 먹으실 분", "오늘 먹었는데 맛있어요", 4, luffyId, SINCHON, OPEN, mock1Id, mock4Id, null, "족발", "배달");
         createMockParty("돼지국밥 시켜 드실 분~", "가계사정상 배민원과 쿠팡주문만 배달가능하다고 합니다.", 4, korungId, CHANGCHEON, CLOSED, mock1Id, mock2Id, null, "돼지국밥", "배달", "배민원");
         createMockParty("냉면", "냉면&덮밥이라는 가게에서 배달해요", 4, mock4Id, NONE, OPEN, luffyId, mock2Id, null, "냉면", "단골집", "배달", "리뷰 이벤트", "오픈");
         createMockParty("페리카나 후라이드 치킨 드실분", "페리카나 후라이드치킨 17000원인데 같이 드실분", 2, luffyId, YEONHUI, FULL, mock1Id,null, null, "페리카나", "후라이드");
@@ -147,25 +152,12 @@ public class MockDataCreator implements CommandLineRunner {
         createMockParty("빵먹고싶다", "빵먹고싶다", 3, luffyId, CHANGCHEON, OPEN, null, null, null, "단팥빵", "호빵", "붕어빵");
     }
 
-
     private String randomEmail() {
         return UUID.randomUUID().toString() + "@gmail.com";
     }
 
     private Long createMockMember(String nickname, Place place) {
         return memberService.saveMember(nickname, place, randomEmail(), Role.USER);
-    }
-
-    // 해시태그 추가 임시 메소드
-    private void addHashtags(Party party, String ... contents) {
-        Arrays.asList(contents).stream().forEach(hc -> {
-            //Hashtag h = Hashtag.createHashtag(hc);
-            Hashtag h = hashtagService.findOrCreateByContent(hc);
-            hashtagRepository.save(h);
-            PartyHashtag ph = PartyHashtag.createPartyHashtag(party, h);
-            party.addPartyHashtag(ph);
-            partyHashtagRepository.save(ph);
-        });
     }
 
     private void addMember(Party party, Long memberId) {
@@ -187,8 +179,8 @@ public class MockDataCreator implements CommandLineRunner {
                 .place(place)
                 .activeNumber(0)
                 .build();
-        partyService.create(party, ownerId, null);
-        addHashtags(party, hashtags);
+        List<String> hashtagContents = Arrays.asList(hashtags);
+        partyService.create(party, ownerId, hashtagContents);
         if (member1 != null) {
             addMember(party, member1);
         }
