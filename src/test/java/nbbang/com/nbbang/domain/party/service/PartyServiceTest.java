@@ -1,9 +1,11 @@
 package nbbang.com.nbbang.domain.party.service;
 
 import nbbang.com.nbbang.domain.member.domain.Member;
+import nbbang.com.nbbang.domain.member.dto.Place;
 import nbbang.com.nbbang.domain.member.repository.MemberRepository;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.domain.PartyStatus;
+import nbbang.com.nbbang.domain.party.dto.single.request.PartyRequestDto;
 import nbbang.com.nbbang.domain.party.exception.PartyExitForbiddenException;
 import nbbang.com.nbbang.domain.party.exception.PartyJoinException;
 import nbbang.com.nbbang.domain.party.repository.PartyRepository;
@@ -12,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -137,6 +141,17 @@ class PartyServiceTest {
         Party find = partyRepository.findById(partyA.getId()).get();
         assertThat(find).isEqualTo(partyA);
         assertThat(find.getTitle()).isEqualTo("partyA");
+    }
+
+    @Test
+    public void partySaveAndFindTest() {
+        Member memberA = Member.builder().nickname("memberA").build();
+        memberRepository.save(memberA);
+        PartyRequestDto dto = PartyRequestDto.builder().title("party").goalNumber(4).content("hello").hashtags(Arrays.asList("치킨")).place("sinchon").build();
+        Party party = dto.createEntityByDto();
+        partyService.create(party, memberA.getId(), dto.getHashtags());
+        Party findParty = partyService.findById(party.getId());
+        assertThat(findParty.getPartyHashtags().size()).isEqualTo(1);
     }
 
 }

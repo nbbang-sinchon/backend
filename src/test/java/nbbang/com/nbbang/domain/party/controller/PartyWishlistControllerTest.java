@@ -1,8 +1,8 @@
-package nbbang.com.nbbang.domain.party.wishlist;
+package nbbang.com.nbbang.domain.party.controller;
 
 import nbbang.com.nbbang.domain.party.controller.PartyWishlistController;
 import nbbang.com.nbbang.domain.party.service.PartyWishlistService;
-import nbbang.com.nbbang.domain.support.ControllerTestUtil;
+import nbbang.com.nbbang.domain.party.controller.ControllerTestUtil;
 import nbbang.com.nbbang.global.error.ErrorResponse;
 import nbbang.com.nbbang.global.error.exception.UserException;
 import nbbang.com.nbbang.global.interceptor.CurrentMember;

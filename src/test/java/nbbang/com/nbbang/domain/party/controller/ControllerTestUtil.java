@@ -1,9 +1,12 @@
-package nbbang.com.nbbang.domain.support;
+package nbbang.com.nbbang.domain.party.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import nbbang.com.nbbang.global.error.ErrorResponse;
 import nbbang.com.nbbang.global.response.DefaultResponse;
+import org.hibernate.annotations.Proxy;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -14,7 +17,6 @@ import java.util.Map;
 /**
  * An Utility for controller Mock tests
  */
-@Component
 public class ControllerTestUtil {
 
     @Autowired private MockMvc mockMvc;
@@ -37,6 +39,10 @@ public class ControllerTestUtil {
         DefaultResponse res = expectDefaultResponseObject(requestBuilder);
         Map data = (Map) res.getData();
         return data;
+    }
+
+    public <T> T convert(Object fromValue, Class<T> toValueType) {
+        return new ObjectMapper().registerModule(new JavaTimeModule()).convertValue(fromValue, toValueType);
     }
 
     public DefaultResponse expectDefaultResponseObject(RequestBuilder requestBuilder) throws Exception {
