@@ -18,7 +18,6 @@ import static nbbang.com.nbbang.domain.party.controller.PartyResponseMessage.*;
 @Tag(name = "Party Wishlist", description = "위시리스트에 파티를 추가 / 삭제합니다. 로그인을 하지 않은 경우 ID=1 인 회원(루피)으로 표시됩니다.")
 @ApiResponses(value = {
         @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(mediaType = "application/json")),
-        @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(mediaType = "application/json"))
 })
 @Slf4j
 @RestController
@@ -31,6 +30,7 @@ public class PartyWishlistController {
     @Operation(summary = "위시리스트에 파티 추가", description = "위시리스트에 파티를 추가합니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "400", description = WISHLIST_DUPLICATE_ADD_ERROR, content = @Content(mediaType = "application/json"))
+    @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(mediaType = "application/json"))
     @PostMapping("/{party-id}/wishlist")
     public DefaultResponse addWishlist(@PathVariable("party-id") Long partyId) {
         partyWishlistService.addWishlistIfNotDuplicate(currentMember.getMemberId(), partyId);
@@ -39,7 +39,7 @@ public class PartyWishlistController {
 
     @Operation(summary = "위시리스트에서 파티 삭제", description = "위시리스트에서 파티를 삭제합니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
-    @ApiResponse(responseCode = "400", description = WISHLIST_NOT_FOUND, content = @Content(mediaType = "application/json"))
+    @ApiResponse(responseCode = "404", description = WISHLIST_NOT_FOUND, content = @Content(mediaType = "application/json"))
     @DeleteMapping("/{party-id}/wishlist")
     public DefaultResponse deleteWishlist(@PathVariable("party-id") Long partyId) {
         partyWishlistService.deleteWishlist(currentMember.getMemberId(), partyId);

@@ -24,6 +24,7 @@ public class MyPartyResponseDto{
     private Integer goalNumber;
     private String status;
     private String place;
+    private MemberSimpleResponseDto owner;
     private Boolean isOwner;
     private List<String> hashtags;
     private List<MemberSimpleResponseDto> members;
@@ -35,6 +36,7 @@ public class MyPartyResponseDto{
                 .createTime(party.getCreateTime())
                 .goalNumber(party.getGoalNumber())
                 .joinNumber(party.getPartyMembers().size() + 1)
+                .owner(MemberSimpleResponseDto.createByEntity(party.getOwner()))
                 .status(party.getStatus()!=null?party.getStatus().toString():null)
                 .hashtags(party.getHashtagContents())
                 .isOwner(memberId == party.getOwner().getId())
