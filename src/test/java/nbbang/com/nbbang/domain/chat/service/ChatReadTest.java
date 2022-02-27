@@ -48,7 +48,7 @@ class ChatReadTest {
         // 파티에는 1~3까지 3명이 존재함
 
         partyService.updateActiveNumber(partyId, 1); // 1번 파티 입장
-        chatRoomController.readMessage(partyId, saveMember1.getId()); // 1번 파티 입장
+        chatService.readMessage(partyId, saveMember1.getId()); // 1번 파티 입장
         Long messageId1 = messageService.send(partyId, saveMember1.getId(), "hello");
         Assertions.assertThat(messageService.findById(messageId1).getReadNumber()).isEqualTo(1);
 

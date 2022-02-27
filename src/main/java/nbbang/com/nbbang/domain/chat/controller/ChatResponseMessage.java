@@ -15,4 +15,6 @@ public class ChatResponseMessage {
 
     public static final String MESSAGE_NOT_FOUND = "존재하지 않는 메시지입니다.";
 
+    public static final String MESSAGE_READ_OK = "메시지 읽음을 잘 반영하였습니다.";
+
 }
