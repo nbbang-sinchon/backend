@@ -139,4 +139,8 @@ public class Party {
     public Boolean isWishlistOf(Long memberId) {
         return wishlists.stream().anyMatch(w -> w.getMember().getId().equals(memberId));
     }
+
+    public Boolean isWishlistOf(Member member) {
+        return wishlists.stream().anyMatch(w -> w.getMember().equals(member));
+    }
 }
