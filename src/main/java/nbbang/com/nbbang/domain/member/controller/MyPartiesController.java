@@ -42,7 +42,7 @@ public class MyPartiesController {
         if (bindingResult.hasErrors()) {
             throw new CustomIllegalArgumentException(ManyPartyResponseMessage.ILLEGAL_PARTY_LIST_REQUEST, bindingResult);
         }
-        Page<Party> res = manyPartyService.findAllParties(requestDto.createPageRequest(), requestDto.createPartyListRequestFilterDto(), requestDto.getCursorId(), currentMember.id(), null);
+        Page<Party> res = manyPartyService.findAllParties(requestDto.createPageRequest(), true, requestDto.createPartyListRequestFilterDto(), requestDto.getCursorId(), currentMember.id(), null);
         return DefaultResponse.res(StatusCode.OK, MemberResponseMessage.READ_MEMBER, MyPartyListResponseDto.createFromEntity(res.getContent(), currentMember.id()));
     }
 
@@ -53,7 +53,7 @@ public class MyPartiesController {
         if (bindingResult.hasErrors()) {
             throw new CustomIllegalArgumentException(ManyPartyResponseMessage.ILLEGAL_PARTY_LIST_REQUEST, bindingResult);
         }
-        Page<Party> res = manyPartyService.findAllParties(requestDto.createPageRequest(), requestDto.createPartyListRequestFilterDto(), requestDto.getCursorId(), currentMember.id(), null);
+        Page<Party> res = manyPartyService.findAllParties(requestDto.createPageRequest(), true, requestDto.createPartyListRequestFilterDto(), requestDto.getCursorId(), currentMember.id(), null);
         return DefaultResponse.res(StatusCode.OK, MemberResponseMessage.READ_MEMBER, MyPartyListResponseDto.createFromEntity(res.getContent(), currentMember.id()));
     }
 
@@ -64,7 +64,7 @@ public class MyPartiesController {
         if (bindingResult.hasErrors()) {
             throw new CustomIllegalArgumentException(ManyPartyResponseMessage.ILLEGAL_PARTY_LIST_REQUEST, bindingResult);
         }
-        Page<Party> res = manyPartyService.findAllParties(requestDto.createPageRequest(), requestDto.createPartyListRequestFilterDto(), requestDto.getCursorId(), currentMember.id(), null);
+        Page<Party> res = manyPartyService.findAllParties(requestDto.createPageRequest(), true, requestDto.createPartyListRequestFilterDto(), requestDto.getCursorId(), currentMember.id(), null);
         return DefaultResponse.res(StatusCode.OK, MemberResponseMessage.READ_MEMBER, MyPartyListResponseDto.createFromEntity(res.getContent(), currentMember.id()));
     }
 

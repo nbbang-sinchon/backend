@@ -29,13 +29,16 @@ public class PartyListRequestDto extends PageableDto {
     private Long cursorId;
     @Parameter(description = "해시태그를 포함하는 파티만 조회합니다.")
     private List<String> hashtags;
+    @Parameter(description = "위시리스트에 포함된 파티만 검색합니다.")
+    private Boolean isWishlist;
 
     @Parameter(hidden = true)
     public PartyListRequestFilterDto createPartyListRequestFilterDto() {
         return PartyListRequestFilterDto.builder()
-                .search((search != null)?search:null)
-                .places((place != null)?place.stream().map(p -> Place.valueOf(p.toUpperCase(Locale.ROOT))).collect(Collectors.toList()):null)
-                .statuses((status != null)?status.stream().map(s -> PartyStatus.valueOf(s.toUpperCase(Locale.ROOT))).collect(Collectors.toList()):null)
+                .search((search!=null)?search:null)
+                .places((place!=null)?place.stream().map(p -> Place.valueOf(p.toUpperCase(Locale.ROOT))).collect(Collectors.toList()):null)
+                .statuses((status!=null)?status.stream().map(s -> PartyStatus.valueOf(s.toUpperCase(Locale.ROOT))).collect(Collectors.toList()):null)
+                .isWishlist((isWishlist!=null)?isWishlist:null)
                 .build();
     }
 

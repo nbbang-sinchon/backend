@@ -15,7 +15,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.Arrays;
-
+/*
+    메소드가 Thread-safe 한지 확실하지 않아서 thread-local 하게 바꾸는 게 좋을수 있습니다.
+ */
 @Slf4j
 @Component
 @RequiredArgsConstructor

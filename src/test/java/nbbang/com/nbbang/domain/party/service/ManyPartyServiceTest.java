@@ -1,11 +1,19 @@
 package nbbang.com.nbbang.domain.party.service;
 
 import nbbang.com.nbbang.domain.member.domain.Member;
+import nbbang.com.nbbang.domain.member.dto.Place;
 import nbbang.com.nbbang.domain.member.repository.MemberRepository;
+import nbbang.com.nbbang.domain.party.domain.Hashtag;
 import nbbang.com.nbbang.domain.party.domain.Party;
+import nbbang.com.nbbang.domain.party.domain.PartyHashtag;
 import nbbang.com.nbbang.domain.party.domain.PartyStatus;
 import nbbang.com.nbbang.domain.party.dto.many.PartyFindRequestFilterDto;
+import nbbang.com.nbbang.domain.party.dto.many.PartyListRequestFilterDto;
+import nbbang.com.nbbang.domain.party.repository.HashtagRepository;
+import nbbang.com.nbbang.domain.party.repository.PartyHashtagRepository;
 import nbbang.com.nbbang.domain.party.repository.PartyRepository;
+import nbbang.com.nbbang.domain.party.service.ManyPartyService;
+import org.apache.commons.lang3.builder.ToStringExclude;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,8 +32,28 @@ class ManyPartyServiceTest {
     @Autowired ManyPartyService manyPartyService;
     @Autowired MemberRepository memberRepository;
     @Autowired PartyRepository partyRepository;
+    @Autowired HashtagRepository hashtagRepository;
+    @Autowired PartyHashtagRepository partyHashtagRepository;
 
     @Test
+    public void findAllPartiesTest1() {
+        Member memberA = Member.builder().nickname("memberA").build();
+        memberRepository.save(memberA);
+        Party party = Party.builder().place(Place.SINCHON).owner(memberA).goalNumber(10).status(PartyStatus.OPEN).title("party").build();
+        partyRepository.save(party);
+        Hashtag hashtag1 = Hashtag.builder().content("치킨").build();
+        hashtagRepository.save(hashtag1);
+        PartyHashtag ph = PartyHashtag.builder().party(party).hashtag(hashtag1).build();
+        partyHashtagRepository.save(ph);
+        party.addPartyHashtag(ph);
+        Page<Party> parties = manyPartyService.findAllParties(PageRequest.of(0, 10), false, PartyListRequestFilterDto.builder().build(), null, memberA.getId(), null);
+        Party findParty = parties.getContent().get(0);
+        System.out.println(parties.getContent().get(0).getTitle());
+        assertThat(findParty.getPartyHashtags().size()).isEqualTo(1);
+        assertThat(parties.getContent().size()).isEqualTo(1);
+    }
+
+    /*@Test
     public void findLastPartyTest1() {
         // given
         Member memberA = Member.builder().nickname("memberA").build();
@@ -86,7 +114,7 @@ class ManyPartyServiceTest {
         for (Party p : findPartyList.getContent()) {
             assertThat(p.getTitle().contains(filterText));
         }
-    }
+    }*/
 
 
 
