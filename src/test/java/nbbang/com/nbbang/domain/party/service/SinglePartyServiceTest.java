@@ -54,13 +54,16 @@ class SinglePartyServiceTest {
         // given
         Member member = Member.builder().nickname("test member").build();
         Member saveMember = memberRepository.save(member);
-        List<String> hashtagContents = Arrays.asList("old1", "old2");
+        List<String> hashtagContents = Arrays.asList("BHC", "bhc");
         Party party = Party.builder().title("tempParty").place(SINCHON).goalNumber(3).build();
         Long createdPartyId = partyService.create(party, saveMember.getId(), hashtagContents);
         // when
         Party findParty = partyService.findById(createdPartyId);
+
         // then
         assertThat(findParty).isEqualTo(party);
+        assertThat(findParty.getPartyHashtags().size()).isEqualTo(2);
+        assertThat(findParty.getHashtagContents().contains("bhc"));
     }
 
     /*@Test

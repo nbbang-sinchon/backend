@@ -8,7 +8,9 @@ import nbbang.com.nbbang.domain.party.repository.PartyHashtagRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly=true)
@@ -25,7 +27,9 @@ public class HashtagService {
     }
 
     public Hashtag findByContent(String content) {
-        return hashtagRepository.findByContent(content);
+        List<Hashtag> hashtags = hashtagRepository.findByContent(content);
+        return Optional.ofNullable(hashtags).orElseGet(Collections::emptyList)
+                .stream().filter(h->h.getContent().equals(content)).findAny().orElse(null);
     }
 
     @Transactional
@@ -40,9 +44,6 @@ public class HashtagService {
         if(hashtag==null){
             hashtag = createHashtag(content);
         }
-        //else {
-        //    System.out.println(content + ":" + hashtag.getContent());
-        //}
         return hashtag;
     }
 
