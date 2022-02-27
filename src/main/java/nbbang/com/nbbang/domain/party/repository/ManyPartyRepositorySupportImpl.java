@@ -31,7 +31,7 @@ public class ManyPartyRepositorySupportImpl implements ManyPartyRepositorySuppor
      * @return
      */
     @Override
-    public Page<Party> findAllParties(Pageable pageable, PartyListRequestFilterDto filter, Long cursorId, Long memberId, List<String> hashtags, Long... partyId) {
+    public Page<Party> findAllParties(Pageable pageable, Boolean isMyParties, PartyListRequestFilterDto filter, Long cursorId, Long memberId, List<String> hashtags, Long... partyId) {
         QParty party = QParty.party;
         QPartyHashtag hashtag = QPartyHashtag.partyHashtag;
         JPQLQuery<Party> q = query.selectFrom(party);
@@ -54,13 +54,19 @@ public class ManyPartyRepositorySupportImpl implements ManyPartyRepositorySuppor
             q.where(statusEquals(statuses));
         }
 
+        // 위시리스트 필터를 제공합니다
+        Boolean isWishlist = filter.getIsWishlist();
+        if (isWishlist != null) {
+            q.where(party.wishlists.any().member.id.eq(memberId));
+        }
+
         // 커서 페이징을 제공합니다
         if (cursorId != null) {
             q.where(party.id.lt(cursorId));
         }
 
         // 자신이 속한 파티 필터링을 제공합니다
-        if (memberId != null) {
+        if (isMyParties) {
             q.where(isMemberOfParty(memberId));
         }
 

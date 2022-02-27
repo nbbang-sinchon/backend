@@ -71,9 +71,9 @@ public class MockDataCreator implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        createMockMembers();
-        createMockDetailedParty1();
-        createMockParties();
+        //createMockMembers();
+        //createMockDetailedParty1();
+        //createMockParties();
     }
 
     private void createMockMembers() {

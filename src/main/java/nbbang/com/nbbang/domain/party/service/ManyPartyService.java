@@ -18,24 +18,8 @@ import java.util.List;
 public class ManyPartyService {
     private final ManyPartyRepository manyPartyRepository;
 
-
-    public Page<Party> findAllParties(Pageable pageable, PartyListRequestFilterDto filter, Long cursorId, Long memberId, List<String> hashtags, Long ... partyId) {
-        return manyPartyRepository.findAllParties(pageable, filter, cursorId, memberId, hashtags, partyId);
+    public Page<Party> findAllParties(Pageable pageable, Boolean isMyParties, PartyListRequestFilterDto filter, Long cursorId, Long memberId, List<String> hashtags, Long ... partyId) {
+        return manyPartyRepository.findAllParties(pageable, isMyParties, filter, cursorId, memberId, hashtags, partyId);
     }
-
-    public Page<Party> findAllByRequestDto(Pageable pageable, PartyFindRequestFilterDto requestFilterDto) {
-        return manyPartyRepository.findAllByRequestDto(pageable, requestFilterDto);
-    }
-
-    public Page<Party> findAllByCursoredFilterDto(Pageable pageable, PartyFindRequestFilterDto requestFilterDto, Long cursorId) {
-        return manyPartyRepository.findAllByCursoredFilterDto(pageable, requestFilterDto, cursorId);
-    }
-
-    public Page<Party> findMyParties(Pageable pageable, PartyListRequestFilterDto filter, Long memberId) {
-        return manyPartyRepository.findMyParties(pageable, filter, memberId);
-    }
-
-    public Party findLastParty() {
-        return manyPartyRepository.findTopByOrderByIdDesc();
-    }
+    
 }

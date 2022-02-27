@@ -27,6 +27,7 @@ public class PartyReadResponseDto {
     private Boolean isMember;
     private String title;
     private String content;
+    private Boolean isWishlist;
     private List<PartyFindResponseDto> parties;
     private List<MemberResponseDto> members;
 
@@ -46,6 +47,7 @@ public class PartyReadResponseDto {
                 .hashtags(hashtags)
                 .isOwner((party.getOwner()!=null)?((party.getOwner().getId())==userId):false)
                 .isMember(isMember)
+                .isWishlist(party.isWishlistOf(userId))
                 .title(party.getTitle())
                 .content(party.getContent())
                 .parties(parties)
