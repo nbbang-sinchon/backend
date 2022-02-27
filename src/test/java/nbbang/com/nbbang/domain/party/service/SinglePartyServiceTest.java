@@ -1,5 +1,8 @@
 package nbbang.com.nbbang.domain.party.service;
 
+import nbbang.com.nbbang.domain.member.domain.Member;
+import nbbang.com.nbbang.domain.member.repository.MemberRepository;
+import nbbang.com.nbbang.domain.member.service.MemberService;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.domain.PartyStatus;
 import nbbang.com.nbbang.domain.party.dto.single.request.PartyRequestDto;
@@ -23,20 +26,23 @@ import static org.assertj.core.api.Assertions.*;
 @SpringBootTest
 @Transactional
 @ActiveProfiles("test")
-// @Rollback(false)
 class SinglePartyServiceTest {
 
     @Autowired PartyService partyService;
     @Autowired PartyRepository partyRepository;
     @Autowired EntityManager em;
+    @Autowired
+    MemberRepository memberRepository;
 
     @Test
     public void createParty(){
         // given
+        Member member = Member.builder().nickname("test member").build();
+        Member saveMember = memberRepository.save(member);
         List<String> hashtagContents = Arrays.asList("old1", "old2");
         Party party = Party.builder().title("tempParty").place(SINCHON).goalNumber(3).build();
         // when
-        Long createdPartyId = partyService.create(party, hashtagContents);
+        Long createdPartyId = partyService.create(party, saveMember.getId(), hashtagContents);
         // then
         Party findParty = partyRepository.findById(createdPartyId).orElse(null);
         assertThat(findParty).isEqualTo(party);
@@ -46,9 +52,11 @@ class SinglePartyServiceTest {
     @Test
     void findParty() {
         // given
+        Member member = Member.builder().nickname("test member").build();
+        Member saveMember = memberRepository.save(member);
         List<String> hashtagContents = Arrays.asList("old1", "old2");
         Party party = Party.builder().title("tempParty").place(SINCHON).goalNumber(3).build();
-        Long createdPartyId = partyService.create(party, hashtagContents);
+        Long createdPartyId = partyService.create(party, saveMember.getId(), hashtagContents);
         // when
         Party findParty = partyService.findById(createdPartyId);
         // then
@@ -74,8 +82,10 @@ class SinglePartyServiceTest {
 
     @Test
     void findNearAndSimilar() {
+        Member member = Member.builder().nickname("test member").build();
+        Member saveMember = memberRepository.save(member);
         Party party = Party.builder().title("tempParty").place(SINCHON).goalNumber(3).build();
-        Long createdPartyId = partyService.create(party, null);
+        Long createdPartyId = partyService.create(party,saveMember.getId(), null);
 
         // when
         List<Party> findParties = partyService.findNearAndSimilar(createdPartyId);

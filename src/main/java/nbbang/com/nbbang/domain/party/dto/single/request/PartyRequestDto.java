@@ -44,25 +44,14 @@ public class PartyRequestDto {
     @Min(2) @Max(10)
     private Integer goalNumber;
 
-    public Party createByDto() {
-        Party party = Party.builder()
-                .title(this.title)
-                .content(this.content)
-                .place(Place.valueOf(place.toUpperCase()))
-                .goalNumber(this.goalNumber)
-                .activeNumber(0)
-                .build();
-        return party;
-    }
-
-    public Party createByDtoWithMember(Member owner) {
+    public Party createEntityByDto() {
         return Party.builder()
                 .title(this.title)
                 .content(this.content)
                 .place(Place.valueOf(place.toUpperCase()))
                 .goalNumber(this.goalNumber)
-                .owner(owner)
                 .createTime(LocalDateTime.now())
+                .activeNumber(0)
                 .build();
     }
 }

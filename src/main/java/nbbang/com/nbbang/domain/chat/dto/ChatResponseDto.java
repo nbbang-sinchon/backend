@@ -25,6 +25,7 @@ public class ChatResponseDto {
     private List<MemberResponseDto> members;
     private List<ChatSendResponseDto> messages;
 
+
     public static ChatResponseDto createByPartyAndMessagesEntity(Party party, List<Message> messages, Long memberId) {
         List<Message> ms = new ArrayList<>(messages);
         Collections.sort(ms);

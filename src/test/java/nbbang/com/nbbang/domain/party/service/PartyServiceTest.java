@@ -50,12 +50,13 @@ class PartyServiceTest {
     public void partyJoin_DuplicateJoinTest1() {
         // given
         Member memberA = Member.builder().nickname("memberA").build();
-        memberRepository.save(memberA);
+        Member saveMember = memberRepository.save(memberA);
         Party partyA = Party.builder().owner(memberA).goalNumber(10).status(PartyStatus.OPEN).build();
-        partyRepository.save(partyA);
+        partyService.create(partyA, saveMember.getId(), null);
         // when // then
         assertThrows(PartyJoinException.class, () -> {
-            partyMemberService.joinParty(partyA, memberA);});
+            partyMemberService.joinParty(partyA, memberA);
+        });
     }
 
     @Test
@@ -99,7 +100,8 @@ class PartyServiceTest {
         Member memberB = Member.builder().nickname("memberB").build();
         memberRepository.save(memberB);
         Party partyA = Party.builder().owner(memberA).goalNumber(3).status(PartyStatus.OPEN).build();
-        partyRepository.save(partyA);
+        partyService.create(partyA, memberA.getId(), null);
+        // partyRepository.save(partyA);
         // when
         partyMemberService.joinParty(partyA, memberB);
         // then

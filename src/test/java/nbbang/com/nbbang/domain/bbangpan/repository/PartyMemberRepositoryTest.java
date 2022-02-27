@@ -1,6 +1,8 @@
 package nbbang.com.nbbang.domain.bbangpan.repository;
 
 import nbbang.com.nbbang.domain.bbangpan.domain.PartyMember;
+import nbbang.com.nbbang.domain.chat.repository.MessageRepository;
+import nbbang.com.nbbang.domain.chat.service.MessageService;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.repository.MemberRepository;
 import nbbang.com.nbbang.domain.party.domain.Party;
@@ -23,6 +25,9 @@ class PartyMemberRepositoryTest {
     PartyMemberRepository memberPartyRepository;
     @Autowired MemberRepository memberRepository;
     @Autowired PartyRepository partyRepository;
+    @Autowired MessageService messageService;
+    @Autowired
+    MessageRepository messageRepository;
 
     @Test
     public void memberPartySaveAndFindTest() {
@@ -31,7 +36,7 @@ class PartyMemberRepositoryTest {
         memberRepository.save(member);
         Party party = Party.builder().owner(member).goalNumber(10).status(PartyStatus.OPEN).title("party").build();
         partyRepository.save(party);
-        PartyMember savePartyMember = PartyMember.createMemberParty(member, party);
+        PartyMember savePartyMember = PartyMember.createMemberParty(member, party, messageRepository.findLastMessage(party.getId()));
         memberPartyRepository.save(savePartyMember);
         // when
         PartyMember findPartyMember = memberPartyRepository.findByMemberIdAndPartyId(member.getId(), party.getId());

@@ -9,18 +9,12 @@ import nbbang.com.nbbang.domain.member.service.MemberService;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.repository.PartyRepository;
 import nbbang.com.nbbang.domain.party.service.PartyService;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.webjars.NotFoundException;
 
-import javax.persistence.Column;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import java.time.LocalDateTime;
-
 import static nbbang.com.nbbang.domain.chat.controller.ChatResponseMessage.MESSAGE_NOT_FOUND;
+import static nbbang.com.nbbang.domain.party.controller.PartyResponseMessage.PARTY_NOT_FOUND;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -28,12 +22,12 @@ import static nbbang.com.nbbang.domain.chat.controller.ChatResponseMessage.MESSA
 public class MessageService {
 
     private final MessageRepository messageRepository;
-    private final PartyService partyService;
+    private final PartyRepository partyRepository;
     private final MemberService memberService;
 
     @Transactional
     public Long send(Long partyId, Long senderId, String content) {
-        Party party = partyService.findById(partyId);
+        Party party = partyRepository.findById(partyId).orElseThrow(()->new NotFoundException(PARTY_NOT_FOUND));
         Member sender = memberService.findById(senderId);
         Long orderInChat = countByPartyId(partyId);
         Integer readNumber = party.getActiveNumber();
@@ -45,7 +39,7 @@ public class MessageService {
 
     @Transactional
     public Long send(Long partyId, Long senderId, String content, MessageType type) {
-        Party party = partyService.findById(partyId);
+        Party party = partyRepository.findById(partyId).orElseThrow(()->new NotFoundException(PARTY_NOT_FOUND));
         Member sender = memberService.findById(senderId);
         Long orderInChat = countByPartyId(partyId);
         Integer readNumber = party.getActiveNumber();
@@ -63,4 +57,5 @@ public class MessageService {
         Long count = messageRepository.countByPartyId(partyId);
         return count;
     }
+
 }

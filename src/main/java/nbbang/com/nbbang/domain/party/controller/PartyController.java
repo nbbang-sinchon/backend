@@ -20,21 +20,15 @@ import nbbang.com.nbbang.domain.party.dto.single.request.PartyStatusChangeReques
 import nbbang.com.nbbang.domain.party.dto.single.response.PartyIdResponseDto;
 import nbbang.com.nbbang.domain.party.dto.single.response.PartyReadResponseDto;
 import nbbang.com.nbbang.domain.party.service.PartyService;
-import nbbang.com.nbbang.global.error.ErrorResponse;
 import nbbang.com.nbbang.global.error.exception.CustomIllegalArgumentException;
 import nbbang.com.nbbang.global.interceptor.CurrentMember;
 import nbbang.com.nbbang.global.response.DefaultResponse;
 import nbbang.com.nbbang.global.error.GlobalErrorResponseMessage;
 import nbbang.com.nbbang.global.response.StatusCode;
-import org.springdoc.api.ErrorMessage;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -64,8 +58,8 @@ public class PartyController {
             throw new CustomIllegalArgumentException(GlobalErrorResponseMessage.ILLEGAL_ARGUMENT_ERROR, bindingResult);
         }
         Member member = memberService.findById(currentMember.id());
-        Party party = partyRequestDto.createByDtoWithMember(member);
-        Long partyId = partyService.create(party, partyRequestDto.getHashtags());
+        Party party = partyRequestDto.createEntityByDto();
+        Long partyId = partyService.create(party, currentMember.id(), partyRequestDto.getHashtags());
         return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_CREATE_SUCCESS, new PartyIdResponseDto(partyId));
     }
 

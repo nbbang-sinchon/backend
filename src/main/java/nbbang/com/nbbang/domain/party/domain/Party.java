@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static javax.persistence.EnumType.STRING;
@@ -94,6 +95,7 @@ public class Party {
     }
 
     public void addOwner(Member member) {
+
         this.owner = member;
     }
 
@@ -122,7 +124,7 @@ public class Party {
     }
 
     public void updateActiveNumber(Integer updateNumbder){
-        activeNumber +=updateNumbder;
+        activeNumber = Optional.ofNullable(activeNumber).orElse(0) + updateNumbder;
     }
 
     public Long removeChatSession(ChatSession chatSession) {
