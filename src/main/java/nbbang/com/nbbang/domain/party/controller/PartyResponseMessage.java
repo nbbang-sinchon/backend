@@ -36,7 +36,7 @@ public class PartyResponseMessage {
     public static final String HASHTAG_DUPLICATE_ERROR = "해시태그는 중복이 허용되지 않습니다.";
 
     public static final String WISHLIST_DUPLICATE_ADD_ERROR = "이미 위시리스트에 추가한 파티입니다.";
-    public static final String WISHLIST_NOT_FOUND = "위시리스트에 추가하지 않은 파티입니다.";
+    public static final String WISHLIST_NOT_FOUND = "위시리스트에 추가하지 않은 파티이거나 존재하지 않는 회원 또는 파티일 수 있습니다.";
     public static final String WISHLIST_ADD_SUCCESS = "위시리스트 추가 성공";
     public static final String WISHLIST_DELETE_SUCCESS = "위시리스트 삭제 성공";
 
