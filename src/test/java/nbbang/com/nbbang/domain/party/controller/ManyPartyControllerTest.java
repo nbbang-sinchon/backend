@@ -61,6 +61,7 @@ class ManyPartyControllerTest {
                         PartyHashtag.builder().id(7L).hashtag(hashtagB).build()))
                 .goalNumber(10).status(PartyStatus.OPEN).createTime(LocalDateTime.now())
                 .partyMembers(Arrays.asList(
+                        PartyMember.builder().member(memberA).build(),
                         PartyMember.builder().member(memberB).build()))
                 .build();
         this.partyA = partyA;
