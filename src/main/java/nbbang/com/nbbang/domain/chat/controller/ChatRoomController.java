@@ -62,20 +62,25 @@ public class ChatRoomController {
     @ApiResponse(responseCode = "403", description = "Not Party Member", content = @Content(mediaType = "application/json"))
     @GetMapping("/{party-id}/messages")
     public DefaultResponse selectChatMessages(@PathVariable("party-id") Long partyId, @ParameterObject PageableDto pageableDto, @RequestParam(required = false) Long cursorId) {
-
         Party party = partyService.findById(partyId);
-        //readMessage(partyId,currentMember.id()); // 채팅방에 들어오면 읽음을 처리합니다. 위치를 수정해도 될 것 같습니다.
         if (cursorId == null) {
             cursorId = chatService.findLastMessage(party).getId();
         }
         Page<Message> messages = chatService.findMessagesByCursorId(party, pageableDto.createPageRequest(), cursorId);
         return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.READ_CHAT, ChatSendListResponseDto.createByEntity(messages.getContent(), currentMember.id()));
     }
-    public void readMessage(Long partyId, Long memberId){
-        Long lastReadMessageId = chatService.readMessage(partyId, memberId);
+
+    @Operation(summary = "채팅 메시지 읽음", description = "채팅 메시지를 읽습니다. 처음 채팅방에 들어올 때 호출해주세요.")
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ChatResponseDto.class)))
+    @ApiResponse(responseCode = "403", description = "Not Party Member", content = @Content(mediaType = "application/json"))
+    @GetMapping("/{party-id}/read")
+    public DefaultResponse readMessage(@PathVariable("party-id") Long partyId){
+        Party party = partyService.findById(partyId);
+        Long lastReadMessageId = chatService.readMessage(partyId, currentMember.id());
         ChatReadSocketDto chatReadSocketDto = ChatReadSocketDto.builder().lastReadMessageId(lastReadMessageId).build();
         simpMessagingTemplate.convertAndSend("/topic/" + partyId, chatReadSocketDto);
         log.info("[Socket] lastReadMessageId: {}, partyId: {}", lastReadMessageId, partyId);
+        return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.MESSAGE_READ_OK);
     }
 
     @Operation(summary = "채팅방에서 나가기", description = "채팅방에서 나갑니다. 소켓 종료 용도로 쓰일 것 같습니다. ")
