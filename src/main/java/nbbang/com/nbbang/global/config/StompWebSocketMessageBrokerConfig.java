@@ -28,7 +28,8 @@ public class StompWebSocketMessageBrokerConfig implements WebSocketMessageBroker
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
         WebSocketMessageBrokerConfigurer.super.configureMessageBroker(registry);
-        registry.enableSimpleBroker("/topic"); //토픽, 큐 방식이 있는데 보통 토픽으로함
+        registry.enableSimpleBroker("/topic");
+        registry.enableSimpleBroker("/global");
         registry.setApplicationDestinationPrefixes("/");
     }
     @Override
