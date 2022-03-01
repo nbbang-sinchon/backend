@@ -1,13 +1,10 @@
 package nbbang.com.nbbang.domain.party.controller;
 
-import nbbang.com.nbbang.domain.party.controller.PartyWishlistController;
 import nbbang.com.nbbang.domain.party.service.PartyWishlistService;
-import nbbang.com.nbbang.domain.party.controller.ControllerTestUtil;
 import nbbang.com.nbbang.global.error.ErrorResponse;
 import nbbang.com.nbbang.global.error.exception.UserException;
 import nbbang.com.nbbang.global.interceptor.CurrentMember;
 import nbbang.com.nbbang.global.response.DefaultResponse;
-import nbbang.com.nbbang.global.security.CustomOAuth2MemberService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;

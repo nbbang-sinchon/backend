@@ -5,9 +5,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter;
-import org.springframework.security.web.header.HeaderWriter;
-import org.springframework.security.web.header.writers.StaticHeadersWriter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -25,30 +24,26 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         CharacterEncodingFilter encodingFilter = new CharacterEncodingFilter();
         encodingFilter.setEncoding("UTF-8");
         encodingFilter.setForceEncoding(true);
-        //StaticHeadersWriter writer = new StaticHeadersWriter("Access-Control-Allow-Headers", "Origin, origin, x-requested-with, authorization, " +
-        //        "Content-Type, Authorization, credential, X-XSRF-TOKEN");
         http
-                .addFilterBefore(encodingFilter, WebAsyncManagerIntegrationFilter.class)
+           //     .addFilterBefore(encodingFilter, WebAsyncManagerIntegrationFilter.class)
+                .addFilterBefore(new TokenAuthenticationFilter(), WebAsyncManagerIntegrationFilter.class)
+                .csrf().disable()
+                .cors()
+                .and()
+                .headers().frameOptions().disable()
+                .and()
                     .authorizeRequests()
-                    .antMatchers("/**").permitAll()
                     .anyRequest().authenticated()
                 .and()
-                    .csrf().disable().cors()
-                .and()
-                    .headers().frameOptions().disable()
-                    //.addHeaderWriter(writer)
-                .and()
-                    .oauth2Login()
-                    //.defaultSuccessUrl("/members")
-                //.defaultSuccessUrl("localhost")
-                    .successHandler(new LoginSuccessHandler())
-                    .failureUrl("/members/loginFail")
-                .and()
-                    .logout().logoutUrl("/logout")
-                    .invalidateHttpSession(true)
-                .and()
-                    .cors();
-        //super.configure(http);
+                .oauth2Login()
+                    .userInfoEndpoint()
+                        .userService(customOAuth2MemberService)
+                    .and()
+                    .successHandler(new OAuth2AuthenticationSuccessHandler())
+
+                    //.failureHandler()
+        ;
+        //http.addFilterBefore(new TokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
     }
 
