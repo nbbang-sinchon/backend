@@ -29,13 +29,11 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
     private String determineTargetUri(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         String token = tokenProvider.createToken(authentication);
-        Cookie c = new Cookie("access_token", token);
-        c.setMaxAge(360000);
-        c.setPath("/");
-        response.addCookie(c);
-        response.setHeader("fun-value","hello");
+        //CookieUtils.addCookie(response, "access_token", token, 360000);
+        //CookieUtils.addCookie(response, "member_id", "2", 360000);
         return UriComponentsBuilder.fromUriString(redirect_url)
                 .queryParam("token", token)
+                .queryParam("id", 2)
                 .build().toUriString();
     }
 

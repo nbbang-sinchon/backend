@@ -2,9 +2,12 @@ package nbbang.com.nbbang.global.security;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -24,8 +27,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         CharacterEncodingFilter encodingFilter = new CharacterEncodingFilter();
         encodingFilter.setEncoding("UTF-8");
         encodingFilter.setForceEncoding(true);
-        http
-           //     .addFilterBefore(encodingFilter, WebAsyncManagerIntegrationFilter.class)
+        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
                 .addFilterBefore(new TokenAuthenticationFilter(), WebAsyncManagerIntegrationFilter.class)
                 .csrf().disable()
                 .cors()
@@ -33,17 +36,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .headers().frameOptions().disable()
                 .and()
                     .authorizeRequests()
+                    .antMatchers("/members").permitAll()
                     .anyRequest().authenticated()
                 .and()
                 .oauth2Login()
                     .userInfoEndpoint()
                         .userService(customOAuth2MemberService)
                     .and()
-                    .successHandler(new OAuth2AuthenticationSuccessHandler())
-
-                    //.failureHandler()
-        ;
-        //http.addFilterBefore(new TokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+                    .successHandler(new OAuth2AuthenticationSuccessHandler());
 
     }
 
