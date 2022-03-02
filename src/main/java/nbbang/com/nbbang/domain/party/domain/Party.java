@@ -53,13 +53,19 @@ public class Party {
 
     // private LocalDateTime cancelTime;
 
-    private Integer deliveryFee;
+    @Builder.Default
+    private Integer deliveryFee=0;
 
+    @Builder.Default
     private Integer activeNumber=0;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "member_id")
     private Member owner;
+
+    private String bank;
+
+    private String account;
 
     @Builder.Default // https://www.inflearn.com/questions/151658
     @OneToMany(mappedBy = "party", cascade = CascadeType.ALL)
