@@ -9,15 +9,19 @@ import nbbang.com.nbbang.domain.party.domain.Party;
 
 import javax.persistence.*;
 
+import static javax.persistence.EnumType.STRING;
+
 @Entity @Getter @Builder
 @AllArgsConstructor
 public class PartyMember {
     @Id @GeneratedValue
     private Long id;
 
-    private Integer price;
+    @Builder.Default
+    private Integer price=0;
 
-    private String sendStatus;
+    @Enumerated(STRING)
+    private SendStatus sendStatus;
 
     @OneToOne
     @JoinColumn(name = "message_id")

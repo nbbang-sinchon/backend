@@ -6,41 +6,53 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import nbbang.com.nbbang.domain.bbangpan.dto.BbangpanGetResponseDto;
-import nbbang.com.nbbang.domain.bbangpan.dto.BbangpanPriceChangeRequestDto;
-import nbbang.com.nbbang.domain.bbangpan.dto.BbangpanStatusChangeRequestDto;
-import nbbang.com.nbbang.domain.bbangpan.dto.MemberBbangpanDto;
+import nbbang.com.nbbang.domain.bbangpan.dto.*;
+import nbbang.com.nbbang.domain.party.controller.PartyResponseMessage;
+import nbbang.com.nbbang.domain.party.domain.Party;
+import nbbang.com.nbbang.domain.party.dto.PartyFindResponseDto;
+import nbbang.com.nbbang.domain.party.dto.single.response.PartyReadResponseDto;
 import nbbang.com.nbbang.global.response.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.OK;
 
 
-@Tag(name = "Bbangpan", description = "빵판과 관련된 API입니다.(미구현)")
-@RestController
-@RequestMapping("/bbangpans/{party-id}")
+@Tag(name = "Bbangpan", description = "빵판과 관련된 API입니다.(구현중)")
 @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json")),
         @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(mediaType = "application/json")),
         @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(mediaType = "application/json"))
 })
 @Slf4j
+@RequiredArgsConstructor
+@RestController
+@RequestMapping("/bbangpans/{party-id}")
 public class BbangpanController {
     @Operation(summary = "빵판 정보", description = "유저가 빵판을 클릭했을 때, 필요한 정보를 보냅니다.")
     @ApiResponse(responseCode = "200", description = "OK",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = BbangpanGetResponseDto.class)))
     @GetMapping
-    public ResponseEntity readBbangpan(@PathVariable("party-id") Long partyId) {
-        // 파티 멤버가 되는 로직을 추가한다.
-        List<MemberBbangpanDto> memberBbangpanDtos = new ArrayList<>();
-        memberBbangpanDtos.add(new MemberBbangpanDto("연희동 주민", 2000, "송금 완료"));
-        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, BbangpanResponseMessage.BBANGPAN_READ_SUCCESS,
-                new BbangpanGetResponseDto(memberBbangpanDtos, 2000, 4000, 6000)), OK);
+    public DefaultResponse readBbangpan(@PathVariable("party-id") Long partyId) {
+/*
+        Party party = partyService.findById(partyId);
+        List<Party> parties = partyService.findNearAndSimilar(partyId);
+        List<PartyFindResponseDto> collect = parties.stream().map(PartyFindResponseDto::createByEntity).collect(Collectors.toList());
+        List<String> hashtags = party.getHashtagContents();
+        BbangpanReadResponseDto partyReadResponseDto = PartyReadResponseDto.createDto(party, currentMember.id(), hashtags, collect);
+        return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_READ_SUCCESS, partyReadResponseDto);
+*/
+
+        // List<MemberBbangpanDto> memberBbangpanDtos = new ArrayList<>();
+        // memberBbangpanDtos.add(new MemberBbangpanDto("연희동 주민", 2000, "송금 완료"));
+        return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_READ_SUCCESS);
+
     }
 
     @Operation(summary = "주문 금액 설정", description = "유저가 주문 금액을 설정합니다.")
