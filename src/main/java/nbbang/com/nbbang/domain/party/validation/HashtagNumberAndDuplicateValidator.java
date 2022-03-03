@@ -4,8 +4,7 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.util.List;
 
-import static nbbang.com.nbbang.domain.party.controller.PartyResponseMessage.HASHTAG_DUPLICATE_ERROR;
-import static nbbang.com.nbbang.domain.party.controller.PartyResponseMessage.HASHTAG_NUMBER_ERROR;
+import static nbbang.com.nbbang.domain.party.controller.PartyResponseMessage.*;
 
 public class HashtagNumberAndDuplicateValidator implements ConstraintValidator<HashtagNumberAndDuplicate, List<String>> {
 
@@ -24,6 +23,10 @@ public class HashtagNumberAndDuplicateValidator implements ConstraintValidator<H
             }
             if (contents.size() != contents.stream().distinct().count()) {
                 addConstraintViolation(context, HASHTAG_DUPLICATE_ERROR);
+                isValid = false;
+            }
+            if (contents.stream().anyMatch(content -> content.trim().isEmpty())) {
+                addConstraintViolation(context, HASHTAG_BLANK_ERROR);
                 isValid = false;
             }
         }

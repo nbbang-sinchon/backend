@@ -1,3 +1,4 @@
+
 package nbbang.com.nbbang.global.security.jwt;
 
 import io.jsonwebtoken.Claims;
@@ -15,8 +16,8 @@ public class JwtService {
     private static final String SECRET_KEY = "lkajsdlkjasdsadasd";
     private static final Long expireTime = 1000L * 30;
 
-    public String createTokenForSocket(Long id){
-        SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+    public String createTokenForSocket(Long id) {
+/*        SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
         byte[] secretKeyByte = DatatypeConverter.parseBase64Binary(SECRET_KEY);
         Key signingKey = new SecretKeySpec(secretKeyByte, signatureAlgorithm.getJcaName());
 
@@ -25,9 +26,15 @@ public class JwtService {
                 .setSubject(subject)
                 .signWith(signingKey, signatureAlgorithm)
                 .setExpiration(new Date(System.currentTimeMillis()+expireTime))
-                .compact();
+                .compact();*/
+        return "hello";
     }
-    public Long validateByToken(String token){
+
+    public Long validateByToken(String token) {
+        return 1L;
+    }
+}
+
 /*        // *************** 토큰 예외 던지는 부분 추가 ****************** //
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(DatatypeConverter.parseBase64Binary(SECRET_KEY))
@@ -35,9 +42,11 @@ public class JwtService {
                 .parseClaimsJws(token)
                 .getBody();
         String subject = claims.getSubject();
-        Long id = Long.valueOf(subject);*/
+        Long id = Long.valueOf(subject);*//*
+
         Long id = Long.valueOf(token);
         return id;
     }
 
 }
+*/

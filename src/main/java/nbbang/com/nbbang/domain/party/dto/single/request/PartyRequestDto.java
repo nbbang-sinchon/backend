@@ -41,7 +41,8 @@ public class PartyRequestDto {
 
     @Parameter(description = "2~10 이어야 합니다.")
     @NotNull(message = "모집 인원수는 필수 값입니다.")
-    @Min(2) @Max(10)
+    @Min(value = 2, message = "모집 인원수는 2명 이상이어야 합니다")
+    @Max(value=10, message = "모집 인원수는 10명 이하이어야 합니다")
     private Integer goalNumber;
 
     public Party createEntityByDto() {
