@@ -145,4 +145,5 @@ public class PartyService {
         Message lastMessage = messageRepository.findLastMessage(partyId);
         return lastMessage;
     }
+
 }

@@ -65,7 +65,7 @@ public class Party {
 
     private String bank;
 
-    private String account;
+    private Integer account;
 
     @Builder.Default // https://www.inflearn.com/questions/151658
     @OneToMany(mappedBy = "party", cascade = CascadeType.ALL)

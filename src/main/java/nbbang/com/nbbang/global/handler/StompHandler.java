@@ -33,15 +33,15 @@ public class StompHandler implements ChannelInterceptor {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
         if (StompCommand.CONNECT == accessor.getCommand()) { // websocket 연결요청
             log.info("CONNECT message = {}",message);
-            String token = accessor.getFirstNativeHeader("token");
+            // String token = accessor.getFirstNativeHeader("token");
             // log.info("token = {}",token);
-            Long id = jwtService.validateByToken(token);
+            // Long id = jwtService.validateByToken(token);
             // log.info("id = {}",id);
-            throw new IllegalArgumentException("test error");
+            // throw new IllegalArgumentException("test error");
         } else if (StompCommand.SUBSCRIBE == accessor.getCommand()) { // 채팅룸 구독요청
             log.info("SUBSCRIBED message = {}",message);
             log.info("SUBSCRIBED destination = {}",accessor.getDestination());
-            String destination = accessor.getDestination();
+/*            String destination = accessor.getDestination();
             if(destination.startsWith("/global"))  {
                 Long memberId = Long.valueOf(destination.substring(8));
                 log.info("SUBSCRIBED memberId: {}", memberId);
@@ -55,15 +55,15 @@ public class StompHandler implements ChannelInterceptor {
             }
             else{
                 throw new IllegalArgumentException("올바른 토픽을 입력해주세요.");
-            }
+            }*/
         } else if (StompCommand.UNSUBSCRIBE == accessor.getCommand()) { //
             log.info("UNSUBSCRIBE message = {}",message);
-            Long partyId = exitChatRoomIfExist(message);
-            log.info("UNSUBSCRIBE RoomId: {}", partyId);
+            // Long partyId = exitChatRoomIfExist(message);
+            // log.info("UNSUBSCRIBE RoomId: {}", partyId);
         } else if (StompCommand.DISCONNECT == accessor.getCommand()) { // Websocket 연결 종료 : DISCONNECT
             log.info("DISCONNECT message = {}",message);
-            Long partyId = exitChatRoomIfExist(message);
-            log.info("DISCONNECT RoomId: {}", partyId);
+            // Long partyId = exitChatRoomIfExist(message);
+            // log.info("DISCONNECT RoomId: {}", partyId);
         }
         return message;
     }

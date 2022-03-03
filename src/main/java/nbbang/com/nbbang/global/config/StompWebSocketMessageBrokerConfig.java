@@ -27,6 +27,7 @@ public class StompWebSocketMessageBrokerConfig implements WebSocketMessageBroker
         WebSocketMessageBrokerConfigurer.super.configureMessageBroker(registry);
         registry.enableSimpleBroker("/topic");
         registry.enableSimpleBroker("/global");
+        registry.enableSimpleBroker("/bbangpan");
         registry.setApplicationDestinationPrefixes("/");
     }
     @Override

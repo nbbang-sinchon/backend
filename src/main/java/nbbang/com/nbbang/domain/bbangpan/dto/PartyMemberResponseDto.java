@@ -1,6 +1,7 @@
 package nbbang.com.nbbang.domain.bbangpan.dto;
 
 import lombok.Builder;
+import lombok.Data;
 import nbbang.com.nbbang.domain.bbangpan.domain.PartyMember;
 import nbbang.com.nbbang.domain.bbangpan.domain.SendStatus;
 import nbbang.com.nbbang.domain.chat.domain.Message;
@@ -15,30 +16,21 @@ import javax.persistence.OneToOne;
 import static javax.persistence.EnumType.STRING;
 
 @Builder
+@Data
 public class PartyMemberResponseDto {
-/*    public static PartyMemberResponseDto createDto(PartyMember partyMember) {
-        // PartyMemberResponseDto partyMemberResponseDto = PartyMemberResponseDto.builder().build();
 
-        // 유저별(나인지, 파티장인지, 그냥인지) 닉네임, 금액, 송금여부,
-        @Builder.Default
-        private Integer price=0;
+    private Integer price;
+    private SendStatus sendStatus;
+    private Boolean isOwner;
+    private String nickname;
 
-        @Enumerated(STRING)
-        private SendStatus sendStatus;
-
-        @OneToOne
-        @JoinColumn(name = "message_id")
-        private Message lastReadMessage;
-
-        @ManyToOne
-        @JoinColumn(name = "member_id")
-        private Member member;
-
-        @ManyToOne
-        @JoinColumn(name = "party_id")
-        private Party party;
-
-
+    public static PartyMemberResponseDto createDtoByEntity(PartyMember partyMember) {
+        PartyMemberResponseDto partyMemberResponseDto = PartyMemberResponseDto.builder()
+                .price(partyMember.getPrice())
+                .sendStatus(partyMember.getSendStatus())
+                .isOwner(partyMember.getMember().getId() == partyMember.getParty().getOwner().getId())
+                .nickname(partyMember.getMember().getNickname())
+                .build();
         return partyMemberResponseDto;
-    }*/
+    }
 }

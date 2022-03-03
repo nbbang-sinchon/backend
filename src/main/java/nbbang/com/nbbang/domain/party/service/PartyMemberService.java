@@ -24,7 +24,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Slf4j
 public class PartyMemberService {
-    private final PartyMemberRepository memberPartyRepository;
+    private final PartyMemberRepository partyMemberRepository;
     private final MessageService messageService;
     private final MessageRepository messageRepository;
 
@@ -49,7 +49,7 @@ public class PartyMemberService {
         }
         // 이 부분 빵판 로직이 들어가야 할 거 같아서 나중에 bbangpan service 로 메소드를 만들어야 할 거 같습니다.
         PartyMember partyMember = PartyMember.createMemberParty(member, party, messageRepository.findLastMessage(party.getId()));
-        memberPartyRepository.save(partyMember);
+        partyMemberRepository.save(partyMember);
 
         return messageService.send(party.getId(), member.getId(), member.getNickname() + " 님이 입장하셨습니다.", MessageType.ENTER);
     }
@@ -66,9 +66,15 @@ public class PartyMemberService {
             throw new PartyExitForbiddenException(PartyResponseMessage.PARTY_OWNER_EXIT_ERROR);
         }
         // 이 부분 빵판 로직이 들어가야 할 거 같아서 나중에 bbangpan service 로 메소드를 만들어야 할 거 같습니다.
-        PartyMember partyMember = memberPartyRepository.findByMemberIdAndPartyId(member.getId(), party.getId());
+        PartyMember partyMember = partyMemberRepository.findByMemberIdAndPartyId(member.getId(), party.getId());
         party.exitMemberParty(partyMember);
-        memberPartyRepository.delete(partyMember);
+        partyMemberRepository.delete(partyMember);
         return messageService.send(party.getId(), member.getId(), member.getNickname() + " 님이 퇴장하셨습니다.", MessageType.EXIT);
+    }
+
+    @Transactional
+    public void changePrice(Long partyId, Long memberId, Integer price) {
+        PartyMember partyMember = partyMemberRepository.findByMemberIdAndPartyId(memberId, partyId);
+        partyMember.changePrice(price);
     }
 }

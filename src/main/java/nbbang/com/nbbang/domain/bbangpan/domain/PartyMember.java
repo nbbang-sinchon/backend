@@ -50,4 +50,8 @@ public class PartyMember {
     public void changeLastReadMessage(Message message) {
         this.lastReadMessage = message;
     }
+
+    public void changePrice(Integer price) {
+        this.price = price;
+    }
 }

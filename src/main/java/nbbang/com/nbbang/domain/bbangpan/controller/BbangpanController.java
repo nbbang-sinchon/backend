@@ -11,15 +11,19 @@ import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.domain.bbangpan.dto.*;
 import nbbang.com.nbbang.domain.party.controller.PartyResponseMessage;
 import nbbang.com.nbbang.domain.party.domain.Party;
-import nbbang.com.nbbang.domain.party.dto.PartyFindResponseDto;
-import nbbang.com.nbbang.domain.party.dto.single.response.PartyReadResponseDto;
+import nbbang.com.nbbang.domain.party.dto.single.response.PartyIdResponseDto;
+import nbbang.com.nbbang.domain.party.service.PartyMemberService;
+import nbbang.com.nbbang.domain.party.service.PartyService;
+import nbbang.com.nbbang.global.error.GlobalErrorResponseMessage;
+import nbbang.com.nbbang.global.error.exception.CustomIllegalArgumentException;
+import nbbang.com.nbbang.global.interceptor.CurrentMember;
 import nbbang.com.nbbang.global.response.*;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import javax.validation.Valid;
 
 import static org.springframework.http.HttpStatus.OK;
 
@@ -35,33 +39,35 @@ import static org.springframework.http.HttpStatus.OK;
 @RestController
 @RequestMapping("/bbangpans/{party-id}")
 public class BbangpanController {
+
+    private final PartyService partyService;
+    private final PartyMemberService partyMemberService;
+    private final CurrentMember currentMember;
+    private final SimpMessagingTemplate simpMessagingTemplate;
+
+
     @Operation(summary = "빵판 정보", description = "유저가 빵판을 클릭했을 때, 필요한 정보를 보냅니다.")
     @ApiResponse(responseCode = "200", description = "OK",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = BbangpanGetResponseDto.class)))
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = BbangpanReadResponseDto.class)))
     @GetMapping
     public DefaultResponse readBbangpan(@PathVariable("party-id") Long partyId) {
-/*
         Party party = partyService.findById(partyId);
-        List<Party> parties = partyService.findNearAndSimilar(partyId);
-        List<PartyFindResponseDto> collect = parties.stream().map(PartyFindResponseDto::createByEntity).collect(Collectors.toList());
-        List<String> hashtags = party.getHashtagContents();
-        BbangpanReadResponseDto partyReadResponseDto = PartyReadResponseDto.createDto(party, currentMember.id(), hashtags, collect);
-        return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_READ_SUCCESS, partyReadResponseDto);
-*/
-
-        // List<MemberBbangpanDto> memberBbangpanDtos = new ArrayList<>();
-        // memberBbangpanDtos.add(new MemberBbangpanDto("연희동 주민", 2000, "송금 완료"));
-        return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_READ_SUCCESS);
-
+        BbangpanReadResponseDto bbangpanReadResponseDto = BbangpanReadResponseDto.createDtoByParty(party);
+        return DefaultResponse.res(StatusCode.OK, BbangpanResponseMessage.BBANGPAN_READ_SUCCESS, bbangpanReadResponseDto);
     }
 
     @Operation(summary = "주문 금액 설정", description = "유저가 주문 금액을 설정합니다.")
     @ApiResponse(responseCode = "403", description = "Not Party Member", content = @Content(mediaType = "application/json"))
     @PostMapping("/price")
-    public ResponseEntity changePrice(@PathVariable("party-id") Long partyId, @RequestBody BbangpanPriceChangeRequestDto bbangpanPriceChangeRequestDto) {
-        // 프론트에 socket.emit 보내면 주문 금액도 바뀌어 보이고 총 금액도 바뀌어 보여야함
-        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, BbangpanResponseMessage.PRICE_CHANGE_SUCCESS), OK);
-
+    public DefaultResponse changePrice(@PathVariable("party-id") Long partyId, @Valid @RequestBody BbangpanPriceChangeRequestDto bbangpanPriceChangeRequestDto, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            throw new CustomIllegalArgumentException(GlobalErrorResponseMessage.ILLEGAL_ARGUMENT_ERROR, bindingResult);
+        }
+        Integer price = bbangpanPriceChangeRequestDto.getPrice();
+        partyMemberService.changePrice(partyId, currentMember.id(), price);
+        BbangpanPriceChangeSocketDto bbangpanPriceChangeSocketDto = BbangpanPriceChangeSocketDto.createDto(currentMember.id(), price);
+        simpMessagingTemplate.convertAndSend("/bbangpan/" + partyId, bbangpanPriceChangeSocketDto);
+        return DefaultResponse.res(StatusCode.OK, BbangpanResponseMessage.PRICE_CHANGE_SUCCESS);
     }
 
     @Operation(summary = "배달비 설정", description = "방장이 배달비를 설정합니다.")
