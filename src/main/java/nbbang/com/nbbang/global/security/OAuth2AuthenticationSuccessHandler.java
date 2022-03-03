@@ -20,30 +20,31 @@ import java.io.IOException;
 @Component
 public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
-    private String redirect_url = "http://127.0.0.1:8080";
+    private String redirect_url = "http://localhost:8080";
     private String targetUri;
     private TokenProvider tokenProvider = new TokenProvider();
     @Autowired OAuth2AuthorizedClientService oAuth2AuthorizedClientService;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-
-
-
         targetUri = determineTargetUri(request, response, authentication);
         getRedirectStrategy().sendRedirect(request, response, targetUri);
     }
 
     private String determineTargetUri(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
-        String token = tokenProvider.createToken(authentication);
-        //CookieUtils.addCookie(response, "access_token", token, 360000);
+
+
+
         //CookieUtils.addCookie(response, "member_id", "2", 360000);
+
         HttpSession session = request.getSession(false);
         SessionMember member = (SessionMember) session.getAttribute("member");
-
+        String token = tokenProvider.createToken(authentication, member.getId());
+        CookieUtils.addCookie(response, "access_token", token, 36000000);
+        //CookieUtils.addResponseCookie(response, token);
         return UriComponentsBuilder.fromUriString(redirect_url)
                 .queryParam("token", token)
-                .queryParam("id", member.getId())
+                //.queryParam("id", member.getId())
                 .build().toUriString();
     }
 

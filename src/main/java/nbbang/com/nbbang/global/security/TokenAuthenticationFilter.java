@@ -2,6 +2,7 @@ package nbbang.com.nbbang.global.security;
 
 import antlr.Token;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -31,28 +32,42 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         logRequest(request);
-        String jwt = getJwtFromRequest(request);
-        System.out.println(jwt);
+        processJwtFromRequest(request);
         filterChain.doFilter(request, response);
     }
 
-    private String getJwtFromRequest(HttpServletRequest request) {
-        String token = request.getHeader("access_token");
-        String memberId = request.getHeader("memberid");
-
+    private String processJwtFromRequest(HttpServletRequest request) {
+        String token = request.getHeader("access-token");
         if (tokenProvider.validateToken(token)) {
-            UsernamePasswordAuthenticationToken authReq
-                    = new UsernamePasswordAuthenticationToken("hello", "None");
-            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(memberId, null, null);
+            Long id = tokenProvider.getUserIdFromToken(token);
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(id.toString(), null, null);
             SecurityContext sc = SecurityContextHolder.getContext();
             sc.setAuthentication(authentication);
             HttpSession session = request.getSession(true);
             session.setAttribute(SPRING_SECURITY_CONTEXT_KEY, sc);
-            System.out.println(SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-            System.out.println("Safely saved.");
+        }
+        else {
+            //throw new RuntimeException("INVALID TOKEN");
+            return "no";
+        }
+        return token;
+    }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String path = request.getServletPath();
+        System.out.println(path);
+        if (path.startsWith("/members")) {
+            return false;
+        }
+        if (path.startsWith("/manyparties")) {
+            return true;
+        }
+        if (path.startsWith("/oauth2") || path.startsWith("/login")) {
+            return true;
         }
 
-        return token;
+        return false;
     }
 
     private void logRequest(HttpServletRequest request) {

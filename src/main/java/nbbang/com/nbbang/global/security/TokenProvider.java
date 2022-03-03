@@ -30,8 +30,30 @@ public class TokenProvider {
                 .compact();
     }
 
+    public String createToken(Authentication authentication, Long memberId) {
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + 3600000);
+
+        return Jwts.builder()
+                .setSubject(Long.toString(memberId))
+                .setIssuedAt(new Date())
+                .setExpiration(expiryDate)
+                .signWith(SignatureAlgorithm.HS512, secretKey)
+                .compact();
+    }
+
+    public Long getUserIdFromToken(String token) {
+        Claims claims = Jwts.parser()
+                .setSigningKey(secretKey)
+                .parseClaimsJws(token)
+                .getBody();
+
+        return Long.parseLong(claims.getSubject());
+    }
 
     public boolean validateToken(String authToken) {
+        System.out.println("Validating token");
+        System.out.println(authToken);
         try {
             Jwts.parser().setSigningKey(secretKey).parseClaimsJws(authToken);
             return true;

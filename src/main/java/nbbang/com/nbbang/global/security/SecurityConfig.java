@@ -2,6 +2,7 @@ package nbbang.com.nbbang.global.security;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -30,14 +31,23 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .addFilterBefore(new TokenAuthenticationFilter(), WebAsyncManagerIntegrationFilter.class)
+
                 .csrf().disable()
                 .cors()
                 .and()
-                .headers().frameOptions().disable()
-                .and()
-                    .authorizeRequests()
-                    .antMatchers("/members").permitAll()
-                    .anyRequest().authenticated()
+                //.headers().frameOptions().disable()
+                //.and()
+                    //.authorizeRequests()
+                    //.antMatchers("/parties").permitAll()
+                    //.anyRequest().authenticated()
+                //.and()
+                //.antMatcher("/members")
+                //.authorizeRequests()
+                //.anyRequest().authenticated()
+                //.and()
+                .authorizeRequests()
+                .antMatchers(HttpMethod.OPTIONS,"/**").permitAll()
+                .anyRequest().authenticated()
                 .and()
                 .oauth2Login()
                     .userInfoEndpoint()
