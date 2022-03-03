@@ -82,7 +82,9 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         if (path.startsWith("/oauth2") || path.startsWith("/login")) {
             return true;
         }
-
+        if (path.startsWith("/swagger-ui") || path.startsWith("/v3/api-docs") || path.startsWith("/configuration/ui") || path.startsWith("/swagger-resources/**") ||path.startsWith("/configuration/security") || path.startsWith("/swagger-ui.html") || path.startsWith("/webjars/**")) {
+            return true;
+        }
         return false;
     }
 

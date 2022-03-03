@@ -40,8 +40,8 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         HttpSession session = request.getSession(false);
         SessionMember member = (SessionMember) session.getAttribute("member");
         String token = tokenProvider.createToken(authentication, member.getId());
-        CookieUtils.addCookie(response, "access_token", token, 36000000);
-        //CookieUtils.addResponseCookie(response, token);
+        //CookieUtils.addCookie(response, "access_token", token, 36000000);
+        CookieUtils.addResponseCookie(response, token);
         return UriComponentsBuilder.fromUriString(redirect_url)
                 .queryParam("token", token)
                 //.queryParam("id", member.getId())

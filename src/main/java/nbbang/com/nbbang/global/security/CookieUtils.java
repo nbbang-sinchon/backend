@@ -31,7 +31,7 @@ public class CookieUtils {
                 //.httpOnly(true)
                 //.sameSite("lax")
                 //.httpOnly(true)
-                //.sameSite("lax")
+                .sameSite("none")
                 .maxAge(3600000)
                 .domain("localhost")
                 .path("/")
@@ -44,8 +44,8 @@ public class CookieUtils {
         //cookie.setPath("http://localhost:8080/");
         cookie.setDomain("localhost");
         cookie.setPath("/");
-        cookie.setHttpOnly(true);
-        cookie.setSecure(true);
+        //cookie.setHttpOnly(true);
+        //cookie.setSecure(true);
         cookie.setMaxAge(maxAge);
         //cookie.
         response.addCookie(cookie);
