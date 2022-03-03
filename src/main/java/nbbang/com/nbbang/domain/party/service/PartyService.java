@@ -146,9 +146,12 @@ public class PartyService {
         return lastMessage;
     }
 
+
     @Transactional
-    public void changeDeliveryFee(Long partyId, Long id, Integer deliveryFee) {
+    public void changeField(Long partyId, Long memberId, String field, Object value) {
         Party party = findById(partyId);
-        party.changeDeliveryFee(deliveryFee);
+        if(field=="DeliveryFee") {
+            party.changeDeliveryFee((Integer) value);
+        }
     }
 }

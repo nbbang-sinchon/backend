@@ -3,6 +3,7 @@ package nbbang.com.nbbang.domain.party.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.domain.bbangpan.domain.PartyMember;
+import nbbang.com.nbbang.domain.bbangpan.domain.SendStatus;
 import nbbang.com.nbbang.domain.bbangpan.repository.PartyMemberRepository;
 import nbbang.com.nbbang.domain.chat.domain.MessageType;
 import nbbang.com.nbbang.domain.chat.repository.MessageRepository;
@@ -72,9 +73,14 @@ public class PartyMemberService {
         return messageService.send(party.getId(), member.getId(), member.getNickname() + " 님이 퇴장하셨습니다.", MessageType.EXIT);
     }
 
+
     @Transactional
-    public void changePrice(Long partyId, Long memberId, Integer price) {
+    public void changeField(Long partyId, Long memberId, String field, Object value) {
         PartyMember partyMember = partyMemberRepository.findByMemberIdAndPartyId(memberId, partyId);
-        partyMember.changePrice(price);
+        if (field=="price"){
+            partyMember.changePrice((Integer) value);
+        }else if(field=="sendStatus"){
+            partyMember.changeSendStatus((SendStatus) value);
+        }
     }
 }

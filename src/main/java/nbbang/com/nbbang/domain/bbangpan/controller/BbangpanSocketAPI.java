@@ -10,7 +10,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import nbbang.com.nbbang.domain.bbangpan.dto.BbangpanDeliveryFeeChangeSocketDto;
 import nbbang.com.nbbang.domain.bbangpan.dto.BbangpanPriceChangeRequestDto;
-import nbbang.com.nbbang.domain.bbangpan.dto.BbangpanPriceChangeSocketDto;
+import nbbang.com.nbbang.domain.bbangpan.dto.PartyMemberFieldChangeSocketDto;
 import nbbang.com.nbbang.domain.chat.dto.ChatReadSocketDto;
 import nbbang.com.nbbang.domain.chat.dto.message.ChatSendResponseDto;
 import nbbang.com.nbbang.global.error.GlobalErrorResponseMessage;
@@ -28,8 +28,8 @@ import javax.validation.Valid;
 @RequestMapping("bbangpan/develop")
 public class BbangpanSocketAPI {
 
-    @Operation(summary = "주문 금액 설정", description = "유저가 주문 금액을 설정합니다.")
-    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = BbangpanPriceChangeSocketDto.class)))
+    @Operation(summary = "주문 금액, 송금 상태 설정", description = "유저가 주문 금액, 송금 상태를 설정합니다.")
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PartyMemberFieldChangeSocketDto.class)))
     @PostMapping("/price")
     public void changePrice() {
     }

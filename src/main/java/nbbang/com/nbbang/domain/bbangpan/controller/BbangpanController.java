@@ -9,7 +9,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.domain.bbangpan.dto.*;
+import nbbang.com.nbbang.domain.member.domain.Member;
+import nbbang.com.nbbang.domain.party.controller.PartyResponseMessage;
 import nbbang.com.nbbang.domain.party.domain.Party;
+import nbbang.com.nbbang.domain.party.dto.single.request.PartyStatusChangeRequestDto;
 import nbbang.com.nbbang.domain.party.service.PartyMemberService;
 import nbbang.com.nbbang.domain.party.service.PartyService;
 import nbbang.com.nbbang.global.error.GlobalErrorResponseMessage;
@@ -19,6 +22,7 @@ import nbbang.com.nbbang.global.response.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -37,6 +41,7 @@ import static org.springframework.http.HttpStatus.OK;
 @RestController
 @RequestMapping("/bbangpans/{party-id}")
 public class BbangpanController {
+    // "******************* 파티원인지, 파티장인지 검증하는 로직 미구현 ****************************
 
     private final PartyService partyService;
     private final PartyMemberService partyMemberService;
@@ -54,20 +59,6 @@ public class BbangpanController {
         return DefaultResponse.res(StatusCode.OK, BbangpanResponseMessage.BBANGPAN_READ_SUCCESS, bbangpanReadResponseDto);
     }
 
-    @Operation(summary = "주문 금액 설정", description = "유저가 주문 금액을 설정합니다.")
-    @ApiResponse(responseCode = "403", description = "Not Party Member", content = @Content(mediaType = "application/json"))
-    @PostMapping("/price")
-    public DefaultResponse changePrice(@PathVariable("party-id") Long partyId, @Valid @RequestBody BbangpanPriceChangeRequestDto bbangpanPriceChangeRequestDto, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            throw new CustomIllegalArgumentException(GlobalErrorResponseMessage.ILLEGAL_ARGUMENT_ERROR, bindingResult);
-        }
-        Integer price = bbangpanPriceChangeRequestDto.getPrice();
-        partyMemberService.changePrice(partyId, currentMember.id(), price);
-        BbangpanPriceChangeSocketDto bbangpanPriceChangeSocketDto = BbangpanPriceChangeSocketDto.createDto(currentMember.id(), price);
-        simpMessagingTemplate.convertAndSend("/bbangpan/" + partyId, bbangpanPriceChangeSocketDto);
-        return DefaultResponse.res(StatusCode.OK, BbangpanResponseMessage.PRICE_CHANGE_SUCCESS);
-    }
-
     @Operation(summary = "배달비 설정", description = "방장이 배달비를 설정합니다.")
     @ApiResponse(responseCode = "403", description = "Not Owner", content = @Content(mediaType = "application/json"))
     @PostMapping("/delivery-fee")
@@ -75,19 +66,42 @@ public class BbangpanController {
         if (bindingResult.hasErrors()) {
             throw new CustomIllegalArgumentException(GlobalErrorResponseMessage.ILLEGAL_ARGUMENT_ERROR, bindingResult);
         }
-        Integer deliveryFee = bbangpanPriceChangeRequestDto.getPrice();
-        partyService.changeDeliveryFee(partyId, currentMember.id(), deliveryFee);
-        BbangpanDeliveryFeeChangeSocketDto bbangpanDeliveryFeeChangeSocketDto = BbangpanDeliveryFeeChangeSocketDto.createDto(deliveryFee);
-        simpMessagingTemplate.convertAndSend("/bbangpan/" + partyId, bbangpanDeliveryFeeChangeSocketDto);
+        changePartyField(partyId, currentMember.id(), "deliveryFee", bbangpanPriceChangeRequestDto.getPrice());
         return DefaultResponse.res(StatusCode.OK, BbangpanResponseMessage.DELIVERYFEE_CHANGE_SUCCESS);
+    }
+
+    public void changePartyField(Long partyId,Long memberId, String field, Object value){
+        partyService.changeField(partyId, memberId, field, value);
+        PartyFieldChangeSocketDto partyFieldChangeSocketDto = PartyFieldChangeSocketDto.createDto(field, value);
+        simpMessagingTemplate.convertAndSend("/bbangpan/" + partyId, partyFieldChangeSocketDto);
+
+    }
+
+    @Operation(summary = "주문 금액 설정", description = "유저가 주문 금액을 설정합니다.")
+    @ApiResponse(responseCode = "403", description = "Not Party Member", content = @Content(mediaType = "application/json"))
+    @PostMapping("/price")
+    public DefaultResponse changePrice(@PathVariable("party-id") Long partyId, @Valid @RequestBody BbangpanPriceChangeRequestDto bbangpanPriceChangeRequestDto, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            throw new CustomIllegalArgumentException(GlobalErrorResponseMessage.ILLEGAL_ARGUMENT_ERROR, bindingResult);
+        }
+        changePartyMemberField(partyId, currentMember.id(), "price", bbangpanPriceChangeRequestDto.getPrice());
+        return DefaultResponse.res(StatusCode.OK, BbangpanResponseMessage.PRICE_CHANGE_SUCCESS);
     }
 
     @Operation(summary = "송금 상태 설정", description = "송금 상태를 설정합니다.")
     @ApiResponse(responseCode = "403", description = "Not Party Member", content = @Content(mediaType = "application/json"))
     @PostMapping("/send-status")
-    public ResponseEntity changeSendStatus(@PathVariable("party-id") Long partyId, @RequestBody BbangpanStatusChangeRequestDto bbangpanStatusChangeRequestDto) {
-        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, BbangpanResponseMessage.SENDSTATUS_CHANGE_SUCCESS), OK);
-
+    public DefaultResponse changeSendStatus(@PathVariable("party-id") Long partyId, @Valid @RequestBody SendStatusChangeRequestDto sendStatusChangeRequestDto, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            throw new CustomIllegalArgumentException(PartyResponseMessage.ILLEGAL_PARTY_STATUS, bindingResult);
+        }
+        changePartyMemberField(partyId, currentMember.id(), "sendStatus", sendStatusChangeRequestDto.createStatus());
+        return DefaultResponse.res(StatusCode.OK, BbangpanResponseMessage.SENDSTATUS_CHANGE_SUCCESS);
     }
 
+    public void changePartyMemberField(Long partyId, Long memberId, String field, Object value){
+        partyMemberService.changeField(partyId, memberId, field, value);
+        PartyMemberFieldChangeSocketDto partyMemberFieldChangeSocketDto = PartyMemberFieldChangeSocketDto.createDto(field,value, currentMember.id());
+        simpMessagingTemplate.convertAndSend("/bbangpan/" + partyId, partyMemberFieldChangeSocketDto);
+    }
 }

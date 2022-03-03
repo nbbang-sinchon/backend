@@ -54,4 +54,8 @@ public class PartyMember {
     public void changePrice(Integer price) {
         this.price = price;
     }
+
+    public void changeSendStatus(SendStatus sendStatus) {
+        this.sendStatus = sendStatus;
+    }
 }
