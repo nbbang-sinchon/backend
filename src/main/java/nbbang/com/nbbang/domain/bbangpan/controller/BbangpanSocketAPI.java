@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import nbbang.com.nbbang.domain.bbangpan.dto.socket.BbangpanDeliveryFeeChangeSocketDto;
+import nbbang.com.nbbang.domain.bbangpan.dto.socket.PartyFieldChangeSocketDto;
 import nbbang.com.nbbang.domain.bbangpan.dto.socket.PartyMemberFieldChangeSocketDto;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,13 +21,13 @@ public class BbangpanSocketAPI {
 
     @Operation(summary = "주문 금액, 송금 상태 설정", description = "유저가 주문 금액, 송금 상태를 설정합니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PartyMemberFieldChangeSocketDto.class)))
-    @PostMapping("/price")
-    public void changePrice() {
+    @PostMapping("/party-member")
+    public void changePartyMember() {
     }
 
-    @Operation(summary = "배달비 설정", description = "방장이 배달비를 설정합니다.")
-    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = BbangpanDeliveryFeeChangeSocketDto.class)))
-    @PostMapping("/delivery-fee")
+    @Operation(summary = "배달비, 계좌 번호 설정", description = "방장이 배달비, 계좌 번호를 설정합니다.")
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PartyFieldChangeSocketDto.class)))
+    @PostMapping("/party")
     public void changeDeliveryFee() {
     }
 }
