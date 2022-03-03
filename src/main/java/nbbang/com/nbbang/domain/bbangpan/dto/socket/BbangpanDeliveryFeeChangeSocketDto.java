@@ -1,4 +1,4 @@
-package nbbang.com.nbbang.domain.bbangpan.dto;
+package nbbang.com.nbbang.domain.bbangpan.dto.socket;
 
 import lombok.Builder;
 import lombok.Data;

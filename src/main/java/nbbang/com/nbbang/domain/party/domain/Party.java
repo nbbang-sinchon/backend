@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import static javax.persistence.EnumType.STRING;
@@ -65,7 +66,7 @@ public class Party {
 
     private String bank;
 
-    private Integer account;
+    private String accountNumber;
 
     @Builder.Default // https://www.inflearn.com/questions/151658
     @OneToMany(mappedBy = "party", cascade = CascadeType.ALL)
@@ -152,5 +153,10 @@ public class Party {
 
     public void changeDeliveryFee(Integer deliveryFee) {
         this.deliveryFee = deliveryFee;
+    }
+
+    public void changeAccount(ConcurrentHashMap accountMap) {
+        this.bank = (String) accountMap.get("bank");
+        this.accountNumber = (String) accountMap.get("accountNumber");
     }
 }

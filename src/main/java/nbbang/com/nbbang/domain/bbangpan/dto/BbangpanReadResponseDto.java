@@ -12,14 +12,14 @@ import java.util.stream.Collectors;
 public class BbangpanReadResponseDto {
 
     private String bank;
-    private Integer account;
+    private String accountNumber;
     private Integer deliveryFee;
     private List<PartyMemberResponseDto> partyMembers;
 
     public static BbangpanReadResponseDto createDtoByParty(Party party) {
         return BbangpanReadResponseDto.builder()
                 .bank(party.getBank())
-                .account(party.getAccount())
+                .accountNumber(party.getAccountNumber())
                 .deliveryFee(party.getDeliveryFee())
                 .partyMembers(party.getPartyMembers().stream().map(PartyMemberResponseDto::createDtoByEntity).collect(Collectors.toList()))
                 .build();

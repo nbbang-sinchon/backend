@@ -22,6 +22,7 @@ import org.webjars.NotFoundException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static nbbang.com.nbbang.domain.party.controller.PartyResponseMessage.PARTY_NOT_FOUND;
 
@@ -150,8 +151,11 @@ public class PartyService {
     @Transactional
     public void changeField(Long partyId, Long memberId, String field, Object value) {
         Party party = findById(partyId);
-        if(field=="DeliveryFee") {
+        if(field=="deliveryFee") {
             party.changeDeliveryFee((Integer) value);
+        }
+        else if(field=="account"){
+            party.changeAccount((ConcurrentHashMap) value);
         }
     }
 }

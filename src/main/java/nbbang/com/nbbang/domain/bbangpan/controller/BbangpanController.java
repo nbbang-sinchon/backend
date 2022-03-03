@@ -9,25 +9,24 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.domain.bbangpan.dto.*;
-import nbbang.com.nbbang.domain.member.domain.Member;
+import nbbang.com.nbbang.domain.bbangpan.dto.request.BbangpanAccountChangeRequestDto;
+import nbbang.com.nbbang.domain.bbangpan.dto.request.BbangpanPriceChangeRequestDto;
+import nbbang.com.nbbang.domain.bbangpan.dto.request.SendStatusChangeRequestDto;
+import nbbang.com.nbbang.domain.bbangpan.dto.socket.PartyFieldChangeSocketDto;
+import nbbang.com.nbbang.domain.bbangpan.dto.socket.PartyMemberFieldChangeSocketDto;
 import nbbang.com.nbbang.domain.party.controller.PartyResponseMessage;
 import nbbang.com.nbbang.domain.party.domain.Party;
-import nbbang.com.nbbang.domain.party.dto.single.request.PartyStatusChangeRequestDto;
 import nbbang.com.nbbang.domain.party.service.PartyMemberService;
 import nbbang.com.nbbang.domain.party.service.PartyService;
 import nbbang.com.nbbang.global.error.GlobalErrorResponseMessage;
 import nbbang.com.nbbang.global.error.exception.CustomIllegalArgumentException;
 import nbbang.com.nbbang.global.interceptor.CurrentMember;
 import nbbang.com.nbbang.global.response.*;
-import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-
-import static org.springframework.http.HttpStatus.OK;
 
 
 @Tag(name = "Bbangpan", description = "빵판과 관련된 API입니다.(구현중)")
@@ -70,12 +69,23 @@ public class BbangpanController {
         return DefaultResponse.res(StatusCode.OK, BbangpanResponseMessage.DELIVERYFEE_CHANGE_SUCCESS);
     }
 
+    @Operation(summary = "계좌번호 설정", description = "방장이 계좌 번호를 설정합니다.")
+    @ApiResponse(responseCode = "403", description = "Not Owner", content = @Content(mediaType = "application/json"))
+    @PostMapping("/account")
+    public DefaultResponse changeAccount(@PathVariable("party-id") Long partyId, @Valid @RequestBody BbangpanAccountChangeRequestDto bbangpanAccountChangeRequestDto, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            throw new CustomIllegalArgumentException(GlobalErrorResponseMessage.ILLEGAL_ARGUMENT_ERROR, bindingResult);
+        }
+        changePartyField(partyId, currentMember.id(), "account", bbangpanAccountChangeRequestDto.getAccountMap());
+        return DefaultResponse.res(StatusCode.OK, BbangpanResponseMessage.ACCOUNT_CHANGE_SUCCESS);
+    }
+
     public void changePartyField(Long partyId,Long memberId, String field, Object value){
         partyService.changeField(partyId, memberId, field, value);
         PartyFieldChangeSocketDto partyFieldChangeSocketDto = PartyFieldChangeSocketDto.createDto(field, value);
         simpMessagingTemplate.convertAndSend("/bbangpan/" + partyId, partyFieldChangeSocketDto);
-
     }
+
 
     @Operation(summary = "주문 금액 설정", description = "유저가 주문 금액을 설정합니다.")
     @ApiResponse(responseCode = "403", description = "Not Party Member", content = @Content(mediaType = "application/json"))

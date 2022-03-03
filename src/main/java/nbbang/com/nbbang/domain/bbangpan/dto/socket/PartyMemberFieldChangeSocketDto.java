@@ -1,8 +1,7 @@
-package nbbang.com.nbbang.domain.bbangpan.dto;
+package nbbang.com.nbbang.domain.bbangpan.dto.socket;
 
 import lombok.Builder;
 import lombok.Data;
-import nbbang.com.nbbang.domain.bbangpan.domain.SendStatus;
 
 @Data
 @Builder

@@ -8,19 +8,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import nbbang.com.nbbang.domain.bbangpan.dto.BbangpanDeliveryFeeChangeSocketDto;
-import nbbang.com.nbbang.domain.bbangpan.dto.BbangpanPriceChangeRequestDto;
-import nbbang.com.nbbang.domain.bbangpan.dto.PartyMemberFieldChangeSocketDto;
-import nbbang.com.nbbang.domain.chat.dto.ChatReadSocketDto;
-import nbbang.com.nbbang.domain.chat.dto.message.ChatSendResponseDto;
-import nbbang.com.nbbang.global.error.GlobalErrorResponseMessage;
-import nbbang.com.nbbang.global.error.exception.CustomIllegalArgumentException;
-import nbbang.com.nbbang.global.response.DefaultResponse;
-import nbbang.com.nbbang.global.response.StatusCode;
-import org.springframework.validation.BindingResult;
+import nbbang.com.nbbang.domain.bbangpan.dto.socket.BbangpanDeliveryFeeChangeSocketDto;
+import nbbang.com.nbbang.domain.bbangpan.dto.socket.PartyMemberFieldChangeSocketDto;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
 
 @Tag(name = "BbangSocketDevelop", description = "빵판의 소켓 관련된 API입니다.")
 @NoArgsConstructor(access = AccessLevel.PRIVATE) // ONLY FOR SWAGGER. Don't do anything for Logic.

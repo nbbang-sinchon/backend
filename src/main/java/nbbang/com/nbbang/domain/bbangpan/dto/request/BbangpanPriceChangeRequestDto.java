@@ -1,4 +1,4 @@
-package nbbang.com.nbbang.domain.bbangpan.dto;
+package nbbang.com.nbbang.domain.bbangpan.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
