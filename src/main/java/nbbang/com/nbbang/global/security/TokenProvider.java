@@ -32,7 +32,7 @@ public class TokenProvider {
 
     public String createToken(Authentication authentication, Long memberId) {
         Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + 3600000);
+        Date expiryDate = new Date(now.getTime() + 360000);
 
         return Jwts.builder()
                 .setSubject(Long.toString(memberId))

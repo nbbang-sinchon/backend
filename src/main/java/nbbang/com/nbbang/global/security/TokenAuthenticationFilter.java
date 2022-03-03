@@ -7,6 +7,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.core.userdetails.memory.UserAttribute;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
@@ -32,23 +33,38 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         logRequest(request);
-        processJwtFromRequest(request);
-        filterChain.doFilter(request, response);
+        try {
+            processJwtFromRequest(request);
+            filterChain.doFilter(request, response);
+        } catch (Exception e) {
+            response.sendError(401, "Unauthorized");
+        }
     }
 
     private String processJwtFromRequest(HttpServletRequest request) {
-        String token = request.getHeader("access-token");
-        if (tokenProvider.validateToken(token)) {
-            Long id = tokenProvider.getUserIdFromToken(token);
-            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(id.toString(), null, null);
-            SecurityContext sc = SecurityContextHolder.getContext();
-            sc.setAuthentication(authentication);
-            HttpSession session = request.getSession(true);
-            session.setAttribute(SPRING_SECURITY_CONTEXT_KEY, sc);
+        String token = request.getHeader("access_token");
+        Cookie cookie = CookieUtils.getCookie(request, "access_token").get();
+        if (cookie != null) {
+            token = cookie.getValue();
+            System.out.println("Ok, cookie's exist");
         }
-        else {
-            //throw new RuntimeException("INVALID TOKEN");
-            return "no";
+        try {
+            if (tokenProvider.validateToken(token)) {
+                Long id = tokenProvider.getUserIdFromToken(token);
+                System.out.println("Hello : " + id);
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(id.toString(), null, null);
+                SecurityContext sc = SecurityContextHolder.getContext();
+                sc.setAuthentication(authentication);
+                HttpSession session = request.getSession(true);
+                session.setAttribute(SPRING_SECURITY_CONTEXT_KEY, sc);
+                System.out.println("Ok, cookie's correct");
+            }
+            else {
+                throw new RuntimeException();
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException("HELL");
         }
         return token;
     }
