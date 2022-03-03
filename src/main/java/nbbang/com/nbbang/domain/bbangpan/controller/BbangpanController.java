@@ -9,9 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.domain.bbangpan.dto.*;
-import nbbang.com.nbbang.domain.party.controller.PartyResponseMessage;
 import nbbang.com.nbbang.domain.party.domain.Party;
-import nbbang.com.nbbang.domain.party.dto.single.response.PartyIdResponseDto;
 import nbbang.com.nbbang.domain.party.service.PartyMemberService;
 import nbbang.com.nbbang.domain.party.service.PartyService;
 import nbbang.com.nbbang.global.error.GlobalErrorResponseMessage;
@@ -73,8 +71,15 @@ public class BbangpanController {
     @Operation(summary = "배달비 설정", description = "방장이 배달비를 설정합니다.")
     @ApiResponse(responseCode = "403", description = "Not Owner", content = @Content(mediaType = "application/json"))
     @PostMapping("/delivery-fee")
-    public ResponseEntity changeDeliveryFee(@PathVariable("party-id") Long partyId, @RequestBody BbangpanPriceChangeRequestDto bbangpanPriceChangeRequestDto) {
-        return new ResponseEntity(DefaultResponse.res(StatusCode.OK, BbangpanResponseMessage.DELIVERYFEE_CHANGE_SUCCESS), OK);
+    public DefaultResponse changeDeliveryFee(@PathVariable("party-id") Long partyId, @Valid @RequestBody BbangpanPriceChangeRequestDto bbangpanPriceChangeRequestDto, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            throw new CustomIllegalArgumentException(GlobalErrorResponseMessage.ILLEGAL_ARGUMENT_ERROR, bindingResult);
+        }
+        Integer deliveryFee = bbangpanPriceChangeRequestDto.getPrice();
+        partyService.changeDeliveryFee(partyId, currentMember.id(), deliveryFee);
+        BbangpanDeliveryFeeChangeSocketDto bbangpanDeliveryFeeChangeSocketDto = BbangpanDeliveryFeeChangeSocketDto.createDto(deliveryFee);
+        simpMessagingTemplate.convertAndSend("/bbangpan/" + partyId, bbangpanDeliveryFeeChangeSocketDto);
+        return DefaultResponse.res(StatusCode.OK, BbangpanResponseMessage.DELIVERYFEE_CHANGE_SUCCESS);
     }
 
     @Operation(summary = "송금 상태 설정", description = "송금 상태를 설정합니다.")

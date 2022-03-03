@@ -149,4 +149,8 @@ public class Party {
     public Boolean isWishlistOf(Member member) {
         return wishlists.stream().anyMatch(w -> w.getMember().equals(member));
     }
+
+    public void changeDeliveryFee(Integer deliveryFee) {
+        this.deliveryFee = deliveryFee;
+    }
 }

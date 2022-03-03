@@ -146,4 +146,9 @@ public class PartyService {
         return lastMessage;
     }
 
+    @Transactional
+    public void changeDeliveryFee(Long partyId, Long id, Integer deliveryFee) {
+        Party party = findById(partyId);
+        party.changeDeliveryFee(deliveryFee);
+    }
 }
