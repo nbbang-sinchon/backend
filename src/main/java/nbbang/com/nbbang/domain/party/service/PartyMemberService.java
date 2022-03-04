@@ -18,6 +18,7 @@ import nbbang.com.nbbang.global.error.exception.NotPartyMemberException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.reflect.Field;
 import java.util.Optional;
 
 @Service
@@ -75,11 +76,11 @@ public class PartyMemberService {
 
 
     @Transactional
-    public void changeField(Long partyId, Long memberId, String field, Object value) {
+    public void changeField(Long partyId, Long memberId, Field field, Object value) throws NoSuchFieldException {
         PartyMember partyMember = partyMemberRepository.findByMemberIdAndPartyId(memberId, partyId);
-        if (field=="price"){
+        if (field==PartyMember.getField("price")){
             partyMember.changePrice((Integer) value);
-        }else if(field=="sendStatus"){
+        }else if(field==PartyMember.getField("sendStatus")){
             partyMember.changeSendStatus((SendStatus) value);
         }
     }

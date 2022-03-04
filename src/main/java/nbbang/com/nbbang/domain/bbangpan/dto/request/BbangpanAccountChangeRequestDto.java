@@ -3,10 +3,13 @@ package nbbang.com.nbbang.domain.bbangpan.dto.request;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import nbbang.com.nbbang.domain.party.domain.Account;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static nbbang.com.nbbang.domain.bbangpan.controller.BbangpanResponseMessage.*;
@@ -21,10 +24,8 @@ public class BbangpanAccountChangeRequestDto {
     @NotBlank(message =ELLEGAL_ARGUMENT_ACCOUNTNUMBER)
     private String accountNumber;
 
-    public ConcurrentHashMap getAccountMap() {
-        ConcurrentHashMap<String, String> map = new ConcurrentHashMap<>();
-        map.compute("bank", (key, value) ->bank);
-        map.compute("accountNumber", (key, value) ->accountNumber);
-        return map;
+    public Account getAccount() {
+        Account account = Account.createAccount(bank, accountNumber);
+        return account;
     }
 }

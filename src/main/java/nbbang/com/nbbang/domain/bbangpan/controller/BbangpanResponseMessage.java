@@ -10,8 +10,8 @@ public class BbangpanResponseMessage {
 
     public static final String SENDSTATUS_CHANGE_SUCCESS = "송금 상태 설정 성공";
 
-    public static final String ACCOUNT_CHANGE_SUCCESS = "송금 상태 설정 성공";
-    public static final String ELLEGAL_ARGUMENT_BANK = "은행은 필수 값입니다.";
+    public static final String ACCOUNT_CHANGE_SUCCESS = "은행 설정 성공";
 
+    public static final String ELLEGAL_ARGUMENT_BANK = "은행은 필수 값입니다.";
     public static final String ELLEGAL_ARGUMENT_ACCOUNTNUMBER = "계좌번호는 필수 값입니다.";
 }

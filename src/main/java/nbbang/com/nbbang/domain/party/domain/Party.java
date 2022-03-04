@@ -13,10 +13,12 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.webjars.NotFoundException;
 
 import javax.persistence.*;
+import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -155,8 +157,12 @@ public class Party {
         this.deliveryFee = deliveryFee;
     }
 
-    public void changeAccount(ConcurrentHashMap accountMap) {
-        this.bank = (String) accountMap.get("bank");
-        this.accountNumber = (String) accountMap.get("accountNumber");
+    public void changeAccount(Account account) {
+        this.bank = account.getBank();
+        this.accountNumber = account.getAccountNumber();
+    }
+
+    public static Field getField(String field) throws NoSuchFieldException {
+        return Party.class.getDeclaredField(field);
     }
 }
