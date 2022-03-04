@@ -77,6 +77,10 @@ public class PartyMemberService {
     @Transactional
     public void changeField(Long partyId, Long memberId, String field, Object value) {
         PartyMember partyMember = partyMemberRepository.findByMemberIdAndPartyId(memberId, partyId);
+        log.info("partyId: {}", partyId);
+        log.info("memberId: {}", memberId);
+        log.info("partyMember: {}", partyMember);
+
         if (field=="price"){
             partyMember.changePrice((Integer) value);
         }else if(field=="sendStatus"){

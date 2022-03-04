@@ -44,7 +44,7 @@ public class BbangpanController {
     private final PartyService partyService;
     private final PartyMemberService partyMemberService;
     private final CurrentMember currentMember;
-    private final SimpMessagingTemplate simpMessagingTemplate;
+    private final SocketSender socketSender;
 
 
     @Operation(summary = "빵판 정보", description = "유저가 빵판을 클릭했을 때, 필요한 정보를 보냅니다.")
@@ -92,6 +92,9 @@ public class BbangpanController {
         if (bindingResult.hasErrors()) {
             throw new CustomIllegalArgumentException(GlobalErrorResponseMessage.ILLEGAL_ARGUMENT_ERROR, bindingResult);
         }
+        log.info("partyId: {}", partyId);
+        log.info("price: {}", bbangpanPriceChangeRequestDto.getPrice());
+        log.info("currentMember.id: {}",currentMember.id());
         changePartyMemberField(partyId, currentMember.id(), "price", bbangpanPriceChangeRequestDto.getPrice());
         return DefaultResponse.res(StatusCode.OK, BbangpanResponseMessage.PRICE_CHANGE_SUCCESS);
     }
@@ -115,7 +118,6 @@ public class BbangpanController {
     public void sendSocket(Long partyId){
         Party party = partyService.findById(partyId);
         BbangpanResponseDto bbangpanResponseDto = BbangpanResponseDto.createDtoByParty(party);
-        SocketSendDto socketSendDto = SocketSendDto.createSocketSendDto(bbangpanResponseDto);
-        simpMessagingTemplate.convertAndSend("/topic/breadBoard/" + partyId, socketSendDto);
+        socketSender.send("breadBoard", partyId, bbangpanResponseDto);
     }
 }
