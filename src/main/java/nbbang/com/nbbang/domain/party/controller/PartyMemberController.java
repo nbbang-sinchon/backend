@@ -48,7 +48,7 @@ public class PartyMemberController {
         Long messageId = partyMemberService.joinParty(party, member);
         Message message = messageService.findById(messageId);
         ChatSendResponseDto chatSendResponseDto = ChatSendResponseDto.createByMessage(message, 0, currentMember.id());
-        simpMessagingTemplate.convertAndSend("/topic/" + partyId, chatSendResponseDto);
+        simpMessagingTemplate.convertAndSend("/topic/chatting/" + partyId, chatSendResponseDto);
 
         return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_JOIN_SUCCESS);
     }
@@ -65,7 +65,7 @@ public class PartyMemberController {
         Long messageId = partyMemberService.exitParty(party, member);
         Message message = messageService.findById(messageId);
         ChatSendResponseDto chatSendResponseDto = ChatSendResponseDto.createByMessage(message, 0, currentMember.id());
-        simpMessagingTemplate.convertAndSend("/topic/" + partyId, chatSendResponseDto);
+        simpMessagingTemplate.convertAndSend("/topic/chatting/" + partyId, chatSendResponseDto);
         return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_EXIT_SUCCESS);
     }
 

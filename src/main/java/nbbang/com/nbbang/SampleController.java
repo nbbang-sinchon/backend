@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.bytebuddy.pool.TypePool;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 //@Tag(name = "sample", description = "테스트 api")
 //@Controller
-//@RestController
+@RestController
+@Slf4j
 public class SampleController {
 
     @Operation(summary = "샘플 조회.", description = "id 를 이용하여 샘플을 조회합니다.")
@@ -37,6 +39,12 @@ public class SampleController {
         if (id == 0L) throw new IllegalStateException("존재하지 않는 샘플입니다.");
         return new SampleDto("BHC 뿌링클 8시", "오늘 저녁 연대서문 뿌링클 먹을 파티 구합니다. 배달비 엔빵 하실분, 사이드 가능입니다.");
     }
+
+    @GetMapping("/log-test")
+    public String logTest() {
+        log.info("log test");
+        return "log test success";
+     }
 
     @Data @NoArgsConstructor @AllArgsConstructor
     static class SampleDto {

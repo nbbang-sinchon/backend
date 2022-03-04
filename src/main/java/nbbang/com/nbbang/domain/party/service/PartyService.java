@@ -7,10 +7,7 @@ import nbbang.com.nbbang.domain.chat.repository.MessageRepository;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.dto.Place;
 import nbbang.com.nbbang.domain.member.service.MemberService;
-import nbbang.com.nbbang.domain.party.domain.Hashtag;
-import nbbang.com.nbbang.domain.party.domain.Party;
-import nbbang.com.nbbang.domain.party.domain.PartyHashtag;
-import nbbang.com.nbbang.domain.party.domain.PartyStatus;
+import nbbang.com.nbbang.domain.party.domain.*;
 import nbbang.com.nbbang.domain.party.dto.single.PartyUpdateServiceDto;
 import nbbang.com.nbbang.domain.party.repository.PartyHashtagRepository;
 import nbbang.com.nbbang.domain.party.repository.PartyRepository;
@@ -19,9 +16,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
 
+import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static nbbang.com.nbbang.domain.party.controller.PartyResponseMessage.PARTY_NOT_FOUND;
 
@@ -144,5 +144,17 @@ public class PartyService {
     public Message findLastMessage(Long partyId) {
         Message lastMessage = messageRepository.findLastMessage(partyId);
         return lastMessage;
+    }
+
+
+    @Transactional
+    public void changeField(Long partyId, Long memberId, Field field, Object value) throws NoSuchFieldException {
+        Party party = findById(partyId);
+        if(field.equals(Party.getField("deliveryFee"))){
+            party.changeDeliveryFee((Integer) value);
+        }
+        else if(field.equals(Party.getField("account"))){
+            party.changeAccount((Account) value);
+        }
     }
 }

@@ -40,9 +40,9 @@ import java.util.stream.Collectors;
         @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(mediaType = "application/json"))
 })
 @Slf4j
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/parties")
-@RequiredArgsConstructor
 public class PartyController {
 
     private final PartyService partyService;
@@ -82,6 +82,9 @@ public class PartyController {
     @ApiResponse(responseCode = "403", description = "Not Owner", content = @Content(mediaType = "application/json"))
     @PatchMapping("/{party-id}")
     public DefaultResponse updateParty(@PathVariable("party-id") Long partyId, @Valid @RequestBody PartyRequestDto partyRequestDtO, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            throw new CustomIllegalArgumentException(GlobalErrorResponseMessage.ILLEGAL_ARGUMENT_ERROR, bindingResult);
+        }
         partyService.update(partyId, PartyUpdateServiceDto.createByPartyRequestDto(partyRequestDtO), currentMember.id());
         return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_UPDATE_SUCCESS, new PartyIdResponseDto(partyId));
     }

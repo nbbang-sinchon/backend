@@ -2,6 +2,7 @@ package nbbang.com.nbbang.domain.chat.dto.message;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.domain.chat.domain.Message;
 import nbbang.com.nbbang.domain.chat.domain.MessageType;
 import nbbang.com.nbbang.domain.member.domain.Member;
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
 
 @Data
 @Builder
+@Slf4j
 public class ChatSendResponseDto {
     private Long id;
     private LocalDateTime createTime;
@@ -31,7 +33,6 @@ public class ChatSendResponseDto {
                 .createTime(message.getCreateTime())
                 //.notReadNumber(partyMembernumber - message.getReadNumber())
                 .notReadNumber(0)
-                //.type(message.getType())
                 .type(message.getType()!=null?message.getType():MessageType.CHAT)
                 .content(message.getContent())
                 .sender(message.getSender()!=null?

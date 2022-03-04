@@ -78,10 +78,19 @@ public class ChatRoomController {
         Party party = partyService.findById(partyId);
         Long lastReadMessageId = chatService.readMessage(partyId, currentMember.id());
         ChatReadSocketDto chatReadSocketDto = ChatReadSocketDto.builder().lastReadMessageId(lastReadMessageId).build();
-        simpMessagingTemplate.convertAndSend("/topic/" + partyId, chatReadSocketDto);
+        simpMessagingTemplate.convertAndSend("/topic/chatting/" + partyId, chatReadSocketDto);
         log.info("[Socket] lastReadMessageId: {}, partyId: {}", lastReadMessageId, partyId);
         return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.MESSAGE_READ_OK);
     }
+
+    @GetMapping("/{party-id}/test")
+    public DefaultResponse testMessage(@PathVariable("party-id") Long partyId){
+        simpMessagingTemplate.convertAndSend("/global/" + 1, "hello! ");
+        //log.info("[Socket] lastReadMessageId: {}, partyId: {}", lastReadMessageId, partyId);
+        return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.MESSAGE_READ_OK);
+    }
+
+
 
     @Operation(summary = "채팅방에서 나가기", description = "채팅방에서 나갑니다. 소켓 종료 용도로 쓰일 것 같습니다. ")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
