@@ -78,10 +78,12 @@ public class PartyMemberService {
     @Transactional
     public void changeField(Long partyId, Long memberId, Field field, Object value) throws NoSuchFieldException {
         PartyMember partyMember = partyMemberRepository.findByMemberIdAndPartyId(memberId, partyId);
-        if (field==PartyMember.getField("price")){
+        if (field.equals(PartyMember.getField("price"))){
             partyMember.changePrice((Integer) value);
-        }else if(field==PartyMember.getField("sendStatus")){
+        }else if(field.equals(PartyMember.getField("sendStatus"))){
             partyMember.changeSendStatus((SendStatus) value);
+        }else{
+            log.info("no such status");
         }
     }
 }

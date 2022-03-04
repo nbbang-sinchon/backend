@@ -150,10 +150,10 @@ public class PartyService {
     @Transactional
     public void changeField(Long partyId, Long memberId, Field field, Object value) throws NoSuchFieldException {
         Party party = findById(partyId);
-        if(field==Party.getField("deliveryFee")) {
+        if(field.equals(Party.getField("deliveryFee"))){
             party.changeDeliveryFee((Integer) value);
         }
-        else if(field==Party.getField("account")){
+        else if(field.equals(Party.getField("account"))){
             party.changeAccount((Account) value);
         }
     }
