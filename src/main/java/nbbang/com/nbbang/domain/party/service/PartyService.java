@@ -158,4 +158,5 @@ public class PartyService {
             party.changeAccount((ConcurrentHashMap) value);
         }
     }
+
 }

@@ -19,7 +19,6 @@ import java.time.LocalDateTime;
 @Data
 @Builder
 @Slf4j
-@RequiredArgsConstructor
 public class ChatSendResponseDto {
     private Long id;
     private LocalDateTime createTime;
