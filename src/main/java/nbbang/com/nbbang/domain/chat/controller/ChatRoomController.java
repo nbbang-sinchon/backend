@@ -78,7 +78,7 @@ public class ChatRoomController {
         Party party = partyService.findById(partyId);
         Long lastReadMessageId = chatService.readMessage(partyId, currentMember.id());
         ChatReadSocketDto chatReadSocketDto = ChatReadSocketDto.builder().lastReadMessageId(lastReadMessageId).build();
-        simpMessagingTemplate.convertAndSend("/topic/" + partyId, chatReadSocketDto);
+        simpMessagingTemplate.convertAndSend("/topic/chatting/" + partyId, chatReadSocketDto);
         log.info("[Socket] lastReadMessageId: {}, partyId: {}", lastReadMessageId, partyId);
         return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.MESSAGE_READ_OK);
     }

@@ -19,17 +19,21 @@ import static javax.persistence.EnumType.STRING;
 @Data
 public class PartyMemberResponseDto {
 
+    private Long id;
     private Integer price;
     private SendStatus sendStatus;
     private Boolean isOwner;
     private String nickname;
+    private String avatar;
 
     public static PartyMemberResponseDto createDtoByEntity(PartyMember partyMember) {
         PartyMemberResponseDto partyMemberResponseDto = PartyMemberResponseDto.builder()
+                .id(partyMember.getMember().getId())
                 .price(partyMember.getPrice())
                 .sendStatus(partyMember.getSendStatus())
                 .isOwner(partyMember.getMember().getId() == partyMember.getParty().getOwner().getId())
                 .nickname(partyMember.getMember().getNickname())
+                .avatar(partyMember.getMember().getAvatar())
                 .build();
         return partyMemberResponseDto;
     }

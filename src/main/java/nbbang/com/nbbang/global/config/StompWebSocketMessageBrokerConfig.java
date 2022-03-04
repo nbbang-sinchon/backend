@@ -10,7 +10,7 @@ import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
 @Configuration
-@EnableWebSocketMessageBroker // STOMP 방식
+@EnableWebSocketMessageBroker
 @RequiredArgsConstructor
 public class StompWebSocketMessageBrokerConfig implements WebSocketMessageBrokerConfigurer {
 
@@ -19,15 +19,13 @@ public class StompWebSocketMessageBrokerConfig implements WebSocketMessageBroker
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         WebSocketMessageBrokerConfigurer.super.registerStompEndpoints(registry);
-        registry.addEndpoint("/chat").setAllowedOriginPatterns("*").withSockJS();
+        registry.addEndpoint("/ws-stomp").setAllowedOriginPatterns("*").withSockJS();
     }
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
         WebSocketMessageBrokerConfigurer.super.configureMessageBroker(registry);
         registry.enableSimpleBroker("/topic");
-        registry.enableSimpleBroker("/global");
-        registry.enableSimpleBroker("/bbangpan");
         registry.setApplicationDestinationPrefixes("/");
     }
     @Override
