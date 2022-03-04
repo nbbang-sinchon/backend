@@ -1,6 +1,7 @@
 package nbbang.com.nbbang.domain.chat.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.domain.chat.domain.Message;
 import nbbang.com.nbbang.domain.chat.domain.MessageType;
 import nbbang.com.nbbang.domain.chat.repository.MessageRepository;
@@ -19,6 +20,7 @@ import static nbbang.com.nbbang.domain.party.controller.PartyResponseMessage.PAR
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class MessageService {
 
     private final MessageRepository messageRepository;
@@ -41,6 +43,7 @@ public class MessageService {
     public Long send(Long partyId, Long senderId, String content, MessageType type) {
         Party party = partyRepository.findById(partyId).orElseThrow(()->new NotFoundException(PARTY_NOT_FOUND));
         Member sender = memberService.findById(senderId);
+        log.info("senderId: {}", senderId);
         Long orderInChat = countByPartyId(partyId);
         Integer readNumber = party.getActiveNumber();
         Message message = Message.builder().readNumber(0).content(content).type(type).readNumber(readNumber)
