@@ -47,8 +47,7 @@ public class PartyMemberController {
 
         Long messageId = partyMemberService.joinParty(party, member);
         Message message = messageService.findById(messageId);
-        ChatSendResponseDto chatSendResponseDto = ChatSendResponseDto.createByMessage(message, 0, currentMember.id());
-        socketSender.sendChatting(partyId, chatSendResponseDto);
+        socketSender.sendChattingByMessage(message);
 
         return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_JOIN_SUCCESS);
     }
@@ -61,11 +60,9 @@ public class PartyMemberController {
     public DefaultResponse exitParty(@PathVariable("party-id") Long partyId) {
         Party party = partyService.findById(partyId);
         Member member = memberService.findById(currentMember.id());
-
         Long messageId = partyMemberService.exitParty(party, member);
         Message message = messageService.findById(messageId);
-        ChatSendResponseDto chatSendResponseDto = ChatSendResponseDto.createByMessage(message, 0, currentMember.id());
-        //simpMessagingTemplate.convertAndSend("/topic/chatting/" + partyId, chatSendResponseDto);
+        socketSender.sendChattingByMessage(message);
         return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_EXIT_SUCCESS);
     }
 

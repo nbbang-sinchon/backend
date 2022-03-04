@@ -53,10 +53,8 @@ public class MessageController {
         }
         Long messageId = messageService.send(partyId, currentMember.id(), chatSendRequestDto.getContent());
         Message message = messageService.findById(messageId);
-        Integer partyMemberNumber = partyService.countPartyMemberNumber(partyId);
-        ChatSendResponseDto chatSendResponseDto = ChatSendResponseDto.createByMessage(message, partyMemberNumber, currentMember.id());
-        socketSender.sendChatting(partyId, chatSendResponseDto);
-        return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.UPLOADED_MESSAGE, chatSendResponseDto);
+        socketSender.sendChattingByMessage(message);
+        return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.UPLOADED_MESSAGE);
     }
 
 

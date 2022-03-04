@@ -2,6 +2,7 @@ package nbbang.com.nbbang.domain.chat.dto.message;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.domain.chat.domain.Message;
 import nbbang.com.nbbang.domain.chat.domain.MessageType;
@@ -9,6 +10,7 @@ import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.dto.MemberDto;
 import nbbang.com.nbbang.domain.member.dto.MemberSimpleResponseDto;
 import nbbang.com.nbbang.domain.party.domain.Party;
+import nbbang.com.nbbang.global.interceptor.CurrentMember;
 import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
@@ -17,6 +19,7 @@ import java.time.LocalDateTime;
 @Data
 @Builder
 @Slf4j
+@RequiredArgsConstructor
 public class ChatSendResponseDto {
     private Long id;
     private LocalDateTime createTime;
@@ -26,8 +29,8 @@ public class ChatSendResponseDto {
     private Boolean isSender;
     private ChatSendResponseSenderDto sender;
 
-
-    public static ChatSendResponseDto createByMessage(Message message, Integer partyMembernumber, Long memberId) {
+    public static ChatSendResponseDto createByMessage(Message message, Long memberId) {
+        // Integer partyMemberNumber = partyService.countPartyMemberNumber(partyId);
         return ChatSendResponseDto.builder()
                 .id(message.getId())
                 .createTime(message.getCreateTime())

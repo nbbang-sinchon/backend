@@ -78,11 +78,10 @@ public class ChatRoomController {
         Party party = partyService.findById(partyId);
         Long lastReadMessageId = chatService.readMessage(partyId, currentMember.id());
         ChatReadSocketDto chatReadSocketDto = ChatReadSocketDto.builder().lastReadMessageId(lastReadMessageId).build();
-        //socketSender.sendChatting(partyId, chatReadSocketDto);
+        socketSender.sendChatting(partyId, chatReadSocketDto);
         log.info("[Socket] lastReadMessageId: {}, partyId: {}", lastReadMessageId, partyId);
         return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.MESSAGE_READ_OK);
     }
-
 
 
     @Operation(summary = "채팅방에서 나가기", description = "채팅방에서 나갑니다. 소켓 종료 용도로 쓰일 것 같습니다. ")
