@@ -12,8 +12,7 @@ import nbbang.com.nbbang.domain.bbangpan.dto.*;
 import nbbang.com.nbbang.domain.bbangpan.dto.request.BbangpanAccountChangeRequestDto;
 import nbbang.com.nbbang.domain.bbangpan.dto.request.BbangpanPriceChangeRequestDto;
 import nbbang.com.nbbang.domain.bbangpan.dto.request.SendStatusChangeRequestDto;
-import nbbang.com.nbbang.domain.bbangpan.dto.socket.PartyFieldChangeSocketDto;
-import nbbang.com.nbbang.domain.bbangpan.dto.socket.PartyMemberFieldChangeSocketDto;
+import nbbang.com.nbbang.global.socket.SocketSendDto;
 import nbbang.com.nbbang.domain.party.controller.PartyResponseMessage;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.service.PartyMemberService;
@@ -29,7 +28,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 
-@Tag(name = "Bbangpan", description = "빵판과 관련된 API입니다.(구현중)")
+@Tag(name = "BreadBoard", description = "빵판과 관련된 API입니다.")
 @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json")),
         @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(mediaType = "application/json")),
@@ -38,7 +37,7 @@ import javax.validation.Valid;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/bbangpans/{party-id}")
+@RequestMapping("/bread-board/{party-id}")
 public class BbangpanController {
     // "******************* 파티원인지, 파티장인지 검증하는 로직 미구현 ****************************
 
@@ -50,12 +49,12 @@ public class BbangpanController {
 
     @Operation(summary = "빵판 정보", description = "유저가 빵판을 클릭했을 때, 필요한 정보를 보냅니다.")
     @ApiResponse(responseCode = "200", description = "OK",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = BbangpanReadResponseDto.class)))
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = BbangpanResponseDto.class)))
     @GetMapping
     public DefaultResponse readBbangpan(@PathVariable("party-id") Long partyId) {
         Party party = partyService.findById(partyId);
-        BbangpanReadResponseDto bbangpanReadResponseDto = BbangpanReadResponseDto.createDtoByParty(party);
-        return DefaultResponse.res(StatusCode.OK, BbangpanResponseMessage.BBANGPAN_READ_SUCCESS, bbangpanReadResponseDto);
+        BbangpanResponseDto bbangpanResponseDto = BbangpanResponseDto.createDtoByParty(party);
+        return DefaultResponse.res(StatusCode.OK, BbangpanResponseMessage.BBANGPAN_READ_SUCCESS, bbangpanResponseDto);
     }
 
     @Operation(summary = "배달비 설정", description = "방장이 배달비를 설정합니다.")
@@ -82,8 +81,7 @@ public class BbangpanController {
 
     public void changePartyField(Long partyId,Long memberId, String field, Object value){
         partyService.changeField(partyId, memberId, field, value);
-        PartyFieldChangeSocketDto partyFieldChangeSocketDto = PartyFieldChangeSocketDto.createDto(field, value);
-        simpMessagingTemplate.convertAndSend("/bbangpan/" + partyId, partyFieldChangeSocketDto);
+        sendSocket(partyId);
     }
 
 
@@ -111,7 +109,13 @@ public class BbangpanController {
 
     public void changePartyMemberField(Long partyId, Long memberId, String field, Object value){
         partyMemberService.changeField(partyId, memberId, field, value);
-        PartyMemberFieldChangeSocketDto partyMemberFieldChangeSocketDto = PartyMemberFieldChangeSocketDto.createDto(field,value, currentMember.id());
-        simpMessagingTemplate.convertAndSend("/bbangpan/" + partyId, partyMemberFieldChangeSocketDto);
+        sendSocket(partyId);
+    }
+
+    public void sendSocket(Long partyId){
+        Party party = partyService.findById(partyId);
+        BbangpanResponseDto bbangpanResponseDto = BbangpanResponseDto.createDtoByParty(party);
+        SocketSendDto socketSendDto = SocketSendDto.createSocketSendDto(bbangpanResponseDto);
+        simpMessagingTemplate.convertAndSend("/topic/breadBoard/" + partyId, socketSendDto);
     }
 }

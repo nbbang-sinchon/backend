@@ -9,19 +9,19 @@ import java.util.stream.Collectors;
 
 @Builder
 @Data
-public class BbangpanReadResponseDto {
+public class BbangpanResponseDto {
 
     private String bank;
     private String accountNumber;
     private Integer deliveryFee;
-    private List<PartyMemberResponseDto> partyMembers;
+    private List<PartyMemberResponseDto> members;
 
-    public static BbangpanReadResponseDto createDtoByParty(Party party) {
-        return BbangpanReadResponseDto.builder()
+    public static BbangpanResponseDto createDtoByParty(Party party) {
+        return BbangpanResponseDto.builder()
                 .bank(party.getBank())
                 .accountNumber(party.getAccountNumber())
                 .deliveryFee(party.getDeliveryFee())
-                .partyMembers(party.getPartyMembers().stream().map(PartyMemberResponseDto::createDtoByEntity).collect(Collectors.toList()))
+                .members(party.getPartyMembers().stream().map(PartyMemberResponseDto::createDtoByEntity).collect(Collectors.toList()))
                 .build();
     }
 

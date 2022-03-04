@@ -33,7 +33,7 @@ public class StompHandler implements ChannelInterceptor {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
         if (StompCommand.CONNECT == accessor.getCommand()) { // websocket 연결요청
             log.info("CONNECT message = {}",message);
-            // String token = accessor.getFirstNativeHeader("token");
+            //String token = accessor.getFirstNativeHeader("token");
             // log.info("token = {}",token);
             // Long id = jwtService.validateByToken(token);
             // log.info("id = {}",id);
@@ -41,29 +41,35 @@ public class StompHandler implements ChannelInterceptor {
         } else if (StompCommand.SUBSCRIBE == accessor.getCommand()) { // 채팅룸 구독요청
             log.info("SUBSCRIBED message = {}",message);
             log.info("SUBSCRIBED destination = {}",accessor.getDestination());
-/*            String destination = accessor.getDestination();
-            if(destination.startsWith("/global"))  {
-                Long memberId = Long.valueOf(destination.substring(8));
+            String destination = accessor.getDestination();
+            if(destination.startsWith("/topic/global"))  {
+                Long memberId = Long.valueOf(destination.substring(14));
                 log.info("SUBSCRIBED memberId: {}", memberId);
             }
-            else if(destination.startsWith("/topic")){
-                Long partyId = Long.valueOf(destination.substring(7));
+            else if(destination.startsWith("/topic/chatting")){
+                Long partyId = Long.valueOf(destination.substring(16));
                 String sessionId = accessor.getSessionId();
                 chatSessionService.createBySessionIdAndPartyId(sessionId, partyId);
                 partyService.updateActiveNumber(partyId, 1);
-                log.info("SUBSCRIBED RoomId: {}", partyId);
+                log.info("SUBSCRIBED chat RoomId: {}", partyId);
+            }else if(destination.startsWith("/topic/breadBoard")){
+                Long partyId = Long.valueOf(destination.substring(18));
+                // String sessionId = accessor.getSessionId();
+                // chatSessionService.createBySessionIdAndPartyId(sessionId, partyId);
+                // partyService.updateActiveNumber(partyId, 1);
+                log.info("SUBSCRIBED breadBoard RoomId: {}", partyId);
             }
             else{
                 throw new IllegalArgumentException("올바른 토픽을 입력해주세요.");
-            }*/
+            }
         } else if (StompCommand.UNSUBSCRIBE == accessor.getCommand()) { //
             log.info("UNSUBSCRIBE message = {}",message);
-            // Long partyId = exitChatRoomIfExist(message);
-            // log.info("UNSUBSCRIBE RoomId: {}", partyId);
+             Long partyId = exitChatRoomIfExist(message);
+             log.info("UNSUBSCRIBE RoomId: {}", partyId);
         } else if (StompCommand.DISCONNECT == accessor.getCommand()) { // Websocket 연결 종료 : DISCONNECT
             log.info("DISCONNECT message = {}",message);
-            // Long partyId = exitChatRoomIfExist(message);
-            // log.info("DISCONNECT RoomId: {}", partyId);
+             Long partyId = exitChatRoomIfExist(message);
+             log.info("DISCONNECT RoomId: {}", partyId);
         }
         return message;
     }
