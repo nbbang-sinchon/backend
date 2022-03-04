@@ -31,6 +31,7 @@ public class CookieUtils {
                 //.httpOnly(true)
                 //.sameSite("lax")
                 //.httpOnly(true)
+                .secure(true)
                 .sameSite("none")
                 .maxAge(3600000)
                 .domain("localhost")
