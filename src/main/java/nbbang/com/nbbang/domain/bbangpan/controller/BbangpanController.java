@@ -12,7 +12,6 @@ import nbbang.com.nbbang.domain.bbangpan.dto.*;
 import nbbang.com.nbbang.domain.bbangpan.dto.request.BbangpanAccountChangeRequestDto;
 import nbbang.com.nbbang.domain.bbangpan.dto.request.BbangpanPriceChangeRequestDto;
 import nbbang.com.nbbang.domain.bbangpan.dto.request.SendStatusChangeRequestDto;
-import nbbang.com.nbbang.global.socket.SocketSendDto;
 import nbbang.com.nbbang.domain.party.controller.PartyResponseMessage;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.service.PartyMemberService;
@@ -21,7 +20,7 @@ import nbbang.com.nbbang.global.error.GlobalErrorResponseMessage;
 import nbbang.com.nbbang.global.error.exception.CustomIllegalArgumentException;
 import nbbang.com.nbbang.global.interceptor.CurrentMember;
 import nbbang.com.nbbang.global.response.*;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
+import nbbang.com.nbbang.global.socket.SocketSender;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,7 +44,6 @@ public class BbangpanController {
     private final PartyMemberService partyMemberService;
     private final CurrentMember currentMember;
     private final SocketSender socketSender;
-
 
     @Operation(summary = "빵판 정보", description = "유저가 빵판을 클릭했을 때, 필요한 정보를 보냅니다.")
     @ApiResponse(responseCode = "200", description = "OK",
@@ -79,12 +77,6 @@ public class BbangpanController {
         return DefaultResponse.res(StatusCode.OK, BbangpanResponseMessage.ACCOUNT_CHANGE_SUCCESS);
     }
 
-    public void changePartyField(Long partyId,Long memberId, String field, Object value){
-        partyService.changeField(partyId, memberId, field, value);
-        sendSocket(partyId);
-    }
-
-
     @Operation(summary = "주문 금액 설정", description = "유저가 주문 금액을 설정합니다.")
     @ApiResponse(responseCode = "403", description = "Not Party Member", content = @Content(mediaType = "application/json"))
     @PostMapping("/price")
@@ -108,6 +100,11 @@ public class BbangpanController {
         }
         changePartyMemberField(partyId, currentMember.id(), "sendStatus", sendStatusChangeRequestDto.createStatus());
         return DefaultResponse.res(StatusCode.OK, BbangpanResponseMessage.SENDSTATUS_CHANGE_SUCCESS);
+    }
+
+    public void changePartyField(Long partyId,Long memberId, String field, Object value){
+        partyService.changeField(partyId, memberId, field, value);
+        sendSocket(partyId);
     }
 
     public void changePartyMemberField(Long partyId, Long memberId, String field, Object value){

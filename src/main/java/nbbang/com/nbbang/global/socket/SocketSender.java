@@ -1,7 +1,8 @@
-package nbbang.com.nbbang.global.response;
+package nbbang.com.nbbang.global.socket;
 
 import lombok.RequiredArgsConstructor;
 import nbbang.com.nbbang.domain.bbangpan.dto.BbangpanResponseDto;
+import nbbang.com.nbbang.domain.chat.dto.message.ChatSendResponseDto;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.global.socket.SocketSendDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class SocketSender {
     private final SimpMessagingTemplate simpMessagingTemplate;
-    public void sendChatting(Long partyId, Object data){
+    public void sendChatting(Long partyId, ChatSendResponseDto chatSendResponseDto){
         send("chatting", partyId, data);
     }
     public void sendBreadBoard(Long partyId, Object data){

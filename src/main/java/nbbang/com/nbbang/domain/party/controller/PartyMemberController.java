@@ -19,8 +19,8 @@ import nbbang.com.nbbang.domain.party.service.PartyService;
 import nbbang.com.nbbang.global.error.ErrorResponse;
 import nbbang.com.nbbang.global.interceptor.CurrentMember;
 import nbbang.com.nbbang.global.response.DefaultResponse;
+import nbbang.com.nbbang.global.socket.SocketSender;
 import nbbang.com.nbbang.global.response.StatusCode;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -33,7 +33,7 @@ public class PartyMemberController {
     private final PartyService partyService;
     private final MemberService memberService;
     private final PartyMemberService partyMemberService;
-    private final SimpMessagingTemplate simpMessagingTemplate;
+    private final SocketSender socketSender;
     private final MessageService messageService;
     private final CurrentMember currentMember;
 
@@ -48,7 +48,7 @@ public class PartyMemberController {
         Long messageId = partyMemberService.joinParty(party, member);
         Message message = messageService.findById(messageId);
         ChatSendResponseDto chatSendResponseDto = ChatSendResponseDto.createByMessage(message, 0, currentMember.id());
-        simpMessagingTemplate.convertAndSend("/topic/chatting/" + partyId, chatSendResponseDto);
+        socketSender.sendChatting(partyId, chatSendResponseDto);
 
         return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_JOIN_SUCCESS);
     }
@@ -65,7 +65,7 @@ public class PartyMemberController {
         Long messageId = partyMemberService.exitParty(party, member);
         Message message = messageService.findById(messageId);
         ChatSendResponseDto chatSendResponseDto = ChatSendResponseDto.createByMessage(message, 0, currentMember.id());
-        simpMessagingTemplate.convertAndSend("/topic/chatting/" + partyId, chatSendResponseDto);
+        //simpMessagingTemplate.convertAndSend("/topic/chatting/" + partyId, chatSendResponseDto);
         return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_EXIT_SUCCESS);
     }
 
