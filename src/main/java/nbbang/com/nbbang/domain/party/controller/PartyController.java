@@ -31,6 +31,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.groups.Default;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -54,7 +55,7 @@ public class PartyController {
     @ApiResponse(responseCode = "200", description = "OK",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = PartyIdResponseDto.class)))
     @PostMapping
-    public DefaultResponse createParty(@Parameter @Validated({PartyCreateGroup.class}) @RequestBody PartyRequestDto partyRequestDto, BindingResult bindingResult) {
+    public DefaultResponse createParty(@Parameter @Validated({PartyCreateGroup.class, Default.class}) @RequestBody PartyRequestDto partyRequestDto, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new CustomIllegalArgumentException(GlobalErrorResponseMessage.ILLEGAL_ARGUMENT_ERROR, bindingResult);
         }

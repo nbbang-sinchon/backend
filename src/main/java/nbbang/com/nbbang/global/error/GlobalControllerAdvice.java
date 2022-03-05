@@ -59,7 +59,7 @@ public class GlobalControllerAdvice {
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ErrorResponse converterExHandle(HttpRequestMethodNotSupportedException e) {
         log.error("[ExceptionHandle] HttpRequestMethodNotSupportedException: ", e.getMessage());
-        return ErrorResponse.res(StatusCode.BAD_REQUEST, GlobalErrorResponseMessage.REQUEST_METHOD_ERROR);
+        return ErrorResponse.res(StatusCode.METHOD_NOT_ALLOWED, GlobalErrorResponseMessage.REQUEST_METHOD_ERROR);
     }
 
     @ExceptionHandler(NoHandlerFoundException.class)
