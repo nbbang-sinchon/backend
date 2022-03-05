@@ -1,5 +1,5 @@
 
-package nbbang.com.nbbang.global.handler;
+package nbbang.com.nbbang.global.socket;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
