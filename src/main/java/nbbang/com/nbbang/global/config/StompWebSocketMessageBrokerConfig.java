@@ -1,6 +1,7 @@
-package nbbang.com.nbbang.global.socket;
+package nbbang.com.nbbang.global.config;
 
 import lombok.RequiredArgsConstructor;
+import nbbang.com.nbbang.global.handler.StompHandler;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
