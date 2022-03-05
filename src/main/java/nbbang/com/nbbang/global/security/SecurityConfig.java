@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -21,6 +22,8 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final CustomOAuth2MemberService customOAuth2MemberService;
+
+
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -47,7 +50,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 //.and()
                 .authorizeRequests()
                 .antMatchers(HttpMethod.OPTIONS,"/**").permitAll()
-                //.anyRequest().authenticated()
+                .anyRequest().authenticated()
                 //.and()
                 //.exceptionHandling()
                 //.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
@@ -56,6 +59,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .userInfoEndpoint()
                         .userService(customOAuth2MemberService)
                     .and()
+                    //.redirectionEndpoint("https://www.nbbang.shop/api/login/oauth2/code/google")
+
                     .successHandler(new OAuth2AuthenticationSuccessHandler());
 
     }
