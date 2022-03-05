@@ -1,13 +1,11 @@
 package nbbang.com.nbbang.global.interceptor;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.stereotype.Component;
 
 @Builder
 @Data
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class PartyMemberInterceptorTestDto {

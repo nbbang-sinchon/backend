@@ -63,7 +63,6 @@ class PartyMemberInterceptorTest {
         Party createdParty = partyService.create(party, owner.getId(), null);
         partyMemberService.joinParty(createdParty, partyMember);
         testDto.change(owner.getId(), partyMember.getId(), justMember.getId(), createdParty.getId());
-        log.info("test dto: {}", testDto);
     }
 
     @Test
