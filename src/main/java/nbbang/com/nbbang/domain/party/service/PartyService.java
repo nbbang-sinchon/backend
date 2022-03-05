@@ -38,7 +38,7 @@ public class PartyService {
     private final MessageRepository messageRepository;
 
     @Transactional
-    public Long create(Party party, Long memberId, List<String> hashtagContents) {
+    public Party create(Party party, Long memberId, List<String> hashtagContents) {
         Party savedParty = partyRepository.save(party);
         savedParty.changeStatus(PartyStatus.OPEN);
         Long partyId = savedParty.getId();
@@ -48,12 +48,16 @@ public class PartyService {
         Member owner = memberService.findById(memberId);
         partyMemberService.joinParty(savedParty, owner);
         party.addOwner(owner);
-        return partyId;
+        return savedParty;
     }
 
     public Party findById(Long partyId) {
         Party party = partyRepository.findById(partyId).orElseThrow(() -> new NotFoundException(PARTY_NOT_FOUND));
         return party;
+    }
+
+    public Long findIdByParty(Party party) {
+        return Optional.ofNullable(party.getId()).orElseThrow(() -> new NotFoundException("파티의 아이디가 존재하지 않습니다."));
     }
 
     // 현재 Near, ON, 스스로 아님만 구현. Hashtag로 찾는 기능 추가하기.

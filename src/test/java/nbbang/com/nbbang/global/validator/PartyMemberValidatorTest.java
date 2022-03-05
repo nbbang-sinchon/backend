@@ -2,6 +2,7 @@ package nbbang.com.nbbang.global.validator;
 
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.repository.MemberRepository;
+import nbbang.com.nbbang.domain.member.service.MemberService;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.service.PartyMemberService;
 import nbbang.com.nbbang.domain.party.service.PartyService;
@@ -28,57 +29,50 @@ class PartyMemberValidatorTest {
     @Autowired PartyService partyService;
     @Autowired PartyMemberService partyMemberService;
     @Autowired PartyMemberValidator partyMemberValidator;
-    @Autowired EntityManager em;
 
     @Test
     void ownerValidatorTest() {
         // given
         Member memberA = Member.builder().nickname("memberA").build();
-        memberRepository.save(memberA);
+        Member savedMemberA = memberRepository.save(memberA);
         Member memberB = Member.builder().nickname("memberB").build();
-        memberRepository.save(memberA);
+        Member savedMemberB = memberRepository.save(memberB);
         Member memberC = Member.builder().nickname("memberC").build();
-        memberRepository.save(memberA);
+        Member savedMemberC = memberRepository.save(memberC);
 
         // when
         Party partyA = Party.builder().goalNumber(2).build();
-        partyService.create(partyA, memberA.getId(), null);
-        partyMemberService.joinParty(partyA, memberB);
-        em.flush();
-        em.clear();
+        Party createdParty = partyService.create(partyA, savedMemberA.getId(), null);
+        partyMemberService.joinParty(createdParty, savedMemberB);
 
         // then
-
-        assertThatThrownBy(()->{partyMemberValidator.isOwner(partyA.getId(), memberA.getId());})
-                .doesNotThrowAnyException();
-        assertDoesNotThrow(()->{partyMemberValidator.isOwner(partyA.getId(), memberA.getId());});
-        assertThrows(NotOwnerException.class,()->{partyMemberValidator.isOwner(partyA.getId(), memberB.getId());});
-        assertThrows(NotOwnerException.class,()->{partyMemberValidator.isOwner(partyA.getId(), memberC.getId());});
+        assertDoesNotThrow(()->{partyMemberValidator.isOwner(createdParty, savedMemberA);});
+        assertThrows(NotOwnerException.class,()->{partyMemberValidator.isOwner(createdParty, savedMemberB);});
+        assertThrows(NotOwnerException.class,()->{partyMemberValidator.isOwner(createdParty, savedMemberC);});
     }
+
     @Test
     void memberValidatorTest() {
         // given
         Member memberA = Member.builder().nickname("memberA").build();
-        memberRepository.save(memberA);
+        Member savedMemberA = memberRepository.save(memberA);
         Member memberB = Member.builder().nickname("memberB").build();
-        memberRepository.save(memberA);
+        Member savedMemberB = memberRepository.save(memberB);
         Member memberC = Member.builder().nickname("memberC").build();
-        memberRepository.save(memberA);
+        Member savedMemberC = memberRepository.save(memberC);
 
         // when
         Party partyA = Party.builder().goalNumber(2).build();
-        partyService.create(partyA, memberA.getId(), null);
-        partyMemberService.joinParty(partyA, memberB);
-        em.flush();
-        em.clear();
+        Party createdParty = partyService.create(partyA, savedMemberA.getId(), null);
+        partyMemberService.joinParty(createdParty, savedMemberB);
+
+        partyMemberValidator.isPartyMember(createdParty, savedMemberA);
 
         // then
-        assertThatThrownBy(()->{partyMemberValidator.isPartyMember(partyA.getId(), memberA.getId());})
-                .doesNotThrowAnyException();
-        assertThatThrownBy(()->{partyMemberValidator.isPartyMember(partyA.getId(), memberB.getId());})
-                .doesNotThrowAnyException();
-        assertThatThrownBy(()->{partyMemberValidator.isPartyMember(partyA.getId(), memberC.getId());})
-                .isInstanceOf(NotPartyMemberException.class);
+        assertDoesNotThrow(()->{partyMemberValidator.isPartyMember(createdParty, savedMemberA);});
+        assertDoesNotThrow(()->{partyMemberValidator.isPartyMember(createdParty, savedMemberB);});
+        assertThrows(NotPartyMemberException.class,()->{partyMemberValidator.isPartyMember(createdParty, savedMemberC);});
+
     }
 
 }

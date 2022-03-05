@@ -14,40 +14,28 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class PartyMemberValidator {
-    private final PartyService partyService;
-    private final MemberService memberService;
 
-    public boolean isPartyMember(String requestUri, Long memberId) {
-        Long partyId = convertUriToPartyId(requestUri);
-        return isPartyMember(partyId, memberId);
+    public boolean isPartyMember(PartyMemberValidatorDto dto) {
+        return isPartyMember(dto.getParty(), dto.getMember());
     }
 
-    public boolean isOwner(String requestUri, Long memberId) {
-        Long partyId = convertUriToPartyId(requestUri);
-        return isOwner(partyId, memberId);
+    public boolean isOwner(PartyMemberValidatorDto dto) {
+        return isOwner(dto.getParty(), dto.getMember());
     }
 
-    public boolean isPartyMember(Long partyId, Long memberId) {
-        Party party = partyService.findById(partyId);
-        Member member = memberService.findById(memberId);
+    public boolean isPartyMember(Party party, Member member) {
         if(!party.getPartyMembers().stream().anyMatch(mp -> mp.getMember().equals(member))){
             throw new NotPartyMemberException();
         }
         return true;
     }
-    public boolean isOwner(Long partyId, Long memberId) {
-        Party party = partyService.findById(partyId);
-        Member member = memberService.findById(memberId);
-        if(!Optional.ofNullable(party.getOwner()).equals(member)){
-            throw new NotOwnerException();
+    public boolean isOwner(Party party, Member member) {
+        if(!(Optional.ofNullable(party.getOwner()).orElse(Member.builder().build()).equals(member))){
+             throw new NotOwnerException();
         }
         return true;
     }
 
-    private Long convertUriToPartyId(String requestUri) {
-        String[] split = requestUri.split("/");
-        return Long.valueOf(split[2]);
-    }
+
 }
