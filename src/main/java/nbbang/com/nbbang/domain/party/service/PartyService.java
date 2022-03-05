@@ -79,11 +79,8 @@ public class PartyService {
         party.update(partyUpdateServiceDto);
         if (partyUpdateServiceDto.getHashtagContents().isPresent()) {
             List<String> oldHashtagContents = party.getHashtagContents();
-            System.out.println("party.getHashtagContents() = " + party.getHashtagContents());
             List<String> newHashtagContents = partyUpdateServiceDto.getHashtagContents().get();
             oldHashtagContents.removeAll(newHashtagContents);
-            System.out.println("newHashtagContents = " + newHashtagContents);
-            System.out.println("party.getHashtagContents() = " + party.getHashtagContents());
             newHashtagContents.removeAll(party.getHashtagContents());
 
             Optional.ofNullable(oldHashtagContents).orElseGet(Collections::emptyList)
@@ -134,9 +131,7 @@ public class PartyService {
 
     @Transactional
     public void updateActiveNumber(Long partyId, Integer cnt){
-        System.out.println("partyId = " + partyId);
         findById(partyId).updateActiveNumber(cnt);
-        System.out.println("PartyService.updateActiveNumber");
     }
 
     public Integer countPartyMemberNumber(Long partyId) {

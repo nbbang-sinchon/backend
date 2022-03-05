@@ -1,6 +1,7 @@
 package nbbang.com.nbbang.global.interceptor;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.global.validator.PartyMemberValidator;
 import nbbang.com.nbbang.global.validator.PartyMemberValidatorDto;
 import nbbang.com.nbbang.global.validator.PartyMemberValidatorService;
@@ -14,9 +15,10 @@ import javax.servlet.http.HttpServletResponse;
 
 
 
-//@Component
+@Component
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class OwnerInterceptor implements HandlerInterceptor {
     private final CurrentMember currentMember;
     private final PartyMemberValidator partyMemberValidator;
@@ -27,7 +29,10 @@ public class OwnerInterceptor implements HandlerInterceptor {
         if (HttpMethod.GET.matches(request.getMethod())){
             return true;
         }
+        log.info("request.getRequestURI(): {}", request.getRequestURI());
+        log.info("currentMember.id(): {}", currentMember.id());
         PartyMemberValidatorDto dto = partyMemberValidatorService.createByUriAndMemberId(request.getRequestURI(), currentMember.id());
+        log.info("dto: {}", dto);
         return partyMemberValidator.isOwner(dto);
     }
 }

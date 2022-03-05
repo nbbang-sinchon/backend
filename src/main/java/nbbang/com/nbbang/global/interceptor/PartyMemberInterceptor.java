@@ -11,7 +11,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-//@Component
+@Component
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class PartyMemberInterceptor implements HandlerInterceptor {
