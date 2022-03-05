@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.domain.chat.domain.Message;
 import nbbang.com.nbbang.domain.chat.dto.*;
 import nbbang.com.nbbang.domain.chat.service.ChatService;
-import nbbang.com.nbbang.domain.member.service.MemberService;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.repository.PartyRepository;
 import nbbang.com.nbbang.domain.party.service.PartyService;
@@ -42,14 +41,12 @@ public class ChatRoomController {
     private final PartyRepository partyRepository;
     private final CurrentMember currentMember;
     private final SocketSender socketSender;
-    private final PartyMemberValidator partyMemberValidator;
 
     @Operation(summary = "채팅방 조회", description = "채팅방을 파티 id 로 조회합니다. ")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ChatResponseDto.class)))
     @ApiResponse(responseCode = "403", description = "Not Party Member", content = @Content(mediaType = "application/json"))
     @GetMapping("/{party-id}")
     public DefaultResponse select(@PathVariable("party-id") Long partyId, @RequestParam(required = false) Integer pageSize) {
-        partyMemberValidator.validatePartyMember(partyId, currentMember.id());
         if (pageSize == null) {
             pageSize = 10;
         }
@@ -64,7 +61,6 @@ public class ChatRoomController {
     @ApiResponse(responseCode = "403", description = "Not Party Member", content = @Content(mediaType = "application/json"))
     @GetMapping("/{party-id}/messages")
     public DefaultResponse selectChatMessages(@PathVariable("party-id") Long partyId, @ParameterObject PageableDto pageableDto, @RequestParam(required = false) Long cursorId) {
-        partyMemberValidator.validatePartyMember(partyId, currentMember.id());
         Party party = partyService.findById(partyId);
         if (cursorId == null) {
             cursorId = chatService.findLastMessage(party).getId();
@@ -78,7 +74,6 @@ public class ChatRoomController {
     @ApiResponse(responseCode = "403", description = "Not Party Member", content = @Content(mediaType = "application/json"))
     @GetMapping("/{party-id}/read")
     public DefaultResponse readMessage(@PathVariable("party-id") Long partyId){
-        partyMemberValidator.validatePartyMember(partyId, currentMember.id());
         Party party = partyService.findById(partyId);
         Long lastReadMessageId = chatService.readMessage(partyId, currentMember.id());
         ChatReadSocketDto chatReadSocketDto = ChatReadSocketDto.builder().lastReadMessageId(lastReadMessageId).build();
@@ -94,7 +89,6 @@ public class ChatRoomController {
     @ApiResponse(responseCode = "403", description = "Not Party Member", content = @Content(mediaType = "application/json"))
     @PostMapping("/{party-id}/out")
     public DefaultResponse exitChat(@PathVariable("party-id") Long partyId) {
-        partyMemberValidator.validatePartyMember(partyId, currentMember.id());
         return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.EXIT_CHAT);
     }
 
@@ -106,7 +100,6 @@ public class ChatRoomController {
     @ApiResponse(responseCode = "403", description = "Not Party Member", content = @Content(mediaType = "application/json"))
     @GetMapping("/{party-id}/develop")
     public DefaultResponse selectWithCookie(@PathVariable("party-id") Long partyId, @RequestParam(required = false) Integer pageSize, HttpServletResponse response) {
-        partyMemberValidator.validatePartyMember(partyId, currentMember.id());
         if (pageSize == null) {
             pageSize = 10;
         }
@@ -126,7 +119,6 @@ public class ChatRoomController {
     @ApiResponse(responseCode = "403", description = "Not Party Member", content = @Content(mediaType = "application/json"))
     @GetMapping("/{party-id}/messages/develop")
     public DefaultResponse selectChatMessagesWithCookie(@PathVariable("party-id") Long partyId, @ParameterObject PageableDto pageableDto, HttpServletRequest request, @CookieValue(value = "cursorId", required = false) Cookie cookie) {
-        partyMemberValidator.validatePartyMember(partyId, currentMember.id());
         Party party = partyService.findById(partyId);
         String [] cookieVals = cookie.getValue().split("=");
         Long cookiePartyId = Long.parseLong(cookieVals[0]);

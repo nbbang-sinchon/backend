@@ -41,7 +41,6 @@ import java.lang.reflect.Field;
 @RestController
 @RequestMapping("/bread-board/{party-id}")
 public class BbangpanController {
-    // "******************* 파티원인지, 파티장인지 검증하는 로직 미구현 ****************************
 
     private final PartyService partyService;
     private final PartyMemberService partyMemberService;
@@ -85,7 +84,6 @@ public class BbangpanController {
         partyService.changeField(partyId, memberId, field, value);
         sendSocket(partyId);
     }
-
 
     @Operation(summary = "주문 금액 설정", description = "유저가 주문 금액을 설정합니다.")
     @ApiResponse(responseCode = "403", description = "Not Party Member", content = @Content(mediaType = "application/json"))

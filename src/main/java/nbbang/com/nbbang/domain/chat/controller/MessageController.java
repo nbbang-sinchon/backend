@@ -13,7 +13,6 @@ import nbbang.com.nbbang.domain.chat.dto.ChatMessageImageUploadResponseDto;
 import nbbang.com.nbbang.domain.chat.dto.message.ChatSendRequestDto;
 import nbbang.com.nbbang.domain.chat.dto.message.ChatSendResponseDto;
 import nbbang.com.nbbang.domain.chat.service.MessageService;
-import nbbang.com.nbbang.domain.party.service.PartyService;
 import nbbang.com.nbbang.global.error.GlobalErrorResponseMessage;
 import nbbang.com.nbbang.global.error.exception.CustomIllegalArgumentException;
 import nbbang.com.nbbang.global.interceptor.CurrentMember;
@@ -42,7 +41,6 @@ public class MessageController {
     private final MessageService messageService;
     private final CurrentMember currentMember;
     private final SocketSender socketSender;
-    private final PartyMemberValidator partyMemberValidator;
 
     @Operation(summary = "채팅 메시지 전송", description = "채팅 메시지를 전송합니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ChatSendResponseDto.class)))
@@ -52,7 +50,6 @@ public class MessageController {
         if (bindingResult.hasErrors()) {
             throw new CustomIllegalArgumentException(GlobalErrorResponseMessage.ILLEGAL_ARGUMENT_ERROR, bindingResult);
         }
-        partyMemberValidator.validatePartyMember(partyId, currentMember.id());
         Long messageId = messageService.send(partyId, currentMember.id(), chatSendRequestDto.getContent());
         Message message = messageService.findById(messageId);
         socketSender.sendChattingByMessage(message);
@@ -67,7 +64,6 @@ public class MessageController {
     public DefaultResponse sendImage(@PathVariable("party-id") Long partyId,
                                      @Schema(description = "이미지 파일을 업로드합니다.")
                                      @RequestPart MultipartFile imgFile) {
-        partyMemberValidator.validatePartyMember(partyId, currentMember.id());
         return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.UPLOADED_MESSAGE, new ChatMessageImageUploadResponseDto(""));
     }
 }
