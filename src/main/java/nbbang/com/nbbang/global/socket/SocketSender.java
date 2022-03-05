@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
+import static nbbang.com.nbbang.global.socket.SocketDestination.*;
+
 @Component
 @RequiredArgsConstructor
 public class SocketSender {
@@ -19,20 +21,19 @@ public class SocketSender {
     public void sendChattingByMessage(Message message){
         ChatSendResponseDto chatSendResponseDto = ChatSendResponseDto.createByMessage(message, currentMember.id());
         Long partyId = message.getParty().getId();
-        send("chatting", partyId, chatSendResponseDto);
+        send(CHATTING, partyId, chatSendResponseDto);
     }
     public void sendChatting(Long partyId, Object data){
-        send("chatting", partyId, data);
+        send(CHATTING, partyId, data);
     }
     public void sendBreadBoard(Long partyId, Object data){
-        send("breadBoard", partyId, data);
+        send(BREAD_BOARD, partyId, data);
     }
     public void sendGloabl(Long memberId, Object data){
-        send("global", memberId, data);
+        send(GLOBAL, memberId, data);
     }
     public void send(String destination, Long id, Object data){
         SocketSendDto socketSendDto = SocketSendDto.createSocketSendDto(data);
         simpMessagingTemplate.convertAndSend("/topic/"+destination+"/" + id, socketSendDto);
     }
-
 }

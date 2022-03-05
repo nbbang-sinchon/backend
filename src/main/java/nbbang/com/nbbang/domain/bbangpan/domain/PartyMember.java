@@ -9,6 +9,8 @@ import nbbang.com.nbbang.domain.party.domain.Party;
 
 import javax.persistence.*;
 
+import java.lang.reflect.Field;
+
 import static javax.persistence.EnumType.STRING;
 
 @Entity @Getter @Builder
@@ -57,5 +59,9 @@ public class PartyMember {
 
     public void changeSendStatus(SendStatus sendStatus) {
         this.sendStatus = sendStatus;
+    }
+
+    public static Field getField(String field) throws NoSuchFieldException {
+        return PartyMember.class.getDeclaredField(field);
     }
 }
