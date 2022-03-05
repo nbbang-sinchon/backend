@@ -1,19 +1,15 @@
 package nbbang.com.nbbang.domain.party.controller;
 
-import nbbang.com.nbbang.domain.party.controller.PartyWishlistController;
 import nbbang.com.nbbang.domain.party.service.PartyWishlistService;
-import nbbang.com.nbbang.domain.party.controller.ControllerTestUtil;
 import nbbang.com.nbbang.global.error.ErrorResponse;
 import nbbang.com.nbbang.global.error.exception.UserException;
-import nbbang.com.nbbang.global.interceptor.CurrentMember;
 import nbbang.com.nbbang.global.response.DefaultResponse;
-import nbbang.com.nbbang.global.security.CustomOAuth2MemberService;
+import nbbang.com.nbbang.global.support.controller.ControllerTestParent;
+import nbbang.com.nbbang.global.support.controller.ControllerTestUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
-import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.webjars.NotFoundException;
 
@@ -28,15 +24,11 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 @WebMvcTest(PartyWishlistController.class)
-@MockBean(JpaMetamodelMappingContext.class)
-@Import(ControllerTestUtil.class)
-class PartyWishlistControllerTest {
+class PartyWishlistControllerTest extends ControllerTestParent {
 
     @Autowired private MockMvc mockMvc;
     @Autowired private ControllerTestUtil controllerTestUtil;
 
-    @MockBean private CustomOAuth2MemberService customOAuth2MemberService;
-    @MockBean private CurrentMember currentMember;
     @MockBean private PartyWishlistService partyWishlistService;
 
     @Test

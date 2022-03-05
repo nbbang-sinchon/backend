@@ -2,10 +2,8 @@ package nbbang.com.nbbang.global.interceptor;
 
 import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.domain.member.service.MemberService;
-import nbbang.com.nbbang.domain.party.controller.ControllerTestUtil;
-import nbbang.com.nbbang.domain.party.controller.PartyController;
+import nbbang.com.nbbang.global.support.controller.ControllerTestUtil;
 import nbbang.com.nbbang.domain.party.service.PartyService;
-import nbbang.com.nbbang.global.response.DefaultResponse;
 import nbbang.com.nbbang.global.security.CustomOAuth2MemberService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
