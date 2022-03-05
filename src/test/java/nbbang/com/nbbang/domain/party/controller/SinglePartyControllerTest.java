@@ -29,21 +29,21 @@ class SinglePartyControllerTest extends ControllerTestParent {
     @Test
     void createPartySuccess() throws Exception {
         PartyRequestDto successDto = PartyRequestDto.builder().title("hello").place("sinchon").goalNumber(4).hashtags(Arrays.asList("hello", "wow")).build();
-        DefaultResponse res = controllerTestUtil.expectDefaultResponseWithDto(post("/parties"), successDto);
+        DefaultResponse res = controllerTestUtil.expectDefaultResponseObject(post("/parties"), successDto);
         assertThat(res.getStatusCode() == OK);
     }
 
     @Test
     void createPartyGoalNumberError() throws Exception {
         PartyRequestDto dto = PartyRequestDto.builder().title("hello").place("sinchon").hashtags(Arrays.asList("hello", "wow")).build();
-        ErrorResponse res = controllerTestUtil.expectErrorResponseWithDto(post("/parties"), dto);
+        ErrorResponse res = controllerTestUtil.expectErrorResponseObject(post("/parties"), dto);
         assertThat(res.getStatusCode() == BAD_REQUEST);
     }
 
     @Test
     void updatePartyGoalNumberSuccess() throws Exception {
         PartyRequestDto dto = PartyRequestDto.builder().title("hello").place("sinchon").hashtags(Arrays.asList("hello", "wow")).build();
-       DefaultResponse res = controllerTestUtil.expectDefaultResponseWithDto(patch("/parties/1"), dto);
+       DefaultResponse res = controllerTestUtil.expectDefaultResponseObject(patch("/parties/1"), dto);
         assertThat(res.getStatusCode() == OK);
     }
 
@@ -55,10 +55,10 @@ class SinglePartyControllerTest extends ControllerTestParent {
         PartyRequestDto dto = PartyRequestDto.builder().title("hello").place("sinchon").goalNumber(4).hashtags(Arrays.asList(" ", "wow!")).build();
 
 
-        ErrorResponse createRes = controllerTestUtil.expectErrorResponseWithDto(post("/parties"), dto);
+        ErrorResponse createRes = controllerTestUtil.expectErrorResponseObject(post("/parties"), dto);
         assertThat(createRes.getStatusCode() == BAD_REQUEST);
 
-        ErrorResponse updateRes = controllerTestUtil.expectErrorResponseWithDto(patch("/parties/{partyId}", 1L), dto);
+        ErrorResponse updateRes = controllerTestUtil.expectErrorResponseObject(patch("/parties/{partyId}", 1L), dto);
         assertThat(updateRes.getStatusCode() == BAD_REQUEST);
     }
 }

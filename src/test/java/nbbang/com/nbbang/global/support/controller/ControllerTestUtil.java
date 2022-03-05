@@ -3,14 +3,10 @@ package nbbang.com.nbbang.global.support.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.global.error.ErrorResponse;
 import nbbang.com.nbbang.global.response.DefaultResponse;
-import org.hibernate.annotations.Proxy;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Component;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
@@ -24,7 +20,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * An Utility for controller Mock tests
  */
-
 
 public class ControllerTestUtil {
 
@@ -80,7 +75,7 @@ public class ControllerTestUtil {
         }
     }
 
-    public DefaultResponse expectDefaultResponseWithDto(MockHttpServletRequestBuilder mockHttpServletRequestBuilder, Object data) throws Exception {
+    public DefaultResponse expectDefaultResponseObject(MockHttpServletRequestBuilder mockHttpServletRequestBuilder, Object data) throws Exception {
         MvcResult res = mockMvc.perform(mockHttpServletRequestBuilder
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonStringify(data)))
@@ -123,7 +118,7 @@ public class ControllerTestUtil {
         }
     }
 
-    public ErrorResponse expectErrorResponseWithDto(MockHttpServletRequestBuilder mockHttpServletRequestBuilder, Object data) throws Exception {
+    public ErrorResponse expectErrorResponseObject(MockHttpServletRequestBuilder mockHttpServletRequestBuilder, Object data) throws Exception {
         MvcResult res = mockMvc.perform(mockHttpServletRequestBuilder
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonStringify(data)))
@@ -145,4 +140,10 @@ public class ControllerTestUtil {
         return jsonString;
     }
 
+    public Object getObject(DefaultResponse res, Class classInfo) throws JsonProcessingException {
+        String json = jsonStringify(res.getData());
+        ObjectMapper mapper = new ObjectMapper();
+        Object object = mapper.readValue(json, classInfo);
+        return object;
+    }
 }
