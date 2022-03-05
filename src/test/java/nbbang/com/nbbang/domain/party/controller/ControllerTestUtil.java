@@ -24,7 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * An Utility for controller Mock tests
  */
-@Slf4j
+
 public class ControllerTestUtil {
 
     @Autowired private MockMvc mockMvc;
@@ -103,10 +103,6 @@ public class ControllerTestUtil {
             return null;
         }
         String json = res.getResponse().getContentAsString();
-        log.info("***************************");
-        log.info("res: {}", json);
-        log.info("***************************");
-
         try {
             return new ObjectMapper().readValue(json, ErrorResponse.class);
         } catch (Exception e) {
