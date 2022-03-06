@@ -1,5 +1,6 @@
 package nbbang.com.nbbang.global.config;
 
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import nbbang.com.nbbang.global.interceptor.LoginInterceptor;
 import nbbang.com.nbbang.global.interceptor.OwnerInterceptor;

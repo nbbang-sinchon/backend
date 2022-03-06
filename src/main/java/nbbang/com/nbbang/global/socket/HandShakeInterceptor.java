@@ -20,8 +20,9 @@ public class HandShakeInterceptor extends HttpSessionHandshakeInterceptor {
     @Override
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler,
                                    Map<String, Object> attributes) throws Exception {
-        // http://localhost:8094/ws-stomp/611/afkxvbnq/websocket?token=nbbang //
+
         if (request instanceof ServletServerHttpRequest) {
+            log.info("URI: {}", request.getURI()); // http://localhost:8094/ws-stomp/611/afkxvbnq/websocket?token=nbbang //
             ServletServerHttpRequest servletServerRequest = (ServletServerHttpRequest) request;
             HttpServletRequest servletRequest = servletServerRequest.getServletRequest();
             String queryString = servletRequest.getQueryString();
