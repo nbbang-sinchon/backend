@@ -13,11 +13,14 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.webjars.NotFoundException;
 
 import javax.persistence.*;
+import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import static javax.persistence.EnumType.STRING;
@@ -53,13 +56,19 @@ public class Party {
 
     // private LocalDateTime cancelTime;
 
-    private Integer deliveryFee;
+    @Builder.Default
+    private Integer deliveryFee=0;
 
+    @Builder.Default
     private Integer activeNumber=0;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "member_id")
     private Member owner;
+
+    private String bank;
+
+    private String accountNumber;
 
     @Builder.Default // https://www.inflearn.com/questions/151658
     @OneToMany(mappedBy = "party", cascade = CascadeType.ALL)
@@ -142,5 +151,18 @@ public class Party {
 
     public Boolean isWishlistOf(Member member) {
         return wishlists.stream().anyMatch(w -> w.getMember().equals(member));
+    }
+
+    public void changeDeliveryFee(Integer deliveryFee) {
+        this.deliveryFee = deliveryFee;
+    }
+
+    public void changeAccount(Account account) {
+        this.bank = account.getBank();
+        this.accountNumber = account.getAccountNumber();
+    }
+
+    public static Field getField(String field) throws NoSuchFieldException {
+        return Party.class.getDeclaredField(field);
     }
 }

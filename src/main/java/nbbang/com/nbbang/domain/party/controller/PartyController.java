@@ -20,6 +20,7 @@ import nbbang.com.nbbang.domain.party.dto.single.request.PartyStatusChangeReques
 import nbbang.com.nbbang.domain.party.dto.single.response.PartyIdResponseDto;
 import nbbang.com.nbbang.domain.party.dto.single.response.PartyReadResponseDto;
 import nbbang.com.nbbang.domain.party.service.PartyService;
+import nbbang.com.nbbang.domain.party.validation.PartyCreateGroup;
 import nbbang.com.nbbang.global.error.exception.CustomIllegalArgumentException;
 import nbbang.com.nbbang.global.interceptor.CurrentMember;
 import nbbang.com.nbbang.global.response.DefaultResponse;
@@ -30,6 +31,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.groups.Default;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,9 +42,9 @@ import java.util.stream.Collectors;
         @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(mediaType = "application/json"))
 })
 @Slf4j
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/parties")
-@RequiredArgsConstructor
 public class PartyController {
 
     private final PartyService partyService;
@@ -53,14 +55,15 @@ public class PartyController {
     @ApiResponse(responseCode = "200", description = "OK",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = PartyIdResponseDto.class)))
     @PostMapping
-    public DefaultResponse createParty(@Parameter @Valid @RequestBody PartyRequestDto partyRequestDto, BindingResult bindingResult) {
+    public DefaultResponse createParty(@Parameter @Validated({PartyCreateGroup.class, Default.class}) @RequestBody PartyRequestDto partyRequestDto, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new CustomIllegalArgumentException(GlobalErrorResponseMessage.ILLEGAL_ARGUMENT_ERROR, bindingResult);
         }
         Member member = memberService.findById(currentMember.id());
         Party party = partyRequestDto.createEntityByDto();
-        Long partyId = partyService.create(party, currentMember.id(), partyRequestDto.getHashtags());
-        return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_CREATE_SUCCESS, new PartyIdResponseDto(partyId));
+        Party createParty = partyService.create(party, currentMember.id(), partyRequestDto.getHashtags());
+        Long partyId = partyService.findIdByParty(createParty);
+        return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_CREATE_SUCCESS, PartyIdResponseDto.builder().id(partyId).build());
     }
 
     @Operation(summary = "파티 상세", description = "파티의 상세 정보입니다.")
@@ -82,6 +85,9 @@ public class PartyController {
     @ApiResponse(responseCode = "403", description = "Not Owner", content = @Content(mediaType = "application/json"))
     @PatchMapping("/{party-id}")
     public DefaultResponse updateParty(@PathVariable("party-id") Long partyId, @Valid @RequestBody PartyRequestDto partyRequestDtO, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            throw new CustomIllegalArgumentException(GlobalErrorResponseMessage.ILLEGAL_ARGUMENT_ERROR, bindingResult);
+        }
         partyService.update(partyId, PartyUpdateServiceDto.createByPartyRequestDto(partyRequestDtO), currentMember.id());
         return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_UPDATE_SUCCESS, new PartyIdResponseDto(partyId));
     }

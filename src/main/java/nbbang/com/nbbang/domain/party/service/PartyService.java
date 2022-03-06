@@ -7,10 +7,7 @@ import nbbang.com.nbbang.domain.chat.repository.MessageRepository;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.dto.Place;
 import nbbang.com.nbbang.domain.member.service.MemberService;
-import nbbang.com.nbbang.domain.party.domain.Hashtag;
-import nbbang.com.nbbang.domain.party.domain.Party;
-import nbbang.com.nbbang.domain.party.domain.PartyHashtag;
-import nbbang.com.nbbang.domain.party.domain.PartyStatus;
+import nbbang.com.nbbang.domain.party.domain.*;
 import nbbang.com.nbbang.domain.party.dto.single.PartyUpdateServiceDto;
 import nbbang.com.nbbang.domain.party.repository.PartyHashtagRepository;
 import nbbang.com.nbbang.domain.party.repository.PartyRepository;
@@ -19,9 +16,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
 
+import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static nbbang.com.nbbang.domain.party.controller.PartyResponseMessage.PARTY_NOT_FOUND;
 
@@ -38,7 +38,7 @@ public class PartyService {
     private final MessageRepository messageRepository;
 
     @Transactional
-    public Long create(Party party, Long memberId, List<String> hashtagContents) {
+    public Party create(Party party, Long memberId, List<String> hashtagContents) {
         Party savedParty = partyRepository.save(party);
         savedParty.changeStatus(PartyStatus.OPEN);
         Long partyId = savedParty.getId();
@@ -48,12 +48,16 @@ public class PartyService {
         Member owner = memberService.findById(memberId);
         partyMemberService.joinParty(savedParty, owner);
         party.addOwner(owner);
-        return partyId;
+        return savedParty;
     }
 
     public Party findById(Long partyId) {
         Party party = partyRepository.findById(partyId).orElseThrow(() -> new NotFoundException(PARTY_NOT_FOUND));
         return party;
+    }
+
+    public Long findIdByParty(Party party) {
+        return Optional.ofNullable(party.getId()).orElseThrow(() -> new NotFoundException("파티의 아이디가 존재하지 않습니다."));
     }
 
     // 현재 Near, ON, 스스로 아님만 구현. Hashtag로 찾는 기능 추가하기.
@@ -75,11 +79,8 @@ public class PartyService {
         party.update(partyUpdateServiceDto);
         if (partyUpdateServiceDto.getHashtagContents().isPresent()) {
             List<String> oldHashtagContents = party.getHashtagContents();
-            System.out.println("party.getHashtagContents() = " + party.getHashtagContents());
             List<String> newHashtagContents = partyUpdateServiceDto.getHashtagContents().get();
             oldHashtagContents.removeAll(newHashtagContents);
-            System.out.println("newHashtagContents = " + newHashtagContents);
-            System.out.println("party.getHashtagContents() = " + party.getHashtagContents());
             newHashtagContents.removeAll(party.getHashtagContents());
 
             Optional.ofNullable(oldHashtagContents).orElseGet(Collections::emptyList)
@@ -130,9 +131,7 @@ public class PartyService {
 
     @Transactional
     public void updateActiveNumber(Long partyId, Integer cnt){
-        System.out.println("partyId = " + partyId);
         findById(partyId).updateActiveNumber(cnt);
-        System.out.println("PartyService.updateActiveNumber");
     }
 
     public Integer countPartyMemberNumber(Long partyId) {
@@ -145,4 +144,17 @@ public class PartyService {
         Message lastMessage = messageRepository.findLastMessage(partyId);
         return lastMessage;
     }
+
+
+    @Transactional
+    public void changeField(Long partyId, Long memberId, Field field, Object value) throws NoSuchFieldException {
+        Party party = findById(partyId);
+        if(field.equals(Party.getField("deliveryFee"))){
+            party.changeDeliveryFee((Integer) value);
+        }
+        else if(field.equals(Party.getField("account"))){
+            party.changeAccount((Account) value);
+        }
+    }
+
 }

@@ -3,6 +3,7 @@ package nbbang.com.nbbang.domain.party.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.domain.bbangpan.domain.PartyMember;
+import nbbang.com.nbbang.domain.bbangpan.domain.SendStatus;
 import nbbang.com.nbbang.domain.bbangpan.repository.PartyMemberRepository;
 import nbbang.com.nbbang.domain.chat.domain.MessageType;
 import nbbang.com.nbbang.domain.chat.repository.MessageRepository;
@@ -17,6 +18,7 @@ import nbbang.com.nbbang.global.error.exception.NotPartyMemberException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.reflect.Field;
 import java.util.Optional;
 
 @Service
@@ -24,7 +26,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Slf4j
 public class PartyMemberService {
-    private final PartyMemberRepository memberPartyRepository;
+    private final PartyMemberRepository partyMemberRepository;
     private final MessageService messageService;
     private final MessageRepository messageRepository;
 
@@ -49,7 +51,7 @@ public class PartyMemberService {
         }
         // 이 부분 빵판 로직이 들어가야 할 거 같아서 나중에 bbangpan service 로 메소드를 만들어야 할 거 같습니다.
         PartyMember partyMember = PartyMember.createMemberParty(member, party, messageRepository.findLastMessage(party.getId()));
-        memberPartyRepository.save(partyMember);
+        partyMemberRepository.save(partyMember);
 
         return messageService.send(party.getId(), member.getId(), member.getNickname() + " 님이 입장하셨습니다.", MessageType.ENTER);
     }
@@ -66,9 +68,22 @@ public class PartyMemberService {
             throw new PartyExitForbiddenException(PartyResponseMessage.PARTY_OWNER_EXIT_ERROR);
         }
         // 이 부분 빵판 로직이 들어가야 할 거 같아서 나중에 bbangpan service 로 메소드를 만들어야 할 거 같습니다.
-        PartyMember partyMember = memberPartyRepository.findByMemberIdAndPartyId(member.getId(), party.getId());
+        PartyMember partyMember = partyMemberRepository.findByMemberIdAndPartyId(member.getId(), party.getId());
         party.exitMemberParty(partyMember);
-        memberPartyRepository.delete(partyMember);
+        partyMemberRepository.delete(partyMember);
         return messageService.send(party.getId(), member.getId(), member.getNickname() + " 님이 퇴장하셨습니다.", MessageType.EXIT);
+    }
+
+
+    @Transactional
+    public void changeField(Long partyId, Long memberId, Field field, Object value) throws NoSuchFieldException {
+        PartyMember partyMember = partyMemberRepository.findByMemberIdAndPartyId(memberId, partyId);
+        if (field.equals(PartyMember.getField("price"))){
+            partyMember.changePrice((Integer) value);
+        }else if(field.equals(PartyMember.getField("sendStatus"))){
+            partyMember.changeSendStatus((SendStatus) value);
+        }else{
+            log.info("no such status");
+        }
     }
 }

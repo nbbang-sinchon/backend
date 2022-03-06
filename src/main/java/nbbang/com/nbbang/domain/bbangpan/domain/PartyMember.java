@@ -9,15 +9,21 @@ import nbbang.com.nbbang.domain.party.domain.Party;
 
 import javax.persistence.*;
 
+import java.lang.reflect.Field;
+
+import static javax.persistence.EnumType.STRING;
+
 @Entity @Getter @Builder
 @AllArgsConstructor
 public class PartyMember {
     @Id @GeneratedValue
     private Long id;
 
-    private Integer price;
+    @Builder.Default
+    private Integer price=0;
 
-    private String sendStatus;
+    @Enumerated(STRING)
+    private SendStatus sendStatus;
 
     @OneToOne
     @JoinColumn(name = "message_id")
@@ -45,5 +51,17 @@ public class PartyMember {
 
     public void changeLastReadMessage(Message message) {
         this.lastReadMessage = message;
+    }
+
+    public void changePrice(Integer price) {
+        this.price = price;
+    }
+
+    public void changeSendStatus(SendStatus sendStatus) {
+        this.sendStatus = sendStatus;
+    }
+
+    public static Field getField(String field) throws NoSuchFieldException {
+        return PartyMember.class.getDeclaredField(field);
     }
 }

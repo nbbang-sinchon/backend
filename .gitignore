@@ -40,3 +40,4 @@ out/
 src/test/java/nbbang/com/nbbang/mytest
 application-oauth.properties
 application-aws.properties
+db-connection.properties

@@ -22,7 +22,6 @@ import static org.springframework.security.web.context.HttpSessionSecurityContex
 /*
     메소드가 Thread-safe 한지 확실하지 않아서 thread-local 하게 바꾸는 게 좋을수 있습니다.
  */
-@Slf4j
 @Component
 @RequiredArgsConstructor
 public class LoginInterceptor implements HandlerInterceptor {

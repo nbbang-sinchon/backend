@@ -3,7 +3,6 @@ package nbbang.com.nbbang.domain.party.controller;
 import nbbang.com.nbbang.domain.bbangpan.domain.PartyMember;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.dto.Place;
-import nbbang.com.nbbang.domain.member.service.MemberService;
 import nbbang.com.nbbang.domain.party.domain.Hashtag;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.domain.PartyHashtag;
@@ -13,15 +12,15 @@ import nbbang.com.nbbang.domain.party.dto.many.PartyListResponseDto;
 import nbbang.com.nbbang.domain.party.service.ManyPartyService;
 import nbbang.com.nbbang.global.interceptor.CurrentMember;
 import nbbang.com.nbbang.global.response.DefaultResponse;
+import nbbang.com.nbbang.global.support.controller.ControllerTestParent;
+import nbbang.com.nbbang.global.support.controller.ControllerTestUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
@@ -34,16 +33,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 @WebMvcTest(ManyPartyController.class)
-@MockBean(JpaMetamodelMappingContext.class)
-@Import(ControllerTestUtil.class)
-class ManyPartyControllerTest {
+class ManyPartyControllerTest extends ControllerTestParent {
     @Autowired private MockMvc mockMvc;
     @Autowired private ControllerTestUtil controllerTestUtil;
 
     @MockBean private ManyPartyService manyPartyService;
     @MockBean private CurrentMember currentMember;
-    @MockBean private MemberService memberService;
-    @MockBean private CustomOAuth2MemberService customOAuth2MemberService;
 
     private Member memberA;
     private Party partyA;

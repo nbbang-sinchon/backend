@@ -8,11 +8,13 @@ import nbbang.com.nbbang.global.response.StatusCode;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.servlet.NoHandlerFoundException;
 import org.webjars.NotFoundException;
 
 import java.util.ArrayList;
@@ -23,12 +25,6 @@ import java.util.List;
 @RestControllerAdvice
 public class GlobalControllerAdvice {
 
-/*    public static final int BAD_REQUEST = 400;
-    public static final int UNAUTHORIZED = 401;
-    public static final int FORBIDDEN = 403;
-    public static final int NOT_FOUND = 404;*/
-
-    //@ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(value = NotFoundException.class)
     public ErrorResponse illegalExHandle(NotFoundException e) {
         // 사용 예시:Party party = partyRepository.findById(partyId)
@@ -44,7 +40,6 @@ public class GlobalControllerAdvice {
     }
 
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(CustomIllegalArgumentException.class)
     public ErrorResponse illegalExHandle(CustomIllegalArgumentException e) {
         log.error("[ExceptionHandle] CustomIllegalArgumentException: ", e);
@@ -55,58 +50,54 @@ public class GlobalControllerAdvice {
         return new ErrorResponse(StatusCode.BAD_REQUEST, e.getMessage(), fieldErrorInfo);
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(IllegalArgumentException.class)
     public ErrorResponse illegalExHandle(IllegalArgumentException e) {
         log.error("[ExceptionHandle] IllegalArgumentException: ", e);
         return new ErrorResponse(StatusCode.BAD_REQUEST, e.getMessage());
     }
 
-
-    @ExceptionHandler
-    public ErrorResponse userExHandle(UserException e) {
-        log.error("[ExceptionHandle] UserException: ", e);
-        return new ErrorResponse(StatusCode.BAD_REQUEST, e.getMessage());
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ErrorResponse converterExHandle(HttpRequestMethodNotSupportedException e) {
+        log.error("[ExceptionHandle] HttpRequestMethodNotSupportedException: ", e.getMessage());
+        return ErrorResponse.res(StatusCode.METHOD_NOT_ALLOWED, GlobalErrorResponseMessage.REQUEST_METHOD_ERROR);
     }
 
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ErrorResponse converterExHandle(HttpMessageNotReadableException e) {
-        log.error("", e.getMessage());
-        return ErrorResponse.res(StatusCode.BAD_REQUEST, GlobalErrorResponseMessage.ILLEGAL_REQUEST_TYPE_ERROR);
+    @ExceptionHandler(NoHandlerFoundException.class)
+    public ErrorResponse notFoundExceptionHandle(NoHandlerFoundException e) {
+        log.error("[ExceptionHandle] NoHandlerFoundException: ", e);
+        return ErrorResponse.res(StatusCode.NOT_FOUND, GlobalErrorResponseMessage.REQUEST_URL_ERROR);
     }
 
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler
     public ErrorResponse exHandle(Exception e) {
         log.error("[ExceptionHandle] Exception: ", e);
         return new ErrorResponse(StatusCode.INTERNAL_SERVER_ERROR, GlobalErrorResponseMessage.INTERNAL_SERVER_ERROR);
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+   // @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ErrorResponse exHandle(MethodArgumentTypeMismatchException e) {
         return new ErrorResponse(StatusCode.INTERNAL_SERVER_ERROR, GlobalErrorResponseMessage.ILLEGAL_TYPE_CONVERSION_ERROR);
     }
 
-    @ResponseStatus(HttpStatus.FORBIDDEN)
+    // @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(NotOwnerException.class)
     public ErrorResponse exHandle(NotOwnerException e) {
         return new ErrorResponse(StatusCode.FORBIDDEN, GlobalErrorResponseMessage.NOT_OWNER_ERROR);
     }
 
-    @ResponseStatus(HttpStatus.FORBIDDEN)
+    // @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(NotPartyMemberException.class)
     public ErrorResponse exHandle(NotPartyMemberException e) {
         return new ErrorResponse(StatusCode.FORBIDDEN, GlobalErrorResponseMessage.NOT_PARTY_MEMBER_ERROR);
     }
 
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    // @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(UnauthorizedException.class)
     public ErrorResponse exHandle(UnauthorizedException e) {
         return new ErrorResponse(StatusCode.UNAUTHORIZED, GlobalErrorResponseMessage.UNAUTHORIZED_ERROR);
     }
+
 }
 
 

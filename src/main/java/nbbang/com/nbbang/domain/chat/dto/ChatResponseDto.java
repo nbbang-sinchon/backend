@@ -39,7 +39,7 @@ public class ChatResponseDto {
                 .joinNumber(party.getPartyMembers().size())
                 .status(party.getStatus().toString())
                 .messages(ms.stream()
-                        .map(message -> ChatSendResponseDto.createByMessage(message, 0, memberId))
+                        .map(message -> ChatSendResponseDto.createByMessage(message, memberId))
                         .collect(Collectors.toList()))
                 .build();
     }

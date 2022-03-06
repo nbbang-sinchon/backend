@@ -2,11 +2,9 @@ package nbbang.com.nbbang.global.security;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -21,32 +19,38 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .addFilterBefore(utf8EncodingFilter(), WebAsyncManagerIntegrationFilter.class)
-                .addFilterBefore(new TokenAuthenticationFilter(), WebAsyncManagerIntegrationFilter.class)
-                .csrf().disable()
-                .cors()
-                .and()
-                .authorizeRequests()
-                    .antMatchers(HttpMethod.OPTIONS,"/**").permitAll()
-                    .antMatchers("/api/oauth2/**").permitAll()
-                    .antMatchers("/api/login/**").permitAll()
-                .and()
-                .oauth2Login()
-                    .userInfoEndpoint()
-                    .userService(customOAuth2MemberService)
-                .and()
-                .successHandler(new OAuth2AuthenticationSuccessHandler()).and().cors();
-    }
 
-
-    private CharacterEncodingFilter utf8EncodingFilter() {
         CharacterEncodingFilter encodingFilter = new CharacterEncodingFilter();
         encodingFilter.setEncoding("UTF-8");
         encodingFilter.setForceEncoding(true);
-        return encodingFilter;
+        http
+                .addFilterBefore(encodingFilter, WebAsyncManagerIntegrationFilter.class)
+                .authorizeRequests()
+                .antMatchers("/**").permitAll()
+                .anyRequest().authenticated()
+                .and()
+                .csrf().disable()
+                .cors()
+                .and()
+                .headers().frameOptions().disable()
+                .and()
+
+                //.authorizeRequests()
+                //.antMatchers(HttpMethod.GET, "/parties").permitAll()
+                //.antMatchers("/login/oauth2/code/google").permitAll()
+                //.antMatchers("/swagger-ui/**").permitAll()
+                //.antMatchers("/**").permitAll()
+                //.antMatchers("/*").permitAll()
+                //.anyRequest().authenticated()
+                //.and()
+                .oauth2Login()
+                .defaultSuccessUrl("/members")
+                .failureUrl("/members/loginFail")
+                .and()
+                .logout().logoutUrl("/logout")
+                .invalidateHttpSession(true)
+        ;
+
     }
 
     @Bean

@@ -2,18 +2,16 @@ package nbbang.com.nbbang.domain.party.controller;
 
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.dto.Place;
-import nbbang.com.nbbang.domain.member.service.MemberService;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.domain.PartyStatus;
 import nbbang.com.nbbang.domain.party.service.PartyService;
-import nbbang.com.nbbang.global.interceptor.CurrentMember;
 import nbbang.com.nbbang.global.response.DefaultResponse;
+import nbbang.com.nbbang.global.support.controller.ControllerTestParent;
+import nbbang.com.nbbang.global.support.controller.ControllerTestUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
-import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -29,17 +27,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(PartyController.class)
-@MockBean(JpaMetamodelMappingContext.class)
-@Import(ControllerTestUtil.class)
-class PartyControllerTest {
+class PartyControllerTest extends ControllerTestParent {
 
     @Autowired private MockMvc mockMvc;
     @Autowired private ControllerTestUtil controllerTestUtil;
 
     @MockBean private PartyService partyService;
-    @MockBean private MemberService memberService;
-    @MockBean private CustomOAuth2MemberService customOAuth2MemberService;
-    @MockBean private CurrentMember currentMember;
 
     @Test
     public void partyReadTest() throws Exception {
