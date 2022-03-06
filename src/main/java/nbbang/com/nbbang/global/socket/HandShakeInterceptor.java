@@ -17,20 +17,26 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Slf4j
 public class HandShakeInterceptor extends HttpSessionHandshakeInterceptor {
+
+    private final MemberSessionService memberSessionService;
+
     @Override
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler,
                                    Map<String, Object> attributes) throws Exception {
 
         if (request instanceof ServletServerHttpRequest) {
-            log.info("URI: {}", request.getURI()); // http://localhost:8094/ws-stomp/611/afkxvbnq/websocket?token=nbbang //
+            String sessionId = request.getURI().toString().split("/")[5];
+
             ServletServerHttpRequest servletServerRequest = (ServletServerHttpRequest) request;
             HttpServletRequest servletRequest = servletServerRequest.getServletRequest();
-            String queryString = servletRequest.getQueryString();
             Map<String,String> queryMap = getQueryMap(servletRequest.getQueryString());
             String token = queryMap.get("token");
-            if(!token.equals("nbbang")){ // **************** verify token value *******************//
-                return false;
-            }
+
+            //**************** verify token value *******************//
+            //**************** change token to memberId *************//
+
+            Long memberId = (token !=null) ? Long.valueOf(token) : 1L;
+            memberSessionService.addSession(memberId,sessionId );
         }
         return true;
     }

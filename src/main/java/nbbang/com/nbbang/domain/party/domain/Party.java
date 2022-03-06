@@ -86,6 +86,9 @@ public class Party {
     @OneToMany(mappedBy = "party")
     private List<PartyWishlist> wishlists = new ArrayList<>();
 
+    @Transient
+    ConcurrentHashMap<Long, String> sessionMap = new ConcurrentHashMap<>();
+
     protected Party() {}
 
     public void addPartyHashtag(PartyHashtag partyHashtag){

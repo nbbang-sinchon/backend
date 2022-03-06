@@ -56,6 +56,9 @@ public class Member {
     @Enumerated(STRING)
     private Place place;
 
+    @Transient
+    private Long activePartyId;
+
     protected Member() {}
 
     public void updateMember(String nickname, Place place) {
@@ -79,5 +82,8 @@ public class Member {
                 .build();
     }
 
+    public void updateActiveParty(Long activePartyId) {
+        this.activePartyId = activePartyId;
+    }
 
 }

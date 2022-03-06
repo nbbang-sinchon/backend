@@ -129,11 +129,6 @@ public class PartyService {
         hashtagService.deleteIfNotReferred(partyHashtag.getHashtag());
     }
 
-    @Transactional
-    public void updateActiveNumber(Long partyId, Integer cnt){
-        findById(partyId).updateActiveNumber(cnt);
-    }
-
     public Integer countPartyMemberNumber(Long partyId) {
         Party party = findById(partyId);
         Integer partyMemberNumber = party.countPartyMemberNumber();
