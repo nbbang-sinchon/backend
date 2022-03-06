@@ -18,14 +18,14 @@ import java.util.Map;
 @Slf4j
 public class HandShakeInterceptor extends HttpSessionHandshakeInterceptor {
 
-    private final MemberSessionService memberSessionService;
+    private final SessionMemberService sessionMemberService;
 
     @Override
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler,
                                    Map<String, Object> attributes) throws Exception {
 
         if (request instanceof ServletServerHttpRequest) {
-            String sessionId = request.getURI().toString().split("/")[5];
+            String session = request.getURI().toString().split("/")[5];
 
             ServletServerHttpRequest servletServerRequest = (ServletServerHttpRequest) request;
             HttpServletRequest servletRequest = servletServerRequest.getServletRequest();
@@ -36,7 +36,7 @@ public class HandShakeInterceptor extends HttpSessionHandshakeInterceptor {
             //**************** change token to memberId *************//
 
             Long memberId = (token !=null) ? Long.valueOf(token) : 1L;
-            memberSessionService.addSession(memberId,sessionId );
+            sessionMemberService.addSession(session, memberId);
         }
         return true;
     }

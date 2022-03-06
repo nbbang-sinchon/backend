@@ -87,7 +87,7 @@ public class Party {
     private List<PartyWishlist> wishlists = new ArrayList<>();
 
     @Transient
-    ConcurrentHashMap<Long, String> sessionMap = new ConcurrentHashMap<>();
+    ConcurrentHashMap<String, Long> sessionMap = new ConcurrentHashMap<>();
 
     protected Party() {}
 

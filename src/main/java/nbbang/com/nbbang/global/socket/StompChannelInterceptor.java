@@ -5,9 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.domain.chat.dto.ChatReadSocketDto;
 import nbbang.com.nbbang.domain.chat.service.ChatService;
 import nbbang.com.nbbang.domain.chat.service.ChatSessionService;
+import nbbang.com.nbbang.domain.member.service.MemberService;
 import nbbang.com.nbbang.domain.party.service.PartyMemberService;
 import nbbang.com.nbbang.domain.party.service.PartyService;
-import nbbang.com.nbbang.domain.party.service.PartySessionService;
+import nbbang.com.nbbang.domain.party.service.SessionPartyService;
 import nbbang.com.nbbang.global.security.jwt.JwtService;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.messaging.Message;
@@ -28,20 +29,22 @@ public class StompChannelInterceptor implements ChannelInterceptor {
     private final ChatService chatService;
     private final PartyService partyService;
     private final ChatSessionService chatSessionService;
-    private final MemberSessionService memberSessionService;
-    private final PartySessionService partySessionService;
+    private final MemberService memberService;
+    private final SessionMemberService sessionMemberService;
+    private final SessionPartyService sessionPartyService;
 
-    public StompChannelInterceptor(ChatService chatService, PartyService partyService, ChatSessionService chatSessionService,
-                                   MemberSessionService memberSessionService,PartySessionService partySessionService,
+    public StompChannelInterceptor(ChatService chatService, PartyService partyService, ChatSessionService chatSessionService, MemberService memberService,
+                                   SessionMemberService sessionMemberService, SessionPartyService sessionPartyService,
                                    PartyMemberService partyMemberService, JwtService jwtService, @Lazy SocketSender socketSender) {
         this.chatService = chatService;
         this.partyService = partyService;
         this.chatSessionService = chatSessionService;
+        this.memberService = memberService;
         this.partyMemberService = partyMemberService;
         this.jwtService = jwtService;
         this.socketSender = socketSender;
-        this.memberSessionService = memberSessionService;
-        this.partySessionService = partySessionService;
+        this.sessionMemberService = sessionMemberService;
+        this.sessionPartyService = sessionPartyService;
     }
 
     private final PartyMemberService partyMemberService;
@@ -55,18 +58,19 @@ public class StompChannelInterceptor implements ChannelInterceptor {
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
+        String destination = accessor.getDestination();
+        String session = accessor.getSessionId();
         if (StompCommand.CONNECT == accessor.getCommand()) {
             log.info("CONNECT message = {}",message);
         } else if (StompCommand.SUBSCRIBE == accessor.getCommand()) {
             log.info("SUBSCRIBED message = {}",message);
-            String destination = accessor.getDestination();
             if(destination.startsWith(TOPIC_GLOBAL))  {
                 Long memberId = Long.valueOf(destination.substring(14));
                 log.info("SUBSCRIBED memberId: {}", memberId);
             }
             else if(destination.startsWith(TOPIC_CHATTING)){
                 Long partyId = Long.valueOf(destination.substring(16));
-                enterChatRoom(accessor, partyId);
+                enterChatRoom(session, partyId);
                 log.info("SUBSCRIBED chat RoomId: {}", partyId);
             }else if(destination.startsWith(TOPIC_BREAD_BOARD)){
                 Long partyId = Long.valueOf(destination.substring(18));
@@ -77,22 +81,25 @@ public class StompChannelInterceptor implements ChannelInterceptor {
             }
         } else if (StompCommand.UNSUBSCRIBE == accessor.getCommand()) {
             log.info("UNSUBSCRIBE message = {}",message);
-             Long partyId = exitChatRoomIfExist(accessor);
-             log.info("UNSUBSCRIBE RoomId: {}", partyId);
+            if(destination.startsWith(TOPIC_CHATTING)){
+                Long partyId = Long.valueOf(destination.substring(18));
+                exitChatRoom(session, partyId);
+                log.info("UNSUBSCRIBE RoomId: {}", partyId);
+            }
+            else{
+                log.info("UNSUBSCRIBE.");
+            }
         } else if (StompCommand.DISCONNECT == accessor.getCommand()) {
-            log.info("DISCONNECT message = {}",message);
-             Long partyId = exitChatRoomIfExist(accessor);
-             log.info("DISCONNECT RoomId: {}", partyId);
+             exitChatRoomIfExist(session);
+             sessionMemberService.deleteSession(accessor.getSessionId());
         }
         return message;
     }
 
-    private void enterChatRoom(StompHeaderAccessor accessor, Long partyId){
-        String session = accessor.getSessionId();
-        Long memberId = memberSessionService.findMemberId(session);
+    private void enterChatRoom(String session, Long partyId){
+        Long memberId = sessionMemberService.findMemberId(session);
         readMessage(partyId, memberId);
-        partySessionService.addSession(partyId, memberId, session);
-        readMessage(partyId, 1L);
+        sessionPartyService.addSession(partyId, session, memberId);
     }
 
     private void readMessage(Long partyId, Long memberId) {
@@ -101,15 +108,15 @@ public class StompChannelInterceptor implements ChannelInterceptor {
         socketSender.sendChatting(partyId, chatReadSocketDto);
     }
 
-    private Long exitChatRoomIfExist(StompHeaderAccessor accessor) {
-        String session = accessor.getSessionId();
-        memberSessionService.findMemberId(session);
-        Long partyId =  1L; //chatSessionService.deleteIfExistBySessionId(sessionId);
-        if (partyId!=-1) {
-            //partyService.updateActiveNumber(partyId, -1);
-            //************* memberId 넣는 로직 추가해야함 *************
-            chatService.exitChatRoom(partyId, 1L);
+    private void exitChatRoom(String session, Long partyId) {
+        Long memberId = sessionMemberService.findMemberId(session);
+        sessionPartyService.deleteSession(partyId, memberId);
+    }
+
+    private void exitChatRoomIfExist(String session) {
+        Long memberId = sessionMemberService.findMemberId(session);
+        if(memberService.findById(memberId).getActivePartyId()!=null){
+            exitChatRoom(session, memberService.findById(memberId).getActivePartyId());
         }
-        return partyId;
     }
 }
