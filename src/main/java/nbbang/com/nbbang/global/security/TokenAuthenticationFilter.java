@@ -1,19 +1,11 @@
 package nbbang.com.nbbang.global.security;
 
-import antlr.Token;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpMethod;
+import nbbang.com.nbbang.global.response.StatusCode;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.parameters.P;
-import org.springframework.security.core.userdetails.memory.UserAttribute;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
@@ -22,8 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.Enumeration;
-import java.util.Optional;
-
+import static nbbang.com.nbbang.global.error.GlobalErrorResponseMessage.UNAUTHORIZED_ERROR;
+import static nbbang.com.nbbang.global.security.SecurityPolicy.TOKEN_COOKIE_KEY;
 import static org.springframework.security.web.context.HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY;
 
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
@@ -37,49 +29,39 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             processJwtFromRequest(request);
             filterChain.doFilter(request, response);
         } catch (Exception e) {
-            response.sendError(401, "Unauthorized");
+            response.sendError(StatusCode.UNAUTHORIZED, UNAUTHORIZED_ERROR);
         }
     }
 
     private String processJwtFromRequest(HttpServletRequest request) {
-        String token = request.getHeader("access_token");
-        Cookie cookie = CookieUtils.getCookie(request, "access_token").get();
-        if (cookie != null) {
-            token = cookie.getValue();
-            System.out.println("Ok, cookie's exist");
-        }
         try {
+            Cookie cookie = CookieUtils.getCookie(request, TOKEN_COOKIE_KEY).get();
+            String token = cookie.getValue();
             if (tokenProvider.validateToken(token)) {
                 Long id = tokenProvider.getUserIdFromToken(token);
-                System.out.println("Hello : " + id);
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(id.toString(), null, null);
                 SecurityContext sc = SecurityContextHolder.getContext();
                 sc.setAuthentication(authentication);
                 HttpSession session = request.getSession(true);
                 session.setAttribute(SPRING_SECURITY_CONTEXT_KEY, sc);
-                System.out.println("Ok, cookie's correct");
+                return token;
             }
             else {
                 throw new RuntimeException();
             }
 
         } catch (Exception e) {
-            throw new RuntimeException("HELL");
+            throw new RuntimeException("INVALID TOKEN");
         }
-        return token;
     }
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String path = request.getServletPath();
-        System.out.println(path);
-        if (path.startsWith("/members")) {
-            return false;
-        }
         if (path.startsWith("/manyparties")) {
             return true;
         }
-        if (path.startsWith("/oauth2") || path.startsWith("/login")) {
+        if (path.startsWith("/oauth2") || path.startsWith("/login") || path.startsWith("/logout") || path.startsWith("/favicon.ico")) {
             return true;
         }
         if (path.startsWith("/api/oauth2") || path.startsWith("/api/login")) {
@@ -115,4 +97,33 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         System.out.println("----------------------------------");
         System.out.println("==================================");
     }
+
+    /*private String processJwtFromRequest(HttpServletRequest request) {
+        String token = request.getHeader("access_token");
+        Cookie cookie = CookieUtils.getCookie(request, "access_token").get();
+        if (cookie != null) {
+            token = cookie.getValue();
+        }
+        try {
+            if (tokenProvider.validateToken(token)) {
+                Long id = tokenProvider.getUserIdFromToken(token);
+                System.out.println("Hello : " + id);
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(id.toString(), null, null);
+                SecurityContext sc = SecurityContextHolder.getContext();
+                sc.setAuthentication(authentication);
+                HttpSession session = request.getSession(true);
+                session.setAttribute(SPRING_SECURITY_CONTEXT_KEY, sc);
+                System.out.println("Ok, cookie's correct");
+            }
+            else {
+                throw new RuntimeException();
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException("HELL");
+        }
+        return token;
+    }*/
+
+
 }

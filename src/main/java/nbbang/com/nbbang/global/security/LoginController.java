@@ -8,6 +8,11 @@ import nbbang.com.nbbang.global.response.StatusCode;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import static nbbang.com.nbbang.global.security.SecurityPolicy.TOKEN_COOKIE_KEY;
+
 @Tag(name = "Login", description = "로그인 GET 요청시 로그인 페이지로 리다이렉트 되며, /logout 으로 GET 요청시 로그아웃 됩니다.")
 @RestController
 @RequiredArgsConstructor
@@ -20,7 +25,8 @@ public class LoginController {
     }
 
     @GetMapping("/logout")
-    public DefaultResponse logout() {
+    public DefaultResponse logout(HttpServletRequest request, HttpServletResponse response) {
+        CookieUtils.deleteCookie(request, response, TOKEN_COOKIE_KEY);
         return DefaultResponse.res(StatusCode.OK, "로그아웃");
     }
 }

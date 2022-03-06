@@ -1,38 +1,22 @@
 package nbbang.com.nbbang.global.security;
 
-import com.sun.security.auth.UserPrincipal;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 
+import static nbbang.com.nbbang.global.security.SecurityPolicy.TOKEN_EXPIRE_TIME;
+import static nbbang.com.nbbang.global.security.SecurityPolicy.TOKEN_SECRET_KEY;
+
 @Service
 @Slf4j
 public class TokenProvider {
-    //@Value("${secret.key}")
-    private String secretKey = "eyJhbGciOiJIUzUxMiJ9.eyJSb2xlIjoiQWRtaW4iLCJJc3N1ZXIiOiJJc3N1ZXIiLCJVc2VybmFtZSI6IkphdmFJblVzZSIsImV4cCI6MTY0NjEwMjQ2MywiaWF0IjoxNjQ2MTAyNDYzfQ._l4MpJZlb32_h-aSTyF77P8Kn-PL25Hio89YK_ntpMba_z9YfDi-aJdGDSYNnOYLC9okXyxB_YvYkmZLjqhrVQ";
-    private Logger logger;
-    public String createToken(Authentication authentication) {
-
-        //UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
-
-        Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + 360000000);
-
-        return Jwts.builder()
-                .setIssuedAt(new Date())
-                .setExpiration(expiryDate)
-                .signWith(SignatureAlgorithm.HS512, secretKey)
-                .compact();
-    }
-
+    private String secretKey = TOKEN_SECRET_KEY;
     public String createToken(Authentication authentication, Long memberId) {
         Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + 360000);
+        Date expiryDate = new Date(now.getTime() + TOKEN_EXPIRE_TIME);
 
         return Jwts.builder()
                 .setSubject(Long.toString(memberId))
@@ -52,8 +36,7 @@ public class TokenProvider {
     }
 
     public boolean validateToken(String authToken) {
-        System.out.println("Validating token");
-        System.out.println(authToken);
+        log.info("Validating token...");
         try {
             Jwts.parser().setSigningKey(secretKey).parseClaimsJws(authToken);
             return true;
@@ -68,7 +51,7 @@ public class TokenProvider {
         } catch (IllegalArgumentException ex) {
             log.error("JWT claims string is empty.");
         }
-        System.out.println("This token is weird.");
+        log.info("Token is invalid.");
         return false;
     }
 

@@ -11,10 +11,11 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
+import static nbbang.com.nbbang.global.security.SecurityPolicy.*;
+
 @Component
 public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
-    private String redirect_url = "http://127.0.0.1:3000";
     private String targetUri;
     private TokenProvider tokenProvider = new TokenProvider();
 
@@ -28,12 +29,19 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         HttpSession session = request.getSession(false);
         SessionMember member = (SessionMember) session.getAttribute("member");
         String token = tokenProvider.createToken(authentication, member.getId());
-        //CookieUtils.addCookie(response, "access_token", token, 36000000);
-        CookieUtils.addResponseCookie(response, token);
-        return UriComponentsBuilder.fromUriString(redirect_url)
-                .queryParam("token", token)
-                //.queryParam("id", member.getId())
+        addAccessTokenCookie(response, token);
+        //localhostAccessToken(response, token);
+        return UriComponentsBuilder.fromUriString(DEFAULT_REDIRECT_URI)
                 .build().toUriString();
+    }
+
+    private void addAccessTokenCookie(HttpServletResponse response, String token) {
+        CookieUtils.addResponseCookie(response, TOKEN_COOKIE_KEY, token, true, true, TOKEN_EXPIRE_TIME, "none", FRONTEND_DOMAIN, "/");
+    }
+
+    // 로컬 테스팅 용도
+    private void localhostAccessToken(HttpServletResponse response, String token) {
+        CookieUtils.addResponseCookie(response, TOKEN_COOKIE_KEY, token, false, false, TOKEN_EXPIRE_TIME, "lax", FRONTEND_DOMAIN, "/");
     }
 
 }

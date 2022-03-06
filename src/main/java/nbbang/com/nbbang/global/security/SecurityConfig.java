@@ -3,14 +3,10 @@ package nbbang.com.nbbang.global.security;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.web.authentication.HttpStatusEntryPoint;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -23,56 +19,34 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final CustomOAuth2MemberService customOAuth2MemberService;
 
-
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-
-        CharacterEncodingFilter encodingFilter = new CharacterEncodingFilter();
-        encodingFilter.setEncoding("UTF-8");
-        encodingFilter.setForceEncoding(true);
-        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        http
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
+                .addFilterBefore(utf8EncodingFilter(), WebAsyncManagerIntegrationFilter.class)
                 .addFilterBefore(new TokenAuthenticationFilter(), WebAsyncManagerIntegrationFilter.class)
-
                 .csrf().disable()
                 .cors()
                 .and()
-                //.headers().frameOptions().disable()
-                //.and()
-                    //.authorizeRequests()
-                    //.antMatchers("/parties").permitAll()
-                    //.anyRequest().authenticated()
-                //.and()
-                //.antMatcher("/members")
-                //.authorizeRequests()
-                //.anyRequest().authenticated()
-                //.and()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.OPTIONS,"/**").permitAll()
-                .antMatchers("/api/oauth2/**").permitAll()
-                .antMatchers("/api/login/**").permitAll()
-//                .anyRequest().authenticated()
-
-                //.and()
-                //.exceptionHandling()
-                //.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
+                    .antMatchers(HttpMethod.OPTIONS,"/**").permitAll()
+                    .antMatchers("/api/oauth2/**").permitAll()
+                    .antMatchers("/api/login/**").permitAll()
                 .and()
                 .oauth2Login()
-                //.authorizationEndpoint()
-                //.baseUri("/api/oauth2/authorization")
-                //.and()
-                //.redirectionEndpoint()
-                //.baseUri("/api/login/oauth2/code")
-                //.and()
-
                     .userInfoEndpoint()
-                        .userService(customOAuth2MemberService)
-                    .and()
-                    //.redirectionEndpoint("https://www.nbbang.shop/api/login/oauth2/code/google")
+                    .userService(customOAuth2MemberService)
+                .and()
+                .successHandler(new OAuth2AuthenticationSuccessHandler()).and().cors();
+    }
 
-                    .successHandler(new OAuth2AuthenticationSuccessHandler());
 
+    private CharacterEncodingFilter utf8EncodingFilter() {
+        CharacterEncodingFilter encodingFilter = new CharacterEncodingFilter();
+        encodingFilter.setEncoding("UTF-8");
+        encodingFilter.setForceEncoding(true);
+        return encodingFilter;
     }
 
     @Bean
