@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import nbbang.com.nbbang.global.interceptor.LoginInterceptor;
 import nbbang.com.nbbang.global.interceptor.OwnerInterceptor;
 import nbbang.com.nbbang.global.interceptor.PartyMemberInterceptor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
