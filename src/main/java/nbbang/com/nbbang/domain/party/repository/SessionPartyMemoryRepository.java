@@ -64,7 +64,6 @@ public class SessionPartyMemoryRepository implements SessionPartyRepository {
 
     @Override
     public Integer getActiveNumber(Long partyId) {
-        System.out.println("sessionPartyMap = " + sessionPartyMap);
         ConcurrentMap<String, Long> partySessionMap = findMap(partyId);
         return partySessionMap.size();
     }

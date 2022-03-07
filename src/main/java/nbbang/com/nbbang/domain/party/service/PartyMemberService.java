@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.domain.bbangpan.domain.PartyMember;
 import nbbang.com.nbbang.domain.bbangpan.domain.SendStatus;
 import nbbang.com.nbbang.domain.bbangpan.repository.PartyMemberRepository;
+import nbbang.com.nbbang.domain.chat.domain.Message;
 import nbbang.com.nbbang.domain.chat.domain.MessageType;
 import nbbang.com.nbbang.domain.chat.repository.MessageRepository;
 import nbbang.com.nbbang.domain.chat.service.MessageService;
@@ -33,7 +34,6 @@ public class PartyMemberService {
     public boolean isPartyOwnerOrMember(Party party, Member member) {
         return Optional.ofNullable(party.getOwner()).equals(member) || party.getPartyMembers().stream().anyMatch(mp -> mp.getMember().equals(member));
     }
-
 
     @Transactional
     public Long joinParty(Party party, Member member) {
@@ -86,4 +86,10 @@ public class PartyMemberService {
             log.info("no such status");
         }
     }
+
+    @Transactional
+    public void updateLastReadMessage(PartyMember partyMember, Message currentLastMessage) {
+        partyMember.changeLastReadMessage(currentLastMessage);
+    }
+
 }

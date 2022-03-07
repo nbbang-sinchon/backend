@@ -31,6 +31,7 @@ public class StompChannelInterceptor implements ChannelInterceptor {
     private final PartyService partyService;
     private final MemberService memberService;
     private final PartyMemberRepository partyMemberRepository;
+    private final PartyMemberService partyMemberService;
     private final SessionMemberService sessionMemberService;
     private final SessionPartyService sessionPartyService;
     private final JwtService jwtService;
@@ -38,13 +39,14 @@ public class StompChannelInterceptor implements ChannelInterceptor {
 
 
     public StompChannelInterceptor(ChatService chatService, PartyService partyService, MemberService memberService,
-                                   PartyMemberRepository partyMemberRepository,
+                                   PartyMemberRepository partyMemberRepository, PartyMemberService partyMemberService,
                                    SessionMemberService sessionMemberService, SessionPartyService sessionPartyService,
                                    JwtService jwtService, @Lazy SocketSender socketSender) {
         this.chatService = chatService;
         this.partyService = partyService;
         this.memberService = memberService;
         this.partyMemberRepository = partyMemberRepository;
+        this.partyMemberService = partyMemberService;
         this.jwtService = jwtService;
         this.socketSender = socketSender;
         this.sessionMemberService = sessionMemberService;
@@ -114,7 +116,7 @@ public class StompChannelInterceptor implements ChannelInterceptor {
         sessionPartyService.deleteSession(partyId, memberId);
         PartyMember partyMember = partyMemberRepository.findByMemberIdAndPartyId(memberId, partyId);
         nbbang.com.nbbang.domain.chat.domain.Message currentLastMessage = partyService.findLastMessage(partyId);
-        partyMember.changeLastReadMessage(currentLastMessage);
+        partyMemberService.updateLastReadMessage(partyMember, currentLastMessage);
     }
 
     public void exitChatRoomIfExist(String session) {

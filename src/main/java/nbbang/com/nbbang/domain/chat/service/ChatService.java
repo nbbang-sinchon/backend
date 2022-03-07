@@ -152,8 +152,9 @@ public class ChatService {
         Long lastReadMessageId = ((Optional.ofNullable(partyMember.getLastReadMessage())).orElse(Message.builder().id(-1L).build())).getId();
         messageRepository.bulkReadNumberPlus(lastReadMessageId, partyId);
 
+        PartyMember reFoundPartyMember = partyMemberRepository.findByMemberIdAndPartyId(memberId, partyId);
         Message currentLastMessage = partyService.findLastMessage(partyId);
-        partyMember.changeLastReadMessage(currentLastMessage);
+        reFoundPartyMember.changeLastReadMessage(currentLastMessage);
         return lastReadMessageId;
     }
 
