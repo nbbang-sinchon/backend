@@ -118,9 +118,9 @@ public class StompChannelInterceptor implements ChannelInterceptor {
     }
 
     public void exitChatRoomIfExist(String session) {
-        Long memberId = sessionMemberService.findMemberId(session);
-        if(memberService.findById(memberId).getActivePartyId()!=null){
-            exitChatRoom(session, memberService.findById(memberId).getActivePartyId());
+        Long partyId = sessionPartyService.findPartyIdBySessionIfExists(session);
+        if(partyId!=null){
+            exitChatRoom(session, partyId);
         }
     }
 }

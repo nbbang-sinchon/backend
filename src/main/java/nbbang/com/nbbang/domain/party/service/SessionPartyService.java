@@ -19,6 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class SessionPartyService {
 
     private final SessionPartyMemoryRepository sessionPartyMemoryRepository;
+    private final MemberService memberService;
 
     public void addParty(Long partyId){
         sessionPartyMemoryRepository.addParty(partyId);
@@ -38,8 +39,14 @@ public class SessionPartyService {
 
     public void addSession(Long partyId, String session, Long memberId){
         sessionPartyMemoryRepository.addSession(partyId, session, memberId);
+        memberService.findById(memberId).updateActiveParty(partyId);
     }
     public void deleteSession(Long partyId, Long memberId){
         sessionPartyMemoryRepository.deleteSession(partyId, memberId);
+        memberService.findById(memberId).updateActiveParty(null);
+    }
+
+    public Long findPartyIdBySessionIfExists(String session) {
+        return sessionPartyMemoryRepository.findPartyIdBySessionIfExists(session);
     }
 }

@@ -1,19 +1,14 @@
 package nbbang.com.nbbang.domain.party.repository;
 
 import lombok.RequiredArgsConstructor;
-import nbbang.com.nbbang.domain.member.domain.Member;
-import nbbang.com.nbbang.domain.member.service.MemberService;
 import nbbang.com.nbbang.domain.party.domain.Party;
-import nbbang.com.nbbang.domain.party.service.PartyService;
 import nbbang.com.nbbang.global.socket.MapUtil;
-import nbbang.com.nbbang.global.socket.Session.SessionRepository;
 import org.springframework.stereotype.Repository;
-import org.webjars.NotFoundException;
 
-import javax.persistence.Transient;
+import javax.annotation.PostConstruct;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -22,12 +17,10 @@ import java.util.concurrent.ConcurrentMap;
 @RequiredArgsConstructor
 public class SessionPartyMemoryRepository implements SessionPartyRepository {
 
-    private static ConcurrentMap<Long, ConcurrentMap<String, Long>> sessionPartyMap = new ConcurrentHashMap<>();
-
     private final MapUtil mapUtil;
 
+    private static ConcurrentMap<Long, ConcurrentMap<String, Long>> sessionPartyMap = new ConcurrentHashMap<>();
     private static final String PARTY_EXISTS = "요청한 파티가 이미 저장되어 있습니다.";
-
 
     public void addParty(Long partyId) {
         if(sessionPartyMap.containsKey(partyId)){
@@ -37,6 +30,9 @@ public class SessionPartyMemoryRepository implements SessionPartyRepository {
     }
 
     public ConcurrentMap<String, Long> findMap(Long partyId) {
+        if(!sessionPartyMap.containsKey(partyId)){
+            addParty(partyId);
+        }
         ConcurrentMap<String, Long> map = sessionPartyMap.get(partyId);
         return map;
     }
@@ -68,7 +64,17 @@ public class SessionPartyMemoryRepository implements SessionPartyRepository {
 
     @Override
     public Integer getActiveNumber(Long partyId) {
+        System.out.println("sessionPartyMap = " + sessionPartyMap);
         ConcurrentMap<String, Long> partySessionMap = findMap(partyId);
         return partySessionMap.size();
+    }
+
+    public Long findPartyIdBySessionIfExists(String session) {
+        for (Map.Entry<Long, ConcurrentMap<String, Long>> mapEntry : sessionPartyMap.entrySet()) {
+            if(mapEntry.getValue().containsKey(session)){
+                return mapEntry.getKey();
+            }
+        }
+        return null;
     }
 }
