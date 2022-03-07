@@ -5,4 +5,5 @@ public interface SessionPartyRepository {
     Long findMemberId(Long partyId, String session);
     void addSession(Long partyId, String session, Long memberId);
     void deleteSession(Long partyId, Long memberId);
+    Integer getActiveNumber(Long partyId);
 }

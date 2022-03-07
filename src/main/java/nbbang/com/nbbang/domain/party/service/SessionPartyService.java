@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.service.MemberService;
 import nbbang.com.nbbang.domain.party.domain.Party;
+import nbbang.com.nbbang.domain.party.repository.SessionPartyMemoryRepository;
 import nbbang.com.nbbang.global.socket.MapUtil;
+import nbbang.com.nbbang.global.socket.Session.SessionMemberMemoryRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,38 +17,29 @@ import java.util.concurrent.ConcurrentHashMap;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class SessionPartyService {
-    private final PartyService partyService;
-    private final MemberService memberService;
-    private final MapUtil mapUtil;
 
-    private ConcurrentHashMap<String, Long> findMap(Long partyId){
-        Party party = partyService.findById(partyId);
-        System.out.println("party.getSessionMap() = " + party.getSessionMap());
-        return party.getSessionMap();
+    private final SessionPartyMemoryRepository sessionPartyMemoryRepository;
+
+    public void addParty(Long partyId){
+        sessionPartyMemoryRepository.addParty(partyId);
+    }
+
+    public Integer getActiveNumber(Long partyId){
+        return sessionPartyMemoryRepository.getActiveNumber(partyId);
     }
 
     public String findSession(Long partyId, Long memberId){
-        ConcurrentHashMap<String, Long> sessionMap = findMap(partyId);
-        return mapUtil.findSession(sessionMap, memberId);
+        return sessionPartyMemoryRepository.findSession(partyId, memberId);
     }
 
     public Long findMemberId(Long partyId, String session){
-        ConcurrentHashMap<String, Long> sessionMap = findMap(partyId);
-        return mapUtil.findMemberId(sessionMap, session);
+        return sessionPartyMemoryRepository.findMemberId(partyId, session);
     }
 
     public void addSession(Long partyId, String session, Long memberId){
-        ConcurrentHashMap<String, Long> sessionMap = findMap(partyId);
-        mapUtil.addSession(sessionMap, session, memberId);
-        Member member = memberService.findById(memberId);
-        member.updateActiveParty(partyId);
-        System.out.println("sessionMap = " + sessionMap);
+        sessionPartyMemoryRepository.addSession(partyId, session, memberId);
     }
-
     public void deleteSession(Long partyId, Long memberId){
-        ConcurrentHashMap<String, Long> sessionMap = findMap(partyId);
-        mapUtil.deleteSession(sessionMap,memberId);
-        Member member = memberService.findById(memberId);
-        member.updateActiveParty(null);
+        sessionPartyMemoryRepository.deleteSession(partyId, memberId);
     }
 }

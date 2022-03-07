@@ -80,9 +80,6 @@ public class Party {
     @OneToMany(mappedBy = "party")
     private List<PartyWishlist> wishlists = new ArrayList<>();
 
-    @Transient
-    ConcurrentHashMap<String, Long> sessionMap = new ConcurrentHashMap<>();
-
     protected Party() {}
 
     public void addPartyHashtag(PartyHashtag partyHashtag){
@@ -152,10 +149,5 @@ public class Party {
 
     public static Field getField(String field) throws NoSuchFieldException {
         return Party.class.getDeclaredField(field);
-    }
-
-    public Integer getActiveNumber() {
-        System.out.println("sessionMap = " + sessionMap);
-        return (sessionMap!=null) ? sessionMap.size() : 0;
     }
 }

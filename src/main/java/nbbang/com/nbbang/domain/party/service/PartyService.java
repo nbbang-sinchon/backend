@@ -36,18 +36,21 @@ public class PartyService {
     private final MemberService memberService;
     private final PartyMemberService partyMemberService;
     private final MessageRepository messageRepository;
+    private final SessionPartyService sessionPartyService;
 
     @Transactional
     public Party create(Party party, Long memberId, List<String> hashtagContents) {
         Party savedParty = partyRepository.save(party);
         savedParty.changeStatus(PartyStatus.OPEN);
         Long partyId = savedParty.getId();
+        sessionPartyService.addParty(partyId);
         // https://sigmasabjil.tistory.com/43
         Optional.ofNullable(hashtagContents).orElseGet(Collections::emptyList).
                 stream().forEach(content-> addHashtag(partyId, content));
         Member owner = memberService.findById(memberId);
         partyMemberService.joinParty(savedParty, owner);
         party.addOwner(owner);
+
         return savedParty;
     }
 

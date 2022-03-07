@@ -8,8 +8,12 @@ import nbbang.com.nbbang.domain.party.service.PartyService;
 import nbbang.com.nbbang.global.socket.MapUtil;
 import nbbang.com.nbbang.global.socket.Session.SessionRepository;
 import org.springframework.stereotype.Repository;
+import org.webjars.NotFoundException;
 
+import javax.persistence.Transient;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -18,67 +22,53 @@ import java.util.concurrent.ConcurrentMap;
 @RequiredArgsConstructor
 public class SessionPartyMemoryRepository implements SessionPartyRepository {
 
-    private static ConcurrentMap<Long, List> sessionPartyMap = new ConcurrentHashMap<>();
+    private static ConcurrentMap<Long, ConcurrentMap<String, Long>> sessionPartyMap = new ConcurrentHashMap<>();
 
-
-    private final PartyService partyService;
-    private final MemberService memberService;
     private final MapUtil mapUtil;
 
+    private static final String PARTY_EXISTS = "요청한 파티가 이미 저장되어 있습니다.";
 
-    private ConcurrentHashMap<String, Long> findMap(Long partyId){
-        Party party = partyService.findById(partyId);
-        return party.getSessionMap();
+
+    public void addParty(Long partyId) {
+        if(sessionPartyMap.containsKey(partyId)){
+            throw new IllegalArgumentException(PARTY_EXISTS);
+        }
+        sessionPartyMap.put(partyId, new ConcurrentHashMap<>());
+    }
+
+    public ConcurrentMap<String, Long> findMap(Long partyId) {
+        ConcurrentMap<String, Long> map = sessionPartyMap.get(partyId);
+        return map;
     }
 
 
     @Override
     public String findSession(Long partyId, Long memberId) {
-        return null;
+        ConcurrentMap<String, Long> partySessionMap = findMap(partyId);
+        return mapUtil.findSession(partySessionMap, memberId);
     }
 
     @Override
     public Long findMemberId(Long partyId, String session) {
-        return null;
+        ConcurrentMap<String, Long> partySessionMap = findMap(partyId);
+        return mapUtil.findMemberId(partySessionMap, session);
     }
 
     @Override
     public void addSession(Long partyId, String session, Long memberId) {
-
+        ConcurrentMap<String, Long> partySessionMap = findMap(partyId);
+        mapUtil.addSession(partySessionMap, session, memberId);
     }
 
     @Override
     public void deleteSession(Long partyId, Long memberId) {
-
+        ConcurrentMap<String, Long> partySessionMap = findMap(partyId);
+        mapUtil.deleteSession(partySessionMap, memberId);
     }
 
-/*
-
-    public String findSession(Long partyId, Long memberId){
-        ConcurrentHashMap<String, Long> sessionMap = findMap(partyId);
-        return mapUtil.findSession(sessionMap, memberId);
+    @Override
+    public Integer getActiveNumber(Long partyId) {
+        ConcurrentMap<String, Long> partySessionMap = findMap(partyId);
+        return partySessionMap.size();
     }
-
-    public Long findMemberId(Long partyId, String session){
-        ConcurrentHashMap<String, Long> sessionMap = findMap(partyId);
-        return mapUtil.findMemberId(sessionMap, session);
-    }
-
-    public void addSession(Long partyId, String session, Long memberId){
-        ConcurrentHashMap<String, Long> sessionMap = findMap(partyId);
-        mapUtil.addSession(sessionMap, session, memberId);
-        Member member = memberService.findById(memberId);
-        member.updateActiveParty(partyId);
-        System.out.println("sessionMap = " + sessionMap);
-    }
-
-    public void deleteSession(Long partyId, Long memberId){
-        ConcurrentHashMap<String, Long> sessionMap = findMap(partyId);
-        mapUtil.deleteSession(sessionMap,memberId);
-        Member member = memberService.findById(memberId);
-        member.updateActiveParty(null);
-    }
-*/
-
-
 }

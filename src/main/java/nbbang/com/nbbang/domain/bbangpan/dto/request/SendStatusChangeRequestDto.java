@@ -18,7 +18,6 @@ public class SendStatusChangeRequestDto {
     private String sendStatus;
 
     public SendStatus createStatus() {
-        System.out.println("sendStatus = " + sendStatus);
         return SendStatus.valueOf(sendStatus.toUpperCase(Locale.ROOT));
     }
 }

@@ -47,7 +47,6 @@ public class SessionMemberMemoryRepository implements SessionRepository {
             throw new IllegalArgumentException(MEMBER_EXISTS);
         }
         memberSessionMap.put(session, memberId);
-        System.out.println("memberSessionMap = " + memberSessionMap);
     }
 
     @Override

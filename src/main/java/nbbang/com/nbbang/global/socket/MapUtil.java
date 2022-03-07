@@ -6,6 +6,7 @@ import org.webjars.NotFoundException;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 @Component
 public class MapUtil {
@@ -15,21 +16,21 @@ public class MapUtil {
     private static final String MEMBER_NOT_FOUND = "요청한 멤버의 socket session이 존재하지 않습니다.";
     private static final String MEMBER_EXISTS = "요청한 멤버가 이미 저장되어 있습니다.";
 
-    public String findSession(ConcurrentHashMap<String, Long> map, Long memberId){
+    public String findSession(ConcurrentMap map, Long memberId){
         if (!map.containsValue(memberId)){
             throw new IllegalArgumentException(MEMBER_NOT_FOUND);
         }
         return findKeyByValue(map, memberId);
     }
 
-    public Long findMemberId(ConcurrentHashMap<String, Long> map, String session){
+    public Long findMemberId(ConcurrentMap map, String session){
         if (!map.containsKey(session)){
             throw new IllegalArgumentException(SESSION_NOT_FOUND);
         }
-        return map.get(session);
+        return (Long) map.get(session);
     }
 
-    public void addSession(ConcurrentHashMap<String, Long> map, String session, Long memberId){
+    public void addSession(ConcurrentMap map, String session, Long memberId){
         if (map.containsKey(session)){
             throw new IllegalArgumentException(SESSION_EXISTS);
         }
@@ -40,14 +41,14 @@ public class MapUtil {
     }
 
 
-    public void deleteSession(ConcurrentHashMap<String, Long> map, String session){
+    public void deleteSession(ConcurrentMap map, String session){
         if (!map.containsKey(session)){
             throw new IllegalArgumentException(SESSION_NOT_FOUND);
         }
         map.remove(session);
     }
 
-    public void deleteSession(ConcurrentHashMap<String, Long> map, Long memberId){
+    public void deleteSession(ConcurrentMap map, Long memberId){
         if (!map.containsValue(memberId)){
             throw new IllegalArgumentException(SESSION_NOT_FOUND);
         }
@@ -55,7 +56,7 @@ public class MapUtil {
         map.remove(session);
     }
 
-    private String findKeyByValue(ConcurrentHashMap<String, Long> map, Long memberId){
+    private String findKeyByValue(ConcurrentMap map, Long memberId){
         Set<Map.Entry<String, Long>> entries = map.entrySet();
         for (Map.Entry<String, Long> entry : entries) {
             if (entry.getValue().equals(memberId)) {
@@ -64,6 +65,4 @@ public class MapUtil {
         }
         throw new NotFoundException(MEMBER_NOT_FOUND);
     }
-
-
 }
