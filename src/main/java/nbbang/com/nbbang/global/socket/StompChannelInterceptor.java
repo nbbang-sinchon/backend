@@ -2,9 +2,12 @@
 package nbbang.com.nbbang.global.socket;
 
 import lombok.extern.slf4j.Slf4j;
+import nbbang.com.nbbang.domain.bbangpan.domain.PartyMember;
+import nbbang.com.nbbang.domain.bbangpan.repository.PartyMemberRepository;
 import nbbang.com.nbbang.domain.chat.dto.ChatReadSocketDto;
 import nbbang.com.nbbang.domain.chat.service.ChatService;
 import nbbang.com.nbbang.domain.member.service.MemberService;
+import nbbang.com.nbbang.domain.party.service.PartyMemberService;
 import nbbang.com.nbbang.domain.party.service.PartyService;
 import nbbang.com.nbbang.domain.party.service.SessionPartyService;
 import nbbang.com.nbbang.global.security.jwt.JwtService;
@@ -27,6 +30,7 @@ public class StompChannelInterceptor implements ChannelInterceptor {
     private final ChatService chatService;
     private final PartyService partyService;
     private final MemberService memberService;
+    private final PartyMemberRepository partyMemberRepository;
     private final SessionMemberService sessionMemberService;
     private final SessionPartyService sessionPartyService;
     private final JwtService jwtService;
@@ -34,11 +38,13 @@ public class StompChannelInterceptor implements ChannelInterceptor {
 
 
     public StompChannelInterceptor(ChatService chatService, PartyService partyService, MemberService memberService,
+                                   PartyMemberRepository partyMemberRepository,
                                    SessionMemberService sessionMemberService, SessionPartyService sessionPartyService,
                                    JwtService jwtService, @Lazy SocketSender socketSender) {
         this.chatService = chatService;
         this.partyService = partyService;
         this.memberService = memberService;
+        this.partyMemberRepository = partyMemberRepository;
         this.jwtService = jwtService;
         this.socketSender = socketSender;
         this.sessionMemberService = sessionMemberService;
@@ -106,6 +112,9 @@ public class StompChannelInterceptor implements ChannelInterceptor {
     public void exitChatRoom(String session, Long partyId) {
         Long memberId = sessionMemberService.findMemberId(session);
         sessionPartyService.deleteSession(partyId, memberId);
+        PartyMember partyMember = partyMemberRepository.findByMemberIdAndPartyId(memberId, partyId);
+        nbbang.com.nbbang.domain.chat.domain.Message currentLastMessage = partyService.findLastMessage(partyId);
+        partyMember.changeLastReadMessage(currentLastMessage);
     }
 
     public void exitChatRoomIfExist(String session) {

@@ -1,4 +1,4 @@
-package nbbang.com.nbbang.domain.chat.service.repository;
+package nbbang.com.nbbang.domain.chat.repository;
 
 import nbbang.com.nbbang.domain.chat.repository.MessageRepository;
 import nbbang.com.nbbang.domain.chat.service.ChatService;

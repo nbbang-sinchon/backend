@@ -10,6 +10,7 @@ import nbbang.com.nbbang.domain.party.service.PartyMemberService;
 import nbbang.com.nbbang.domain.party.service.PartyService;
 import nbbang.com.nbbang.global.socket.Session.SessionMemberService;
 import nbbang.com.nbbang.global.socket.StompChannelInterceptor;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,6 +18,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import static nbbang.com.nbbang.domain.member.dto.Place.*;
+import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
@@ -60,36 +62,31 @@ class ChatReadTest {
 
         //
         stompChannelInterceptor.enterChatRoom(session1, partyId); // 1번 파티 입장
-        //Assertions.assertThat(saveMember1.getActivePartyId()).isEqualTo(1L);
         Long messageId1 = messageService.send(partyId, saveMember1.getId(), "hello");
-        //Assertions.assertThat(messageService.findById(messageId1).getReadNumber()).isEqualTo(1);
-        //Assertions.assertThat(saveMember1.getActivePartyId()).isEqualTo(1L);
+        assertThat(messageService.findById(messageId1).getReadNumber()).isEqualTo(1);
 
         stompChannelInterceptor.enterChatRoom(session2, partyId); // 2번 파티 입장
-        //Assertions.assertThat(saveMember1.getActivePartyId()).isEqualTo(1L);
-        //Assertions.assertThat(messageService.findById(messageId1).getReadNumber()).isEqualTo(2);
+        assertThat(messageService.findById(messageId1).getReadNumber()).isEqualTo(2);
 
         Long messageId2 = messageService.send(partyId, saveMember2.getId(), "hello here 2");
-        //Assertions.assertThat(messageService.findById(messageId1).getReadNumber()).isEqualTo(2);
-        //Assertions.assertThat(saveMember1.getActivePartyId()).isEqualTo(1L);
+        assertThat(messageService.findById(messageId1).getReadNumber()).isEqualTo(2);
+        assertThat(messageService.findById(messageId2).getReadNumber()).isEqualTo(2);
 
-        //Assertions.assertThat(messageService.findById(messageId2).getReadNumber()).isEqualTo(2);
-
-        //stompChannelInterceptor.exitChatRoom(session1, partyId); // 1번 파티 나감
-        //Assertions.assertThat(messageService.findById(messageId1).getReadNumber()).isEqualTo(2);
+        stompChannelInterceptor.exitChatRoom(session1, partyId); // 1번 파티 나감
+        assertThat(messageService.findById(messageId1).getReadNumber()).isEqualTo(2);
 
         stompChannelInterceptor.enterChatRoom(session3, partyId); // 3번 파티 입장
 
-        //Assertions.assertThat(messageService.findById(messageId1).getReadNumber()).isEqualTo(3);
-        //Assertions.assertThat(messageService.findById(messageId2).getReadNumber()).isEqualTo(3);
+        assertThat(messageService.findById(messageId1).getReadNumber()).isEqualTo(3);
+        assertThat(messageService.findById(messageId2).getReadNumber()).isEqualTo(3);
 
         Long messageId3 = messageService.send(partyId, saveMember3.getId(), "hello here 3");
-        //Assertions.assertThat(messageService.findById(messageId3).getReadNumber()).isEqualTo(2);
+        assertThat(messageService.findById(messageId3).getReadNumber()).isEqualTo(2);
 
-        //stompChannelInterceptor.enterChatRoom("session1", partyId); // 2번 파티 입장
-        //Assertions.assertThat(messageService.findById(messageId1).getReadNumber()).isEqualTo(3);
-        //Assertions.assertThat(messageService.findById(messageId2).getReadNumber()).isEqualTo(3);
-        //Assertions.assertThat(messageService.findById(messageId3).getReadNumber()).isEqualTo(3);
+        stompChannelInterceptor.enterChatRoom(session1, partyId); // 1번 파티 입장
+        assertThat(messageService.findById(messageId1).getReadNumber()).isEqualTo(3);
+        assertThat(messageService.findById(messageId2).getReadNumber()).isEqualTo(3);
+        assertThat(messageService.findById(messageId3).getReadNumber()).isEqualTo(3);
 
     }
 
