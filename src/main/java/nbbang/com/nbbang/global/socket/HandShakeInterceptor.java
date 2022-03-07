@@ -2,6 +2,7 @@ package nbbang.com.nbbang.global.socket;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import nbbang.com.nbbang.global.socket.Session.SessionMemberService;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.http.server.ServletServerHttpRequest;
