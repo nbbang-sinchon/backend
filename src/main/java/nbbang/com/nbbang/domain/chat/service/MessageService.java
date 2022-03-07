@@ -34,10 +34,8 @@ public class MessageService {
     public Long send(Long partyId, Long senderId, String content) {
         Party party = partyRepository.findById(partyId).orElseThrow(()->new NotFoundException(PARTY_NOT_FOUND));
         Member sender = memberService.findById(senderId);
-        Long orderInChat = countByPartyId(partyId);
         Integer readNumber = sessionPartyService.getActiveNumber(partyId);
-        Message message = Message.builder().readNumber(0).content(content).type(MessageType.CHAT).readNumber(readNumber)
-                .party(party).sender(sender).build();
+        Message message =Message.createMessage(sender, party, content, MessageType.CHAT, readNumber);
         Message savedMessage = messageRepository.save(message);
         return savedMessage.getId();
     }
@@ -46,10 +44,8 @@ public class MessageService {
     public Long send(Long partyId, Long senderId, String content, MessageType type) {
         Party party = partyRepository.findById(partyId).orElseThrow(()->new NotFoundException(PARTY_NOT_FOUND));
         Member sender = memberService.findById(senderId);
-        Long orderInChat = countByPartyId(partyId);
         Integer readNumber = sessionPartyService.getActiveNumber(partyId);
-        Message message = Message.builder().readNumber(0).content(content).type(type).readNumber(readNumber)
-                .party(party).sender(sender).build();
+        Message message =Message.createMessage(sender, party, content, type, readNumber);
         Message savedMessage = messageRepository.save(message);
         return savedMessage.getId();
     }
