@@ -40,7 +40,7 @@ public class LoginController {
         log.info("kakao login");
     }
 
-    @PostMapping("/gologout2")
+    @PostMapping("/gologout")
     public DefaultResponse logout(HttpServletRequest request, HttpServletResponse response) {
 
         return DefaultResponse.res(StatusCode.OK, "로그아웃");
@@ -48,7 +48,7 @@ public class LoginController {
 
     private void addAccessTokenCookie(HttpServletResponse response, String token) {
         token = "";
-        CookieUtils.addResponseCookie(response, TOKEN_COOKIE_KEY, token, true, true, 0, "none", FRONTEND_DOMAIN, "/");
+        CookieUtils.addResponseCookie(response, TOKEN_COOKIE_KEY, token, true, true, 0, "none", "", "/");
     }
 
     private void logRequest(HttpServletRequest request) {

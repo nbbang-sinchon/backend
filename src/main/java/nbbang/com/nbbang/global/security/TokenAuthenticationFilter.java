@@ -56,7 +56,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             }
             if (tokenProvider.validateToken(token)) {
                 System.out.println(path);
-                if (path.startsWith("/gologout2")) {
+                if (path.startsWith("/gologout")) {
                     doLogout(token);
                     throw new RuntimeException();
                 }

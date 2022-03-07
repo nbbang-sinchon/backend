@@ -46,12 +46,12 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     }
 
     private void addAccessTokenCookie(HttpServletResponse response, String token) {
-        CookieUtils.addResponseCookie(response, TOKEN_COOKIE_KEY, token, true, true, TOKEN_EXPIRE_TIME, "none", FRONTEND_DOMAIN, "/");
+        CookieUtils.addResponseCookie(response, TOKEN_COOKIE_KEY, token, true, true, TOKEN_EXPIRE_TIME, "none", "", "/");
     }
 
     // 로컬 테스팅 용도
     private void localhostAccessToken(HttpServletResponse response, String token) {
-        CookieUtils.addResponseCookie(response, TOKEN_COOKIE_KEY, token, false, false, TOKEN_EXPIRE_TIME, "lax", FRONTEND_DOMAIN, "/");
+        CookieUtils.addResponseCookie(response, TOKEN_COOKIE_KEY, token, false, false, TOKEN_EXPIRE_TIME, "lax", "", "/");
     }
 
 }
