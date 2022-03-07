@@ -43,7 +43,6 @@ public class PartyService {
         Party savedParty = partyRepository.save(party);
         savedParty.changeStatus(PartyStatus.OPEN);
         Long partyId = savedParty.getId();
-        sessionPartyService.addParty(partyId);
         // https://sigmasabjil.tistory.com/43
         Optional.ofNullable(hashtagContents).orElseGet(Collections::emptyList).
                 stream().forEach(content-> addHashtag(partyId, content));
