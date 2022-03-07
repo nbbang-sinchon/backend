@@ -18,8 +18,8 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final CustomOAuth2MemberService customOAuth2MemberService;
-    private final CustomLogoutHandler customLogoutHandler;
     private final TokenAuthenticationFilter tokenAuthenticationFilter;
+    private final LoginRedirectionFilter loginRedirectionFilter;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -37,18 +37,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/oauth2/**").permitAll()
                 .antMatchers("/api/login/**").permitAll()
                 .and()
+                .addFilterAfter(loginRedirectionFilter, TokenAuthenticationFilter.class)
                 .oauth2Login()
                 .userInfoEndpoint()
                 .userService(customOAuth2MemberService)
                 .and()
                 .successHandler(new OAuth2AuthenticationSuccessHandler())
-                //.and()
-                //.logout()
-                //.logoutUrl("/gologout")
-                //.addLogoutHandler(customLogoutHandler)
-                //.logoutSuccessHandler(new CustomLogoutSuccessHandler())
-                //.permitAll()
-
                 .and().cors();
     }
 

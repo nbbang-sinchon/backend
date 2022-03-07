@@ -6,10 +6,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.Optional;
 
 import static nbbang.com.nbbang.global.security.SecurityPolicy.*;
 
@@ -21,6 +23,8 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+        RequestLogUtils.logRequest(request);
+        System.out.println(request.getParameter("redirect"));
         targetUri = determineTargetUri(request, response, authentication);
         getRedirectStrategy().sendRedirect(request, response, targetUri);
     }
@@ -31,7 +35,13 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         String token = tokenProvider.createToken(authentication, member.getId());
         addAccessTokenCookie(response, token);
         //localhostAccessToken(response, token);
-        return UriComponentsBuilder.fromUriString(DEFAULT_REDIRECT_URI)
+        String redirect_uri = DEFAULT_REDIRECT_URI;
+        Optional<Cookie> cookie = CookieUtils.getCookie(request, "redirect_uri");
+        if (!cookie.isEmpty()) {
+            System.out.println("Custom redirect uri");
+            redirect_uri = cookie.get().getValue();
+        }
+        return UriComponentsBuilder.fromUriString(redirect_uri)
                 .build().toUriString();
     }
 

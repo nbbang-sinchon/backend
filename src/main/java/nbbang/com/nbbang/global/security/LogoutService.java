@@ -10,6 +10,7 @@ import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class LogoutService {
     private final RedisTemplate<String, String> redisTemplate;
     private String key = "blocked";

@@ -3,12 +3,7 @@ package nbbang.com.nbbang.global.security;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import nbbang.com.nbbang.global.error.ErrorResponse;
-import nbbang.com.nbbang.global.error.GlobalErrorResponseMessage;
 import nbbang.com.nbbang.global.response.StatusCode;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,8 +18,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Enumeration;
+
 import static nbbang.com.nbbang.global.error.GlobalErrorResponseMessage.UNAUTHORIZED_ERROR;
+import static nbbang.com.nbbang.global.security.RequestLogUtils.logRequest;
 import static nbbang.com.nbbang.global.security.SecurityPolicy.TOKEN_COOKIE_KEY;
 import static org.springframework.security.web.context.HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY;
 
@@ -107,59 +103,5 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         logoutService.invalidate(token);
         System.out.println("trying to logout...");
     }
-
-
-    private void logRequest(HttpServletRequest request) {
-        Enumeration<String> headerNames = request.getHeaderNames();
-
-        System.out.println("=============NEWREQUEST===========");
-        if (headerNames != null) {
-            while (headerNames.hasMoreElements()) {
-                String nextName = headerNames.nextElement();
-                System.out.print(nextName);
-                System.out.println(" : "+request.getHeader(nextName));
-            }
-        }
-        System.out.println("-------------COOKIES--------------");
-        Cookie [] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie c : cookies) {
-                System.out.println(c.getName());
-            }
-        }
-        else {
-            System.out.println("empty");
-        }
-        System.out.println("----------------------------------");
-        System.out.println("==================================");
-    }
-
-    /*private String processJwtFromRequest(HttpServletRequest request) {
-        String token = request.getHeader("access_token");
-        Cookie cookie = CookieUtils.getCookie(request, "access_token").get();
-        if (cookie != null) {
-            token = cookie.getValue();
-        }
-        try {
-            if (tokenProvider.validateToken(token)) {
-                Long id = tokenProvider.getUserIdFromToken(token);
-                System.out.println("Hello : " + id);
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(id.toString(), null, null);
-                SecurityContext sc = SecurityContextHolder.getContext();
-                sc.setAuthentication(authentication);
-                HttpSession session = request.getSession(true);
-                session.setAttribute(SPRING_SECURITY_CONTEXT_KEY, sc);
-                System.out.println("Ok, cookie's correct");
-            }
-            else {
-                throw new RuntimeException();
-            }
-
-        } catch (Exception e) {
-            throw new RuntimeException("HELL");
-        }
-        return token;
-    }*/
-
 
 }
