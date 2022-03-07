@@ -22,7 +22,7 @@ import nbbang.com.nbbang.global.error.GlobalErrorResponseMessage;
 import nbbang.com.nbbang.global.error.exception.CustomIllegalArgumentException;
 import nbbang.com.nbbang.global.interceptor.CurrentMember;
 import nbbang.com.nbbang.global.response.*;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
+import nbbang.com.nbbang.global.socket.SocketSender;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,13 +41,11 @@ import java.lang.reflect.Field;
 @RestController
 @RequestMapping("/bread-board/{party-id}")
 public class BbangpanController {
-    // "******************* 파티원인지, 파티장인지 검증하는 로직 미구현 ****************************
 
     private final PartyService partyService;
     private final PartyMemberService partyMemberService;
     private final CurrentMember currentMember;
-    private final SimpMessagingTemplate simpMessagingTemplate;
-
+    private final SocketSender socketSender;
 
     @Operation(summary = "빵판 정보", description = "유저가 빵판을 클릭했을 때, 필요한 정보를 보냅니다.")
     @ApiResponse(responseCode = "200", description = "OK",
@@ -87,7 +85,6 @@ public class BbangpanController {
         sendSocket(partyId);
     }
 
-
     @Operation(summary = "주문 금액 설정", description = "유저가 주문 금액을 설정합니다.")
     @ApiResponse(responseCode = "403", description = "Not Party Member", content = @Content(mediaType = "application/json"))
     @PostMapping("/price")
@@ -118,7 +115,6 @@ public class BbangpanController {
     public void sendSocket(Long partyId){
         Party party = partyService.findById(partyId);
         BbangpanResponseDto bbangpanResponseDto = BbangpanResponseDto.createDtoByParty(party);
-        SocketSendDto socketSendDto = SocketSendDto.createSocketSendDto(bbangpanResponseDto);
-        simpMessagingTemplate.convertAndSend("/topic/breadBoard/" + partyId, socketSendDto);
+        socketSender.send("breadBoard", partyId, bbangpanResponseDto);
     }
 }

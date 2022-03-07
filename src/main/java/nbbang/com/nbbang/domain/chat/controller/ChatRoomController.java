@@ -10,18 +10,18 @@ import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.domain.chat.domain.Message;
 import nbbang.com.nbbang.domain.chat.dto.*;
 import nbbang.com.nbbang.domain.chat.service.ChatService;
-import nbbang.com.nbbang.domain.member.service.MemberService;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.repository.PartyRepository;
 import nbbang.com.nbbang.domain.party.service.PartyService;
 import nbbang.com.nbbang.global.dto.PageableDto;
 import nbbang.com.nbbang.global.interceptor.CurrentMember;
 import nbbang.com.nbbang.global.response.DefaultResponse;
+import nbbang.com.nbbang.global.socket.SocketSender;
 import nbbang.com.nbbang.global.response.StatusCode;
+import nbbang.com.nbbang.global.validator.PartyMemberValidator;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
@@ -37,11 +37,10 @@ import javax.servlet.http.HttpServletResponse;
 public class ChatRoomController {
 
     private final ChatService chatService;
-    private final MemberService memberService;
     private final PartyService partyService;
     private final PartyRepository partyRepository;
     private final CurrentMember currentMember;
-    private final SimpMessagingTemplate simpMessagingTemplate;
+    private final SocketSender socketSender;
 
     @Operation(summary = "채팅방 조회", description = "채팅방을 파티 id 로 조회합니다. ")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ChatResponseDto.class)))
@@ -78,18 +77,10 @@ public class ChatRoomController {
         Party party = partyService.findById(partyId);
         Long lastReadMessageId = chatService.readMessage(partyId, currentMember.id());
         ChatReadSocketDto chatReadSocketDto = ChatReadSocketDto.builder().lastReadMessageId(lastReadMessageId).build();
-        simpMessagingTemplate.convertAndSend("/topic/chatting/" + partyId, chatReadSocketDto);
+        socketSender.sendChatting(partyId, chatReadSocketDto);
         log.info("[Socket] lastReadMessageId: {}, partyId: {}", lastReadMessageId, partyId);
         return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.MESSAGE_READ_OK);
     }
-
-    @GetMapping("/{party-id}/test")
-    public DefaultResponse testMessage(@PathVariable("party-id") Long partyId){
-        simpMessagingTemplate.convertAndSend("/global/" + 1, "hello! ");
-        //log.info("[Socket] lastReadMessageId: {}, partyId: {}", lastReadMessageId, partyId);
-        return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.MESSAGE_READ_OK);
-    }
-
 
 
     @Operation(summary = "채팅방에서 나가기", description = "채팅방에서 나갑니다. 소켓 종료 용도로 쓰일 것 같습니다. ")

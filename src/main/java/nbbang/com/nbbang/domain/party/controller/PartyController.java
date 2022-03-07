@@ -61,8 +61,9 @@ public class PartyController {
         }
         Member member = memberService.findById(currentMember.id());
         Party party = partyRequestDto.createEntityByDto();
-        Long partyId = partyService.create(party, currentMember.id(), partyRequestDto.getHashtags());
-        return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_CREATE_SUCCESS, new PartyIdResponseDto(partyId));
+        Party createParty = partyService.create(party, currentMember.id(), partyRequestDto.getHashtags());
+        Long partyId = partyService.findIdByParty(createParty);
+        return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_CREATE_SUCCESS, PartyIdResponseDto.builder().id(partyId).build());
     }
 
     @Operation(summary = "파티 상세", description = "파티의 상세 정보입니다.")

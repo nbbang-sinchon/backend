@@ -42,9 +42,9 @@ class SinglePartyServiceTest {
         List<String> hashtagContents = Arrays.asList("old1", "old2");
         Party party = Party.builder().title("tempParty").place(SINCHON).goalNumber(3).build();
         // when
-        Long createdPartyId = partyService.create(party, saveMember.getId(), hashtagContents);
+        Party createdParty = partyService.create(party, saveMember.getId(), hashtagContents);
         // then
-        Party findParty = partyRepository.findById(createdPartyId).orElse(null);
+        Party findParty = partyRepository.findById(createdParty.getId()).orElse(null);
         assertThat(findParty).isEqualTo(party);
     }
 
@@ -56,9 +56,9 @@ class SinglePartyServiceTest {
         Member saveMember = memberRepository.save(member);
         List<String> hashtagContents = Arrays.asList("BHC", "bhc");
         Party party = Party.builder().title("tempParty").place(SINCHON).goalNumber(3).build();
-        Long createdPartyId = partyService.create(party, saveMember.getId(), hashtagContents);
+        Party createdParty = partyService.create(party, saveMember.getId(), hashtagContents);
         // when
-        Party findParty = partyService.findById(createdPartyId);
+        Party findParty = partyService.findById(createdParty.getId());
 
         // then
         assertThat(findParty).isEqualTo(party);
@@ -88,10 +88,10 @@ class SinglePartyServiceTest {
         Member member = Member.builder().nickname("test member").build();
         Member saveMember = memberRepository.save(member);
         Party party = Party.builder().title("tempParty").place(SINCHON).goalNumber(3).build();
-        Long createdPartyId = partyService.create(party,saveMember.getId(), null);
+        Party createdParty = partyService.create(party, saveMember.getId(), null);
 
         // when
-        List<Party> findParties = partyService.findNearAndSimilar(createdPartyId);
+        List<Party> findParties = partyService.findNearAndSimilar(createdParty.getId());
         // then
         assertThat(findParties.size()).isLessThanOrEqualTo(6);
         findParties.stream().forEach(findParty->assertThat(findParty.getPlace()).isEqualTo(party.getPlace()));

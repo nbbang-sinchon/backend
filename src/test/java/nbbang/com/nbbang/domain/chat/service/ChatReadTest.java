@@ -36,7 +36,8 @@ class ChatReadTest {
         Member member = Member.builder().nickname("test member").build();
         Member saveMember1 = memberRepository.save(member);
         Party party = Party.builder().title("tempParty").place(SINCHON).goalNumber(4).build();
-        Long partyId = partyService.create(party,saveMember1.getId(), null);
+        Party savedParty = partyService.create(party, saveMember1.getId(), null);
+        Long partyId = savedParty.getId();
         Member member2 = Member.builder().nickname("test member").build();
         Member saveMember2 = memberRepository.save(member2);
         Member member3 = Member.builder().nickname("test member").build();
