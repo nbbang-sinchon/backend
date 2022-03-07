@@ -18,6 +18,8 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final CustomOAuth2MemberService customOAuth2MemberService;
+    private final CustomLogoutHandler customLogoutHandler;
+    private final TokenAuthenticationFilter tokenAuthenticationFilter;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -25,7 +27,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .addFilterBefore(utf8EncodingFilter(), WebAsyncManagerIntegrationFilter.class)
-                .addFilterBefore(new TokenAuthenticationFilter(), WebAsyncManagerIntegrationFilter.class)
+                //.addFilterBefore(new TokenAuthenticationFilter(), WebAsyncManagerIntegrationFilter.class)
+                .addFilterBefore(tokenAuthenticationFilter, WebAsyncManagerIntegrationFilter.class)
                 .csrf().disable()
                 .cors()
                 .and()
@@ -38,7 +41,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .userInfoEndpoint()
                 .userService(customOAuth2MemberService)
                 .and()
-                .successHandler(new OAuth2AuthenticationSuccessHandler()).and().cors();
+                .successHandler(new OAuth2AuthenticationSuccessHandler())
+                //.and()
+                //.logout()
+                //.logoutUrl("/gologout")
+                //.addLogoutHandler(customLogoutHandler)
+                //.logoutSuccessHandler(new CustomLogoutSuccessHandler())
+                //.permitAll()
+
+                .and().cors();
     }
 
 

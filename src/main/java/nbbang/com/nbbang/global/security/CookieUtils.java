@@ -20,17 +20,6 @@ public class CookieUtils {
         return Optional.empty();
     }
 
-    public static void addResponseCookie(HttpServletResponse response, String token) {
-        ResponseCookie cookie = ResponseCookie.from("access_token", token)
-                .secure(true)
-                .sameSite("none")
-                .maxAge(3600000)
-                .domain("127.0.0.1")
-                .path("/")
-                .build();
-        response.addHeader("Set-Cookie", cookie.toString());
-    }
-
     public static void addResponseCookie(HttpServletResponse response, String name, String value, boolean httpOnly, boolean secure, int maxAge, String sameSite, String domain, String path) {
         ResponseCookie cookie = ResponseCookie.from(name, value)
                 .secure(secure)
@@ -48,6 +37,7 @@ public class CookieUtils {
         if (cookies != null && cookies.length > 0) {
             for (Cookie cookie : cookies) {
                 if (cookie.getName().equals(name)) {
+                    cookie.setHttpOnly(true);
                     cookie.setValue("");
                     cookie.setPath("/");
                     cookie.setMaxAge(0);

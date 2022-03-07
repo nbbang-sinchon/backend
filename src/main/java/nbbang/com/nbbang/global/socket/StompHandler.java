@@ -7,7 +7,6 @@ import nbbang.com.nbbang.domain.chat.service.ChatService;
 import nbbang.com.nbbang.domain.chat.service.ChatSessionService;
 import nbbang.com.nbbang.domain.party.service.PartyMemberService;
 import nbbang.com.nbbang.domain.party.service.PartyService;
-import nbbang.com.nbbang.global.security.jwt.JwtService;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.stomp.StompCommand;
@@ -26,7 +25,7 @@ public class StompHandler implements ChannelInterceptor {
     private final PartyService partyService;
     private final ChatSessionService chatSessionService;
     private final PartyMemberService partyMemberService;
-    private final JwtService jwtService;
+    //private final JwtService jwtService;
 
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
