@@ -12,6 +12,7 @@ import nbbang.com.nbbang.domain.party.service.PartyMemberService;
 import nbbang.com.nbbang.domain.party.service.PartyService;
 import nbbang.com.nbbang.global.interceptor.CurrentMember;
 import nbbang.com.nbbang.global.security.jwt.JwtService;
+import nbbang.com.nbbang.global.validator.PartyMemberValidator;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
@@ -35,24 +36,26 @@ public class StompChannelInterceptor implements ChannelInterceptor {
     private final PartyMemberRepository partyMemberRepository;
     private final PartyMemberService partyMemberService;
     private final SessionPartyGlobalRepository sessionPartyGlobalRepository;
-    private final JwtService jwtService;
     private final SocketSender socketSender;
     private final CurrentMember currentMember;
+    private final PartyMemberValidator partyMemberValidator;
+
 
 
     public StompChannelInterceptor(ChatService chatService, PartyService partyService, MemberService memberService,
                                    PartyMemberRepository partyMemberRepository, PartyMemberService partyMemberService,
                                    SessionPartyGlobalRepository sessionPartyGlobalRepository,
-                                   JwtService jwtService, @Lazy SocketSender socketSender, CurrentMember currentMember) {
+                                   @Lazy SocketSender socketSender, CurrentMember currentMember,
+                                   PartyMemberValidator partyMemberValidator) {
         this.chatService = chatService;
         this.partyService = partyService;
         this.memberService = memberService;
         this.partyMemberRepository = partyMemberRepository;
         this.partyMemberService = partyMemberService;
-        this.jwtService = jwtService;
         this.socketSender = socketSender;
         this.sessionPartyGlobalRepository = sessionPartyGlobalRepository;
         this.currentMember = currentMember;
+        this.partyMemberValidator = partyMemberValidator;
     }
 
     private static final String TOPIC_GLOBAL = "/topic/global";
@@ -71,17 +74,17 @@ public class StompChannelInterceptor implements ChannelInterceptor {
         } else if (StompCommand.SUBSCRIBE == accessor.getCommand()) {
             if(destination.startsWith(TOPIC_GLOBAL))  {
                 Long globalMemberId = Long.valueOf(destination.substring(14));
-                // 스스로가 아니면 거절하는 로직 추가 //
+                //if(currentMember.id()!=globalMemberId){throw new RuntimeException("자신의 소켓만 구독할 수 있습니다. ");}
                 log.info("SUBSCRIBED memberId: {}", globalMemberId);
             }
             else if(destination.startsWith(TOPIC_CHATTING)){
                 Long partyId = Long.valueOf(destination.substring(16));
-                // 파티원이 아니면 거절하는 로직 추가 //
+                //partyMemberValidator.isPartyMember(partyService.findById(partyId),memberService.findById(currentMember.id()));
                 enterChatRoom(attributes, partyId);
                 log.info("SUBSCRIBED chat RoomId: {}", partyId);
             }else if(destination.startsWith(TOPIC_BREAD_BOARD)){
                 Long partyId = Long.valueOf(destination.substring(18));
-                // 파티원이 아니면 거절하는 로직 추가 //
+                //partyMemberValidator.isPartyMember(partyService.findById(partyId),memberService.findById(currentMember.id()));
                 log.info("SUBSCRIBED breadBoard RoomId: {}", partyId);
             }
             else{
