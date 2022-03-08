@@ -42,37 +42,14 @@ public class LoginController {
 
     @PostMapping("/gologout")
     public DefaultResponse logout(HttpServletRequest request, HttpServletResponse response) {
-
-        return DefaultResponse.res(StatusCode.OK, "로그아웃");
-    }
-
-    private void addAccessTokenCookie(HttpServletResponse response, String token) {
-        token = "";
-        CookieUtils.addResponseCookie(response, TOKEN_COOKIE_KEY, token, true, true, 0, "none", "", "/");
-    }
-
-    private void logRequest(HttpServletRequest request) {
-        Enumeration<String> headerNames = request.getHeaderNames();
-
-        System.out.println("=============NEWREQUEST===========");
-        if (headerNames != null) {
-            while (headerNames.hasMoreElements()) {
-                String nextName = headerNames.nextElement();
-                System.out.print(nextName);
-                System.out.println(" : "+request.getHeader(nextName));
-            }
+        String message = "로그아웃 성공";
+        try {
+            Cookie cookie = CookieUtils.getCookie(request, TOKEN_COOKIE_KEY).get();
+            String token = cookie.getValue();
+            logoutService.invalidate(token);
+        } catch (Exception e) {
+            message = "로그아웃 실패";
         }
-        System.out.println("-------------COOKIES--------------");
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie c : cookies) {
-                System.out.println(c.getName());
-            }
-        }
-        else {
-            System.out.println("empty");
-        }
-        System.out.println("----------------------------------");
-        System.out.println("==================================");
+        return DefaultResponse.res(StatusCode.OK ,message);
     }
 }

@@ -2,11 +2,17 @@ package nbbang.com.nbbang.global.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.global.error.ErrorResponse;
 import nbbang.com.nbbang.global.response.StatusCode;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -18,12 +24,15 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.security.Security;
+import java.util.Optional;
 
 import static nbbang.com.nbbang.global.error.GlobalErrorResponseMessage.UNAUTHORIZED_ERROR;
 import static nbbang.com.nbbang.global.security.RequestLogUtils.logRequest;
 import static nbbang.com.nbbang.global.security.SecurityPolicy.TOKEN_COOKIE_KEY;
 import static org.springframework.security.web.context.HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
@@ -31,19 +40,55 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     private TokenProvider tokenProvider = new TokenProvider();
     private final LogoutService logoutService;
 
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         logRequest(request);
         try {
-            processJwtFromRequest(request);
-            filterChain.doFilter(request, response);
+            String token = getJwtFromRequest(request);
+            if (isValid(token) && !isLogout(token)) {
+                processAuthentication(token, request);
+                log.info("Successfully Authenticated!");
+                filterChain.doFilter(request, response);
+            } else throw new RuntimeException();
         } catch (Exception e) {
-            //response.sendError(StatusCode.UNAUTHORIZED, UNAUTHORIZED_ERROR);
+            log.error("Failed to authenticate");
+            response.sendError(401, "error");
+            /*response.setContentType("application/json");
             PrintWriter writer = response.getWriter();
             ObjectMapper om = new ObjectMapper();
             writer.print(om.writeValueAsString(ErrorResponse.res(StatusCode.UNAUTHORIZED, UNAUTHORIZED_ERROR, null)));
+            filterChain.doFilter(request, response);*/
         }
     }
+
+    private void processAuthentication(String token, HttpServletRequest request) {
+        Long memberId = tokenProvider.getUserIdFromToken(token);
+        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(memberId.toString(), null);
+        SecurityContext sc = SecurityContextHolder.getContext();
+        sc.setAuthentication(auth);
+        HttpSession session = request.getSession(true);
+        session.setAttribute(SPRING_SECURITY_CONTEXT_KEY, sc);
+    }
+
+    private String getJwtFromRequest(HttpServletRequest request) {
+        try {
+            Cookie cookie = CookieUtils.getCookie(request, TOKEN_COOKIE_KEY).get();
+            String token = cookie.getValue();
+            return token;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private boolean isValid(String token) {
+        return tokenProvider.validateToken(token);
+    }
+
+    private boolean isLogout(String token) {
+        return logoutService.isInvalid(token);
+    }
+
 
     private String processJwtFromRequest(HttpServletRequest request) {
         try {
@@ -51,11 +96,10 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             String token = cookie.getValue();
             String path = request.getServletPath();
             if (logoutService.isInvalid(token)) {
-                System.out.println("token is already invalidated");
+                log.error("이미 로그아웃한 유저입니다.");
                 throw new RuntimeException();
             }
             if (tokenProvider.validateToken(token)) {
-                System.out.println(path);
                 if (path.startsWith("/gologout")) {
                     doLogout(token);
                     throw new RuntimeException();
