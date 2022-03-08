@@ -4,7 +4,6 @@ package nbbang.com.nbbang.domain.party.repository;
 import com.mysema.commons.lang.Pair;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import nbbang.com.nbbang.global.socket.MapUtil;
 import org.springframework.stereotype.Repository;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -15,10 +14,7 @@ import java.util.concurrent.ConcurrentMap;
 @Slf4j
 public class SessionPartyGlobalRepository {
 
-    private final MapUtil mapUtil;
-
     private static ConcurrentMap<Pair<Long, Long>, Integer> sessionPartyMap = new ConcurrentHashMap<>();
-    private static final String PARTY_EXISTS = "요청한 파티가 이미 저장되어 있습니다.";
 
     public void subscribe(Long partyId, Long memberId){
         Pair<Long, Long> pair = new Pair<>(partyId, memberId);
@@ -41,6 +37,5 @@ public class SessionPartyGlobalRepository {
         long count = sessionPartyMap.entrySet().stream().filter(entry -> entry.getKey().getFirst().equals(partyId) && entry.getValue() > 0).count();
         return Integer.valueOf((int) count);
     }
-
 
 }

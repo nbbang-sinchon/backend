@@ -31,5 +31,4 @@ public class StompWebSocketMessageBrokerConfig implements WebSocketMessageBroker
     public void configureClientInboundChannel(ChannelRegistration registration) {
         registration.interceptors(stompChannelInterceptor);
     }
-
 }
