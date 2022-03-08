@@ -104,11 +104,21 @@ class MyPartiesControllerTest {
         assertThat(result.getParties().get(0).getNotReadNumber()).isEqualTo(2);
 
         stompChannelInterceptor.enterChatRoom(member1Attributes, partyId); // 1번 파티 입장
-        stompChannelInterceptor.exitChatRoom(member1Attributes, partyId); // 1번 파티 나감
 
         DefaultResponse res2 = controllerTestUtil.expectDefaultResponseObject(get("/members/parties/on"));
         MyPartyListResponseDto result2 = controllerTestUtil.convert(res2.getData(), MyPartyListResponseDto.class);
         assertThat(result2.getParties().get(0).getNotReadNumber()).isEqualTo(0);
+
+        Long messageId4 = messageService.send(partyId, saveMember3.getId(), "hoho 3");
+
+
+        DefaultResponse res3 = controllerTestUtil.expectDefaultResponseObject(get("/members/parties/on"));
+        MyPartyListResponseDto result3 = controllerTestUtil.convert(res3.getData(), MyPartyListResponseDto.class);
+        assertThat(result3.getParties().get(0).getNotReadNumber()).isEqualTo(0);
+
+
+        stompChannelInterceptor.exitChatRoom(member1Attributes, partyId); // 1번 파티 나감
+
 
     }
 

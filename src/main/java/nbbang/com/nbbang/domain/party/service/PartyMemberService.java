@@ -15,11 +15,13 @@ import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.domain.PartyStatus;
 import nbbang.com.nbbang.domain.party.exception.PartyExitForbiddenException;
 import nbbang.com.nbbang.domain.party.exception.PartyJoinException;
+import nbbang.com.nbbang.domain.party.repository.SessionPartyGlobalRepository;
 import nbbang.com.nbbang.global.error.exception.NotPartyMemberException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -32,6 +34,7 @@ public class PartyMemberService {
     private final PartyMemberRepository partyMemberRepository;
     private final MessageService messageService;
     private final MessageRepository messageRepository;
+    private final SessionPartyGlobalRepository sessionPartyGlobalRepository;
 
     public boolean isPartyOwnerOrMember(Party party, Member member) {
         return Optional.ofNullable(party.getOwner()).equals(member) || party.getPartyMembers().stream().anyMatch(mp -> mp.getMember().equals(member));
@@ -101,10 +104,15 @@ public class PartyMemberService {
 
 
     public List getNotReadNumber(List<Party> parties, Long memberId) {
-        List<Integer> notReadNumber = parties.stream().map(party -> messageRepository
-                .countByPartyIdAndIdGreaterThan(party.getId(), findLastReadMessage(party.getId(), memberId).getId())).collect(Collectors.toList());
-
-        return notReadNumber;
+        List<Integer> notReadNumbers = new ArrayList<>();
+        for (Party party : parties) {
+            if(sessionPartyGlobalRepository.isActive(party.getId(), memberId)){
+                notReadNumbers.add(0);
+            }
+            else{
+                notReadNumbers.add(messageRepository.countByPartyIdAndIdGreaterThan(party.getId(), findLastReadMessage(party.getId(), memberId).getId()));
+            }
+        }
+        return notReadNumbers;
     }
-
 }

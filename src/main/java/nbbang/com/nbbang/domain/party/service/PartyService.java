@@ -139,7 +139,7 @@ public class PartyService {
 
     public Message findLastMessage(Long partyId) {
         Message lastMessage = messageRepository.findLastMessage(partyId);
-        return lastMessage;
+        return Optional.ofNullable(lastMessage).orElse(Message.builder().id(0L).build());
     }
 
 
@@ -154,11 +154,4 @@ public class PartyService {
         }
     }
 
-
-    public Integer getNotReadMessageNumber(Long partyId, Long memberId){
-        PartyMember partyMember = partyMemberRepository.findByMemberIdAndPartyId(memberId, partyId);
-        Long lastReadMessageId = (Optional.ofNullable(partyMember.getLastReadMessage()).orElse(Message.builder().id(0L).build())).getId();
-        long count = messageRepository.countByPartyIdAndIdGreaterThan(partyId, lastReadMessageId);
-        return (int) count;
-    }
 }
