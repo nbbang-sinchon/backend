@@ -14,6 +14,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static nbbang.com.nbbang.domain.member.dto.Place.*;
 import static org.assertj.core.api.Assertions.*;
 
@@ -44,28 +47,32 @@ class ChatReadTest {
 
         join(partyId, saveMember2.getId());
         join(partyId, saveMember3.getId());
-        String session1 = "session1";
-        String session2 = "session2";
-        String session3 = "session3";
+
 
         //when
-
+        Map<String, Object> member1Attributes = new HashMap<>();
+        Map<String, Object> member2Attributes = new HashMap<>();
+        Map<String, Object> member3Attributes = new HashMap<>();
         //
-        stompChannelInterceptor.enterChatRoom(partyId, null); // 1번 파티 입장
+        stompChannelInterceptor.connect(member1Attributes, saveMember1.getId());
+        stompChannelInterceptor.connect(member2Attributes, saveMember2.getId());
+        stompChannelInterceptor.connect(member3Attributes, saveMember3.getId());
+
+        stompChannelInterceptor.enterChatRoom(member1Attributes, partyId); // 1번 파티 입장
         Long messageId1 = messageService.send(partyId, saveMember1.getId(), "hello");
         assertThat(messageService.findById(messageId1).getReadNumber()).isEqualTo(1);
 
-        stompChannelInterceptor.enterChatRoom(partyId, null); // 2번 파티 입장
+        stompChannelInterceptor.enterChatRoom(member2Attributes, partyId); // 2번 파티 입장
         assertThat(messageService.findById(messageId1).getReadNumber()).isEqualTo(2);
 
         Long messageId2 = messageService.send(partyId, saveMember2.getId(), "hello here 2");
         assertThat(messageService.findById(messageId1).getReadNumber()).isEqualTo(2);
         assertThat(messageService.findById(messageId2).getReadNumber()).isEqualTo(2);
 
-        stompChannelInterceptor.exitChatRoom(partyId, null); // 1번 파티 나감
+        stompChannelInterceptor.exitChatRoom(member1Attributes, partyId); // 1번 파티 나감
         assertThat(messageService.findById(messageId1).getReadNumber()).isEqualTo(2);
 
-        stompChannelInterceptor.enterChatRoom(partyId, null); // 3번 파티 입장
+        stompChannelInterceptor.enterChatRoom(member3Attributes, partyId); // 3번 파티 입장
 
         assertThat(messageService.findById(messageId1).getReadNumber()).isEqualTo(3);
         assertThat(messageService.findById(messageId2).getReadNumber()).isEqualTo(3);
@@ -73,7 +80,7 @@ class ChatReadTest {
         Long messageId3 = messageService.send(partyId, saveMember3.getId(), "hello here 3");
         assertThat(messageService.findById(messageId3).getReadNumber()).isEqualTo(2);
 
-        stompChannelInterceptor.enterChatRoom(partyId, null); // 1번 파티 입장
+        stompChannelInterceptor.enterChatRoom(member1Attributes, partyId); // 1번 파티 입장
         assertThat(messageService.findById(messageId1).getReadNumber()).isEqualTo(3);
         assertThat(messageService.findById(messageId2).getReadNumber()).isEqualTo(3);
         assertThat(messageService.findById(messageId3).getReadNumber()).isEqualTo(3);

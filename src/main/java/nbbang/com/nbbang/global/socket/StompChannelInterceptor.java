@@ -65,19 +65,19 @@ public class StompChannelInterceptor implements ChannelInterceptor {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
         Map<String, Object> attributes = accessor.getSessionAttributes();
         String destination = accessor.getDestination();
-        attributes.put("status", "none");
         if (StompCommand.CONNECT == accessor.getCommand()) {
-            attributes.put("memberId", 1L); // current member로 수정
+            Long memberId = 1L; // current member로 수정
+            connect(attributes, memberId);
         } else if (StompCommand.SUBSCRIBE == accessor.getCommand()) {
             if(destination.startsWith(TOPIC_GLOBAL))  {
-                Long memberId = Long.valueOf(destination.substring(14));
+                Long globalMemberId = Long.valueOf(destination.substring(14));
                 // 스스로가 아니면 거절하는 로직 추가 //
-                log.info("SUBSCRIBED memberId: {}", memberId);
+                log.info("SUBSCRIBED memberId: {}", globalMemberId);
             }
             else if(destination.startsWith(TOPIC_CHATTING)){
                 Long partyId = Long.valueOf(destination.substring(16));
                 // 파티원이 아니면 거절하는 로직 추가 //
-                enterChatRoom(partyId,attributes);
+                enterChatRoom(attributes, partyId);
                 log.info("SUBSCRIBED chat RoomId: {}", partyId);
             }else if(destination.startsWith(TOPIC_BREAD_BOARD)){
                 Long partyId = Long.valueOf(destination.substring(18));
@@ -90,7 +90,7 @@ public class StompChannelInterceptor implements ChannelInterceptor {
         } else if (StompCommand.UNSUBSCRIBE == accessor.getCommand()) {
             if(destination.startsWith(TOPIC_CHATTING)){
                 Long partyId = Long.valueOf(destination.substring(18));
-                exitChatRoom(partyId, attributes);
+                exitChatRoom(attributes, partyId);
                 log.info("UNSUBSCRIBE RoomId: {}", partyId);
             }
             else{
@@ -102,7 +102,12 @@ public class StompChannelInterceptor implements ChannelInterceptor {
         return message;
     }
 
-    public void enterChatRoom(Long partyId, Map<String, Object> attributes){
+    public void connect(Map<String, Object> attributes, Long memberId) {
+        attributes.put("status", "none");
+        attributes.put("memberId",memberId);
+    }
+
+    public void enterChatRoom(Map<String, Object> attributes, Long partyId){
         attributes.put("partyId", partyId);
         attributes.put("status", "subscribe");
         Long memberId = (Long) attributes.get("memberId");
@@ -116,9 +121,9 @@ public class StompChannelInterceptor implements ChannelInterceptor {
         socketSender.sendChatting(partyId, chatReadSocketDto);
     }
 
-    public void exitChatRoom(Long partyId, Map<String, Object> attributes) {
+    public void exitChatRoom(Map<String, Object> attributes, Long partyId) {
         Long memberId = (Long) attributes.get("memberId");
-        sessionPartyGlobalRepository.unsubscribe(memberId, partyId);
+        sessionPartyGlobalRepository.unsubscribe(partyId, memberId);
         attributes.put("status", "unsubscribe");
         PartyMember partyMember = partyMemberRepository.findByMemberIdAndPartyId(memberId, partyId);
         nbbang.com.nbbang.domain.chat.domain.Message currentLastMessage = partyService.findLastMessage(partyId);
@@ -128,7 +133,7 @@ public class StompChannelInterceptor implements ChannelInterceptor {
     public void exitChatRoomIfExist(Map<String, Object> attributes) {
         if(attributes.get("status").equals("subscribe")){
             Long partyId = (Long) attributes.get("partyId");
-            exitChatRoom(partyId, attributes);
+            exitChatRoom(attributes, partyId);
         }
     }
 }
