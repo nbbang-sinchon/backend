@@ -36,7 +36,6 @@ public class PartyService {
     private final MemberService memberService;
     private final PartyMemberService partyMemberService;
     private final MessageRepository messageRepository;
-    private final SessionPartyService sessionPartyService;
 
     @Transactional
     public Party create(Party party, Long memberId, List<String> hashtagContents) {

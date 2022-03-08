@@ -1,16 +1,13 @@
 package nbbang.com.nbbang.domain.chat.service;
 
 import lombok.extern.slf4j.Slf4j;
-import nbbang.com.nbbang.domain.chat.controller.ChatRoomController;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.repository.MemberRepository;
 import nbbang.com.nbbang.domain.member.service.MemberService;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.service.PartyMemberService;
 import nbbang.com.nbbang.domain.party.service.PartyService;
-import nbbang.com.nbbang.global.socket.Session.SessionMemberService;
 import nbbang.com.nbbang.global.socket.StompChannelInterceptor;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,16 +22,12 @@ import static org.assertj.core.api.Assertions.*;
 @ActiveProfiles("test")
 @Slf4j
 class ChatReadTest {
-
-    @Autowired ChatService chatService;
     @Autowired PartyService partyService;
     @Autowired MemberService memberService;
     @Autowired MemberRepository memberRepository;
     @Autowired PartyMemberService partyMemberService;
     @Autowired MessageService messageService;
-    @Autowired ChatRoomController chatRoomController;
     @Autowired StompChannelInterceptor stompChannelInterceptor;
-    @Autowired SessionMemberService sessionMemberService;
 
     @Test
     void readMessageTest() {
@@ -56,26 +49,23 @@ class ChatReadTest {
         String session3 = "session3";
 
         //when
-        sessionMemberService.addSession(session1, saveMember1.getId());
-        sessionMemberService.addSession(session2, saveMember2.getId());
-        sessionMemberService.addSession(session3, saveMember3.getId());
 
         //
-        stompChannelInterceptor.enterChatRoom(session1, partyId); // 1번 파티 입장
+        stompChannelInterceptor.enterChatRoom(partyId, null); // 1번 파티 입장
         Long messageId1 = messageService.send(partyId, saveMember1.getId(), "hello");
         assertThat(messageService.findById(messageId1).getReadNumber()).isEqualTo(1);
 
-        stompChannelInterceptor.enterChatRoom(session2, partyId); // 2번 파티 입장
+        stompChannelInterceptor.enterChatRoom(partyId, null); // 2번 파티 입장
         assertThat(messageService.findById(messageId1).getReadNumber()).isEqualTo(2);
 
         Long messageId2 = messageService.send(partyId, saveMember2.getId(), "hello here 2");
         assertThat(messageService.findById(messageId1).getReadNumber()).isEqualTo(2);
         assertThat(messageService.findById(messageId2).getReadNumber()).isEqualTo(2);
 
-        stompChannelInterceptor.exitChatRoom(session1, partyId); // 1번 파티 나감
+        stompChannelInterceptor.exitChatRoom(partyId, null); // 1번 파티 나감
         assertThat(messageService.findById(messageId1).getReadNumber()).isEqualTo(2);
 
-        stompChannelInterceptor.enterChatRoom(session3, partyId); // 3번 파티 입장
+        stompChannelInterceptor.enterChatRoom(partyId, null); // 3번 파티 입장
 
         assertThat(messageService.findById(messageId1).getReadNumber()).isEqualTo(3);
         assertThat(messageService.findById(messageId2).getReadNumber()).isEqualTo(3);
@@ -83,7 +73,7 @@ class ChatReadTest {
         Long messageId3 = messageService.send(partyId, saveMember3.getId(), "hello here 3");
         assertThat(messageService.findById(messageId3).getReadNumber()).isEqualTo(2);
 
-        stompChannelInterceptor.enterChatRoom(session1, partyId); // 1번 파티 입장
+        stompChannelInterceptor.enterChatRoom(partyId, null); // 1번 파티 입장
         assertThat(messageService.findById(messageId1).getReadNumber()).isEqualTo(3);
         assertThat(messageService.findById(messageId2).getReadNumber()).isEqualTo(3);
         assertThat(messageService.findById(messageId3).getReadNumber()).isEqualTo(3);
