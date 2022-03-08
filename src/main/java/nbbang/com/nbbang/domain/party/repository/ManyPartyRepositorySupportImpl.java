@@ -15,6 +15,8 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
+import static nbbang.com.nbbang.domain.bbangpan.domain.QPartyMember.partyMember;
+
 @RequiredArgsConstructor
 public class ManyPartyRepositorySupportImpl implements ManyPartyRepositorySupport {
 
@@ -67,7 +69,9 @@ public class ManyPartyRepositorySupportImpl implements ManyPartyRepositorySuppor
 
         // 자신이 속한 파티 필터링을 제공합니다
         if (isMyParties) {
-            q.where(isMemberOfParty(memberId));
+            q.where(isMemberOfParty(memberId))
+                    .join(party.partyMembers, partyMember).fetchJoin()
+                    .where(partyMember.member.id.eq(memberId));
         }
 
         // 표시하지 않을 파티를 제공합니다
@@ -152,7 +156,7 @@ public class ManyPartyRepositorySupportImpl implements ManyPartyRepositorySuppor
 
     private BooleanBuilder isMemberOfParty(Long memberId) {
         QParty party = QParty.party;
-        QPartyMember mp = QPartyMember.partyMember;
+        QPartyMember mp = partyMember;
         BooleanBuilder builder = new BooleanBuilder();
         builder.or(party.owner.id.eq(memberId));
         builder.or(party.partyMembers.any().member.id.eq(memberId));

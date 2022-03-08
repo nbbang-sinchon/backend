@@ -18,4 +18,6 @@ public interface MessageRepository extends JpaRepository<Message, Long>, Message
 
     Long countByPartyId(Long partyId);
 
+    Integer countByPartyIdAndIdGreaterThan(Long partyId, Long id);
+
 }

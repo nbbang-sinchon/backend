@@ -20,7 +20,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.Field;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly=true)
@@ -90,6 +92,19 @@ public class PartyMemberService {
     @Transactional
     public void updateLastReadMessage(PartyMember partyMember, Message currentLastMessage) {
         partyMember.changeLastReadMessage(currentLastMessage);
+    }
+
+    public Message findLastReadMessage(Long partyId, Long memberId) {
+        PartyMember partyMember = partyMemberRepository.findByMemberIdAndPartyId(memberId, partyId);
+        return Optional.ofNullable(partyMember.getLastReadMessage()).orElse(Message.builder().id(0L).build());
+    }
+
+
+    public List getNotReadNumber(List<Party> parties, Long memberId) {
+        List<Integer> notReadNumber = parties.stream().map(party -> messageRepository
+                .countByPartyIdAndIdGreaterThan(party.getId(), findLastReadMessage(party.getId(), memberId).getId())).collect(Collectors.toList());
+
+        return notReadNumber;
     }
 
 }

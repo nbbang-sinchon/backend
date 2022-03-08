@@ -15,6 +15,7 @@ import nbbang.com.nbbang.domain.party.dto.my.MyClosedPartyListRequestDto;
 import nbbang.com.nbbang.domain.party.dto.my.MyOnPartyListRequestDto;
 import nbbang.com.nbbang.domain.party.dto.my.MyPartyListResponseDto;
 import nbbang.com.nbbang.domain.party.service.ManyPartyService;
+import nbbang.com.nbbang.domain.party.service.PartyMemberService;
 import nbbang.com.nbbang.global.error.exception.CustomIllegalArgumentException;
 import nbbang.com.nbbang.global.interceptor.CurrentMember;
 import nbbang.com.nbbang.global.response.DefaultResponse;
@@ -23,6 +24,8 @@ import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Tag(name = "MyParties", description = "나의 파티 api 로그인을 하지 않은 경우 ID=1 인 회원(루피)으로 표시됩니다.")
 @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(mediaType = "application/json"))
@@ -33,6 +36,7 @@ import org.springframework.web.bind.annotation.*;
 public class MyPartiesController {
 
     private final ManyPartyService manyPartyService;
+    private final PartyMemberService partyMemberService;
     private final CurrentMember currentMember;
 
     @Operation(summary = "나의 파티", description = "자신이 속한 파티 목록을 조회합니다.")
@@ -54,7 +58,8 @@ public class MyPartiesController {
             throw new CustomIllegalArgumentException(ManyPartyResponseMessage.ILLEGAL_PARTY_LIST_REQUEST, bindingResult);
         }
         Page<Party> res = manyPartyService.findAllParties(requestDto.createPageRequest(), true, requestDto.createPartyListRequestFilterDto(), requestDto.getCursorId(), currentMember.id(), null);
-        return DefaultResponse.res(StatusCode.OK, MemberResponseMessage.READ_MEMBER, MyPartyListResponseDto.createFromEntity(res.getContent(), currentMember.id()));
+        List<Integer> notReadNumbers = partyMemberService.getNotReadNumber(res.getContent(), currentMember.id());
+        return DefaultResponse.res(StatusCode.OK, MemberResponseMessage.READ_MEMBER, MyPartyListResponseDto.createFromEntity(res.getContent(), currentMember.id(), notReadNumbers));
     }
 
     @Operation(summary = "나의 종료된 파티", description = "자신이 속한 종료된 파티 목록을 조회합니다.")

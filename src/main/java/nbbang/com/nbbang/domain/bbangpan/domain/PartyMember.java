@@ -27,7 +27,7 @@ public class PartyMember {
 
     @OneToOne
     @JoinColumn(name = "message_id")
-    private Message lastReadMessage;
+    private Message lastReadMessage = Message.builder().build();
 
     @ManyToOne
     @JoinColumn(name = "member_id")

@@ -1,6 +1,7 @@
 package nbbang.com.nbbang.domain.party.service;
 
 import lombok.RequiredArgsConstructor;
+import nbbang.com.nbbang.domain.chat.repository.MessageRepository;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.dto.many.PartyFindRequestFilterDto;
 import nbbang.com.nbbang.domain.party.dto.many.PartyListRequestFilterDto;
@@ -17,9 +18,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ManyPartyService {
     private final ManyPartyRepository manyPartyRepository;
+    private final MessageRepository messageRepository;
 
     public Page<Party> findAllParties(Pageable pageable, Boolean isMyParties, PartyListRequestFilterDto filter, Long cursorId, Long memberId, List<String> hashtags, Long ... partyId) {
         return manyPartyRepository.findAllParties(pageable, isMyParties, filter, cursorId, memberId, hashtags, partyId);
     }
-    
 }

@@ -1,6 +1,7 @@
 package nbbang.com.nbbang.domain.party.service;
 
 import lombok.RequiredArgsConstructor;
+import nbbang.com.nbbang.domain.bbangpan.domain.PartyMember;
 import nbbang.com.nbbang.domain.bbangpan.repository.PartyMemberRepository;
 import nbbang.com.nbbang.domain.chat.domain.Message;
 import nbbang.com.nbbang.domain.chat.repository.MessageRepository;
@@ -32,7 +33,7 @@ public class PartyService {
     private final PartyRepository partyRepository;
     private final PartyHashtagRepository partyHashtagRepository;
     private final HashtagService hashtagService;
-    private final PartyMemberRepository memberPartyRepository;
+    private final PartyMemberRepository partyMemberRepository;
     private final MemberService memberService;
     private final PartyMemberService partyMemberService;
     private final MessageRepository messageRepository;
@@ -153,4 +154,11 @@ public class PartyService {
         }
     }
 
+
+    public Integer getNotReadMessageNumber(Long partyId, Long memberId){
+        PartyMember partyMember = partyMemberRepository.findByMemberIdAndPartyId(memberId, partyId);
+        Long lastReadMessageId = (Optional.ofNullable(partyMember.getLastReadMessage()).orElse(Message.builder().id(0L).build())).getId();
+        long count = messageRepository.countByPartyIdAndIdGreaterThan(partyId, lastReadMessageId);
+        return (int) count;
+    }
 }
