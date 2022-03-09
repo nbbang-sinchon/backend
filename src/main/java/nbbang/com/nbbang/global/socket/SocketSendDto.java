@@ -9,6 +9,6 @@ public class SocketSendDto {
     private String type;
     private Object data;
     public static SocketSendDto createSocketSendDto(String type, Object data){
-        return SocketSendDto.builder().data(data).build();
+        return SocketSendDto.builder().type(type).data(data).build();
     }
 }

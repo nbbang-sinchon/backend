@@ -7,35 +7,75 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AccessLevel;
+import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import nbbang.com.nbbang.domain.bbangpan.dto.BbangpanResponseDto;
+import nbbang.com.nbbang.domain.bbangpan.dto.socket.PartyFieldChangeSocketDto;
+import nbbang.com.nbbang.domain.bbangpan.dto.socket.PartyMemberFieldChangeSocketDto;
+import nbbang.com.nbbang.domain.chat.domain.Message;
 import nbbang.com.nbbang.domain.chat.dto.ChatReadSocketDto;
+import nbbang.com.nbbang.domain.chat.dto.message.ChatSendRequestDto;
 import nbbang.com.nbbang.domain.chat.dto.message.ChatSendResponseDto;
+import nbbang.com.nbbang.domain.chat.service.MessageService;
+import nbbang.com.nbbang.domain.party.domain.Party;
+import nbbang.com.nbbang.domain.party.service.PartyService;
+import nbbang.com.nbbang.global.interceptor.CurrentMember;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "ChatSocketDevelop", description = "채팅방의 소켓 관련된 API입니다.")
+import static nbbang.com.nbbang.global.socket.SocketDestination.BREAD_BOARD;
+import static nbbang.com.nbbang.global.socket.SocketDestination.CHATTING;
+
+@Tag(name = "SocketDevelop", description = "소켓 관련된 API입니다.")
 @NoArgsConstructor(access = AccessLevel.PRIVATE) // ONLY FOR SWAGGER. Don't do anything for Logic.
 @RestController
+@RequestMapping("socket/develop")
 public class SocketAPI {
+    @Autowired
+    MessageService messageService;
+    @Autowired
+    CurrentMember currentMember;
+    @Autowired
+    PartyService partyService;
 
-    @Operation(summary = "[Socket] 채팅 메시지 전송", description = "다른 사람이 채팅 메시지를 전송하면, 채팅방 내의 유저들이 받는 소켓입니다.")
+    @Operation(summary = "[CHATTING] 채팅 메시지 전송", description = "다른 사람이 채팅 메시지를 전송하면, 채팅방 내의 유저들이 받는 소켓입니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ChatSendResponseDto.class)))
-    @PostMapping("/chats/develop")
-    public void socketEmitApi(){
+    @PostMapping("/chatting")
+    public SocketSendDto socketEmitApi(@RequestBody ChatSendRequestDto chatSendRequestDto){
+        Long messageId = messageService.send(1L, 1L, chatSendRequestDto.getContent());
+        Message message = messageService.findById(messageId);
+        ChatSendResponseDto data = ChatSendResponseDto.createByMessage(message, currentMember.id());
+        return SocketSendDto.createSocketSendDto(CHATTING, data);
     }
 
-    @Operation(summary = "[Socket] 채팅 읽음", description = "다른 사람이 채팅방에 들어와 메시지를 읽으면, 채팅방 내의 유저들이 받는 소켓입니다. lastReadMessageId보다 큰 id를 갖는 메시지들은 전부 읽지 않은 사람 수를 -1 해주세요.")
+    @Operation(summary = "[CHATTING] 채팅 읽음", description = "다른 사람이 채팅방에 들어와 메시지를 읽으면, 채팅방 내의 유저들이 받는 소켓입니다. lastReadMessageId보다 큰 id를 갖는 메시지들은 전부 읽지 않은 사람 수를 -1 해주세요.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ChatReadSocketDto.class)))
-    @PostMapping("/chats/develop/read")
-    public void readMessage(){
+    @PostMapping("/chatting/reading")
+    public SocketSendDto readMessage(){
+        Long lastReadMessageId = 5L;
+        ChatReadSocketDto chatReadSocketDto = ChatReadSocketDto.builder().lastReadMessageId(lastReadMessageId).build();
+        return SocketSendDto.createSocketSendDto("reading", chatReadSocketDto);
     }
 
-    @Operation(summary = "[Socket] 빵판", description = "빵판과 관련된 소켓입니다.")
+    @Operation(summary = "[BREAD-BOARD] 빵판", description = "빵판과 관련된 소켓입니다.")
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = BbangpanResponseDto.class)))
+    @PostMapping("/bread-board")
+    public SocketSendDto breadBoard(){
+        Party party = partyService.findById(1L);
+        BbangpanResponseDto bbangpanResponseDto = BbangpanResponseDto.createDtoByParty(party);
+        return SocketSendDto.createSocketSendDto(BREAD_BOARD, bbangpanResponseDto);
+    }
+
+    @Operation(summary = "[GLOBAL] 알람", description = "알람과 관련된 소켓입니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = BbangpanResponseDto.class)))
     @PostMapping("/bread-board/develop")
-    public void breadBoard(){
+    public void global(){
     }
+
 
 
 }

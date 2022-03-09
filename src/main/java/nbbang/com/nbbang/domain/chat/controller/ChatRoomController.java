@@ -43,8 +43,6 @@ public class ChatRoomController {
     private final PartyService partyService;
     private final PartyRepository partyRepository;
     private final CurrentMember currentMember;
-    private final SocketSender socketSender;
-    private final MemberService memberService;
 
     @Operation(summary = "채팅방 조회", description = "채팅방을 파티 id 로 조회합니다. ")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ChatResponseDto.class)))
