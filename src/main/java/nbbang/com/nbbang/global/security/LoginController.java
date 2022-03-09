@@ -40,6 +40,7 @@ public class LoginController {
         log.info("kakao login");
     }
 
+    @Operation(summary = "로그아웃", description = "로그아웃합니다.")
     @PostMapping("/gologout")
     public DefaultResponse logout(HttpServletRequest request, HttpServletResponse response) {
         String message = "로그아웃 성공";
