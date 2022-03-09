@@ -25,7 +25,8 @@ public class Message implements Comparable<Message> {
     @Column(updatable = false)
     private LocalDateTime createTime;
 
-    private Integer readNumber;
+    @Builder.Default
+    private Integer readNumber=0;
 
     @Column(columnDefinition = "TEXT")
     private String content;
@@ -43,12 +44,23 @@ public class Message implements Comparable<Message> {
 
     protected Message() {}
 
+    public static Message createMessage(Member sender, Party party, String content, MessageType type, Integer readNumber) {
+        return Message.builder()
+                .sender(sender)
+                .party(party)
+                .content(content)
+                .type(type)
+                .readNumber(readNumber)
+                .build();
+    }
+
     public static Message createMessage(Member member, Party party, String content, LocalDateTime createTime) {
         return Message.builder()
                 .sender(member)
                 .party(party)
                 .content(content)
                 .createTime(createTime)
+                .type(MessageType.CHAT)
                 .build();
     }
 

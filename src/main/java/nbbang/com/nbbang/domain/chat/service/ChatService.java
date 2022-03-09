@@ -2,6 +2,7 @@ package nbbang.com.nbbang.domain.chat.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import nbbang.com.nbbang.domain.bbangpan.domain.BreadBoardPartyMemberService;
 import nbbang.com.nbbang.domain.bbangpan.domain.PartyMember;
 import nbbang.com.nbbang.domain.bbangpan.repository.PartyMemberRepository;
 import nbbang.com.nbbang.domain.chat.controller.ChatResponseMessage;
@@ -33,6 +34,7 @@ public class ChatService {
     private final PartyRepository partyRepository;
     private final PartyService partyService;
     private final PartyMemberRepository partyMemberRepository;
+    private final BreadBoardPartyMemberService breadBoardPartyMemberService;
 
     /*public Long findLastMessageId(Long partyId) {
         return messageRepository.findLastMessageId(partyId);
@@ -144,17 +146,19 @@ public class ChatService {
 
     @Transactional
     public Long readMessage(Long partyId, Long memberId) {
-        log.info("*****************");
+
         PartyMember partyMember = partyMemberRepository.findByMemberIdAndPartyId(memberId, partyId);
-        log.info("partyMemberId: {}", partyMember.getId());
-        log.info("*****************");
-        Long lastReadMessageId = (Optional.ofNullable(partyMember.getLastReadMessage()).orElse(Message.builder().id(-1L).build())).getId();
+
+        Long lastReadMessageId = ((Optional.ofNullable(partyMember.getLastReadMessage())).orElse(Message.builder().id(-1L).build())).getId();
         messageRepository.bulkReadNumberPlus(lastReadMessageId, partyId);
+
+        PartyMember reFoundPartyMember = partyMemberRepository.findByMemberIdAndPartyId(memberId, partyId);
         Message currentLastMessage = partyService.findLastMessage(partyId);
-        partyMember.changeLastReadMessage(currentLastMessage);
+        reFoundPartyMember.changeLastReadMessage(currentLastMessage);
         return lastReadMessageId;
     }
 
+    @Transactional
     public void exitChatRoom(Long partyId, Long memberId) {
         PartyMember partyMember = partyMemberRepository.findByMemberIdAndPartyId(memberId, partyId);
         Message currentLastMessage = partyService.findLastMessage(partyId);

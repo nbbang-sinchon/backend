@@ -48,6 +48,7 @@ public class PartyService {
         Member owner = memberService.findById(memberId);
         partyMemberService.joinParty(savedParty, owner);
         party.addOwner(owner);
+
         return savedParty;
     }
 
@@ -127,11 +128,6 @@ public class PartyService {
         PartyHashtag partyHashtag = party.deletePartyHashtag(content);
         partyHashtagRepository.delete(partyHashtag);
         hashtagService.deleteIfNotReferred(partyHashtag.getHashtag());
-    }
-
-    @Transactional
-    public void updateActiveNumber(Long partyId, Integer cnt){
-        findById(partyId).updateActiveNumber(cnt);
     }
 
     public Integer countPartyMemberNumber(Long partyId) {

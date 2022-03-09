@@ -29,12 +29,11 @@ public class ChatSendResponseDto {
     private ChatSendResponseSenderDto sender;
 
     public static ChatSendResponseDto createByMessage(Message message, Long memberId) {
-        // Integer partyMemberNumber = partyService.countPartyMemberNumber(partyId);
+        Integer partyMemberNumber =message.getParty().countPartyMemberNumber();
         return ChatSendResponseDto.builder()
                 .id(message.getId())
                 .createTime(message.getCreateTime())
-                //.notReadNumber(partyMembernumber - message.getReadNumber())
-                .notReadNumber(0)
+                .notReadNumber(partyMemberNumber - message.getReadNumber())
                 .type(message.getType()!=null?message.getType():MessageType.CHAT)
                 .content(message.getContent())
                 .sender(message.getSender()!=null?

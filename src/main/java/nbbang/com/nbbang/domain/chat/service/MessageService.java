@@ -9,7 +9,7 @@ import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.service.MemberService;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.repository.PartyRepository;
-import nbbang.com.nbbang.domain.party.service.PartyService;
+import nbbang.com.nbbang.domain.party.repository.SessionPartyGlobalRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
@@ -26,15 +26,14 @@ public class MessageService {
     private final MessageRepository messageRepository;
     private final PartyRepository partyRepository;
     private final MemberService memberService;
+    private final SessionPartyGlobalRepository sessionPartyGlobalRepository;
 
     @Transactional
     public Long send(Long partyId, Long senderId, String content) {
         Party party = partyRepository.findById(partyId).orElseThrow(()->new NotFoundException(PARTY_NOT_FOUND));
         Member sender = memberService.findById(senderId);
-        Long orderInChat = countByPartyId(partyId);
-        Integer readNumber = party.getActiveNumber();
-        Message message = Message.builder().readNumber(0).content(content).type(MessageType.CHAT).readNumber(readNumber)
-                .party(party).sender(sender).build();
+        Integer readNumber = sessionPartyGlobalRepository.getActiveNumber(partyId);
+        Message message =Message.createMessage(sender, party, content, MessageType.CHAT, readNumber);
         Message savedMessage = messageRepository.save(message);
         return savedMessage.getId();
     }
@@ -43,11 +42,8 @@ public class MessageService {
     public Long send(Long partyId, Long senderId, String content, MessageType type) {
         Party party = partyRepository.findById(partyId).orElseThrow(()->new NotFoundException(PARTY_NOT_FOUND));
         Member sender = memberService.findById(senderId);
-        log.info("senderId: {}", senderId);
-        Long orderInChat = countByPartyId(partyId);
-        Integer readNumber = party.getActiveNumber();
-        Message message = Message.builder().readNumber(0).content(content).type(type).readNumber(readNumber)
-                .party(party).sender(sender).build();
+        Integer readNumber = sessionPartyGlobalRepository.getActiveNumber(partyId);
+        Message message =Message.createMessage(sender, party, content, type, readNumber);
         Message savedMessage = messageRepository.save(message);
         return savedMessage.getId();
     }

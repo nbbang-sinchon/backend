@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
+import javax.persistence.EntityManager;
 import java.util.Collections;
 import java.util.List;
 
@@ -17,6 +18,7 @@ import java.util.List;
 public class MessageRepositorySupportImpl implements MessageRepositorySupport {
 
     private final JPAQueryFactory query;
+    private final EntityManager em;
 
     @Override
     public Message findLastMessage(Long partyId) {
@@ -44,5 +46,18 @@ public class MessageRepositorySupportImpl implements MessageRepositorySupport {
         List<Message> res = q.fetch();
         Long count = query.selectFrom(message).stream().count();
         return new PageImpl<>(res, pageable, count);
+    }
+
+    @Override
+    public void bulkReadNumberPlus(Long lastReadId, Long partyId) {
+        QMessage message = QMessage.message;
+                query
+                .update(message)
+                .set(message.readNumber,message.readNumber.add(1)) // (1)
+                .where(message.id.gt(lastReadId))
+                .where(message.party.id.eq(partyId))
+                .execute();
+        em.flush();
+        em.clear();
     }
 }

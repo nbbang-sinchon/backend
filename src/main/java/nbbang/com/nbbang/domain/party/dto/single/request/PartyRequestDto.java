@@ -53,7 +53,6 @@ public class PartyRequestDto {
                 .place(Place.valueOf(place.toUpperCase()))
                 .goalNumber(this.goalNumber)
                 .createTime(LocalDateTime.now())
-                .activeNumber(0)
                 .build();
     }
 }
