@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 
-@Tag(name = "Party", description = "단일 파티 생성, 수정, 조회를 지원합니다. 로그인을 하지 않은 경우 ID=1 인 회원(루피)으로 표시됩니다.")
+@Tag(name = "Party", description = "단일 파티 생성, 수정, 조회를 지원합니다.")
 @ApiResponses(value = {
         @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(mediaType = "application/json")),
         @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(mediaType = "application/json"))
