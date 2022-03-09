@@ -52,14 +52,26 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                 filterChain.doFilter(request, response);
             } else throw new RuntimeException();
         } catch (Exception e) {
+            log.error("테스트 용도로 1L 멤버로 인증합니다.");
+            testPurposeAuthentication(request);
+            filterChain.doFilter(request, response);
+            /*
             log.error("Failed to authenticate");
-            response.sendError(401, "error");
-            /*response.setContentType("application/json");
+            response.setContentType("application/json");
             PrintWriter writer = response.getWriter();
             ObjectMapper om = new ObjectMapper();
             writer.print(om.writeValueAsString(ErrorResponse.res(StatusCode.UNAUTHORIZED, UNAUTHORIZED_ERROR, null)));
-            filterChain.doFilter(request, response);*/
+            */
         }
+    }
+
+    private void testPurposeAuthentication(HttpServletRequest request) {
+        Long memberId = 1L;
+        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(memberId.toString(), null);
+        SecurityContext sc = SecurityContextHolder.getContext();
+        sc.setAuthentication(auth);
+        HttpSession session = request.getSession(true);
+        session.setAttribute(SPRING_SECURITY_CONTEXT_KEY, sc);
     }
 
     private void processAuthentication(String token, HttpServletRequest request) {

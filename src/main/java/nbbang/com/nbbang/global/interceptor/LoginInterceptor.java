@@ -1,6 +1,5 @@
 package nbbang.com.nbbang.global.interceptor;
 
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.global.security.SessionMember;
@@ -36,8 +35,6 @@ public class LoginInterceptor implements HandlerInterceptor {
 
             if (session != null) {
                 SecurityContext sc = (SecurityContext) session.getAttribute(SPRING_SECURITY_CONTEXT_KEY);
-                System.out.println("hello");
-                System.out.println(sc.getAuthentication().getPrincipal());
                 this.currentMember.setMemberId(Long.parseLong((String) sc.getAuthentication().getPrincipal()));
             }
 

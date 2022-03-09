@@ -23,7 +23,7 @@ public class MemberResponseDto {
                 .id(member.getId())
                 .avatar(member.getAvatar()!=null?member.getAvatar():null)
                 .nickname(member.getNickname())
-                .place(member.getPlace().toString())
+                .place(member.getPlace()!=null?member.getPlace().toString():Place.NONE.toString())
                 .build();
     }
 

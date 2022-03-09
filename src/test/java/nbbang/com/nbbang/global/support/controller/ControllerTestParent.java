@@ -21,10 +21,8 @@ import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 @MockBeans({ @MockBean(WebMvcConfig.class), @MockBean(PartyService.class), @MockBean(MemberService.class),
         @MockBean(CustomOAuth2MemberService.class), @MockBean(CurrentMember.class),
         @MockBean(PartyMemberValidator.class), @MockBean(PartyMemberValidatorService.class),
-        @MockBean(SecurityConfig.class),
-        @MockBean(TokenAuthenticationFilter.class),
+        //@MockBean(TokenAuthenticationFilter.class),
         @MockBean(LogoutService.class),
-
 })
 public class ControllerTestParent {
 }
