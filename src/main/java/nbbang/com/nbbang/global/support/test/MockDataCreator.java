@@ -172,7 +172,6 @@ public class MockDataCreator implements CommandLineRunner {
                 .createTime(nextTime())
                 .goalNumber(goalNumber)
                 .place(place)
-                .activeNumber(0)
                 .build();
         List<String> hashtagContents = Arrays.asList(hashtags);
         partyService.create(party, ownerId, hashtagContents);

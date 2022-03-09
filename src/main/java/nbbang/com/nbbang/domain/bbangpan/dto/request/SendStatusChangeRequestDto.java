@@ -8,17 +8,14 @@ import nbbang.com.nbbang.domain.bbangpan.domain.SendStatus;
 import nbbang.com.nbbang.domain.party.domain.PartyStatus;
 import nbbang.com.nbbang.global.support.validation.ValueOfEnum;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Locale;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class SendStatusChangeRequestDto {
-    @ValueOfEnum(enumClass = SendStatus.class) @Schema(description = "올바른 status 값: NONE, SEND, CHECK")
-    private String sendStatus;
-
-    public SendStatus createStatus() {
-        System.out.println("sendStatus = " + sendStatus);
-        return SendStatus.valueOf(sendStatus.toUpperCase(Locale.ROOT));
-    }
+    @NotNull(message = "송금 상태는 필수 값입니다.")
+    private Boolean isSent;
 }

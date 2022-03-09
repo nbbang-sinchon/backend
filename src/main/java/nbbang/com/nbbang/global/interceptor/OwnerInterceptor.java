@@ -29,10 +29,7 @@ public class OwnerInterceptor implements HandlerInterceptor {
         if (HttpMethod.GET.matches(request.getMethod())){
             return true;
         }
-        log.info("request.getRequestURI(): {}", request.getRequestURI());
-        log.info("currentMember.id(): {}", currentMember.id());
         PartyMemberValidatorDto dto = partyMemberValidatorService.createByUriAndMemberId(request.getRequestURI(), currentMember.id());
-        log.info("dto: {}", dto);
         return partyMemberValidator.isOwner(dto);
     }
 }

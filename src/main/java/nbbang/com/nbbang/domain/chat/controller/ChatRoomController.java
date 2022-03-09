@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.domain.chat.domain.Message;
 import nbbang.com.nbbang.domain.chat.dto.*;
 import nbbang.com.nbbang.domain.chat.service.ChatService;
+import nbbang.com.nbbang.domain.member.domain.Member;
+import nbbang.com.nbbang.domain.member.service.MemberService;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.repository.PartyRepository;
 import nbbang.com.nbbang.domain.party.service.PartyService;
@@ -22,6 +24,7 @@ import nbbang.com.nbbang.global.validator.PartyMemberValidator;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
@@ -41,6 +44,7 @@ public class ChatRoomController {
     private final PartyRepository partyRepository;
     private final CurrentMember currentMember;
     private final SocketSender socketSender;
+    private final MemberService memberService;
 
     @Operation(summary = "채팅방 조회", description = "채팅방을 파티 id 로 조회합니다. ")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ChatResponseDto.class)))
@@ -68,20 +72,6 @@ public class ChatRoomController {
         Page<Message> messages = chatService.findMessagesByCursorId(party, pageableDto.createPageRequest(), cursorId);
         return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.READ_CHAT, ChatSendListResponseDto.createByEntity(messages.getContent(), currentMember.id()));
     }
-
-    @Operation(summary = "채팅 메시지 읽음", description = "채팅 메시지를 읽습니다. 처음 채팅방에 들어올 때 호출해주세요.")
-    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ChatResponseDto.class)))
-    @ApiResponse(responseCode = "403", description = "Not Party Member", content = @Content(mediaType = "application/json"))
-    @GetMapping("/{party-id}/read")
-    public DefaultResponse readMessage(@PathVariable("party-id") Long partyId){
-        Party party = partyService.findById(partyId);
-        Long lastReadMessageId = chatService.readMessage(partyId, currentMember.id());
-        ChatReadSocketDto chatReadSocketDto = ChatReadSocketDto.builder().lastReadMessageId(lastReadMessageId).build();
-        socketSender.sendChatting(partyId, chatReadSocketDto);
-        log.info("[Socket] lastReadMessageId: {}, partyId: {}", lastReadMessageId, partyId);
-        return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.MESSAGE_READ_OK);
-    }
-
 
     @Operation(summary = "채팅방에서 나가기", description = "채팅방에서 나갑니다. 소켓 종료 용도로 쓰일 것 같습니다. ")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))

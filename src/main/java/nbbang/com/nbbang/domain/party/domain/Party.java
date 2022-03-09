@@ -44,7 +44,8 @@ public class Party {
     @Column(updatable = false)
     private LocalDateTime createTime;
 
-    private Integer goalNumber;
+    @Builder.Default
+    private Integer goalNumber=1;
 
     //@ValueOfEnum(enumClass = PartyStatus.class)
     @Enumerated(STRING)
@@ -59,8 +60,6 @@ public class Party {
     @Builder.Default
     private Integer deliveryFee=0;
 
-    @Builder.Default
-    private Integer activeNumber=0;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "member_id")
@@ -77,10 +76,6 @@ public class Party {
     @Builder.Default
     @OneToMany(mappedBy = "party")
     private List<PartyMember> partyMembers = new ArrayList<>();
-
-    @Builder.Default
-    @OneToMany(mappedBy = "party")
-    private List<ChatSession> chatSessions = new ArrayList<>();
 
     @Builder.Default
     @OneToMany(mappedBy = "party")
@@ -130,15 +125,6 @@ public class Party {
         partyUpdateServiceDto.getContent().ifPresent(content->this.content=content);
         partyUpdateServiceDto.getPlace().ifPresent(place->this.place=place);
         partyUpdateServiceDto.getGoalNumber().ifPresent(goalNumber->this.goalNumber=goalNumber);
-    }
-
-    public void updateActiveNumber(Integer updateNumbder){
-        activeNumber = Optional.ofNullable(activeNumber).orElse(0) + updateNumbder;
-    }
-
-    public Long removeChatSession(ChatSession chatSession) {
-        chatSessions.remove(chatSession);
-        return id;
     }
 
     public Integer countPartyMemberNumber() {

@@ -7,6 +7,7 @@ import nbbang.com.nbbang.global.error.exception.*;
 import nbbang.com.nbbang.global.response.StatusCode;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.web.firewall.RequestRejectedException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -65,6 +66,13 @@ public class GlobalControllerAdvice {
     @ExceptionHandler(NoHandlerFoundException.class)
     public ErrorResponse notFoundExceptionHandle(NoHandlerFoundException e) {
         log.error("[ExceptionHandle] NoHandlerFoundException: ", e);
+        return ErrorResponse.res(StatusCode.NOT_FOUND, GlobalErrorResponseMessage.REQUEST_URL_ERROR);
+    }
+
+
+    @ExceptionHandler(RequestRejectedException.class)
+    public ErrorResponse requestRejectionExceptionHandle(RequestRejectedException e) {
+        log.error("[ExceptionHandle] requestRejectionExceptionHandle: ", e);
         return ErrorResponse.res(StatusCode.NOT_FOUND, GlobalErrorResponseMessage.REQUEST_URL_ERROR);
     }
 

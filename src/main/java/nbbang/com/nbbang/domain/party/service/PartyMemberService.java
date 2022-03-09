@@ -3,8 +3,8 @@ package nbbang.com.nbbang.domain.party.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.domain.bbangpan.domain.PartyMember;
-import nbbang.com.nbbang.domain.bbangpan.domain.SendStatus;
 import nbbang.com.nbbang.domain.bbangpan.repository.PartyMemberRepository;
+import nbbang.com.nbbang.domain.chat.domain.Message;
 import nbbang.com.nbbang.domain.chat.domain.MessageType;
 import nbbang.com.nbbang.domain.chat.repository.MessageRepository;
 import nbbang.com.nbbang.domain.chat.service.MessageService;
@@ -14,11 +14,14 @@ import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.domain.PartyStatus;
 import nbbang.com.nbbang.domain.party.exception.PartyExitForbiddenException;
 import nbbang.com.nbbang.domain.party.exception.PartyJoinException;
+import nbbang.com.nbbang.domain.party.repository.SessionPartyGlobalRepository;
 import nbbang.com.nbbang.global.error.exception.NotPartyMemberException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -29,11 +32,11 @@ public class PartyMemberService {
     private final PartyMemberRepository partyMemberRepository;
     private final MessageService messageService;
     private final MessageRepository messageRepository;
+    private final SessionPartyGlobalRepository sessionPartyGlobalRepository;
 
     public boolean isPartyOwnerOrMember(Party party, Member member) {
         return Optional.ofNullable(party.getOwner()).equals(member) || party.getPartyMembers().stream().anyMatch(mp -> mp.getMember().equals(member));
     }
-
 
     @Transactional
     public Long joinParty(Party party, Member member) {
@@ -80,10 +83,34 @@ public class PartyMemberService {
         PartyMember partyMember = partyMemberRepository.findByMemberIdAndPartyId(memberId, partyId);
         if (field.equals(PartyMember.getField("price"))){
             partyMember.changePrice((Integer) value);
-        }else if(field.equals(PartyMember.getField("sendStatus"))){
-            partyMember.changeSendStatus((SendStatus) value);
+        }else if(field.equals(PartyMember.getField("isSent"))){
+            partyMember.changeIsSent((Boolean) value);
         }else{
-            log.info("no such status");
+            log.info("no such field");
         }
+    }
+
+    @Transactional
+    public void updateLastReadMessage(PartyMember partyMember, Message currentLastMessage) {
+        partyMember.changeLastReadMessage(currentLastMessage);
+    }
+
+    public Message findLastReadMessage(Long partyId, Long memberId) {
+        PartyMember partyMember = partyMemberRepository.findByMemberIdAndPartyId(memberId, partyId);
+        return Optional.ofNullable(partyMember.getLastReadMessage()).orElse(Message.builder().id(0L).build());
+    }
+
+
+    public List getNotReadNumber(List<Party> parties, Long memberId) {
+        List<Integer> notReadNumbers = new ArrayList<>();
+        for (Party party : parties) {
+            if(sessionPartyGlobalRepository.isActive(party.getId(), memberId)){
+                notReadNumbers.add(0);
+            }
+            else{
+                notReadNumbers.add(messageRepository.countByPartyIdAndIdGreaterThan(party.getId(), findLastReadMessage(party.getId(), memberId).getId()));
+            }
+        }
+        return notReadNumbers;
     }
 }

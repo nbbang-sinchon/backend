@@ -9,6 +9,8 @@ import nbbang.com.nbbang.domain.party.domain.Party;
 
 import javax.persistence.*;
 
+
+// deprecated in favor of in memory operation
 @Entity
 @Getter
 @Builder

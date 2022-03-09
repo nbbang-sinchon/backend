@@ -18,9 +18,6 @@ public interface MessageRepository extends JpaRepository<Message, Long>, Message
 
     Long countByPartyId(Long partyId);
 
-    @Modifying(clearAutomatically = true)
-    @Query(value="update Message m set m.readNumber = m.readNumber + 1 " +
-            "where m.id > :lastReadId and m.party.id = :partyId")
-    int bulkReadNumberPlus(@Param("lastReadId") Long lastReadId, @Param("partyId") Long partyId);
+    Integer countByPartyIdAndIdGreaterThan(Long partyId, Long id);
 
 }
