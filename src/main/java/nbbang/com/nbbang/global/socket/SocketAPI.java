@@ -70,12 +70,14 @@ public class SocketAPI {
         return SocketSendDto.createSocketSendDto(BREAD_BOARD, bbangpanResponseDto);
     }
 
-    @Operation(summary = "[GLOBAL] 알람", description = "알람과 관련된 소켓입니다.")
-    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = BbangpanResponseDto.class)))
-    @PostMapping("/bread-board/develop")
-    public void global(){
+    @Operation(summary = "[GLOBAL] 알람", description = "참가중인 파티에 새로운 채팅이 들어오면 알람을 보냅니다.")
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ChatSendResponseDto.class)))
+    @PostMapping("/global")
+    public SocketSendDto global(){
+        Long messageId = messageService.send(1L, 2L, "다른 사람이 보낸 채팅");
+        Message message = messageService.findById(messageId);
+        ChatSendResponseDto data = ChatSendResponseDto.createByMessage(message, currentMember.id());
+        return SocketSendDto.createSocketSendDto(CHATTING, data);
     }
-
-
 
 }
