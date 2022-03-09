@@ -30,7 +30,7 @@ public class Member {
     //@Column(nullable = false)
     private Role role;
 
-    @Builder
+
     public Member(String nickname, String email, String picture, Role role) {
         this.nickname = nickname;
         this.email = email;

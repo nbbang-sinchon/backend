@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 public class CurrentMember {
     private Long memberId;
     public Long id() {
+        //if (memberId == null) return 1L;
         return memberId;
     }
 }

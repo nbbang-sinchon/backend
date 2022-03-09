@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import static nbbang.com.nbbang.domain.party.controller.PartyResponseMessage.*;
 
-@Tag(name = "Party Wishlist", description = "위시리스트에 파티를 추가 / 삭제합니다. 로그인을 하지 않은 경우 ID=1 인 회원(루피)으로 표시됩니다.")
+@Tag(name = "Party Wishlist", description = "위시리스트에 파티를 추가 / 삭제합니다.")
 @ApiResponses(value = {
         @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(mediaType = "application/json")),
 })

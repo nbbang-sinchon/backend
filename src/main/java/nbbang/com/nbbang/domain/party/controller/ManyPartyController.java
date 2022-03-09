@@ -30,6 +30,17 @@ public class ManyPartyController {
     private final ManyPartyService manyPartyService;
     private final CurrentMember currentMember;
     private final MemberService memberService;
+    @Operation(summary = "로그인 필요 없는 여러 개 파티 리스트 조회", description = "여러 개의 파티 리스트를 전송합니다. 기본값으로 10개의 파티를 조회합니다. json이 아닌 query parameter로 데이터를 전송해야 합니다. 예시 : http://15.165.132.250:8094/parties?places=YEONHUI&places=CHANGCHEON&showOngoing=true&search=BHC")
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PartyListResponseDto.class)))
+    @ApiResponse(responseCode = "400", description = "잘못된 요청입니다. 쿼리 파라미터를 올바르게 입력하세요.", content = @Content(mediaType = "application/json"))
+    @GetMapping("/manyparties")
+    public DefaultResponse findManyParties(@ParameterObject @Validated @ModelAttribute PartyListRequestDto requestDto, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            throw new CustomIllegalArgumentException(ManyPartyResponseMessage.ILLEGAL_PARTY_LIST_REQUEST, bindingResult);
+        }
+        Page<Party> res = manyPartyService.findAllParties(requestDto.createPageRequest(), false, requestDto.createPartyListRequestFilterDto(), requestDto.getCursorId(), 1L, requestDto.getHashtags());
+        return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_FIND_SUCCESS, PartyListResponseDto.createByEntity(res.getContent(), memberService.findById(1L)));
+    }
 
     @Operation(summary = "여러 개 파티 리스트 조회", description = "여러 개의 파티 리스트를 전송합니다. 기본값으로 10개의 파티를 조회합니다. json이 아닌 query parameter로 데이터를 전송해야 합니다. 예시 : http://15.165.132.250:8094/parties?places=YEONHUI&places=CHANGCHEON&showOngoing=true&search=BHC")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PartyListResponseDto.class)))
