@@ -2,6 +2,7 @@ package nbbang.com.nbbang.global.socket;
 
 import lombok.RequiredArgsConstructor;
 import nbbang.com.nbbang.domain.chat.domain.Message;
+import nbbang.com.nbbang.domain.chat.dto.message.ChatAlarmResponseDto;
 import nbbang.com.nbbang.domain.chat.dto.message.ChatSendResponseDto;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.repository.MemberRepository;
@@ -25,8 +26,10 @@ public class SocketSender {
         Long partyId = message.getParty().getId();
         send(CHATTING, partyId,  chatSendResponseDto);
         List<Member> members = partyService.findMembers(partyId);
-        members.stream().forEach(member -> sendGlobal(member.getId(),chatSendResponseDto));
+        ChatAlarmResponseDto chatAlarmResponseDto = ChatAlarmResponseDto.create(partyService.findById(partyId), chatSendResponseDto);
+        members.stream().forEach(member -> sendGlobal(member.getId(),chatAlarmResponseDto));
     }
+
     public void sendChattingReadMessage(Long partyId, Object data){
         send(CHATTING, partyId, "reading", data);
     }

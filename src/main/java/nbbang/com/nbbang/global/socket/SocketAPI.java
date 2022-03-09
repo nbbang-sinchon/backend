@@ -15,6 +15,7 @@ import nbbang.com.nbbang.domain.bbangpan.dto.socket.PartyFieldChangeSocketDto;
 import nbbang.com.nbbang.domain.bbangpan.dto.socket.PartyMemberFieldChangeSocketDto;
 import nbbang.com.nbbang.domain.chat.domain.Message;
 import nbbang.com.nbbang.domain.chat.dto.ChatReadSocketDto;
+import nbbang.com.nbbang.domain.chat.dto.message.ChatAlarmResponseDto;
 import nbbang.com.nbbang.domain.chat.dto.message.ChatSendRequestDto;
 import nbbang.com.nbbang.domain.chat.dto.message.ChatSendResponseDto;
 import nbbang.com.nbbang.domain.chat.service.MessageService;
@@ -27,8 +28,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import static nbbang.com.nbbang.global.socket.SocketDestination.BREAD_BOARD;
-import static nbbang.com.nbbang.global.socket.SocketDestination.CHATTING;
+import static nbbang.com.nbbang.global.socket.SocketDestination.*;
 
 @Tag(name = "SocketDevelop", description = "소켓 관련된 API입니다.")
 @NoArgsConstructor(access = AccessLevel.PRIVATE) // ONLY FOR SWAGGER. Don't do anything for Logic.
@@ -71,13 +71,13 @@ public class SocketAPI {
     }
 
     @Operation(summary = "[GLOBAL] 알람", description = "참가중인 파티에 새로운 채팅이 들어오면 알람을 보냅니다.")
-    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ChatSendResponseDto.class)))
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ChatAlarmResponseDto.class)))
     @PostMapping("/global")
     public SocketSendDto global(){
         Long messageId = messageService.send(1L, 2L, "다른 사람이 보낸 채팅");
         Message message = messageService.findById(messageId);
         ChatSendResponseDto data = ChatSendResponseDto.createByMessage(message, currentMember.id());
-        return SocketSendDto.createSocketSendDto(CHATTING, data);
+        return SocketSendDto.createSocketSendDto(GLOBAL, ChatAlarmResponseDto.create(Party.builder().id(0L).title("test party").build(), data));
     }
 
 }
