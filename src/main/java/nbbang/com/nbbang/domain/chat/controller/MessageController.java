@@ -27,7 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 
-@Tag(name = "Chat", description = "채팅 메시지를 전송합니다. 로그인을 하지 않은 경우 ID=1 인 회원(루피)으로 표시됩니다.")
+@Tag(name = "Chat", description = "채팅 메시지를 전송합니다.")
 @ApiResponses(value = {
         @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(mediaType = "application/json")),
         @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(mediaType = "application/json"))

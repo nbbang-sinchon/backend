@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Tag(name = "MyParties", description = "나의 파티 api 로그인을 하지 않은 경우 ID=1 인 회원(루피)으로 표시됩니다.")
+@Tag(name = "MyParties", description = "나의 파티 api")
 @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(mediaType = "application/json"))
 @Slf4j
 @RestController

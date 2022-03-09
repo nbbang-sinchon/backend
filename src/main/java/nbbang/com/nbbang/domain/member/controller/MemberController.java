@@ -34,7 +34,7 @@ import java.io.IOException;
 import static org.springframework.security.web.context.HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY;
 
 
-@Tag(name = "Member", description = "회원 관리 api, 로그인을 하지 않은 경우 ID=1 인 회원(루피)으로 표시됩니다.")
+@Tag(name = "Member", description = "회원 관리 api")
 @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(mediaType = "application/json"))
 @Slf4j
 @RestController
