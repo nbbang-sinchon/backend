@@ -35,7 +35,7 @@ public class PartyService {
     private final PartyRepository partyRepository;
     private final PartyHashtagRepository partyHashtagRepository;
     private final HashtagService hashtagService;
-    private final PartyMemberRepository memberPartyRepository;
+    private final PartyMemberRepository partyMemberRepository;
     private final MemberService memberService;
     private final PartyMemberService partyMemberService;
     private final MessageRepository messageRepository;
@@ -141,7 +141,7 @@ public class PartyService {
 
     public Message findLastMessage(Long partyId) {
         Message lastMessage = messageRepository.findLastMessage(partyId);
-        return lastMessage;
+        return Optional.ofNullable(lastMessage).orElse(Message.builder().id(0L).build());
     }
 
 

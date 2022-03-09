@@ -103,7 +103,7 @@ public class BbangpanController {
         if (bindingResult.hasErrors()) {
             throw new CustomIllegalArgumentException(PartyResponseMessage.ILLEGAL_PARTY_STATUS, bindingResult);
         }
-        changePartyMemberField(partyId, currentMember.id(), PartyMember.getField("sendStatus"), sendStatusChangeRequestDto.createStatus());
+        changePartyMemberField(partyId, currentMember.id(), PartyMember.getField("isSent"), sendStatusChangeRequestDto.getIsSent());
         return DefaultResponse.res(StatusCode.OK, BbangpanResponseMessage.SENDSTATUS_CHANGE_SUCCESS);
     }
 

@@ -28,15 +28,16 @@ public class WebMvcConfig implements WebMvcConfigurer {
        List<String> partyMemberInterceptorUrlPatterns = Arrays.asList("/chats/*", "/bread-board/*");
        List<String> ownerInterceptorUrlPatterns =
                 Arrays.asList("/parties/*", "/bread-board/*/delivery-fee", "/bread-board/*/account");
-
+        List<String> ownerInterceptorExcludeUrlPatterns =
+                Arrays.asList("/parties/*/wishlist", "/parties/*/join", "/parties/*/exit");
 
         registry.addInterceptor(partyMemberInterceptor)
                 .addPathPatterns(partyMemberInterceptorUrlPatterns)
                 .excludePathPatterns(ownerInterceptorUrlPatterns);
 
-
         registry.addInterceptor(ownerInterceptor)
-               .addPathPatterns(ownerInterceptorUrlPatterns);
+               .addPathPatterns(ownerInterceptorUrlPatterns)
+                .excludePathPatterns(ownerInterceptorExcludeUrlPatterns);
 
     }
 }

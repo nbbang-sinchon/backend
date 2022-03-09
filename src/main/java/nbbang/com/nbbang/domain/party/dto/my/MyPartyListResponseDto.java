@@ -17,6 +17,11 @@ import java.util.stream.Collectors;
 public class MyPartyListResponseDto {
     List<MyPartyResponseDto> parties;
 
+    public static MyPartyListResponseDto createFromEntity(List<Party> partyList, Long memberId, List<Integer> notReadNumbers) {
+        return MyPartyListResponseDto.builder()
+                .parties(partyList.stream().map(p -> MyPartyResponseDto.createByEntity(p, memberId, notReadNumbers.get(partyList.indexOf(p)))).collect(Collectors.toList()))
+                .build();
+    }
     public static MyPartyListResponseDto createFromEntity(List<Party> partyList, Long memberId) {
         return MyPartyListResponseDto.builder()
                 .parties(partyList.stream().map(p -> MyPartyResponseDto.createByEntity(p, memberId)).collect(Collectors.toList()))

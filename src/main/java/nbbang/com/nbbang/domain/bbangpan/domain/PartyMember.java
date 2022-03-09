@@ -11,8 +11,6 @@ import javax.persistence.*;
 
 import java.lang.reflect.Field;
 
-import static javax.persistence.EnumType.STRING;
-
 @Entity @Getter @Builder
 @AllArgsConstructor
 public class PartyMember {
@@ -22,12 +20,12 @@ public class PartyMember {
     @Builder.Default
     private Integer price=0;
 
-    @Enumerated(STRING)
-    private SendStatus sendStatus;
+    @Builder.Default
+    private Boolean isSent = false;
 
     @OneToOne
     @JoinColumn(name = "message_id")
-    private Message lastReadMessage;
+    private Message lastReadMessage = Message.builder().build();
 
     @ManyToOne
     @JoinColumn(name = "member_id")
@@ -57,8 +55,8 @@ public class PartyMember {
         this.price = price;
     }
 
-    public void changeSendStatus(SendStatus sendStatus) {
-        this.sendStatus = sendStatus;
+    public void changeIsSent(Boolean isSent) {
+        this.isSent = isSent;
     }
 
     public static Field getField(String field) throws NoSuchFieldException {
