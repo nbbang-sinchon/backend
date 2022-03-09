@@ -24,6 +24,7 @@ import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
         @MockBean(SecurityConfig.class),
         @MockBean(TokenAuthenticationFilter.class),
         @MockBean(LogoutService.class),
+
 })
 public class ControllerTestParent {
 }

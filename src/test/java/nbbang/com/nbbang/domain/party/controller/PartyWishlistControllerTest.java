@@ -14,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mock.web.MockFilterConfig;
 import org.springframework.security.config.BeanIds;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.filter.DelegatingFilterProxy;
 import org.webjars.NotFoundException;
@@ -29,6 +30,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 @WebMvcTest(PartyWishlistController.class)
+@WithMockUser(roles="USER")
 class PartyWishlistControllerTest extends ControllerTestParent {
 
     @Autowired private MockMvc mockMvc;
