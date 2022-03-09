@@ -44,7 +44,8 @@ public class Party {
     @Column(updatable = false)
     private LocalDateTime createTime;
 
-    private Integer goalNumber;
+    @Builder.Default
+    private Integer goalNumber=1;
 
     //@ValueOfEnum(enumClass = PartyStatus.class)
     @Enumerated(STRING)

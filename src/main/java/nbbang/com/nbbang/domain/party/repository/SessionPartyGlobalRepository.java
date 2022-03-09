@@ -38,4 +38,12 @@ public class SessionPartyGlobalRepository {
         return Integer.valueOf((int) count);
     }
 
+    public Boolean isActive(Long partyId, Long memberId) {
+        Pair<Long, Long> pair = new Pair<>(partyId, memberId);
+        if(sessionPartyMap.containsKey(pair) &&  (sessionPartyMap.get(pair) > 0)){
+            return true;
+        }
+        return false;
+    }
+
 }
