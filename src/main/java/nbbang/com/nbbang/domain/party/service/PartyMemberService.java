@@ -3,7 +3,6 @@ package nbbang.com.nbbang.domain.party.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.domain.bbangpan.domain.PartyMember;
-import nbbang.com.nbbang.domain.bbangpan.domain.SendStatus;
 import nbbang.com.nbbang.domain.bbangpan.repository.PartyMemberRepository;
 import nbbang.com.nbbang.domain.chat.domain.Message;
 import nbbang.com.nbbang.domain.chat.domain.MessageType;
@@ -24,7 +23,6 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly=true)
@@ -85,10 +83,10 @@ public class PartyMemberService {
         PartyMember partyMember = partyMemberRepository.findByMemberIdAndPartyId(memberId, partyId);
         if (field.equals(PartyMember.getField("price"))){
             partyMember.changePrice((Integer) value);
-        }else if(field.equals(PartyMember.getField("sendStatus"))){
-            partyMember.changeSendStatus((SendStatus) value);
+        }else if(field.equals(PartyMember.getField("isSent"))){
+            partyMember.changeIsSent((Boolean) value);
         }else{
-            log.info("no such status");
+            log.info("no such field");
         }
     }
 
