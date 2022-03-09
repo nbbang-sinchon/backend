@@ -6,8 +6,9 @@ import lombok.Data;
 @Builder
 @Data
 public class SocketSendDto {
+    private String type;
     private Object data;
-    public static SocketSendDto createSocketSendDto(Object data){
+    public static SocketSendDto createSocketSendDto(String type, Object data){
         return SocketSendDto.builder().data(data).build();
     }
 }

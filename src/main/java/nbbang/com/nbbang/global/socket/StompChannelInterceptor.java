@@ -11,7 +11,6 @@ import nbbang.com.nbbang.domain.party.repository.SessionPartyGlobalRepository;
 import nbbang.com.nbbang.domain.party.service.PartyMemberService;
 import nbbang.com.nbbang.domain.party.service.PartyService;
 import nbbang.com.nbbang.global.interceptor.CurrentMember;
-import nbbang.com.nbbang.global.security.jwt.JwtService;
 import nbbang.com.nbbang.global.validator.PartyMemberValidator;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.messaging.Message;
@@ -121,7 +120,7 @@ public class StompChannelInterceptor implements ChannelInterceptor {
     public void readMessage(Long partyId, Long memberId) {
         Long lastReadMessageId = chatService.readMessage(partyId, memberId);
         ChatReadSocketDto chatReadSocketDto = ChatReadSocketDto.builder().lastReadMessageId(lastReadMessageId).build();
-        socketSender.sendChatting(partyId, chatReadSocketDto);
+        socketSender.sendChattingReadMessage(partyId, chatReadSocketDto);
     }
 
     public void exitChatRoom(Map<String, Object> attributes, Long partyId) {
