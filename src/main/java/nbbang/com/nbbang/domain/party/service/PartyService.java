@@ -1,6 +1,7 @@
 package nbbang.com.nbbang.domain.party.service;
 
 import lombok.RequiredArgsConstructor;
+import nbbang.com.nbbang.domain.bbangpan.domain.PartyMember;
 import nbbang.com.nbbang.domain.bbangpan.repository.PartyMemberRepository;
 import nbbang.com.nbbang.domain.chat.domain.Message;
 import nbbang.com.nbbang.domain.chat.repository.MessageRepository;
@@ -22,8 +23,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import static nbbang.com.nbbang.domain.party.controller.PartyResponseMessage.PARTY_NOT_FOUND;
+import static nbbang.com.nbbang.global.socket.SocketDestination.GLOBAL;
 
 @Service
 @Transactional(readOnly=true)
@@ -153,4 +156,11 @@ public class PartyService {
         }
     }
 
+    public List<Member> findMembers(Long partyId)  {
+        List<PartyMember> partyMembers = findById(partyId).getPartyMembers();
+
+        return partyMembers.stream()
+                .map(partyMember -> partyMember.getMember()).collect(Collectors.toList());
+
+    }
 }

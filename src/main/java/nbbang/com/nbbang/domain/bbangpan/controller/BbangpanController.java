@@ -115,6 +115,6 @@ public class BbangpanController {
     public void sendSocket(Long partyId){
         Party party = partyService.findById(partyId);
         BbangpanResponseDto bbangpanResponseDto = BbangpanResponseDto.createDtoByParty(party);
-        socketSender.send("breadBoard", partyId, bbangpanResponseDto);
+        socketSender.sendBreadBoard(partyId, bbangpanResponseDto);
     }
 }
