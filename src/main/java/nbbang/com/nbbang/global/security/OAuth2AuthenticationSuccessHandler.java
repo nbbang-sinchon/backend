@@ -24,7 +24,6 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         RequestLogUtils.logRequest(request);
-        System.out.println(request.getParameter("redirect"));
         targetUri = determineTargetUri(request, response, authentication);
         getRedirectStrategy().sendRedirect(request, response, targetUri);
     }
