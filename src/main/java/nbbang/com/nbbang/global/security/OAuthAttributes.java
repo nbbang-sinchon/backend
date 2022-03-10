@@ -49,7 +49,6 @@ public class OAuthAttributes {
                 .nickname(nickname)
                 .email(email)
                 .role(Role.USER)
-                .place(Place.NONE)
                 .build();
     }
 }

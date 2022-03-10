@@ -1,25 +1,20 @@
 package nbbang.com.nbbang.global.support.test;
 
 import lombok.extern.slf4j.Slf4j;
-import nbbang.com.nbbang.domain.bbangpan.domain.PartyMember;
 import nbbang.com.nbbang.domain.bbangpan.repository.PartyMemberRepository;
 import nbbang.com.nbbang.domain.chat.service.ChatService;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.dto.Place;
 import nbbang.com.nbbang.domain.member.repository.MemberRepository;
 import nbbang.com.nbbang.domain.member.service.MemberService;
-import nbbang.com.nbbang.domain.party.domain.Hashtag;
 import nbbang.com.nbbang.domain.party.domain.Party;
-import nbbang.com.nbbang.domain.party.domain.PartyHashtag;
 import nbbang.com.nbbang.domain.party.domain.PartyStatus;
-import nbbang.com.nbbang.domain.party.dto.single.request.PartyRequestDto;
 import nbbang.com.nbbang.domain.party.repository.HashtagRepository;
 import nbbang.com.nbbang.domain.party.repository.PartyHashtagRepository;
 import nbbang.com.nbbang.domain.party.repository.PartyRepository;
 import nbbang.com.nbbang.domain.party.service.HashtagService;
 import nbbang.com.nbbang.domain.party.service.PartyMemberService;
 import nbbang.com.nbbang.domain.party.service.PartyService;
-import nbbang.com.nbbang.global.security.CustomOAuth2MemberService;
 import nbbang.com.nbbang.global.security.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;

@@ -68,7 +68,7 @@ public class ManyPartyRepositorySupportImpl implements ManyPartyRepositorySuppor
         }
 
         // 자신이 속한 파티 필터링을 제공합니다
-        if (isMyParties) {
+        if (isMyParties && memberId != null) {
             q.where(isMemberOfParty(memberId))
                     .join(party.partyMembers, partyMember).fetchJoin()
                     .where(partyMember.member.id.eq(memberId));

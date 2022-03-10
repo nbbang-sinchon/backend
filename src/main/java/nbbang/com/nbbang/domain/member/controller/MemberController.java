@@ -19,16 +19,22 @@ import nbbang.com.nbbang.global.interceptor.CurrentMember;
 import nbbang.com.nbbang.global.response.DefaultResponse;
 import nbbang.com.nbbang.global.response.StatusCode;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
+import static org.springframework.security.web.context.HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY;
 
-@Tag(name = "Member", description = "회원 관리 api, 로그인을 하지 않은 경우 ID=1 인 회원(루피)으로 표시됩니다.")
+
+@Tag(name = "Member", description = "회원 관리 api")
 @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(mediaType = "application/json"))
 @Slf4j
 @RestController
@@ -42,7 +48,15 @@ public class MemberController {
     @Operation(summary = "마이페이지 정보 조회", description = "자신의 정보를 조회합니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MemberResponseDto.class)))
     @GetMapping
-    public DefaultResponse select() {
+    public DefaultResponse select(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+
+        if (session != null) {
+            SecurityContext sc = (SecurityContext) session.getAttribute(SPRING_SECURITY_CONTEXT_KEY);
+            System.out.println("hello");
+            System.out.println(sc.getAuthentication().getPrincipal());
+        }
+
         Member member = memberService.findById(currentMember.id());
         MemberResponseDto dto = MemberResponseDto.createByEntity(member);
         return DefaultResponse.res(StatusCode.OK, MemberResponseMessage.READ_MEMBER, dto);

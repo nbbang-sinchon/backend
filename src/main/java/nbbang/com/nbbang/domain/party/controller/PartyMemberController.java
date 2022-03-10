@@ -24,7 +24,7 @@ import nbbang.com.nbbang.global.response.StatusCode;
 import org.springframework.web.bind.annotation.*;
 
 
-@Tag(name = "PartyMember", description = "파티 참여/탈퇴 로그인을 하지 않은 경우 ID=1 인 회원(루피)으로 표시됩니다.")
+@Tag(name = "PartyMember", description = "파티 참여/탈퇴")
 @Slf4j
 @RestController
 @RequestMapping("/parties")
