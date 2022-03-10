@@ -37,7 +37,6 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         String redirect_uri = DEFAULT_REDIRECT_URI;
         Optional<Cookie> cookie = CookieUtils.getCookie(request, "redirect_uri");
         if (!cookie.isEmpty()) {
-            System.out.println("Custom redirect uri");
             redirect_uri = cookie.get().getValue();
         }
         return UriComponentsBuilder.fromUriString(redirect_uri)
