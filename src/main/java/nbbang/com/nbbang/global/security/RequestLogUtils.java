@@ -9,6 +9,7 @@ public class RequestLogUtils {
         Enumeration<String> headerNames = request.getHeaderNames();
 
         System.out.println("=============NEWREQUEST===========");
+        System.out.println(request.getMethod());
         System.out.println(request.getRequestURL());
         if (headerNames != null) {
             while (headerNames.hasMoreElements()) {
