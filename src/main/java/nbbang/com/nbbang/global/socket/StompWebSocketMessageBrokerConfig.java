@@ -1,6 +1,7 @@
 package nbbang.com.nbbang.global.socket;
 
 import lombok.RequiredArgsConstructor;
+import nbbang.com.nbbang.global.interceptor.LoginInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
@@ -14,11 +15,13 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 public class StompWebSocketMessageBrokerConfig implements WebSocketMessageBrokerConfigurer {
 
     private final StompChannelInterceptor stompChannelInterceptor;
+    private final LoginHandShakeInterceptor loginInterceptor;
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         WebSocketMessageBrokerConfigurer.super.registerStompEndpoints(registry);
-        registry.addEndpoint("/ws-stomp").setAllowedOriginPatterns("*").withSockJS();
+        registry.addEndpoint("/ws-stomp").setAllowedOriginPatterns("*").withSockJS()
+        .setInterceptors(loginInterceptor);
     }
 
     @Override
