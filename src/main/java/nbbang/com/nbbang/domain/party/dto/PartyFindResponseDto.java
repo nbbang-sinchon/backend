@@ -33,6 +33,7 @@ public class PartyFindResponseDto{
                 .joinNumber(party.getPartyMembers().size())
                 .status(party.getStatus()!=null?party.getStatus().toString():null)
                 .hashtags(party.getHashtagContents())
+                .isWishlist(false)
                 .place(party.getPlace().toString())
                 .build();
     }

@@ -29,18 +29,13 @@ public class LoginInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         HttpSession session = request.getSession(false);
-        try {
-            //SessionMember sessionMember = (SessionMember) session.getAttribute("member");
-            session = request.getSession(false);
-
-            if (session != null) {
-                SecurityContext sc = (SecurityContext) session.getAttribute(SPRING_SECURITY_CONTEXT_KEY);
-                this.currentMember.setMemberId(Long.parseLong((String) sc.getAuthentication().getPrincipal()));
+        if (session != null) {
+            SecurityContext sc = (SecurityContext) session.getAttribute(SPRING_SECURITY_CONTEXT_KEY);
+            try {
+                this.currentMember.setMemberId(Long.parseLong(sc.getAuthentication().getPrincipal().toString()));
+            } catch(Exception e) {
+                this.currentMember.setMemberId(null);
             }
-
-        }
-        catch (Exception e) {
-            this.currentMember.setMemberId(1L);
         }
         return true;
     }

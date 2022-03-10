@@ -23,11 +23,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(interceptor)
-                .order(1);
+                .order(1)
+                ;
 
-
-       List<String> partyMemberInterceptorUrlPatterns = Arrays.asList("/chats/*", "/bread-board/*");
-       List<String> ownerInterceptorUrlPatterns =
+        List<String> partyMemberInterceptorUrlPatterns = Arrays.asList("/chats/*", "/bread-board/*");
+        List<String> ownerInterceptorUrlPatterns =
                 Arrays.asList("/parties/*", "/bread-board/*/delivery-fee", "/bread-board/*/account");
         List<String> ownerInterceptorExcludeUrlPatterns =
                 Arrays.asList("/parties/*/wishlist", "/parties/*/join", "/parties/*/exit");
@@ -39,8 +39,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
         registry.addInterceptor(ownerInterceptor)
                 .order(3)
-               .addPathPatterns(ownerInterceptorUrlPatterns)
+                .addPathPatterns(ownerInterceptorUrlPatterns)
                 .excludePathPatterns(ownerInterceptorExcludeUrlPatterns);
+
 
     }
 }

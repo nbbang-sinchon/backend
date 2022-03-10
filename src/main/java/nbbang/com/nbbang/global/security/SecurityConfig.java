@@ -45,7 +45,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .addFilterBefore(utf8EncodingFilter(), WebAsyncManagerIntegrationFilter.class)
-                .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                //.addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(tokenAuthenticationFilter, WebAsyncManagerIntegrationFilter.class)
                 .csrf().disable()
                 .cors()
                 .and()
@@ -57,7 +58,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.OPTIONS,"/**").permitAll()
                 .antMatchers("/login/**").permitAll()
                 .antMatchers("/oauth2/**").permitAll()
-                .antMatchers("/manyparties").permitAll()
+                .antMatchers(HttpMethod.GET, "/parties").permitAll()
 
                 //.anyRequest().authenticated()
 

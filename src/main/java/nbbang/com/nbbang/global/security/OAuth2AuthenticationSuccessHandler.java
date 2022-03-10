@@ -24,7 +24,6 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         RequestLogUtils.logRequest(request);
-        System.out.println(request.getParameter("redirect"));
         targetUri = determineTargetUri(request, response, authentication);
         getRedirectStrategy().sendRedirect(request, response, targetUri);
     }
@@ -38,7 +37,6 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         String redirect_uri = DEFAULT_REDIRECT_URI;
         Optional<Cookie> cookie = CookieUtils.getCookie(request, "redirect_uri");
         if (!cookie.isEmpty()) {
-            System.out.println("Custom redirect uri");
             redirect_uri = cookie.get().getValue();
         }
         return UriComponentsBuilder.fromUriString(redirect_uri)

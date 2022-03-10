@@ -7,13 +7,17 @@ import nbbang.com.nbbang.global.error.ErrorResponse;
 import nbbang.com.nbbang.global.response.StatusCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
+import org.springframework.util.PathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -38,24 +42,40 @@ import static org.springframework.security.web.context.HttpSessionSecurityContex
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
     private TokenProvider tokenProvider = new TokenProvider();
+    private AntPathMatcher matcher = new AntPathMatcher();
+    private AntPathRequestMatcher partiesMatcher = new AntPathRequestMatcher("/parties/**", HttpMethod.GET.toString());
     private final LogoutService logoutService;
 
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         logRequest(request);
+        System.out.println(request.getRequestURL());
         try {
             String token = getJwtFromRequest(request);
             if (isValid(token) && !isLogout(token)) {
-                processAuthentication(token, request);
+                //processAuthentication(token, request);
+                successAuthentication(token, request);
                 log.info("Successfully Authenticated!");
                 filterChain.doFilter(request, response);
             } else throw new RuntimeException();
         } catch (Exception e) {
+
+            // 로컬용
             log.error("테스트 용도로 1L 멤버로 인증합니다.");
             testPurposeAuthentication(request);
             filterChain.doFilter(request, response);
-            /*
+
+
+            // 실제 배포용
+
+            /*if (partiesMatcher.matches(request)) {
+                nullAuthentication(request);
+                log.info("/GET /parties/** allowed for anonymous users");
+                filterChain.doFilter(request, response);
+                return;
+            }
+
             log.error("Failed to authenticate");
             response.setContentType("application/json");
             PrintWriter writer = response.getWriter();
@@ -65,18 +85,22 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         }
     }
 
-    private void testPurposeAuthentication(HttpServletRequest request) {
-        Long memberId = 1L;
-        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(memberId.toString(), null);
-        SecurityContext sc = SecurityContextHolder.getContext();
-        sc.setAuthentication(auth);
-        HttpSession session = request.getSession(true);
-        session.setAttribute(SPRING_SECURITY_CONTEXT_KEY, sc);
+    private void nullAuthentication(HttpServletRequest request) {
+        processAuthentication(null, request);
     }
 
-    private void processAuthentication(String token, HttpServletRequest request) {
+    private void testPurposeAuthentication(HttpServletRequest request) {
+        Long memberId = 1L;
+        processAuthentication(memberId.toString(), request);
+    }
+
+    private void successAuthentication(String token, HttpServletRequest request) {
         Long memberId = tokenProvider.getUserIdFromToken(token);
-        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(memberId.toString(), null);
+        processAuthentication(memberId.toString(), request);
+    }
+
+    private void processAuthentication(String value, HttpServletRequest request) {
+        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(value, null);
         SecurityContext sc = SecurityContextHolder.getContext();
         sc.setAuthentication(auth);
         HttpSession session = request.getSession(true);
@@ -101,46 +125,10 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         return logoutService.isInvalid(token);
     }
 
-
-    private String processJwtFromRequest(HttpServletRequest request) {
-        try {
-            Cookie cookie = CookieUtils.getCookie(request, TOKEN_COOKIE_KEY).get();
-            String token = cookie.getValue();
-            String path = request.getServletPath();
-            if (logoutService.isInvalid(token)) {
-                log.error("이미 로그아웃한 유저입니다.");
-                throw new RuntimeException();
-            }
-            if (tokenProvider.validateToken(token)) {
-                if (path.startsWith("/gologout")) {
-                    doLogout(token);
-                    throw new RuntimeException();
-                }
-                Long id = tokenProvider.getUserIdFromToken(token);
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(id.toString(), null, null);
-                SecurityContext sc = SecurityContextHolder.getContext();
-                sc.setAuthentication(authentication);
-                HttpSession session = request.getSession(true);
-                session.setAttribute(SPRING_SECURITY_CONTEXT_KEY, sc);
-                return token;
-            }
-            else {
-                throw new RuntimeException();
-            }
-
-        } catch (Exception e) {
-            throw new RuntimeException("INVALID TOKEN");
-        }
-    }
-
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String path = request.getServletPath();
-        System.out.println(request.getMethod());
         if (request.getMethod().equals("OPTIONS")) {
-            return true;
-        }
-        if (path.startsWith("/manyparties")) {
             return true;
         }
         if (path.startsWith("/oauth2") || path.startsWith("/login") || path.startsWith("/favicon.ico")) {
@@ -157,7 +145,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
     private void doLogout(String token) {
         logoutService.invalidate(token);
-        System.out.println("trying to logout...");
     }
 
 }
+
