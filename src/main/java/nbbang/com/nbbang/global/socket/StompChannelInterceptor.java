@@ -64,6 +64,10 @@ public class StompChannelInterceptor implements ChannelInterceptor {
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
 
+        System.out.println("==============소켓=============");
+        System.out.println("현재멤버 : " + currentMember.getMemberId());
+        System.out.println("==============소켓=============");
+
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
         Map<String, Object> attributes = accessor.getSessionAttributes();
         String destination = accessor.getDestination();
