@@ -19,6 +19,7 @@ import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
 
@@ -27,6 +28,7 @@ import java.util.Map;
 @Slf4j
 @Component
 //@RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class StompChannelInterceptor implements ChannelInterceptor {
 
     private final ChatService chatService;
@@ -38,7 +40,6 @@ public class StompChannelInterceptor implements ChannelInterceptor {
     private final SocketSender socketSender;
     private final CurrentMember currentMember;
     private final PartyMemberValidator partyMemberValidator;
-
 
 
     public StompChannelInterceptor(ChatService chatService, PartyService partyService, MemberService memberService,
@@ -67,24 +68,21 @@ public class StompChannelInterceptor implements ChannelInterceptor {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
         Map<String, Object> attributes = accessor.getSessionAttributes();
         String destination = accessor.getDestination();
+        Long memberId = (Long) attributes.get("memberId");
         if (StompCommand.CONNECT == accessor.getCommand()) {
-            Long memberId = 1L; // current member로 수정
             connect(attributes, memberId);
         } else if (StompCommand.SUBSCRIBE == accessor.getCommand()) {
             if(destination.startsWith(TOPIC_GLOBAL))  {
                 Long globalMemberId = Long.valueOf(destination.substring(14));
-                //if(currentMember.id()!=globalMemberId){throw new RuntimeException("자신의 소켓만 구독할 수 있습니다. ");}
-                log.info("SUBSCRIBED memberId: {}", globalMemberId);
+                if(memberId!=globalMemberId){throw new RuntimeException("자신의 소켓만 구독할 수 있습니다. ");}
             }
             else if(destination.startsWith(TOPIC_CHATTING)){
                 Long partyId = Long.valueOf(destination.substring(16));
-                //partyMemberValidator.isPartyMember(partyService.findById(partyId),memberService.findById(currentMember.id()));
+                partyMemberValidator.isPartyMember(partyService.findById(partyId),memberService.findById(memberId));
                 enterChatRoom(attributes, partyId);
-                log.info("SUBSCRIBED chat RoomId: {}", partyId);
             }else if(destination.startsWith(TOPIC_BREAD_BOARD)){
                 Long partyId = Long.valueOf(destination.substring(18));
-                //partyMemberValidator.isPartyMember(partyService.findById(partyId),memberService.findById(currentMember.id()));
-                log.info("SUBSCRIBED breadBoard RoomId: {}", partyId);
+                partyMemberValidator.isPartyMember(partyService.findById(partyId),memberService.findById(memberId));
             }
             else{
                 throw new IllegalArgumentException("올바른 토픽을 입력해주세요.");
@@ -93,10 +91,6 @@ public class StompChannelInterceptor implements ChannelInterceptor {
             if(destination.startsWith(TOPIC_CHATTING)){
                 Long partyId = Long.valueOf(destination.substring(18));
                 exitChatRoom(attributes, partyId);
-                log.info("UNSUBSCRIBE RoomId: {}", partyId);
-            }
-            else{
-                log.info("UNSUBSCRIBE.");
             }
         } else if (StompCommand.DISCONNECT == accessor.getCommand()) {
             exitChatRoomIfExist(attributes);
@@ -106,7 +100,6 @@ public class StompChannelInterceptor implements ChannelInterceptor {
 
     public void connect(Map<String, Object> attributes, Long memberId) {
         attributes.put("status", "none");
-        attributes.put("memberId",memberId);
     }
 
     public void enterChatRoom(Map<String, Object> attributes, Long partyId){

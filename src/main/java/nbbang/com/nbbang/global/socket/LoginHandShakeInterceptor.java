@@ -8,6 +8,7 @@ import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketHandler;
+import org.springframework.web.socket.server.HandshakeFailureException;
 import org.springframework.web.socket.server.HandshakeInterceptor;
 
 import javax.servlet.http.HttpSession;
@@ -30,9 +31,10 @@ public class LoginHandShakeInterceptor implements HandshakeInterceptor {
         if (session != null) {
             SecurityContext sc = (SecurityContext) session.getAttribute(SPRING_SECURITY_CONTEXT_KEY);
             try {
-                this.currentMember.setMemberId(Long.parseLong(sc.getAuthentication().getPrincipal().toString()));
+                attributes.put("memberId", Long.parseLong(sc.getAuthentication().getPrincipal().toString()));
             } catch(Exception e) {
-                this.currentMember.setMemberId(null);
+                attributes.put("memberId", 1L); // 개발용도
+                //throw new HandshakeFailureException("Socket Handshake 실패");
             }
         }
         return true;
