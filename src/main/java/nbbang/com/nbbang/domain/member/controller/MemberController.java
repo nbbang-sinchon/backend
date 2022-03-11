@@ -50,13 +50,6 @@ public class MemberController {
     @GetMapping
     public DefaultResponse select(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
-
-        if (session != null) {
-            SecurityContext sc = (SecurityContext) session.getAttribute(SPRING_SECURITY_CONTEXT_KEY);
-            System.out.println("hello");
-            System.out.println(sc.getAuthentication().getPrincipal());
-        }
-
         Member member = memberService.findById(currentMember.id());
         MemberResponseDto dto = MemberResponseDto.createByEntity(member);
         return DefaultResponse.res(StatusCode.OK, MemberResponseMessage.READ_MEMBER, dto);
@@ -88,7 +81,8 @@ public class MemberController {
     @ApiResponse(responseCode = "400", description = "프로필 사진 업로드 실패, 잘못된 요청입니다. 사진이 올바른지 확인하세요.", content = @Content(mediaType = "application/json"))
     @PostMapping(path = "/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public DefaultResponse uploadAndUpdateAvatar(@Schema(description = "이미지 파일을 업로드합니다.")
-                                             @RequestPart MultipartFile imgFile) throws IOException {
+                                             @RequestParam MultipartFile imgFile) throws IOException {
+        System.out.println(imgFile);
         String avatarUrl = memberService.uploadAndUpdateAvatar(currentMember.id(), imgFile);
         return DefaultResponse.res(StatusCode.OK, MemberResponseMessage.UPDATE_MEMBER, MemberProfileImageUploadResponseDto.createByString(avatarUrl));
     }

@@ -26,7 +26,7 @@ public class S3Uploader {
     private String bucket;
 
     public String upload(MultipartFile multipartFile, String dirName, String storeName) throws IOException {
-        File uploadFile = convert(multipartFile).orElseThrow(() -> new IllegalArgumentException("파일 변환에 실패하였습니다. 10MB 이상의 파일이거나 올바른 확장자 (png, jpeg) 여야 합니다."));
+        File uploadFile = convert(multipartFile).orElseThrow(() -> new IllegalArgumentException("파일 변환에 실패하였습니다. 10MB 이하의 파일이고 올바른 확장자 (png, jpeg, jpg, jfif) 여야 합니다."));
         return upload(uploadFile, dirName, storeName);
     }
 
@@ -60,7 +60,7 @@ public class S3Uploader {
     private Optional<File> convert(MultipartFile file) throws IOException {
         String originalName = file.getOriginalFilename();
         String extension = originalName.substring(originalName.lastIndexOf(".") + 1);
-        if (!(extension.equals("jpeg") || extension.equals("png"))) {
+        if (!(extension.equals("jpeg") || extension.equals("png") || extension.equals("jpg") || extension.equals("jfif"))) {
             return Optional.empty();
         }
         File convertFile = new File(System.getProperty("user.dir") + "/" + file.getOriginalFilename());
