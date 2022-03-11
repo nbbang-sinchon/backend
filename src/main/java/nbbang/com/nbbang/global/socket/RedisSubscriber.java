@@ -1,7 +1,5 @@
 package nbbang.com.nbbang.global.socket;
 
-import antlr.debug.MessageEvent;
-import antlr.debug.TraceEvent;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,8 +23,9 @@ public class RedisSubscriber implements MessageListener {
     public void onMessage(Message message, byte[] pattern) {
         try {
             String publishMessage = (String) redisTemplate.getStringSerializer().deserialize(message.getBody());
-            SocketSendDto data = objectMapper.readValue(publishMessage, SocketSendDto.class);
-            messagingTemplate.convertAndSend("topic/chatting/" + data.getDestinationId(), data);
+            SocketSendRedisDto data = objectMapper.readValue(publishMessage, SocketSendRedisDto.class);
+            SocketSendDto socketSendDto = SocketSendDto.create(data);
+            messagingTemplate.convertAndSend(data.getTopic(), socketSendDto);
         }
         catch (Exception e){
             log.error(e.getMessage());

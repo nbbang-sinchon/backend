@@ -5,12 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.domain.chat.domain.Message;
 import nbbang.com.nbbang.domain.chat.dto.message.ChatAlarmResponseDto;
 import nbbang.com.nbbang.domain.chat.dto.message.ChatSendResponseDto;
-import nbbang.com.nbbang.domain.chat.repository.MessageRedisRepository;
 import nbbang.com.nbbang.domain.member.domain.Member;
-import nbbang.com.nbbang.domain.member.repository.MemberRepository;
 import nbbang.com.nbbang.domain.party.service.PartyService;
 import nbbang.com.nbbang.global.interceptor.CurrentMember;
-import org.springframework.data.redis.listener.Topic;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
@@ -52,12 +49,8 @@ public class SocketSender {
     }
 
     public void send(String destination, Long id, String type, Object data){
-        SocketSendDto socketSendDto = SocketSendDto.createSocketSendDto(type, data, id);
-        if(destination==CHATTING){
-            redisPublisher.publish(messageRedisRepository.getTopic(id), socketSendDto);
-        }
-        else{
-            simpMessagingTemplate.convertAndSend("/topic/"+destination+"/" + id, socketSendDto);
-        }
+        String topic = "/topic/"+destination+"/"+id;
+        SocketSendRedisDto socketSendRedisDto = SocketSendRedisDto.createSocketSendDto(type, data, topic);
+        redisPublisher.publish(messageRedisRepository.getTopic(topic), socketSendRedisDto);
     }
 }

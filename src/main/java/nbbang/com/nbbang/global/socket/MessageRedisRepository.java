@@ -1,4 +1,4 @@
-package nbbang.com.nbbang.domain.chat.repository;
+package nbbang.com.nbbang.global.socket;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +15,8 @@ import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import static nbbang.com.nbbang.global.socket.SocketDestination.*;
+
 
 @RequiredArgsConstructor
 @Repository
@@ -25,45 +27,47 @@ public class MessageRedisRepository {
 
     private final RedisSubscriber redisSubscriber;
 
-    private static final String CHAT_ROOMS = "CHAT_ROOM";
     private final RedisTemplate<String, Object> redisTemplate;
-    private HashOperations<String, String, ChatRoom> opsHashChatRoom;
+    //private HashOperations<String, String, ChatRoom> opsHashChatRoom;
 
-    private Map<Long, ChannelTopic> topics;
+    private Map<String, ChannelTopic> topics;
 
     @PostConstruct
     private void init(){
-        opsHashChatRoom = redisTemplate.opsForHash();
+        //opsHashChatRoom = redisTemplate.opsForHash();
         topics = new HashMap<>();
     }
 
+/*
     public List<ChatRoom> findAllRoom(){
-        return opsHashChatRoom.values(CHAT_ROOMS);
+        return opsHashChatRoom.values(CHAT_ROOM);
     }
 
     public ChatRoom findRoomById(Long partyId){ // id는 대체 뭔가
-        return opsHashChatRoom.get(CHAT_ROOMS, partyId);
+        return opsHashChatRoom.get(CHAT_ROOM, partyId);
     }
 
     public ChatRoom createChatRoom(Long partyId){
         ChatRoom chatRoom = ChatRoom.create(partyId);
-        opsHashChatRoom.put(CHAT_ROOMS, String.valueOf(chatRoom.getPartyId()), chatRoom);
+        opsHashChatRoom.put(CHAT_ROOM, String.valueOf(chatRoom.getPartyId()), chatRoom);
         return chatRoom;
     }
+*/
 
-    public void enterChatRoom(Long partyId){
-        ChannelTopic topic = topics.get(partyId);
+    public void addChatRoom(String topicName){
+        ChannelTopic topic = topics.get(topicName);
         if(topic==null){
-            topic = new ChannelTopic(String.valueOf(partyId));
+            topic = new ChannelTopic(topicName);
             redisMessageListener.addMessageListener(redisSubscriber, topic);
-            topics.put(partyId, topic);
+            topics.put(topicName, topic);
         }
     }
-    public ChannelTopic getTopic(Long partyId){
-        if (topics.get(partyId)==null){
-            enterChatRoom(partyId);
+
+    public ChannelTopic getTopic(String topicName){
+        if (topics.get(topicName)==null){
+            addChatRoom(topicName);
         }
-        return topics.get(partyId);
+        return topics.get(topicName);
     }
 
 }
