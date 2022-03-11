@@ -64,7 +64,7 @@ dependencies {
 	implementation "org.springframework.boot:spring-boot-starter-data-redis"
 	testImplementation("org.springframework.security:spring-security-test")
 
-
+	implementation group: 'it.ozimov', name: 'embedded-redis', version: '0.7.1' //0311
 
 }
 
