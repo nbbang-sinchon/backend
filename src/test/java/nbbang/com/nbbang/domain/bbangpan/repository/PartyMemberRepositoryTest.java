@@ -2,7 +2,7 @@ package nbbang.com.nbbang.domain.bbangpan.repository;
 
 import nbbang.com.nbbang.domain.bbangpan.domain.PartyMember;
 import nbbang.com.nbbang.domain.chat.repository.MessageRepository;
-import nbbang.com.nbbang.domain.chat.service.MessageServiceImpl;
+import nbbang.com.nbbang.domain.chat.service.MessageService;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.repository.MemberRepository;
 import nbbang.com.nbbang.domain.party.domain.Party;
@@ -25,8 +25,6 @@ class PartyMemberRepositoryTest {
     PartyMemberRepository memberPartyRepository;
     @Autowired MemberRepository memberRepository;
     @Autowired PartyRepository partyRepository;
-    @Autowired
-    MessageServiceImpl messageServiceImpl;
     @Autowired
     MessageRepository messageRepository;
 

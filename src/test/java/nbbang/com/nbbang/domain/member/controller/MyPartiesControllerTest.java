@@ -1,7 +1,7 @@
 package nbbang.com.nbbang.domain.member.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import nbbang.com.nbbang.domain.chat.service.MessageServiceImpl;
+import nbbang.com.nbbang.domain.chat.service.MessageService;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.repository.MemberRepository;
 import nbbang.com.nbbang.domain.member.service.MemberService;
@@ -45,7 +45,7 @@ class MyPartiesControllerTest {
     @Autowired MemberRepository memberRepository;
     @Autowired PartyMemberService partyMemberService;
     @Autowired
-    MessageServiceImpl messageServiceImpl;
+    MessageService messageService;
     @Autowired StompChannelInterceptor stompChannelInterceptor;
     @Autowired ManyPartyService manyPartyService;
 
@@ -83,17 +83,17 @@ class MyPartiesControllerTest {
         stompChannelInterceptor.connect(member3Attributes);
 
         stompChannelInterceptor.enterChatRoom(member1Attributes, partyId); // 1번 파티 입장
-        messageServiceImpl.send(partyId, saveMember1.getId(), "hello");
+        messageService.send(partyId, saveMember1.getId(), "hello");
 
         stompChannelInterceptor.exitChatRoom(member1Attributes, partyId); // 1번 파티 나감
 
         stompChannelInterceptor.enterChatRoom(member2Attributes, partyId); // 2번 파티 입장
 
-        messageServiceImpl.send(partyId, saveMember2.getId(), "hello here 2");
+        messageService.send(partyId, saveMember2.getId(), "hello here 2");
 
         stompChannelInterceptor.enterChatRoom(member3Attributes, partyId); // 3번 파티 입장
 
-        messageServiceImpl.send(partyId, saveMember3.getId(), "hello here 3");
+        messageService.send(partyId, saveMember3.getId(), "hello here 3");
 
 
         DefaultResponse res = controllerTestUtil.expectDefaultResponseObject(get("/members/parties/on"));
@@ -106,7 +106,7 @@ class MyPartiesControllerTest {
         MyPartyListResponseDto result2 = controllerTestUtil.convert(res2.getData(), MyPartyListResponseDto.class);
         // assertThat(result2.getParties().get(0).getNotReadNumber()).isEqualTo(0);
 
-        messageServiceImpl.send(partyId, saveMember3.getId(), "hoho 3");
+        messageService.send(partyId, saveMember3.getId(), "hoho 3");
 
 
         DefaultResponse res3 = controllerTestUtil.expectDefaultResponseObject(get("/members/parties/on"));

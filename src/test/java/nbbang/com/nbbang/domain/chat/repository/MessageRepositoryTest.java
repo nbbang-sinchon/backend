@@ -1,7 +1,7 @@
 package nbbang.com.nbbang.domain.chat.repository;
 
 import nbbang.com.nbbang.domain.chat.service.ChatService;
-import nbbang.com.nbbang.domain.chat.service.MessageServiceImpl;
+import nbbang.com.nbbang.domain.chat.service.MessageService;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.repository.MemberRepository;
 import nbbang.com.nbbang.domain.party.domain.Party;
@@ -26,7 +26,7 @@ class MessageRepositoryTest {
     @Autowired
     PartyService partyService;
     @Autowired
-    MessageServiceImpl messageServiceImpl;
+    MessageService messageService;
 
     @Test
     public void findLastMessageIdTest() {
@@ -48,8 +48,8 @@ class MessageRepositoryTest {
         Member savedMember = memberRepository.save(memberA);
         Party partyA = Party.builder().title("hello").goalNumber(3).build();
         Party party = partyService.create(partyA, savedMember.getId(), null);
-        messageServiceImpl.send(party.getId(), savedMember.getId(), "hello");
-        messageServiceImpl.send(party.getId(), savedMember.getId(), "hello2");
+        messageService.send(party.getId(), savedMember.getId(), "hello");
+        messageService.send(party.getId(), savedMember.getId(), "hello2");
 
         Integer cnt = messageRepository.countByPartyIdAndIdGreaterThan(party.getId(), 0L);
         Assertions.assertThat(cnt).isEqualTo(3);

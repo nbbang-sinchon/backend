@@ -1,7 +1,6 @@
 package nbbang.com.nbbang.domain.chat.service;
 
 import lombok.extern.slf4j.Slf4j;
-import nbbang.com.nbbang.domain.chat.domain.Message;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.repository.MemberRepository;
 import nbbang.com.nbbang.domain.member.service.MemberService;
@@ -9,6 +8,7 @@ import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.service.PartyMemberService;
 import nbbang.com.nbbang.domain.party.service.PartyService;
 import nbbang.com.nbbang.global.socket.StompChannelInterceptor;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -31,7 +31,7 @@ class ChatReadTest {
     @Autowired MemberRepository memberRepository;
     @Autowired PartyMemberService partyMemberService;
     @Autowired
-    MessageServiceImpl messageServiceImpl;
+    MessageService messageService;
     @Autowired StompChannelInterceptor stompChannelInterceptor;
 
     @Test

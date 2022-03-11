@@ -7,7 +7,7 @@ import nbbang.com.nbbang.domain.bbangpan.repository.PartyMemberRepository;
 import nbbang.com.nbbang.domain.chat.domain.Message;
 import nbbang.com.nbbang.domain.chat.domain.MessageType;
 import nbbang.com.nbbang.domain.chat.repository.MessageRepository;
-import nbbang.com.nbbang.domain.chat.service.MessageServiceImpl;
+import nbbang.com.nbbang.domain.chat.service.MessageService;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.party.controller.PartyResponseMessage;
 import nbbang.com.nbbang.domain.party.domain.Party;
@@ -30,7 +30,7 @@ import java.util.Optional;
 @Slf4j
 public class PartyMemberService {
     private final PartyMemberRepository partyMemberRepository;
-    private final MessageServiceImpl messageServiceImpl;
+    private final MessageService messageService;
     private final MessageRepository messageRepository;
     private final SessionPartyGlobalRepository sessionPartyGlobalRepository;
 
@@ -56,7 +56,7 @@ public class PartyMemberService {
         PartyMember partyMember = PartyMember.createMemberParty(member, party, messageRepository.findLastMessage(party.getId()));
         partyMemberRepository.save(partyMember);
 
-        return messageServiceImpl.send(party.getId(), member.getId(), member.getNickname() + " 님이 입장하셨습니다.", MessageType.ENTER);
+        return messageService.send(party.getId(), member.getId(), member.getNickname() + " 님이 입장하셨습니다.", MessageType.ENTER);
     }
 
 
@@ -74,7 +74,7 @@ public class PartyMemberService {
         PartyMember partyMember = partyMemberRepository.findByMemberIdAndPartyId(member.getId(), party.getId());
         party.exitMemberParty(partyMember);
         partyMemberRepository.delete(partyMember);
-        return messageServiceImpl.send(party.getId(), member.getId(), member.getNickname() + " 님이 퇴장하셨습니다.", MessageType.EXIT);
+        return messageService.send(party.getId(), member.getId(), member.getNickname() + " 님이 퇴장하셨습니다.", MessageType.EXIT);
     }
 
 

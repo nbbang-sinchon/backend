@@ -11,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.domain.chat.domain.Message;
 import nbbang.com.nbbang.domain.chat.dto.message.ChatSendRequestDto;
 import nbbang.com.nbbang.domain.chat.dto.message.ChatSendResponseDto;
-import nbbang.com.nbbang.domain.chat.service.MessageServiceImpl;
+import nbbang.com.nbbang.domain.chat.service.MessageService;
 import nbbang.com.nbbang.global.error.GlobalErrorResponseMessage;
 import nbbang.com.nbbang.global.error.exception.CustomIllegalArgumentException;
 import nbbang.com.nbbang.global.interceptor.CurrentMember;
@@ -37,7 +37,7 @@ import java.io.IOException;
 @RequestMapping("/chats/{party-id}")
 public class MessageController {
 
-    private final MessageServiceImpl messageServiceImpl;
+    private final MessageService messageService;
     private final CurrentMember currentMember;
     private final SocketSender socketSender;
 
@@ -49,7 +49,7 @@ public class MessageController {
         if (bindingResult.hasErrors()) {
             throw new CustomIllegalArgumentException(GlobalErrorResponseMessage.ILLEGAL_ARGUMENT_ERROR, bindingResult);
         }
-        Message message = messageServiceImpl.send(partyId, currentMember.id(), chatSendRequestDto.getContent());
+        Message message = messageService.send(partyId, currentMember.id(), chatSendRequestDto.getContent());
         socketSender.sendChattingByMessage(message);
         return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.UPLOADED_MESSAGE);
     }
@@ -60,7 +60,7 @@ public class MessageController {
     @ApiResponse(responseCode = "400", description = "잘못된 요청입니다.", content = @Content(mediaType = "application/json"))
     @PostMapping(path = "/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public DefaultResponse sendImage(@PathVariable("party-id") Long partyId, @RequestPart MultipartFile imgFile) throws IOException {
-        Message message = messageServiceImpl.sendImage(partyId, currentMember.id(), imgFile);
+        Message message = messageService.sendImage(partyId, currentMember.id(), imgFile);
         socketSender.sendChattingByMessage(message);
         return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.UPLOADED_IMAGE_MESSAGE);
     }
