@@ -23,7 +23,7 @@ public class SocketSender {
     private final CurrentMember currentMember;
     private final PartyService partyService;
     private final RedisPublisher redisPublisher;
-    private final MessageRedisRepository messageRedisRepository;
+    private final TopicRedisRepository topicRedisRepository;
 
     public void sendChattingByMessage(Message message){
         ChatSendResponseDto chatSendResponseDto = ChatSendResponseDto.createByMessage(message, currentMember.id());
@@ -51,6 +51,6 @@ public class SocketSender {
     public void send(String destination, Long id, String type, Object data){
         String topic = "/topic/"+destination+"/"+id;
         SocketSendRedisDto socketSendRedisDto = SocketSendRedisDto.createSocketSendDto(type, data, topic);
-        redisPublisher.publish(messageRedisRepository.getTopic(topic), socketSendRedisDto);
+        redisPublisher.publish(topicRedisRepository.getTopic(topic), socketSendRedisDto);
     }
 }

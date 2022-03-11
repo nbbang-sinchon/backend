@@ -7,7 +7,6 @@ import nbbang.com.nbbang.domain.bbangpan.repository.PartyMemberRepository;
 import nbbang.com.nbbang.domain.chat.dto.ChatReadSocketDto;
 import nbbang.com.nbbang.domain.chat.service.ChatService;
 import nbbang.com.nbbang.domain.member.service.MemberService;
-import nbbang.com.nbbang.domain.party.repository.SessionPartyGlobalRepository;
 import nbbang.com.nbbang.domain.party.service.PartyMemberService;
 import nbbang.com.nbbang.domain.party.service.PartyService;
 import nbbang.com.nbbang.global.interceptor.CurrentMember;

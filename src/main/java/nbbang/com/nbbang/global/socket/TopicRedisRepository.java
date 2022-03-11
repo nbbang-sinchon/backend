@@ -2,10 +2,6 @@ package nbbang.com.nbbang.global.socket;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import nbbang.com.nbbang.domain.chat.dto.ChatRoom;
-import nbbang.com.nbbang.domain.party.domain.Party;
-import nbbang.com.nbbang.global.socket.RedisSubscriber;
-import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
@@ -13,15 +9,13 @@ import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import static nbbang.com.nbbang.global.socket.SocketDestination.*;
 
 
 @RequiredArgsConstructor
 @Repository
 @Slf4j
-public class MessageRedisRepository {
+public class TopicRedisRepository {
 
     private final RedisMessageListenerContainer redisMessageListener;
 

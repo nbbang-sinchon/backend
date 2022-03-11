@@ -9,7 +9,7 @@ import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.service.MemberService;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.repository.PartyRepository;
-import nbbang.com.nbbang.domain.party.repository.SessionPartyGlobalRepository;
+import nbbang.com.nbbang.global.socket.SessionPartyGlobalRepository;
 import nbbang.com.nbbang.global.FileUpload.S3Uploader;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

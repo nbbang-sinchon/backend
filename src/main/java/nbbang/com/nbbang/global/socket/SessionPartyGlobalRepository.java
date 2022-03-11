@@ -1,4 +1,4 @@
-package nbbang.com.nbbang.domain.party.repository;
+package nbbang.com.nbbang.global.socket;
 
 
 import com.mysema.commons.lang.Pair;

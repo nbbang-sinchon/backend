@@ -14,7 +14,7 @@ import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.domain.PartyStatus;
 import nbbang.com.nbbang.domain.party.exception.PartyExitForbiddenException;
 import nbbang.com.nbbang.domain.party.exception.PartyJoinException;
-import nbbang.com.nbbang.domain.party.repository.SessionPartyGlobalRepository;
+import nbbang.com.nbbang.global.socket.SessionPartyGlobalRepository;
 import nbbang.com.nbbang.global.error.exception.NotPartyMemberException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
