@@ -13,6 +13,8 @@ import nbbang.com.nbbang.domain.chat.dto.ChatMessageImageUploadResponseDto;
 import nbbang.com.nbbang.domain.chat.dto.message.ChatSendRequestDto;
 import nbbang.com.nbbang.domain.chat.dto.message.ChatSendResponseDto;
 import nbbang.com.nbbang.domain.chat.service.MessageService;
+import nbbang.com.nbbang.domain.member.controller.MemberResponseMessage;
+import nbbang.com.nbbang.domain.member.dto.MemberProfileImageUploadResponseDto;
 import nbbang.com.nbbang.global.error.GlobalErrorResponseMessage;
 import nbbang.com.nbbang.global.error.exception.CustomIllegalArgumentException;
 import nbbang.com.nbbang.global.interceptor.CurrentMember;
@@ -26,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.IOException;
 
 @Tag(name = "Chat", description = "채팅 메시지를 전송합니다.")
 @ApiResponses(value = {
@@ -50,20 +53,19 @@ public class MessageController {
         if (bindingResult.hasErrors()) {
             throw new CustomIllegalArgumentException(GlobalErrorResponseMessage.ILLEGAL_ARGUMENT_ERROR, bindingResult);
         }
-        Long messageId = messageService.send(partyId, currentMember.id(), chatSendRequestDto.getContent());
-        Message message = messageService.findById(messageId);
+        Message message = messageService.send(partyId, currentMember.id(), chatSendRequestDto.getContent());
         socketSender.sendChattingByMessage(message);
         return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.UPLOADED_MESSAGE);
     }
 
 
-    @Operation(summary = "메시지 사진 업로드(미구현)", description = "메시지 사진을 업로드합니다.")
-    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ChatMessageImageUploadResponseDto.class)))
+    @Operation(summary = "채팅 사진 전송", description = "채팅 사진을 전송합니다.")
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ChatSendResponseDto.class)))
     @ApiResponse(responseCode = "400", description = "잘못된 요청입니다.", content = @Content(mediaType = "application/json"))
     @PostMapping(path = "/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public DefaultResponse sendImage(@PathVariable("party-id") Long partyId,
-                                     @Schema(description = "이미지 파일을 업로드합니다.")
-                                     @RequestPart MultipartFile imgFile) {
-        return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.UPLOADED_MESSAGE, new ChatMessageImageUploadResponseDto(""));
+    public DefaultResponse sendImage(@PathVariable("party-id") Long partyId, @RequestPart MultipartFile imgFile) throws IOException {
+        Message message = messageService.sendImage(partyId, currentMember.id(), imgFile);
+        socketSender.sendChattingByMessage(message);
+        return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.UPLOADED_IMAGE_MESSAGE);
     }
 }

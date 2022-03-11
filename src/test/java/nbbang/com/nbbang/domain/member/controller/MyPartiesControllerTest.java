@@ -91,18 +91,17 @@ class MyPartiesControllerTest {
         stompChannelInterceptor.connect(member3Attributes);
 
         stompChannelInterceptor.enterChatRoom(member1Attributes, partyId); // 1번 파티 입장
-        Long messageId1 = messageService.send(partyId, saveMember1.getId(), "hello");
+        messageService.send(partyId, saveMember1.getId(), "hello");
 
         stompChannelInterceptor.exitChatRoom(member1Attributes, partyId); // 1번 파티 나감
 
         stompChannelInterceptor.enterChatRoom(member2Attributes, partyId); // 2번 파티 입장
 
-        Long messageId2 = messageService.send(partyId, saveMember2.getId(), "hello here 2");
+        messageService.send(partyId, saveMember2.getId(), "hello here 2");
 
         stompChannelInterceptor.enterChatRoom(member3Attributes, partyId); // 3번 파티 입장
 
-        Long messageId3 = messageService.send(partyId, saveMember3.getId(), "hello here 3");
-
+        messageService.send(partyId, saveMember3.getId(), "hello here 3");
 
 
         DefaultResponse res = controllerTestUtil.expectDefaultResponseObject(get("/members/parties/on"));
@@ -115,7 +114,7 @@ class MyPartiesControllerTest {
         MyPartyListResponseDto result2 = controllerTestUtil.convert(res2.getData(), MyPartyListResponseDto.class);
         // assertThat(result2.getParties().get(0).getNotReadNumber()).isEqualTo(0);
 
-        Long messageId4 = messageService.send(partyId, saveMember3.getId(), "hoho 3");
+        messageService.send(partyId, saveMember3.getId(), "hoho 3");
 
 
         DefaultResponse res3 = controllerTestUtil.expectDefaultResponseObject(get("/members/parties/on"));

@@ -46,8 +46,7 @@ public class SocketAPI {
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ChatSendResponseDto.class)))
     @PostMapping("/chatting")
     public SocketSendDto socketEmitApi(@RequestBody ChatSendRequestDto chatSendRequestDto){
-        Long messageId = messageService.send(1L, 1L, chatSendRequestDto.getContent());
-        Message message = messageService.findById(messageId);
+        Message message = messageService.send(1L, 1L, chatSendRequestDto.getContent());
         ChatSendResponseDto data = ChatSendResponseDto.createByMessage(message, currentMember.id());
         return SocketSendDto.createSocketSendDto(CHATTING, data);
     }
@@ -74,8 +73,7 @@ public class SocketAPI {
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ChatAlarmResponseDto.class)))
     @PostMapping("/global")
     public SocketSendDto global(){
-        Long messageId = messageService.send(1L, 2L, "다른 사람이 보낸 채팅");
-        Message message = messageService.findById(messageId);
+        Message message = messageService.send(1L, 2L, "다른 사람이 보낸 채팅");
         ChatSendResponseDto data = ChatSendResponseDto.createByMessage(message, currentMember.id());
         return SocketSendDto.createSocketSendDto(GLOBAL, ChatAlarmResponseDto.create(Party.builder().id(0L).title("test party").build(), data));
     }
