@@ -70,7 +70,7 @@ public class StompChannelInterceptor implements ChannelInterceptor {
         String destination = accessor.getDestination();
         Long memberId = (Long) attributes.get("memberId");
         if (StompCommand.CONNECT == accessor.getCommand()) {
-            connect(attributes, memberId);
+            connect(attributes);
         } else if (StompCommand.SUBSCRIBE == accessor.getCommand()) {
             if(destination.startsWith(TOPIC_GLOBAL))  {
                 Long globalMemberId = Long.valueOf(destination.substring(14));
@@ -98,7 +98,7 @@ public class StompChannelInterceptor implements ChannelInterceptor {
         return message;
     }
 
-    public void connect(Map<String, Object> attributes, Long memberId) {
+    public void connect(Map<String, Object> attributes) {
         attributes.put("status", "none");
     }
 
@@ -110,6 +110,7 @@ public class StompChannelInterceptor implements ChannelInterceptor {
         sessionPartyGlobalRepository.subscribe(partyId, memberId);
     }
 
+    @Transactional
     public void readMessage(Long partyId, Long memberId) {
         Long lastReadMessageId = chatService.readMessage(partyId, memberId);
         ChatReadSocketDto chatReadSocketDto = ChatReadSocketDto.builder().lastReadMessageId(lastReadMessageId).build();
