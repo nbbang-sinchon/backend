@@ -28,7 +28,7 @@ public class SessionPartyGlobalRepository {
     public void unsubscribe(Long partyId, Long memberId){
         Pair<Long, Long> pair = new Pair<>(partyId, memberId);
         if ((!sessionPartyMap.containsKey(pair)) || (sessionPartyMap.get(pair) < 1)){
-            throw new IllegalArgumentException("memberId, partyId와 맞는 데이터가 존재하지 않습니다.");
+            throw new IllegalArgumentException("[UNSUBSCRIBE] partyId, memberId에 해당하는 소켓 연결을 찾을 수 없습니다. ");
         }
         sessionPartyMap.put(pair, sessionPartyMap.get(pair) - 1);
     }

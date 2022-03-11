@@ -1,6 +1,7 @@
 package nbbang.com.nbbang.domain.chat.repository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.domain.chat.dto.ChatRoom;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.global.socket.RedisSubscriber;
@@ -17,6 +18,7 @@ import java.util.Map;
 
 @RequiredArgsConstructor
 @Repository
+@Slf4j
 public class MessageRedisRepository {
 
     private final RedisMessageListenerContainer redisMessageListener;
@@ -58,7 +60,10 @@ public class MessageRedisRepository {
         }
     }
     public ChannelTopic getTopic(Long partyId){
-        return topics.get(String.valueOf(partyId));
+        if (topics.get(partyId)==null){
+            enterChatRoom(partyId);
+        }
+        return topics.get(partyId);
     }
 
 }

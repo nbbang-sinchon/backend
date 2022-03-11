@@ -104,10 +104,10 @@ public class StompChannelInterceptor implements ChannelInterceptor {
 
     public void enterChatRoom(Map<String, Object> attributes, Long partyId){
         attributes.put("partyId", partyId);
-        attributes.put("status", "subscribe");
         Long memberId = (Long) attributes.get("memberId");
         readMessage(partyId, memberId);
         sessionPartyGlobalRepository.subscribe(partyId, memberId);
+        attributes.put("status", "subscribe");
     }
 
     @Transactional

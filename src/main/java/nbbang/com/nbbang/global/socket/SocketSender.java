@@ -1,6 +1,7 @@
 package nbbang.com.nbbang.global.socket;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.domain.chat.domain.Message;
 import nbbang.com.nbbang.domain.chat.dto.message.ChatAlarmResponseDto;
 import nbbang.com.nbbang.domain.chat.dto.message.ChatSendResponseDto;
@@ -19,7 +20,7 @@ import static nbbang.com.nbbang.global.socket.SocketDestination.*;
 
 @Component
 @RequiredArgsConstructor
-
+@Slf4j
 public class SocketSender {
     private final SimpMessagingTemplate simpMessagingTemplate;
     private final CurrentMember currentMember;
