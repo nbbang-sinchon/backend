@@ -8,6 +8,7 @@ import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.repository.MemberRepository;
 import nbbang.com.nbbang.domain.party.service.PartyService;
 import nbbang.com.nbbang.global.interceptor.CurrentMember;
+import org.springframework.data.redis.listener.Topic;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
@@ -21,6 +22,8 @@ public class SocketSender {
     private final SimpMessagingTemplate simpMessagingTemplate;
     private final CurrentMember currentMember;
     private final PartyService partyService;
+    private final RedisPublisher redisPublisher;
+
     public void sendChattingByMessage(Message message){
         ChatSendResponseDto chatSendResponseDto = ChatSendResponseDto.createByMessage(message, currentMember.id());
         Long partyId = message.getParty().getId();
@@ -47,5 +50,6 @@ public class SocketSender {
     public void send(String destination, Long id, String type, Object data){
         SocketSendDto socketSendDto = SocketSendDto.createSocketSendDto(type, data);
         simpMessagingTemplate.convertAndSend("/topic/"+destination+"/" + id, socketSendDto);
+        //redisPublisher.publish(new Topic(), socketSendDto);
     }
 }

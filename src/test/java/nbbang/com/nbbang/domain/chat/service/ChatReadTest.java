@@ -30,7 +30,8 @@ class ChatReadTest {
     @Autowired MemberService memberService;
     @Autowired MemberRepository memberRepository;
     @Autowired PartyMemberService partyMemberService;
-    @Autowired MessageService messageService;
+    @Autowired
+    MessageServiceImpl messageServiceImpl;
     @Autowired StompChannelInterceptor stompChannelInterceptor;
 
     @Test
@@ -64,13 +65,13 @@ class ChatReadTest {
         stompChannelInterceptor.connect(member3Attributes);
 
         stompChannelInterceptor.enterChatRoom(member1Attributes, partyId); // 1번 파티 입장
-        Message message1 = messageService.send(partyId, saveMember1.getId(), "hello");
+        Message message1 = messageServiceImpl.send(partyId, saveMember1.getId(), "hello");
         assertThat(message1.getReadNumber()).isEqualTo(1);
 
         stompChannelInterceptor.enterChatRoom(member2Attributes, partyId); // 2번 파티 입장
         assertThat(message1.getReadNumber()).isEqualTo(2);
 
-        Message message2 = messageService.send(partyId, saveMember2.getId(), "hello here 2");
+        Message message2 = messageServiceImpl.send(partyId, saveMember2.getId(), "hello here 2");
         assertThat(message1.getReadNumber()).isEqualTo(2);
         assertThat(message2.getReadNumber()).isEqualTo(2);
 
@@ -85,7 +86,7 @@ class ChatReadTest {
         assertThat(message2.getReadNumber()).isEqualTo(3);
 
 
-        Message message3 = messageService.send(partyId, saveMember3.getId(), "hello here 3");
+        Message message3 = messageServiceImpl.send(partyId, saveMember3.getId(), "hello here 3");
         assertThat(message3.getReadNumber()).isEqualTo(2);
 
         stompChannelInterceptor.enterChatRoom(member1Attributes, partyId); // 1번 파티 입장

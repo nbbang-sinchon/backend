@@ -7,18 +7,14 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AccessLevel;
-import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import nbbang.com.nbbang.domain.bbangpan.dto.BbangpanResponseDto;
-import nbbang.com.nbbang.domain.bbangpan.dto.socket.PartyFieldChangeSocketDto;
-import nbbang.com.nbbang.domain.bbangpan.dto.socket.PartyMemberFieldChangeSocketDto;
 import nbbang.com.nbbang.domain.chat.domain.Message;
 import nbbang.com.nbbang.domain.chat.dto.ChatReadSocketDto;
 import nbbang.com.nbbang.domain.chat.dto.message.ChatAlarmResponseDto;
 import nbbang.com.nbbang.domain.chat.dto.message.ChatSendRequestDto;
 import nbbang.com.nbbang.domain.chat.dto.message.ChatSendResponseDto;
-import nbbang.com.nbbang.domain.chat.service.MessageService;
+import nbbang.com.nbbang.domain.chat.service.MessageServiceImpl;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.service.PartyService;
 import nbbang.com.nbbang.global.interceptor.CurrentMember;
@@ -36,7 +32,7 @@ import static nbbang.com.nbbang.global.socket.SocketDestination.*;
 @RequestMapping("socket/develop")
 public class SocketAPI {
     @Autowired
-    MessageService messageService;
+    MessageServiceImpl messageServiceImpl;
     @Autowired
     CurrentMember currentMember;
     @Autowired
@@ -46,7 +42,7 @@ public class SocketAPI {
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ChatSendResponseDto.class)))
     @PostMapping("/chatting")
     public SocketSendDto socketEmitApi(@RequestBody ChatSendRequestDto chatSendRequestDto){
-        Message message = messageService.send(1L, 1L, chatSendRequestDto.getContent());
+        Message message = messageServiceImpl.send(1L, 1L, chatSendRequestDto.getContent());
         ChatSendResponseDto data = ChatSendResponseDto.createByMessage(message, currentMember.id());
         return SocketSendDto.createSocketSendDto(CHATTING, data);
     }
@@ -73,7 +69,7 @@ public class SocketAPI {
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ChatAlarmResponseDto.class)))
     @PostMapping("/global")
     public SocketSendDto global(){
-        Message message = messageService.send(1L, 2L, "다른 사람이 보낸 채팅");
+        Message message = messageServiceImpl.send(1L, 2L, "다른 사람이 보낸 채팅");
         ChatSendResponseDto data = ChatSendResponseDto.createByMessage(message, currentMember.id());
         return SocketSendDto.createSocketSendDto(GLOBAL, ChatAlarmResponseDto.create(Party.builder().id(0L).title("test party").build(), data));
     }

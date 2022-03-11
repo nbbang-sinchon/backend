@@ -7,8 +7,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.domain.chat.domain.Message;
-import nbbang.com.nbbang.domain.chat.dto.message.ChatSendResponseDto;
-import nbbang.com.nbbang.domain.chat.service.MessageService;
+import nbbang.com.nbbang.domain.chat.service.MessageServiceImpl;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.service.MemberService;
 import nbbang.com.nbbang.domain.party.domain.Party;
@@ -34,7 +33,7 @@ public class PartyMemberController {
     private final MemberService memberService;
     private final PartyMemberService partyMemberService;
     private final SocketSender socketSender;
-    private final MessageService messageService;
+    private final MessageServiceImpl messageServiceImpl;
     private final CurrentMember currentMember;
 
     @Operation(summary = "파티 참여", description = "파티에 참여합니다.")
@@ -46,7 +45,7 @@ public class PartyMemberController {
         Member member = memberService.findById(currentMember.id());
 
         Long messageId = partyMemberService.joinParty(party, member);
-        Message message = messageService.findById(messageId);
+        Message message = messageServiceImpl.findById(messageId);
         socketSender.sendChattingByMessage(message);
 
         return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_JOIN_SUCCESS);
@@ -61,7 +60,7 @@ public class PartyMemberController {
         Party party = partyService.findById(partyId);
         Member member = memberService.findById(currentMember.id());
         Long messageId = partyMemberService.exitParty(party, member);
-        Message message = messageService.findById(messageId);
+        Message message = messageServiceImpl.findById(messageId);
         socketSender.sendChattingByMessage(message);
         return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_EXIT_SUCCESS);
     }
