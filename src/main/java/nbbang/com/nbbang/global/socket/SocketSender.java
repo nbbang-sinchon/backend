@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import nbbang.com.nbbang.domain.chat.domain.Message;
 import nbbang.com.nbbang.domain.chat.dto.message.ChatAlarmResponseDto;
 import nbbang.com.nbbang.domain.chat.dto.message.ChatSendResponseDto;
+import nbbang.com.nbbang.domain.chat.repository.MessageRedisRepository;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.repository.MemberRepository;
 import nbbang.com.nbbang.domain.party.service.PartyService;
@@ -18,11 +19,13 @@ import static nbbang.com.nbbang.global.socket.SocketDestination.*;
 
 @Component
 @RequiredArgsConstructor
+
 public class SocketSender {
     private final SimpMessagingTemplate simpMessagingTemplate;
     private final CurrentMember currentMember;
     private final PartyService partyService;
     private final RedisPublisher redisPublisher;
+    private final MessageRedisRepository messageRedisRepository;
 
     public void sendChattingByMessage(Message message){
         ChatSendResponseDto chatSendResponseDto = ChatSendResponseDto.createByMessage(message, currentMember.id());
@@ -48,8 +51,12 @@ public class SocketSender {
     }
 
     public void send(String destination, Long id, String type, Object data){
-        SocketSendDto socketSendDto = SocketSendDto.createSocketSendDto(type, data);
-        simpMessagingTemplate.convertAndSend("/topic/"+destination+"/" + id, socketSendDto);
-        //redisPublisher.publish(new Topic(), socketSendDto);
+        SocketSendDto socketSendDto = SocketSendDto.createSocketSendDto(type, data, id);
+        if(destination==CHATTING){
+            redisPublisher.publish(messageRedisRepository.getTopic(id), socketSendDto);
+        }
+        else{
+            simpMessagingTemplate.convertAndSend("/topic/"+destination+"/" + id, socketSendDto);
+        }
     }
 }

@@ -26,7 +26,7 @@ public class RedisSubscriber implements MessageListener {
         try {
             String publishMessage = (String) redisTemplate.getStringSerializer().deserialize(message.getBody());
             SocketSendDto data = objectMapper.readValue(publishMessage, SocketSendDto.class);
-            messagingTemplate.convertAndSend("topic/" + "chatting" + 1L);
+            messagingTemplate.convertAndSend("topic/chatting" + data.getDestinationId(), data);
         }
         catch (Exception e){
             log.error(e.getMessage());

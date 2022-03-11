@@ -8,7 +8,8 @@ import lombok.Data;
 public class SocketSendDto {
     private String type;
     private Object data;
-    public static SocketSendDto createSocketSendDto(String type, Object data){
-        return SocketSendDto.builder().type(type).data(data).build();
+    private Long destinationId;
+    public static SocketSendDto createSocketSendDto(String type, Object data, Long destinationId){
+        return SocketSendDto.builder().type(type).data(data).destinationId(destinationId).build();
     }
 }

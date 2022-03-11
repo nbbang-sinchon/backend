@@ -44,7 +44,7 @@ public class SocketAPI {
     public SocketSendDto socketEmitApi(@RequestBody ChatSendRequestDto chatSendRequestDto){
         Message message = messageServiceImpl.send(1L, 1L, chatSendRequestDto.getContent());
         ChatSendResponseDto data = ChatSendResponseDto.createByMessage(message, currentMember.id());
-        return SocketSendDto.createSocketSendDto(CHATTING, data);
+        return SocketSendDto.createSocketSendDto(CHATTING, data, 1L);
     }
 
     @Operation(summary = "[CHATTING] 채팅 읽음", description = "다른 사람이 채팅방에 들어와 메시지를 읽으면, 채팅방 내의 유저들이 받는 소켓입니다. lastReadMessageId보다 큰 id를 갖는 메시지들은 전부 읽지 않은 사람 수를 -1 해주세요.")
@@ -53,7 +53,7 @@ public class SocketAPI {
     public SocketSendDto readMessage(){
         Long lastReadMessageId = 5L;
         ChatReadSocketDto chatReadSocketDto = ChatReadSocketDto.builder().lastReadMessageId(lastReadMessageId).build();
-        return SocketSendDto.createSocketSendDto("reading", chatReadSocketDto);
+        return SocketSendDto.createSocketSendDto("reading", chatReadSocketDto, 1L);
     }
 
     @Operation(summary = "[BREAD-BOARD] 빵판", description = "빵판과 관련된 소켓입니다.")
@@ -62,7 +62,7 @@ public class SocketAPI {
     public SocketSendDto breadBoard(){
         Party party = partyService.findById(1L);
         BbangpanResponseDto bbangpanResponseDto = BbangpanResponseDto.createDtoByParty(party);
-        return SocketSendDto.createSocketSendDto(BREAD_BOARD, bbangpanResponseDto);
+        return SocketSendDto.createSocketSendDto(BREAD_BOARD, bbangpanResponseDto, 1L);
     }
 
     @Operation(summary = "[GLOBAL] 알람", description = "참가중인 파티에 새로운 채팅이 들어오면 알람을 보냅니다.")
@@ -71,7 +71,7 @@ public class SocketAPI {
     public SocketSendDto global(){
         Message message = messageServiceImpl.send(1L, 2L, "다른 사람이 보낸 채팅");
         ChatSendResponseDto data = ChatSendResponseDto.createByMessage(message, currentMember.id());
-        return SocketSendDto.createSocketSendDto(GLOBAL, ChatAlarmResponseDto.create(Party.builder().id(0L).title("test party").build(), data));
+        return SocketSendDto.createSocketSendDto(GLOBAL, ChatAlarmResponseDto.create(Party.builder().id(0L).title("test party").build(), data), 1L);
     }
 
 }
