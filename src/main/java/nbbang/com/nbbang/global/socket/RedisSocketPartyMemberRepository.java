@@ -2,18 +2,11 @@ package nbbang.com.nbbang.global.socket;
 
 import com.mysema.commons.lang.Pair;
 import lombok.RequiredArgsConstructor;
-import nbbang.com.nbbang.domain.chat.dto.ChatRoom;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.listener.ChannelTopic;
-import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 @Repository
 @RequiredArgsConstructor
@@ -41,7 +34,7 @@ public class RedisSocketPartyMemberRepository implements SocketPartyMemberReposi
     public void unsubscribe(Long partyId, Long memberId){
         PartyMemberPair pair = PartyMemberPair.create(partyId, memberId);
         if ((!opsHashChatRoom.hasKey(CHAT_ROOM, pair)) || (opsHashChatRoom.get(CHAT_ROOM, pair) < 1)){
-            throw new IllegalArgumentException("[UNSUBSCRIBE] partyId, memberId에 해당하는 소켓 연결을 찾을 수 없습니다. ");
+            throw new IllegalArgumentException("[UNSUBSCRIBE ERROR] partyId, memberId에 해당하는 소켓 연결을 찾을 수 없습니다. ");
         }
         opsHashChatRoom.put(CHAT_ROOM, pair, opsHashChatRoom.get(CHAT_ROOM, pair) - 1);
     }
