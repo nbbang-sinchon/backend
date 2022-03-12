@@ -20,7 +20,7 @@ import java.util.concurrent.ConcurrentMap;
 public class RedisSocketPartyMemberRepository implements SocketPartyMemberRepository{
 
     private final RedisTemplate<String, Object> redisTemplate;
-    private HashOperations<String, Pair<Long, Long>, Integer> opsHashChatRoom;
+    private HashOperations<String,PartyMemberPair, Integer> opsHashChatRoom;
 
     private static final String CHAT_ROOM = "CHAT_ROOM";
 
@@ -32,14 +32,14 @@ public class RedisSocketPartyMemberRepository implements SocketPartyMemberReposi
 
     @Override
     public void subscribe(Long partyId, Long memberId){
-        Pair<Long, Long> pair = new Pair<>(partyId, memberId);
+        PartyMemberPair pair = PartyMemberPair.create(partyId, memberId);
         opsHashChatRoom.putIfAbsent(CHAT_ROOM, pair, 0);
         opsHashChatRoom.put(CHAT_ROOM, pair, opsHashChatRoom.get(CHAT_ROOM, pair) + 1);
     }
 
     @Override
     public void unsubscribe(Long partyId, Long memberId){
-        Pair<Long, Long> pair = new Pair<>(partyId, memberId);
+        PartyMemberPair pair = PartyMemberPair.create(partyId, memberId);
         if ((!opsHashChatRoom.hasKey(CHAT_ROOM, pair)) || (opsHashChatRoom.get(CHAT_ROOM, pair) < 1)){
             throw new IllegalArgumentException("[UNSUBSCRIBE] partyId, memberId에 해당하는 소켓 연결을 찾을 수 없습니다. ");
         }
@@ -48,7 +48,7 @@ public class RedisSocketPartyMemberRepository implements SocketPartyMemberReposi
 
     @Override
     public Integer getActiveNumber(Long partyId) {
-        long count = opsHashChatRoom.entries(CHAT_ROOM).entrySet().stream().filter(entry -> entry.getKey().getFirst().equals(partyId) && entry.getValue() > 0).count();
+        long count = opsHashChatRoom.entries(CHAT_ROOM).entrySet().stream().filter(entry -> entry.getKey().getPartyId().equals(partyId) && entry.getValue() > 0).count();
         return Integer.valueOf((int) count);
     }
 
