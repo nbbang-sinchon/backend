@@ -7,6 +7,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 
 @Repository
 @RequiredArgsConstructor
@@ -47,10 +48,15 @@ public class RedisSocketPartyMemberRepository implements SocketPartyMemberReposi
 
     @Override
     public Boolean isActive(Long partyId, Long memberId) {
-        Pair<Long, Long> pair = new Pair<>(partyId, memberId);
+        PartyMemberPair pair = PartyMemberPair.create(partyId, memberId);
         if(opsHashChatRoom.hasKey(CHAT_ROOM, pair) &&  (opsHashChatRoom.get(CHAT_ROOM, pair) > 0)){
             return true;
         }
         return false;
+    }
+
+    @PreDestroy
+    private void deleteAllData(){
+        redisTemplate.delete(CHAT_ROOM);
     }
 }
