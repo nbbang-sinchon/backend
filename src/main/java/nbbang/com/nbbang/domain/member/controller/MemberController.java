@@ -82,7 +82,6 @@ public class MemberController {
     @PostMapping(path = "/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public DefaultResponse uploadAndUpdateAvatar(@Schema(description = "이미지 파일을 업로드합니다.")
                                              @RequestParam MultipartFile imgFile) throws IOException {
-        System.out.println(imgFile);
         String avatarUrl = memberService.uploadAndUpdateAvatar(currentMember.id(), imgFile);
         return DefaultResponse.res(StatusCode.OK, MemberResponseMessage.UPDATE_MEMBER, MemberProfileImageUploadResponseDto.createByString(avatarUrl));
     }

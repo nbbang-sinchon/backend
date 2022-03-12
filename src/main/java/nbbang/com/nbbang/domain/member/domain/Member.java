@@ -70,6 +70,11 @@ public class Member {
         this.avatar = avatar;
     }
 
+    public String uploadAvatar(String avatar) {
+        this.avatar = avatar;
+        return avatar;
+    }
+
     public void leaveMember() {
         this.isLeaved = true;
     }
