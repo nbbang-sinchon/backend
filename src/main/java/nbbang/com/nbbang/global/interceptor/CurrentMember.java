@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.context.annotation.Scope;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -14,7 +15,6 @@ import org.springframework.stereotype.Component;
 public class CurrentMember {
     private Long memberId;
     public Long id() {
-        //if (memberId == null) return 1L;
         return memberId;
     }
 }

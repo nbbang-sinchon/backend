@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.global.error.ErrorResponse;
+import nbbang.com.nbbang.global.interceptor.CurrentMember;
 import nbbang.com.nbbang.global.response.StatusCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -45,16 +46,14 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     private AntPathMatcher matcher = new AntPathMatcher();
     private AntPathRequestMatcher partiesMatcher = new AntPathRequestMatcher("/parties/**", HttpMethod.GET.toString());
     private final LogoutService logoutService;
-
+    private final CurrentMember currentMember;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         logRequest(request);
-        System.out.println(request.getRequestURL());
         try {
             String token = getJwtFromRequest(request);
             if (isValid(token) && !isLogout(token)) {
-                //processAuthentication(token, request);
                 successAuthentication(token, request);
                 log.info("Successfully Authenticated!");
                 filterChain.doFilter(request, response);
@@ -101,10 +100,12 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
     private void processAuthentication(String value, HttpServletRequest request) {
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(value, null);
+
         SecurityContext sc = SecurityContextHolder.getContext();
         sc.setAuthentication(auth);
         HttpSession session = request.getSession(true);
         session.setAttribute(SPRING_SECURITY_CONTEXT_KEY, sc);
+        currentMember.setMemberId(Long.parseLong(value));
     }
 
     private String getJwtFromRequest(HttpServletRequest request) {
