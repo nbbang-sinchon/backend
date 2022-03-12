@@ -16,6 +16,7 @@ import nbbang.com.nbbang.domain.party.exception.PartyExitForbiddenException;
 import nbbang.com.nbbang.domain.party.exception.PartyJoinException;
 import nbbang.com.nbbang.global.socket.SessionPartyGlobalRepository;
 import nbbang.com.nbbang.global.error.exception.NotPartyMemberException;
+import nbbang.com.nbbang.global.socket.SocketPartyMemberRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,7 +33,7 @@ public class PartyMemberService {
     private final PartyMemberRepository partyMemberRepository;
     private final MessageService messageService;
     private final MessageRepository messageRepository;
-    private final SessionPartyGlobalRepository sessionPartyGlobalRepository;
+    private final SocketPartyMemberRepository sessionPartyGlobalRepository;
 
     public boolean isPartyOwnerOrMember(Party party, Member member) {
         return Optional.ofNullable(party.getOwner()).equals(member) || party.getPartyMembers().stream().anyMatch(mp -> mp.getMember().equals(member));

@@ -35,7 +35,7 @@ public class StompChannelInterceptor implements ChannelInterceptor {
     private final MemberService memberService;
     private final PartyMemberRepository partyMemberRepository;
     private final PartyMemberService partyMemberService;
-    private final SessionPartyGlobalRepository sessionPartyGlobalRepository;
+    private final SocketPartyMemberRepository sessionPartyGlobalRepository;
     private final SocketSender socketSender;
     private final CurrentMember currentMember;
     private final PartyMemberValidator partyMemberValidator;
@@ -43,7 +43,7 @@ public class StompChannelInterceptor implements ChannelInterceptor {
 
     public StompChannelInterceptor(ChatService chatService, PartyService partyService, MemberService memberService,
                                    PartyMemberRepository partyMemberRepository, PartyMemberService partyMemberService,
-                                   SessionPartyGlobalRepository sessionPartyGlobalRepository,
+                                   SocketPartyMemberRepository sessionPartyGlobalRepository,
                                    @Lazy SocketSender socketSender, CurrentMember currentMember,
                                    PartyMemberValidator partyMemberValidator) {
         this.chatService = chatService;

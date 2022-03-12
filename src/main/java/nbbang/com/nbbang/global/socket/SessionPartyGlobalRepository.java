@@ -9,13 +9,13 @@ import org.springframework.stereotype.Repository;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-@Repository
+//@Repository
 @RequiredArgsConstructor
 @Slf4j
-public class SessionPartyGlobalRepository {
-
+public class SessionPartyGlobalRepository implements SocketPartyMemberRepository {
     private static ConcurrentMap<Pair<Long, Long>, Integer> sessionPartyMap = new ConcurrentHashMap<>();
 
+    @Override
     public void subscribe(Long partyId, Long memberId){
         Pair<Long, Long> pair = new Pair<>(partyId, memberId);
         if (sessionPartyMap.containsKey(pair)){
@@ -25,6 +25,7 @@ public class SessionPartyGlobalRepository {
         }
     }
 
+    @Override
     public void unsubscribe(Long partyId, Long memberId){
         Pair<Long, Long> pair = new Pair<>(partyId, memberId);
         if ((!sessionPartyMap.containsKey(pair)) || (sessionPartyMap.get(pair) < 1)){
@@ -33,11 +34,13 @@ public class SessionPartyGlobalRepository {
         sessionPartyMap.put(pair, sessionPartyMap.get(pair) - 1);
     }
 
+    @Override
     public Integer getActiveNumber(Long partyId) {
         long count = sessionPartyMap.entrySet().stream().filter(entry -> entry.getKey().getFirst().equals(partyId) && entry.getValue() > 0).count();
         return Integer.valueOf((int) count);
     }
 
+    @Override
     public Boolean isActive(Long partyId, Long memberId) {
         Pair<Long, Long> pair = new Pair<>(partyId, memberId);
         if(sessionPartyMap.containsKey(pair) &&  (sessionPartyMap.get(pair) > 0)){

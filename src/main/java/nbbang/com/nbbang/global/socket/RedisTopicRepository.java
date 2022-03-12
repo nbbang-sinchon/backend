@@ -15,38 +15,17 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Repository
 @Slf4j
-public class TopicRedisRepository {
+public class RedisTopicRepository {
 
     private final RedisMessageListenerContainer redisMessageListener;
-
     private final RedisSubscriber redisSubscriber;
-
-    private final RedisTemplate<String, Object> redisTemplate;
-    //private HashOperations<String, String, ChatRoom> opsHashChatRoom;
 
     private Map<String, ChannelTopic> topics;
 
     @PostConstruct
     private void init(){
-        //opsHashChatRoom = redisTemplate.opsForHash();
         topics = new HashMap<>();
     }
-
-/*
-    public List<ChatRoom> findAllRoom(){
-        return opsHashChatRoom.values(CHAT_ROOM);
-    }
-
-    public ChatRoom findRoomById(Long partyId){ // id는 대체 뭔가
-        return opsHashChatRoom.get(CHAT_ROOM, partyId);
-    }
-
-    public ChatRoom createChatRoom(Long partyId){
-        ChatRoom chatRoom = ChatRoom.create(partyId);
-        opsHashChatRoom.put(CHAT_ROOM, String.valueOf(chatRoom.getPartyId()), chatRoom);
-        return chatRoom;
-    }
-*/
 
     public void addChatRoom(String topicName){
         ChannelTopic topic = topics.get(topicName);
