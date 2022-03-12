@@ -51,21 +51,25 @@ class ChatReadTest {
 
         //when
         Map<String, Object> member1Attributes = new HashMap<>();
+        member1Attributes.put("memberId", saveMember1.getId());
         Map<String, Object> member2Attributes = new HashMap<>();
+        member2Attributes.put("memberId", saveMember2.getId());
         Map<String, Object> member3Attributes = new HashMap<>();
+        member3Attributes.put("memberId", saveMember3.getId());
+
         //
-        stompChannelInterceptor.connect(member1Attributes, saveMember1.getId());
-        stompChannelInterceptor.connect(member2Attributes, saveMember2.getId());
-        stompChannelInterceptor.connect(member3Attributes, saveMember3.getId());
+        stompChannelInterceptor.connect(member1Attributes);
+        stompChannelInterceptor.connect(member2Attributes);
+        stompChannelInterceptor.connect(member3Attributes);
 
         stompChannelInterceptor.enterChatRoom(member1Attributes, partyId); // 1번 파티 입장
-        Long messageId1 = messageService.send(partyId, saveMember1.getId(), "hello");
+        Long messageId1 = messageService.send(partyId, saveMember1.getId(), "hello").getId();
         assertThat(messageService.findById(messageId1).getReadNumber()).isEqualTo(1);
 
         stompChannelInterceptor.enterChatRoom(member2Attributes, partyId); // 2번 파티 입장
         assertThat(messageService.findById(messageId1).getReadNumber()).isEqualTo(2);
 
-        Long messageId2 = messageService.send(partyId, saveMember2.getId(), "hello here 2");
+        Long messageId2 = messageService.send(partyId, saveMember2.getId(), "hello here 2").getId();
         assertThat(messageService.findById(messageId1).getReadNumber()).isEqualTo(2);
         assertThat(messageService.findById(messageId2).getReadNumber()).isEqualTo(2);
 
@@ -77,7 +81,7 @@ class ChatReadTest {
         assertThat(messageService.findById(messageId1).getReadNumber()).isEqualTo(3);
         assertThat(messageService.findById(messageId2).getReadNumber()).isEqualTo(3);
 
-        Long messageId3 = messageService.send(partyId, saveMember3.getId(), "hello here 3");
+        Long messageId3 = messageService.send(partyId, saveMember3.getId(), "hello here 3").getId();
         assertThat(messageService.findById(messageId3).getReadNumber()).isEqualTo(2);
 
         stompChannelInterceptor.enterChatRoom(member1Attributes, partyId); // 1번 파티 입장

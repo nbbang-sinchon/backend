@@ -36,11 +36,8 @@ public class ChatSendResponseDto {
                 .notReadNumber(partyMemberNumber - message.getReadNumber())
                 .type(message.getType()!=null?message.getType():MessageType.CHAT)
                 .content(message.getContent())
-                .sender(message.getSender()!=null?
-                        ChatSendResponseSenderDto.builder().id(message.getSender().getId())
-                                .nickname(message.getSender().getNickname()).build() :null)
-                .isSender(memberId.equals(message.getSender().getId()))
+                .sender(message.getSender()!=null?ChatSendResponseSenderDto.create(message.getSender()):null)
+                .isSender(message.getSender()!=null?memberId.equals(message.getSender().getId()):false)
                 .build();
     }
-
 }

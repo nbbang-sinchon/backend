@@ -17,6 +17,7 @@ import java.util.Optional;
 @Component
 @RequiredArgsConstructor
 @Slf4j
+@Transactional(readOnly = true)
 public class PartyMemberValidator {
 
     public boolean isPartyMember(PartyMemberValidatorDto dto) {
@@ -42,6 +43,5 @@ public class PartyMemberValidator {
         }
         return true;
     }
-
 
 }
