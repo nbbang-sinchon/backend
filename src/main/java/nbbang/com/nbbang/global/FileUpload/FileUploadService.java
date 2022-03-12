@@ -20,9 +20,7 @@ public class FileUploadService {
             String oldFileName = deleteUrl.substring(deleteUrl.lastIndexOf("/") + 1);
             s3Uploader.delete(uploadDirName, oldFileName);
         }
-        String savedFileName = UUID.randomUUID().toString();
-        String uploadUrl = s3Uploader.upload(imgFile, uploadDirName, savedFileName);
-        return uploadUrl;
+        return upload(imgFile, uploadDirName);
     }
 
     public String upload(MultipartFile imgFile, String uploadDirName) throws IOException {

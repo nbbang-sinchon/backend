@@ -5,7 +5,6 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,15 +12,14 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Locale;
-import java.util.Optional;import java.util.UUID;
+import java.util.*;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class S3Uploader {
     private final AmazonS3Client amazonS3Client;
-
+    private List<String> allowedExtensions = Arrays.asList("jpeg", "jpg", "png", "jfif");
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
@@ -60,7 +58,7 @@ public class S3Uploader {
     private Optional<File> convert(MultipartFile file) throws IOException {
         String originalName = file.getOriginalFilename();
         String extension = originalName.substring(originalName.lastIndexOf(".") + 1).toLowerCase(Locale.ROOT);
-        if (!(extension.equals("jpeg") || extension.equals("png") || extension.equals("jpg") || extension.equals("jfif"))) {
+        if (!allowedExtensions.contains(extension)) {
             return Optional.empty();
         }
         File convertFile = new File(System.getProperty("user.dir") + "/" + file.getOriginalFilename());

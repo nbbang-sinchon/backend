@@ -19,5 +19,5 @@ public class GlobalErrorResponseMessage {
     public static final String UNAUTHORIZED_ERROR = "로그인이 필요합니다.";
 
     public static final String MAX_FILE_SIZE_ERROR = "허용된 파일 용량 (10 MB) 를 초과하였습니다.";
-    public static final String BAD_MULTIPART_FILE_ERROR = "파일이 올바르지 않습니다.";
+    public static final String BAD_MULTIPART_FILE_ERROR = "파일이 올바르지 않습니다. 올바른 확장자인지 확인하세요.";
 }
