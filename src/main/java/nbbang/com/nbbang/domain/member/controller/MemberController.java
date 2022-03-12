@@ -49,7 +49,6 @@ public class MemberController {
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MemberResponseDto.class)))
     @GetMapping
     public DefaultResponse select(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
         Member member = memberService.findById(currentMember.id());
         MemberResponseDto dto = MemberResponseDto.createByEntity(member);
         return DefaultResponse.res(StatusCode.OK, MemberResponseMessage.READ_MEMBER, dto);

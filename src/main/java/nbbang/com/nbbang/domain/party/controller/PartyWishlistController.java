@@ -33,7 +33,7 @@ public class PartyWishlistController {
     @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(mediaType = "application/json"))
     @PostMapping("/{party-id}/wishlist")
     public DefaultResponse addWishlist(@PathVariable("party-id") Long partyId) {
-        partyWishlistService.addWishlistIfNotDuplicate(currentMember.getMemberId(), partyId);
+        partyWishlistService.addWishlistIfNotDuplicate(currentMember.id(), partyId);
         return DefaultResponse.res(StatusCode.OK, WISHLIST_ADD_SUCCESS);
     }
 
@@ -42,7 +42,7 @@ public class PartyWishlistController {
     @ApiResponse(responseCode = "404", description = WISHLIST_NOT_FOUND, content = @Content(mediaType = "application/json"))
     @DeleteMapping("/{party-id}/wishlist")
     public DefaultResponse deleteWishlist(@PathVariable("party-id") Long partyId) {
-        partyWishlistService.deleteWishlist(currentMember.getMemberId(), partyId);
+        partyWishlistService.deleteWishlist(currentMember.id(), partyId);
         return DefaultResponse.res(StatusCode.OK, WISHLIST_DELETE_SUCCESS);
     }
 
