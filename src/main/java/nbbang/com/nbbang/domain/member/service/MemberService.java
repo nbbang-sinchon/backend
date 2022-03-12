@@ -6,6 +6,7 @@ import nbbang.com.nbbang.domain.member.controller.MemberResponseMessage;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.dto.Place;
 import nbbang.com.nbbang.domain.member.repository.MemberRepository;
+import nbbang.com.nbbang.global.FileUpload.FileUploadService;
 import nbbang.com.nbbang.global.FileUpload.S3Uploader;
 import nbbang.com.nbbang.global.security.Role;
 import org.springframework.stereotype.Service;
@@ -16,13 +17,15 @@ import org.webjars.NotFoundException;
 import java.io.IOException;
 import java.util.UUID;
 
+import static nbbang.com.nbbang.global.FileUpload.UploadDirName.DIR_AVATAR;
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class MemberService {
 
     private final MemberRepository memberRepository;
-    private final S3Uploader s3Uploader;
+    private final FileUploadService fileUploadService;
 
     @Transactional
     @Deprecated
@@ -59,16 +62,7 @@ public class MemberService {
     @Transactional
     public String uploadAndUpdateAvatar(Long memberId, MultipartFile imgFile) throws IOException {
         Member member = findById(memberId);
-        String oldAvatarUrl = member.getAvatar();
-        if (oldAvatarUrl != null) {
-            String oldFileName = oldAvatarUrl.substring(oldAvatarUrl.lastIndexOf("/") + 1);
-            s3Uploader.delete("profile-images", oldFileName);
-        }
-        String savedFileName = UUID.randomUUID().toString();
-        String avatarUrl = s3Uploader.upload(imgFile, "profile-images", savedFileName);
-
-        member.updateMember(avatarUrl);
-        return avatarUrl;
+        return member.uploadAvatar(fileUploadService.deleteAndUpload(member.getAvatar(), imgFile, DIR_AVATAR));
     }
 
     @Transactional

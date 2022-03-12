@@ -14,8 +14,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Locale;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.Optional;import java.util.UUID;
 
 @Slf4j
 @Component
@@ -57,8 +56,7 @@ public class S3Uploader {
             log.info("로컬 파일이 삭제되지 못했습니다.");
         }
     }
-    
-    // 확장자 대문자도 됨 -> 대소문자 구분 없애기
+
     private Optional<File> convert(MultipartFile file) throws IOException {
         String originalName = file.getOriginalFilename();
         String extension = originalName.substring(originalName.lastIndexOf(".") + 1).toLowerCase(Locale.ROOT);
