@@ -84,4 +84,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return null;
         }
     }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String path = request.getServletPath();
+        if (request.getMethod().equals("OPTIONS")) {
+            return true;
+        }
+        if (path.startsWith("/oauth2") || path.startsWith("/login") || path.startsWith("/favicon.ico")) {
+            return true;
+        }
+        if (path.startsWith("/api/oauth2") || path.startsWith("/api/login")) {
+            return true;
+        }
+        if (path.startsWith("/swagger-ui") || path.startsWith("/v3/api-docs") || path.startsWith("/configuration/ui") || path.startsWith("/swagger-resources/**") ||path.startsWith("/configuration/security") || path.startsWith("/swagger-ui.html") || path.startsWith("/webjars/**")) {
+            return true;
+        }
+        return false;
+    }
 }
