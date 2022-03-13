@@ -75,7 +75,8 @@ public class MemberController {
         return DefaultResponse.res(StatusCode.OK, MemberResponseMessage.DELETE_MEMBER);
     }
 
-    @Operation(summary = "프로필 사진 업로드", description = "프로필 사진을 업로드하여 기존 프로필 사진이 있으면 대체합니다. 파일 용량이 10 MB 이하인 것으로 보내주세요. 검증 로직이 있지만 네트워크를 타기만 해도 1GB 당 100원씩 부과됩니다.")
+    @Operation(summary = "프로필 사진 업로드", description = "프로필 사진을 업로드합니다. 기존 사진이 있으면 대체합니다. 10MB 이하, jpg, jpeg, jfif, png 포맷을 지원합니다. content-type : multipart/form-data; boundary=----WebKitFormBoundaryMHbwDI3md9KAPlGo " +
+            "큰 파일은 서버에 오지 않게 해주세요. request body 에 imgFile 로 multipart 파일을 보내야 합니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(type = "string", implementation = MemberProfileImageUploadResponseDto.class)))
     @ApiResponse(responseCode = "400", description = "프로필 사진 업로드 실패, 잘못된 요청입니다. 사진이 올바른지 확인하세요.", content = @Content(mediaType = "application/json"))
     @PostMapping(path = "/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

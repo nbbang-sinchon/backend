@@ -5,6 +5,7 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import nbbang.com.nbbang.global.error.GlobalErrorResponseMessage;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,6 +14,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
+
+import static nbbang.com.nbbang.global.error.GlobalErrorResponseMessage.BAD_MULTIPART_FILE_ERROR;
 
 @Slf4j
 @Component
@@ -24,7 +27,7 @@ public class S3Uploader {
     private String bucket;
 
     public String upload(MultipartFile multipartFile, String dirName, String storeName) throws IOException {
-        File uploadFile = convert(multipartFile).orElseThrow(() -> new IllegalArgumentException("파일 변환에 실패하였습니다. 10MB 이하의 파일이고 올바른 확장자 (png, jpeg, jpg, jfif) 여야 합니다."));
+        File uploadFile = convert(multipartFile).orElseThrow(() -> new IllegalArgumentException(BAD_MULTIPART_FILE_ERROR));
         return upload(uploadFile, dirName, storeName);
     }
 
