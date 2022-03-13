@@ -9,9 +9,9 @@ import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.service.MemberService;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.repository.PartyRepository;
-import nbbang.com.nbbang.domain.party.repository.SessionPartyGlobalRepository;
 import nbbang.com.nbbang.global.FileUpload.FileUploadService;
 import nbbang.com.nbbang.global.FileUpload.S3Uploader;
+import nbbang.com.nbbang.global.socket.SocketPartyMemberRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,7 +33,6 @@ public class MessageService {
     private final MessageRepository messageRepository;
     private final PartyRepository partyRepository;
     private final MemberService memberService;
-    private final SessionPartyGlobalRepository sessionPartyGlobalRepository;
     private final FileUploadService fileUploadService;
     private final SocketPartyMemberRepository sessionPartyGlobalRepository;
     private final S3Uploader s3Uploader;
