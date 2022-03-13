@@ -6,8 +6,6 @@ import nbbang.com.nbbang.global.config.WebMvcConfig;
 import nbbang.com.nbbang.global.interceptor.CurrentMember;
 import nbbang.com.nbbang.global.security.CustomOAuth2MemberService;
 import nbbang.com.nbbang.global.security.LogoutService;
-import nbbang.com.nbbang.global.security.SecurityConfig;
-import nbbang.com.nbbang.global.security.TokenAuthenticationFilter;
 import nbbang.com.nbbang.global.validator.PartyMemberValidator;
 import nbbang.com.nbbang.global.validator.PartyMemberValidatorService;
 import org.springframework.boot.test.mock.mockito.MockBean;

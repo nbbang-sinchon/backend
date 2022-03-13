@@ -12,13 +12,16 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.messaging.MessageSecurityMetadataSourceRegistry;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
@@ -27,16 +30,17 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
 @RequiredArgsConstructor
+@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-
     private final CustomOAuth2MemberService customOAuth2MemberService;
-    private final TokenAuthenticationFilter tokenAuthenticationFilter;
-    private final LoginRedirectionFilter loginRedirectionFilter;
+    private final LogoutService logoutService;
 
-
-
+    @Bean
+    public JwtAuthenticationFilter jwtAuthenticationFilter() {
+        return new JwtAuthenticationFilter(logoutService);
+    }
 
 
     @Override
@@ -45,10 +49,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .addFilterBefore(utf8EncodingFilter(), WebAsyncManagerIntegrationFilter.class)
-                //.addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(tokenAuthenticationFilter, WebAsyncManagerIntegrationFilter.class)
+                .addFilterBefore(jwtAuthenticationFilter(), BasicAuthenticationFilter.class)
+                .addFilterBefore(new LoginRedirectionFilter(), WebAsyncManagerIntegrationFilter.class)
                 .csrf().disable()
                 .cors()
+
                 .and()
                 .exceptionHandling()
                 .authenticationEntryPoint(new RestAuthenticationEntryPoint())
@@ -59,24 +64,25 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/login/**").permitAll()
                 .antMatchers("/oauth2/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/parties").permitAll()
+                .antMatchers(HttpMethod.GET, "/parties/**").permitAll()
+//                .antMatchers("/ws-stomp/**").permitAll()
 
-                //.anyRequest().authenticated()
-
-
+                .anyRequest().authenticated()
 
                 .and()
-                .addFilterAfter(loginRedirectionFilter, TokenAuthenticationFilter.class)
                 .oauth2Login()
                 .userInfoEndpoint()
                 .userService(customOAuth2MemberService)
                 .and()
-                .successHandler(new OAuth2AuthenticationSuccessHandler())
-                .and().cors();
+                .successHandler(new OAuth2AuthenticationSuccessHandler());
     }
+
+
 
     private AuthenticationEntryPoint getRestAuthenticationEntryPoint() {
         return new HttpStatusEntryPoint(HttpStatus.BAD_GATEWAY);
     }
+
 
     private CharacterEncodingFilter utf8EncodingFilter() {
         CharacterEncodingFilter encodingFilter = new CharacterEncodingFilter();

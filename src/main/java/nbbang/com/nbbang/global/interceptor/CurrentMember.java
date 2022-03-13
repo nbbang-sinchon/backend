@@ -1,20 +1,20 @@
 package nbbang.com.nbbang.global.interceptor;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.springframework.context.annotation.Scope;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
-@Getter @Setter
-@AllArgsConstructor
 @NoArgsConstructor
 public class CurrentMember {
-    private Long memberId;
     public Long id() {
-        //if (memberId == null) return 1L;
-        return memberId;
+        try {
+            String id = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            return Long.parseLong(id);
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

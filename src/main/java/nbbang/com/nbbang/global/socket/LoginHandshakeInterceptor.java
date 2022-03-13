@@ -6,9 +6,9 @@ import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketHandler;
-import org.springframework.web.socket.server.HandshakeFailureException;
 import org.springframework.web.socket.server.HandshakeInterceptor;
 
 import javax.servlet.http.HttpSession;
@@ -18,24 +18,13 @@ import static org.springframework.security.web.context.HttpSessionSecurityContex
 
 @Component
 @RequiredArgsConstructor
-public class LoginHandShakeInterceptor implements HandshakeInterceptor {
-    private final CurrentMember currentMember;
+class LoginHandShakeInterceptor implements HandshakeInterceptor {
 
     @Override
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
-        HttpSession session = null;
         if (request instanceof ServletServerHttpRequest) {
             ServletServerHttpRequest servletRequest = (ServletServerHttpRequest) request;
-            session = servletRequest.getServletRequest().getSession(false);
-        }
-        if (session != null) {
-            SecurityContext sc = (SecurityContext) session.getAttribute(SPRING_SECURITY_CONTEXT_KEY);
-            try {
-                attributes.put("memberId", Long.parseLong(sc.getAuthentication().getPrincipal().toString()));
-            } catch(Exception e) {
-                attributes.put("memberId", 1L); // 개발용도
-                //throw new HandshakeFailureException("Socket Handshake 실패");
-            }
+            attributes.put("memberId", servletRequest.getPrincipal().getName());
         }
         return true;
     }

@@ -1,7 +1,6 @@
 package nbbang.com.nbbang.global.socket;
 
 import lombok.RequiredArgsConstructor;
-import nbbang.com.nbbang.global.interceptor.LoginInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
@@ -30,6 +29,7 @@ public class StompWebSocketMessageBrokerConfig implements WebSocketMessageBroker
         registry.enableSimpleBroker("/topic");
         registry.setApplicationDestinationPrefixes("/");
     }
+
     @Override
     public void configureClientInboundChannel(ChannelRegistration registration) {
         registration.interceptors(stompChannelInterceptor);
