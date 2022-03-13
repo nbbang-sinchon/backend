@@ -18,7 +18,7 @@ import static org.springframework.security.web.context.HttpSessionSecurityContex
 
 @Component
 @RequiredArgsConstructor
-class LoginHandShakeInterceptor implements HandshakeInterceptor {
+public class LoginHandShakeInterceptor implements HandshakeInterceptor {
 
     @Override
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
