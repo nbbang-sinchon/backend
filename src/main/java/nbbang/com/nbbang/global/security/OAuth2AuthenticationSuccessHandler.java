@@ -1,5 +1,6 @@
 package nbbang.com.nbbang.global.security;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -16,6 +17,7 @@ import java.util.Optional;
 
 import static nbbang.com.nbbang.global.security.SecurityPolicy.*;
 
+@Slf4j
 @Component
 public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
@@ -32,6 +34,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     private String determineTargetUri(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         HttpSession session = request.getSession(false);
         SessionMember member = (SessionMember) session.getAttribute("member");
+        log.info("Welcome " + member.getId() + " has logged in");
         String token = tokenProvider.createToken(authentication, member.getId());
         addAccessTokenCookie(response, token);
         String redirect_uri = DEFAULT_REDIRECT_URI;

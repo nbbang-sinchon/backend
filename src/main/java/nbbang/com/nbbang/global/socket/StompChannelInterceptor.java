@@ -15,13 +15,18 @@ import nbbang.com.nbbang.global.validator.PartyMemberValidator;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
+import org.springframework.messaging.MessageHeaders;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.MultiValueMap;
 
 import java.util.Map;
+import java.util.List;
 
 // https://daddyprogrammer.org/post/5290/spring-websocket-chatting-server-enter-qut-event-view-user-count/
 // https://stackoverflow.com/questions/44852776/spring-mvc-websockets-with-stomp-authenticate-against-specific-channels
@@ -62,13 +67,20 @@ public class StompChannelInterceptor implements ChannelInterceptor {
     private static final String TOPIC_CHATTING = "/topic/chatting";
     private static final String TOPIC_BREAD_BOARD = "/topic/breadBoard";
 
+    private Long memberId(Message<?> message) {
+        Map<String, Object> sessionHeaders = SimpMessageHeaderAccessor.getSessionAttributes(message.getHeaders());
+        return Long.parseLong(sessionHeaders.get("memberId").toString());
+    }
+
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
 
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
         Map<String, Object> attributes = accessor.getSessionAttributes();
         String destination = accessor.getDestination();
+        attributes.put("memberId", memberId(message));
         Long memberId = (Long) attributes.get("memberId");
+
         if (StompCommand.CONNECT == accessor.getCommand()) {
             connect(attributes);
         } else if (StompCommand.SUBSCRIBE == accessor.getCommand()) {
