@@ -10,6 +10,7 @@ import nbbang.com.nbbang.domain.member.service.MemberService;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.repository.PartyRepository;
 import nbbang.com.nbbang.domain.party.repository.SessionPartyGlobalRepository;
+import nbbang.com.nbbang.global.FileUpload.FileUploadService;
 import nbbang.com.nbbang.global.FileUpload.S3Uploader;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +22,7 @@ import java.util.UUID;
 
 import static nbbang.com.nbbang.domain.chat.controller.ChatResponseMessage.MESSAGE_NOT_FOUND;
 import static nbbang.com.nbbang.domain.party.controller.PartyResponseMessage.PARTY_NOT_FOUND;
+import static nbbang.com.nbbang.global.FileUpload.UploadDirName.DIR_CHATS;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -32,7 +34,7 @@ public class MessageService {
     private final PartyRepository partyRepository;
     private final MemberService memberService;
     private final SessionPartyGlobalRepository sessionPartyGlobalRepository;
-    private final S3Uploader s3Uploader;
+    private final FileUploadService fileUploadService;
 
 
     @Transactional
@@ -61,13 +63,13 @@ public class MessageService {
 
     @Transactional
     public Message sendImage(Long partyId, Long senderId, MultipartFile imgFile) throws IOException {
-        String savedFileName = UUID.randomUUID().toString();
-        String avatarUrl = s3Uploader.upload(imgFile, "chatting-images", savedFileName);
+
+        String uploadUrl = fileUploadService.upload(imgFile, DIR_CHATS);
 
         Party party = partyRepository.findById(partyId).orElseThrow(()->new NotFoundException(PARTY_NOT_FOUND));
         Member sender = memberService.findById(senderId);
         Integer readNumber = sessionPartyGlobalRepository.getActiveNumber(partyId);
-        Message message =Message.createMessage(sender, party, avatarUrl, MessageType.IMAGE, readNumber);
+        Message message =Message.createMessage(sender, party, uploadUrl, MessageType.IMAGE, readNumber);
         Message savedMessage = messageRepository.save(message);
         return savedMessage;
     }

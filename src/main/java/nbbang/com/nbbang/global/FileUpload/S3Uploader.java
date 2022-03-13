@@ -5,7 +5,7 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import nbbang.com.nbbang.global.error.GlobalErrorResponseMessage;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,20 +13,21 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+
+import static nbbang.com.nbbang.global.error.GlobalErrorResponseMessage.BAD_MULTIPART_FILE_ERROR;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class S3Uploader {
     private final AmazonS3Client amazonS3Client;
-
+    private List<String> allowedExtensions = Arrays.asList("jpeg", "jpg", "png", "jfif");
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
     public String upload(MultipartFile multipartFile, String dirName, String storeName) throws IOException {
-        File uploadFile = convert(multipartFile).orElseThrow(() -> new IllegalArgumentException("파일 변환에 실패하였습니다. 10MB 이상의 파일이거나 올바른 확장자 (png, jpeg) 여야 합니다."));
+        File uploadFile = convert(multipartFile).orElseThrow(() -> new IllegalArgumentException(BAD_MULTIPART_FILE_ERROR));
         return upload(uploadFile, dirName, storeName);
     }
 
@@ -59,8 +60,8 @@ public class S3Uploader {
 
     private Optional<File> convert(MultipartFile file) throws IOException {
         String originalName = file.getOriginalFilename();
-        String extension = originalName.substring(originalName.lastIndexOf(".") + 1);
-        if (!(extension.equals("jpeg") || extension.equals("png"))) {
+        String extension = originalName.substring(originalName.lastIndexOf(".") + 1).toLowerCase(Locale.ROOT);
+        if (!allowedExtensions.contains(extension)) {
             return Optional.empty();
         }
         File convertFile = new File(System.getProperty("user.dir") + "/" + file.getOriginalFilename());
