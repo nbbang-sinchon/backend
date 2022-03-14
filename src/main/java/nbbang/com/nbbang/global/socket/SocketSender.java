@@ -19,7 +19,6 @@ import static nbbang.com.nbbang.global.socket.SocketDestination.*;
 @RequiredArgsConstructor
 @Slf4j
 public class SocketSender {
-    private final SimpMessagingTemplate simpMessagingTemplate;
     private final CurrentMember currentMember;
     private final PartyService partyService;
     private final RedisPublisher redisPublisher;

@@ -76,6 +76,7 @@ public class StompChannelInterceptor implements ChannelInterceptor {
         String destination = accessor.getDestination();
         attributes.put("memberId", memberId(message));
         Long memberId = (Long) attributes.get("memberId");
+        log.info("[{}] destination: {}", accessor.getCommand(), destination);
 
         if (StompCommand.CONNECT == accessor.getCommand()) {
             connect(attributes);
@@ -111,6 +112,7 @@ public class StompChannelInterceptor implements ChannelInterceptor {
     }
 
     public void enterChatRoom(Map<String, Object> attributes, Long partyId){
+
         attributes.put("partyId", partyId);
         Long memberId = (Long) attributes.get("memberId");
         readMessage(partyId, memberId);

@@ -56,7 +56,7 @@ public class PartyMemberService {
         PartyMember partyMember = PartyMember.createMemberParty(member, party, messageRepository.findLastMessage(party.getId()));
         partyMemberRepository.save(partyMember);
 
-        return messageService.send(party.getId(), member.getId(), member.getNickname() + " 님이 입장하셨습니다.", MessageType.ENTER);
+        return messageService.send(party.getId(), member.getId(), member.getNickname() + " 님이 입장하셨습니다.", MessageType.ENTER).getId();
     }
 
 
@@ -74,7 +74,7 @@ public class PartyMemberService {
         PartyMember partyMember = partyMemberRepository.findByMemberIdAndPartyId(member.getId(), party.getId());
         party.exitMemberParty(partyMember);
         partyMemberRepository.delete(partyMember);
-        return messageService.send(party.getId(), member.getId(), member.getNickname() + " 님이 퇴장하셨습니다.", MessageType.EXIT);
+        return messageService.send(party.getId(), member.getId(), member.getNickname() + " 님이 퇴장하셨습니다.", MessageType.EXIT).getId();
     }
 
 

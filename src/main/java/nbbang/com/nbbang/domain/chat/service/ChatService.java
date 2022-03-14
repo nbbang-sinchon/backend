@@ -34,64 +34,6 @@ public class ChatService {
     private final PartyRepository partyRepository;
     private final PartyService partyService;
     private final PartyMemberRepository partyMemberRepository;
-    private final BreadBoardPartyMemberService breadBoardPartyMemberService;
-
-    /*public Long findLastMessageId(Long partyId) {
-        return messageRepository.findLastMessageId(partyId);
-    }
-
-    public Message findById(Long messageId) {
-        return messageRepository.findById(messageId).orElseThrow(MessageNotFoundException::new);
-    }
-
-    public Page<Message> findMessages(Long partyId, Pageable pageable) {
-        return messageRepository.findAllByPartyId(partyId, pageable);
-    }
-
-    public Page<Message> findMessages(Long partyId, Pageable pageable, Long startId) {
-        return messageRepository.findAllByPartyId(partyId, pageable);
-    }
-
-    public Page<Message> findMessagesByCursorId(Long partyId, Pageable pageable, Long cursorId) {
-        return messageRepository.findAllByCursorId(partyId, pageable, cursorId);
-    }
-
-    public void exitChat(Long partyId, Long memberId) {
-
-    }
-
-    public void changeStatus(Long partyId, Long memberId, PartyStatus status) {
-
-    }
-
-    public void changeGoalNumber(Long partyId, Long memberId, Integer goalNumber) {
-
-    }
-
-    @Transactional
-    public Long sendMessage(Long memberId, Long partyId, String content, LocalDateTime localDateTime) {
-        Member member = memberService.findById(memberId);
-        Party party = partyRepository.getById(partyId);
-
-        boolean isMember = true;
-        if (party.getOwner().getId() == memberId) {
-            isMember = true;
-        }
-        if (party.getMemberParties() != null) {
-            for (MemberParty mp : party.getMemberParties()) {
-                if (mp.getMember().getId() == memberId) {
-                    isMember = true;
-                }
-            }
-        }
-        if (!isMember) {
-            throw new NotPartyMemberException();
-        }
-
-          messageRepository.save(message);
-        return message.getId();
-    }*/
-
 
     public Message findLastMessage(Party party) {
         return messageRepository.findLastMessage(party.getId());
@@ -107,16 +49,6 @@ public class ChatService {
 
     public Page<Message> findMessagesByCursorId(Party party, Pageable pageable, Long cursorId) {
         return messageRepository.findAllByCursorId(party.getId(), pageable, cursorId);
-    }
-
-    @Transactional
-    public void changeStatus(Party party, Member member, PartyStatus status) {
-        party.changeStatus(status);
-    }
-
-    @Transactional
-    public void changeGoalNumber(Party party, Member member, Integer goalNumber) {
-        party.changeGoalNumber(goalNumber);
     }
 
     @Transactional
