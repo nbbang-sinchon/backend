@@ -1,18 +1,11 @@
 
 package nbbang.com.nbbang.global.socket;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import nbbang.com.nbbang.domain.bbangpan.domain.PartyMember;
-import nbbang.com.nbbang.domain.bbangpan.repository.PartyMemberRepository;
-import nbbang.com.nbbang.domain.chat.dto.ChatReadSocketDto;
-import nbbang.com.nbbang.domain.chat.service.ChatService;
 import nbbang.com.nbbang.domain.member.service.MemberService;
-import nbbang.com.nbbang.domain.party.service.PartyMemberService;
 import nbbang.com.nbbang.domain.party.service.PartyService;
-import nbbang.com.nbbang.global.interceptor.CurrentMember;
-import nbbang.com.nbbang.global.socket.service.SocketPartyMemberService;
 import nbbang.com.nbbang.global.validator.PartyMemberValidator;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
@@ -28,36 +21,15 @@ import java.util.Map;
 // https://stackoverflow.com/questions/44852776/spring-mvc-websockets-with-stomp-authenticate-against-specific-channels
 @Slf4j
 @Component
-//@RequiredArgsConstructor
+@RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class StompChannelInterceptor implements ChannelInterceptor {
 
-    private final ChatService chatService;
     private final PartyService partyService;
     private final MemberService memberService;
-    private final PartyMemberRepository partyMemberRepository;
-    private final PartyMemberService partyMemberService;
-    private final SocketPartyMemberService socketPartyMemberService;
-    private final SocketSender socketSender;
-    private final CurrentMember currentMember;
     private final PartyMemberValidator partyMemberValidator;
+    private final ChatRoomService chatRoomService;
 
-
-    public StompChannelInterceptor(ChatService chatService, PartyService partyService, MemberService memberService,
-                                   PartyMemberRepository partyMemberRepository, PartyMemberService partyMemberService,
-                                   SocketPartyMemberService socketPartyMemberService,
-                                   @Lazy SocketSender socketSender, CurrentMember currentMember,
-                                   PartyMemberValidator partyMemberValidator) {
-        this.chatService = chatService;
-        this.partyService = partyService;
-        this.memberService = memberService;
-        this.partyMemberRepository = partyMemberRepository;
-        this.partyMemberService = partyMemberService;
-        this.socketSender = socketSender;
-        this.socketPartyMemberService = socketPartyMemberService;
-        this.currentMember = currentMember;
-        this.partyMemberValidator = partyMemberValidator;
-    }
 
     private static final String TOPIC_GLOBAL = "/topic/global";
     private static final String TOPIC_CHATTING = "/topic/chatting";
@@ -88,7 +60,7 @@ public class StompChannelInterceptor implements ChannelInterceptor {
             else if(destination.startsWith(TOPIC_CHATTING)){
                 Long partyId = Long.valueOf(destination.substring(16));
                 partyMemberValidator.isPartyMember(partyService.findById(partyId),memberService.findById(memberId));
-                enterChatRoom(attributes, partyId);
+                chatRoomService.enter(attributes, partyId);
             }else if(destination.startsWith(TOPIC_BREAD_BOARD)){
                 Long partyId = Long.valueOf(destination.substring(18));
                 partyMemberValidator.isPartyMember(partyService.findById(partyId),memberService.findById(memberId));
@@ -99,10 +71,10 @@ public class StompChannelInterceptor implements ChannelInterceptor {
         } else if (StompCommand.UNSUBSCRIBE == accessor.getCommand()) {
             if(destination.startsWith(TOPIC_CHATTING)){
                 Long partyId = Long.valueOf(destination.substring(18));
-                exitChatRoom(attributes, partyId);
+                chatRoomService.exit(attributes, partyId);
             }
         } else if (StompCommand.DISCONNECT == accessor.getCommand()) {
-            exitChatRoomIfExist(attributes);
+            chatRoomService.exitIfSubscribing(attributes);
         }
         return message;
     }
@@ -111,35 +83,5 @@ public class StompChannelInterceptor implements ChannelInterceptor {
         attributes.put("status", "none");
     }
 
-    public void enterChatRoom(Map<String, Object> attributes, Long partyId){
 
-        attributes.put("partyId", partyId);
-        Long memberId = (Long) attributes.get("memberId");
-        readMessage(partyId, memberId);
-        socketPartyMemberService.subscribe(partyId, memberId);
-        attributes.put("status", "subscribe");
-    }
-
-    @Transactional
-    public void readMessage(Long partyId, Long memberId) {
-        Long lastReadMessageId = chatService.readMessage(partyId, memberId);
-        ChatReadSocketDto chatReadSocketDto = ChatReadSocketDto.builder().lastReadMessageId(lastReadMessageId).build();
-        socketSender.sendChattingReadMessage(partyId, chatReadSocketDto);
-    }
-
-    public void exitChatRoom(Map<String, Object> attributes, Long partyId) {
-        Long memberId = (Long) attributes.get("memberId");
-        socketPartyMemberService.unsubscribe(partyId, memberId);
-        attributes.put("status", "unsubscribe");
-        PartyMember partyMember = partyMemberRepository.findByMemberIdAndPartyId(memberId, partyId);
-        nbbang.com.nbbang.domain.chat.domain.Message currentLastMessage = partyService.findLastMessage(partyId);
-        partyMemberService.updateLastReadMessage(partyMember, currentLastMessage);
-    }
-
-    public void exitChatRoomIfExist(Map<String, Object> attributes) {
-        if(attributes.get("status").equals("subscribe")){
-            Long partyId = (Long) attributes.get("partyId");
-            exitChatRoom(attributes, partyId);
-        }
-    }
 }
