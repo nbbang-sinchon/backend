@@ -36,7 +36,8 @@ public class ChatRoomService {
         this.socketPartyMemberService = socketPartyMemberService;
     }
 
-    public void enter(Map<String, Object> attributes, Long partyId){
+    @Transactional
+    public void enter(Map<String, Object> attributes, Long partyId, Long H){
         attributes.put("partyId", partyId);
         Long memberId = (Long) attributes.get("memberId");
         readMessage(partyId, memberId);

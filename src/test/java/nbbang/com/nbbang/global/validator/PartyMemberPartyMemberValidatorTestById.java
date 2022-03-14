@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @ActiveProfiles("test")
 @Transactional
-class PartyMemberValidatorTest {
+class PartyMemberPartyMemberValidatorTestById {
 
     @Autowired MemberRepository memberRepository;
     @Autowired PartyService partyService;

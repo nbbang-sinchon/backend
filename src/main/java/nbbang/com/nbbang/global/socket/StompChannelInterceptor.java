@@ -3,9 +3,7 @@ package nbbang.com.nbbang.global.socket;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import nbbang.com.nbbang.domain.member.service.MemberService;
-import nbbang.com.nbbang.domain.party.service.PartyService;
-import nbbang.com.nbbang.global.validator.PartyMemberValidator;
+import nbbang.com.nbbang.global.validator.PartyMemberValidatorById;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
@@ -13,9 +11,7 @@ import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Map;
 
 // https://daddyprogrammer.org/post/5290/spring-websocket-chatting-server-enter-qut-event-view-user-count/
@@ -23,14 +19,10 @@ import java.util.Map;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class StompChannelInterceptor implements ChannelInterceptor {
 
-    private final PartyService partyService;
-    private final MemberService memberService;
-    private final PartyMemberValidator partyMemberValidator;
     private final ChatRoomService chatRoomService;
-
+    private final PartyMemberValidatorById partyMemberValidatorById;
 
     private static final String TOPIC_GLOBAL = "/topic/global";
     private static final String TOPIC_CHATTING = "/topic/chatting";
@@ -61,11 +53,11 @@ public class StompChannelInterceptor implements ChannelInterceptor {
             }
             else if(destination.startsWith(TOPIC_CHATTING)){
                 Long partyId = Long.valueOf(destination.substring(16));
-                partyMemberValidator.isPartyMember(partyService.findById(partyId),memberService.findById(memberId));
-                chatRoomService.enter(attributes, partyId);
+                partyMemberValidatorById.isPartyMember(partyId, memberId);
+                chatRoomService.enter(attributes, partyId, 1L);
             }else if(destination.startsWith(TOPIC_BREAD_BOARD)){
                 Long partyId = Long.valueOf(destination.substring(18));
-                partyMemberValidator.isPartyMember(partyService.findById(partyId),memberService.findById(memberId));
+                partyMemberValidatorById.isPartyMember(partyId, memberId);
             }
             else{
                 throw new IllegalArgumentException("올바른 토픽을 입력해주세요.");
@@ -85,6 +77,4 @@ public class StompChannelInterceptor implements ChannelInterceptor {
     public void connect(Map<String, Object> attributes) {
         attributes.put("status", "none");
     }
-
-
 }
