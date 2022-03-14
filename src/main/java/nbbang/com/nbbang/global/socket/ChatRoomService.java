@@ -37,7 +37,7 @@ public class ChatRoomService {
     }
 
     @Transactional
-    public void enter(Map<String, Object> attributes, Long partyId, Long H){
+    public void enter(Map<String, Object> attributes, Long partyId){
         attributes.put("partyId", partyId);
         Long memberId = (Long) attributes.get("memberId");
         readMessage(partyId, memberId);

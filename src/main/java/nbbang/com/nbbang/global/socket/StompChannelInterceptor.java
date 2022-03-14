@@ -54,7 +54,7 @@ public class StompChannelInterceptor implements ChannelInterceptor {
             else if(destination.startsWith(TOPIC_CHATTING)){
                 Long partyId = Long.valueOf(destination.substring(16));
                 partyMemberValidatorById.isPartyMember(partyId, memberId);
-                chatRoomService.enter(attributes, partyId, 1L);
+                chatRoomService.enter(attributes, partyId);
             }else if(destination.startsWith(TOPIC_BREAD_BOARD)){
                 Long partyId = Long.valueOf(destination.substring(18));
                 partyMemberValidatorById.isPartyMember(partyId, memberId);
