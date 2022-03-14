@@ -36,18 +36,15 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @Slf4j
 @Transactional
 @ActiveProfiles("test")
-class MyPartiesControllerTest {
+class MyPartiesIntegrationTest {
 
-    @Autowired MockMvc mockMvc;
     @Autowired ControllerTestUtil controllerTestUtil;
     @Autowired PartyService partyService;
     @Autowired MemberService memberService;
     @Autowired MemberRepository memberRepository;
     @Autowired PartyMemberService partyMemberService;
-    @Autowired
-    MessageService messageService;
+    @Autowired MessageService messageService;
     @Autowired StompChannelInterceptor stompChannelInterceptor;
-    @Autowired ManyPartyService manyPartyService;
 
     @Test
     void partiesOn() throws Exception {
