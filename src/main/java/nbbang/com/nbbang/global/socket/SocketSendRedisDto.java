@@ -9,10 +9,11 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class SocketSendDto {
+public class SocketSendRedisDto {
     private String type;
     private Object data;
-    public static SocketSendDto create(SocketSendRedisDto socketSendRedisDto){
-        return SocketSendDto.builder().type(socketSendRedisDto.getType()).data(socketSendRedisDto.getData()).build();
+    private String topic;
+    public static SocketSendRedisDto createSocketSendDto(String type, Object data, String topic){
+        return SocketSendRedisDto.builder().type(type).data(data).topic(topic).build();
     }
 }

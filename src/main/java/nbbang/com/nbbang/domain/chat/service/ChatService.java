@@ -158,10 +158,4 @@ public class ChatService {
         return lastReadMessageId;
     }
 
-    @Transactional
-    public void exitChatRoom(Long partyId, Long memberId) {
-        PartyMember partyMember = partyMemberRepository.findByMemberIdAndPartyId(memberId, partyId);
-        Message currentLastMessage = partyService.findLastMessage(partyId);
-        partyMember.changeLastReadMessage(currentLastMessage);
-    }
 }

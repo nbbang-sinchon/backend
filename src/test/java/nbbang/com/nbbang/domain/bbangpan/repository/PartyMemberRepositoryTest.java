@@ -25,7 +25,6 @@ class PartyMemberRepositoryTest {
     PartyMemberRepository memberPartyRepository;
     @Autowired MemberRepository memberRepository;
     @Autowired PartyRepository partyRepository;
-    @Autowired MessageService messageService;
     @Autowired
     MessageRepository messageRepository;
 

@@ -1,21 +1,20 @@
-package nbbang.com.nbbang.domain.party.repository;
+package nbbang.com.nbbang.global.socket;
 
 
 import com.mysema.commons.lang.Pair;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Repository;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-@Repository
+//@Repository
 @RequiredArgsConstructor
 @Slf4j
-public class SessionPartyGlobalRepository {
-
+public class TomcatSocketPartyMemberRepository implements SocketPartyMemberRepository {
     private static ConcurrentMap<Pair<Long, Long>, Integer> sessionPartyMap = new ConcurrentHashMap<>();
 
+    @Override
     public void subscribe(Long partyId, Long memberId){
         Pair<Long, Long> pair = new Pair<>(partyId, memberId);
         if (sessionPartyMap.containsKey(pair)){
@@ -25,19 +24,22 @@ public class SessionPartyGlobalRepository {
         }
     }
 
+    @Override
     public void unsubscribe(Long partyId, Long memberId){
         Pair<Long, Long> pair = new Pair<>(partyId, memberId);
         if ((!sessionPartyMap.containsKey(pair)) || (sessionPartyMap.get(pair) < 1)){
-            throw new IllegalArgumentException("memberId, partyId와 맞는 데이터가 존재하지 않습니다.");
+            throw new IllegalArgumentException("[UNSUBSCRIBE] partyId, memberId에 해당하는 소켓 연결을 찾을 수 없습니다. ");
         }
         sessionPartyMap.put(pair, sessionPartyMap.get(pair) - 1);
     }
 
+    @Override
     public Integer getActiveNumber(Long partyId) {
         long count = sessionPartyMap.entrySet().stream().filter(entry -> entry.getKey().getFirst().equals(partyId) && entry.getValue() > 0).count();
         return Integer.valueOf((int) count);
     }
 
+    @Override
     public Boolean isActive(Long partyId, Long memberId) {
         Pair<Long, Long> pair = new Pair<>(partyId, memberId);
         if(sessionPartyMap.containsKey(pair) &&  (sessionPartyMap.get(pair) > 0)){

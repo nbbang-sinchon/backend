@@ -8,6 +8,7 @@ import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.service.PartyMemberService;
 import nbbang.com.nbbang.domain.party.service.PartyService;
 import nbbang.com.nbbang.global.socket.StompChannelInterceptor;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -29,7 +30,8 @@ class ChatReadTest {
     @Autowired MemberService memberService;
     @Autowired MemberRepository memberRepository;
     @Autowired PartyMemberService partyMemberService;
-    @Autowired MessageService messageService;
+    @Autowired
+    MessageService messageService;
     @Autowired StompChannelInterceptor stompChannelInterceptor;
 
     @Test

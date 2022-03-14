@@ -13,7 +13,6 @@ import nbbang.com.nbbang.domain.bbangpan.dto.*;
 import nbbang.com.nbbang.domain.bbangpan.dto.request.BbangpanAccountChangeRequestDto;
 import nbbang.com.nbbang.domain.bbangpan.dto.request.BbangpanPriceChangeRequestDto;
 import nbbang.com.nbbang.domain.bbangpan.dto.request.SendStatusChangeRequestDto;
-import nbbang.com.nbbang.global.socket.SocketSendDto;
 import nbbang.com.nbbang.domain.party.controller.PartyResponseMessage;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.service.PartyMemberService;

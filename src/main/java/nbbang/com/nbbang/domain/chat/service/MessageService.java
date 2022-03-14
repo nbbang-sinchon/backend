@@ -9,9 +9,9 @@ import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.service.MemberService;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.repository.PartyRepository;
-import nbbang.com.nbbang.domain.party.repository.SessionPartyGlobalRepository;
 import nbbang.com.nbbang.global.FileUpload.FileUploadService;
 import nbbang.com.nbbang.global.FileUpload.S3Uploader;
+import nbbang.com.nbbang.global.socket.SocketPartyMemberRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,15 +33,14 @@ public class MessageService {
     private final MessageRepository messageRepository;
     private final PartyRepository partyRepository;
     private final MemberService memberService;
-    private final SessionPartyGlobalRepository sessionPartyGlobalRepository;
     private final FileUploadService fileUploadService;
-
+    private final SocketPartyMemberRepository socketPartyMemberRepository;
 
     @Transactional
     public Message send(Long partyId, Long senderId, String content) {
         Party party = partyRepository.findById(partyId).orElseThrow(()->new NotFoundException(PARTY_NOT_FOUND));
         Member sender = memberService.findById(senderId);
-        Integer readNumber = sessionPartyGlobalRepository.getActiveNumber(partyId);
+        Integer readNumber = socketPartyMemberRepository.getActiveNumber(partyId);
         Message message =Message.createMessage(sender, party, content, MessageType.CHAT, readNumber);
         Message savedMessage = messageRepository.save(message);
         return savedMessage;
@@ -51,7 +50,7 @@ public class MessageService {
     public Long send(Long partyId, Long senderId, String content, MessageType type) {
         Party party = partyRepository.findById(partyId).orElseThrow(()->new NotFoundException(PARTY_NOT_FOUND));
         Member sender = memberService.findById(senderId);
-        Integer readNumber = sessionPartyGlobalRepository.getActiveNumber(partyId);
+        Integer readNumber = socketPartyMemberRepository.getActiveNumber(partyId);
         Message message =Message.createMessage(sender, party, content, type, readNumber);
         Message savedMessage = messageRepository.save(message);
         return savedMessage.getId();
@@ -68,7 +67,7 @@ public class MessageService {
 
         Party party = partyRepository.findById(partyId).orElseThrow(()->new NotFoundException(PARTY_NOT_FOUND));
         Member sender = memberService.findById(senderId);
-        Integer readNumber = sessionPartyGlobalRepository.getActiveNumber(partyId);
+        Integer readNumber = socketPartyMemberRepository.getActiveNumber(partyId);
         Message message =Message.createMessage(sender, party, uploadUrl, MessageType.IMAGE, readNumber);
         Message savedMessage = messageRepository.save(message);
         return savedMessage;

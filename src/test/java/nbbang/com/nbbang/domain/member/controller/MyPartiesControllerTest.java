@@ -5,37 +5,28 @@ import nbbang.com.nbbang.domain.chat.service.MessageService;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.repository.MemberRepository;
 import nbbang.com.nbbang.domain.member.service.MemberService;
-import nbbang.com.nbbang.domain.party.controller.PartyController;
 import nbbang.com.nbbang.domain.party.domain.Party;
-import nbbang.com.nbbang.domain.party.dto.many.PartyListResponseDto;
 import nbbang.com.nbbang.domain.party.dto.my.MyPartyListResponseDto;
-import nbbang.com.nbbang.domain.party.dto.single.request.PartyRequestDto;
 import nbbang.com.nbbang.domain.party.service.ManyPartyService;
 import nbbang.com.nbbang.domain.party.service.PartyMemberService;
 import nbbang.com.nbbang.domain.party.service.PartyService;
-import nbbang.com.nbbang.global.interceptor.PartyMemberInterceptorTestDto;
 import nbbang.com.nbbang.global.response.DefaultResponse;
 import nbbang.com.nbbang.global.socket.StompChannelInterceptor;
-import nbbang.com.nbbang.global.support.controller.ControllerTestParent;
 import nbbang.com.nbbang.global.support.controller.ControllerTestUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 import static nbbang.com.nbbang.domain.member.dto.Place.SINCHON;
-import static nbbang.com.nbbang.global.response.StatusCode.OK;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
@@ -53,7 +44,8 @@ class MyPartiesControllerTest {
     @Autowired MemberService memberService;
     @Autowired MemberRepository memberRepository;
     @Autowired PartyMemberService partyMemberService;
-    @Autowired MessageService messageService;
+    @Autowired
+    MessageService messageService;
     @Autowired StompChannelInterceptor stompChannelInterceptor;
     @Autowired ManyPartyService manyPartyService;
 
