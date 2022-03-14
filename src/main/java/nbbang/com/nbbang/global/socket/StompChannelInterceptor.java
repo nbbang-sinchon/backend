@@ -15,6 +15,7 @@ import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Map;
 
 // https://daddyprogrammer.org/post/5290/spring-websocket-chatting-server-enter-qut-event-view-user-count/
@@ -45,14 +46,15 @@ public class StompChannelInterceptor implements ChannelInterceptor {
 
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
         Map<String, Object> attributes = accessor.getSessionAttributes();
-        String destination = accessor.getDestination();
+
         attributes.put("memberId", memberId(message));
         Long memberId = (Long) attributes.get("memberId");
-        log.info("[{}] destination: {}", accessor.getCommand(), destination);
+        log.info("[{}] message: {}", accessor.getCommand(), message);
 
         if (StompCommand.CONNECT == accessor.getCommand()) {
             connect(attributes);
         } else if (StompCommand.SUBSCRIBE == accessor.getCommand()) {
+            String destination = accessor.getDestination();
             if(destination.startsWith(TOPIC_GLOBAL))  {
                 Long globalMemberId = Long.valueOf(destination.substring(14));
                 if(memberId!=globalMemberId){throw new RuntimeException("자신의 소켓만 구독할 수 있습니다. ");}
@@ -69,8 +71,9 @@ public class StompChannelInterceptor implements ChannelInterceptor {
                 throw new IllegalArgumentException("올바른 토픽을 입력해주세요.");
             }
         } else if (StompCommand.UNSUBSCRIBE == accessor.getCommand()) {
+            String destination = accessor.getSubscriptionId();
             if(destination.startsWith(TOPIC_CHATTING)){
-                Long partyId = Long.valueOf(destination.substring(18));
+                Long partyId = Long.valueOf(destination.substring(16));
                 chatRoomService.exit(attributes, partyId);
             }
         } else if (StompCommand.DISCONNECT == accessor.getCommand()) {
