@@ -1,8 +1,8 @@
-package nbbang.com.nbbang.global.socket;
+package nbbang.com.nbbang.global.socket.redisPubSub;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.RedisTemplate;
+import nbbang.com.nbbang.global.socket.redisPubSub.RedisSubscriber;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.stereotype.Repository;

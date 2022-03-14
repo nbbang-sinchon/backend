@@ -1,8 +1,10 @@
-package nbbang.com.nbbang.global.socket;
+package nbbang.com.nbbang.global.socket.redisPubSub;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import nbbang.com.nbbang.global.socket.SocketSendDto;
+import nbbang.com.nbbang.global.socket.SocketSendRedisDto;
 import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.data.redis.core.RedisTemplate;

@@ -28,7 +28,7 @@ public class ChatSendResponseDto {
     private Boolean isSender;
     private ChatSendResponseSenderDto sender;
 
-    public static ChatSendResponseDto createByMessage(Message message, Long memberId) {
+    public static ChatSendResponseDto createByMessage(Message message) {
         Integer partyMemberNumber =message.getParty().countPartyMemberNumber();
         return ChatSendResponseDto.builder()
                 .id(message.getId())
@@ -37,7 +37,6 @@ public class ChatSendResponseDto {
                 .type(message.getType()!=null?message.getType():MessageType.CHAT)
                 .content(message.getContent())
                 .sender(message.getSender()!=null?ChatSendResponseSenderDto.create(message.getSender()):null)
-                .isSender(message.getSender()!=null?memberId.equals(message.getSender().getId()):false)
                 .build();
     }
 }

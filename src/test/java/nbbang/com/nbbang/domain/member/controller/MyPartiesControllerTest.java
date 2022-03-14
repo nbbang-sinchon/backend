@@ -7,10 +7,10 @@ import nbbang.com.nbbang.domain.member.repository.MemberRepository;
 import nbbang.com.nbbang.domain.member.service.MemberService;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.dto.my.MyPartyListResponseDto;
-import nbbang.com.nbbang.domain.party.service.ManyPartyService;
 import nbbang.com.nbbang.domain.party.service.PartyMemberService;
 import nbbang.com.nbbang.domain.party.service.PartyService;
 import nbbang.com.nbbang.global.response.DefaultResponse;
+import nbbang.com.nbbang.global.socket.ChatRoomService;
 import nbbang.com.nbbang.global.socket.StompChannelInterceptor;
 import nbbang.com.nbbang.global.support.controller.ControllerTestUtil;
 import org.junit.jupiter.api.Test;
@@ -19,7 +19,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
@@ -45,6 +44,8 @@ class MyPartiesIntegrationTest {
     @Autowired PartyMemberService partyMemberService;
     @Autowired MessageService messageService;
     @Autowired StompChannelInterceptor stompChannelInterceptor;
+    @Autowired
+    ChatRoomService chatRoomService;
 
     @Test
     void partiesOn() throws Exception {
@@ -79,16 +80,16 @@ class MyPartiesIntegrationTest {
         stompChannelInterceptor.connect(member2Attributes);
         stompChannelInterceptor.connect(member3Attributes);
 
-        stompChannelInterceptor.enterChatRoom(member1Attributes, partyId); // 1번 파티 입장
+        chatRoomService.enter(member1Attributes, partyId); // 1번 파티 입장
         messageService.send(partyId, saveMember1.getId(), "hello");
 
-        stompChannelInterceptor.exitChatRoom(member1Attributes, partyId); // 1번 파티 나감
+        chatRoomService.exit(member1Attributes, partyId); // 1번 파티 나감
 
-        stompChannelInterceptor.enterChatRoom(member2Attributes, partyId); // 2번 파티 입장
+        chatRoomService.enter(member2Attributes, partyId); // 2번 파티 입장
 
         messageService.send(partyId, saveMember2.getId(), "hello here 2");
 
-        stompChannelInterceptor.enterChatRoom(member3Attributes, partyId); // 3번 파티 입장
+        chatRoomService.enter(member3Attributes, partyId); // 3번 파티 입장
 
         messageService.send(partyId, saveMember3.getId(), "hello here 3");
 
@@ -97,7 +98,7 @@ class MyPartiesIntegrationTest {
         MyPartyListResponseDto result = controllerTestUtil.convert(res.getData(), MyPartyListResponseDto.class);
         // assertThat(result.getParties().get(0).getNotReadNumber()).isEqualTo(2);
 
-        stompChannelInterceptor.enterChatRoom(member1Attributes, partyId); // 1번 파티 입장
+        chatRoomService.enter(member1Attributes, partyId); // 1번 파티 입장
 
         DefaultResponse res2 = controllerTestUtil.expectDefaultResponseObject(get("/members/parties/on"));
         MyPartyListResponseDto result2 = controllerTestUtil.convert(res2.getData(), MyPartyListResponseDto.class);
@@ -110,7 +111,7 @@ class MyPartiesIntegrationTest {
         MyPartyListResponseDto result3 = controllerTestUtil.convert(res3.getData(), MyPartyListResponseDto.class);
         // assertThat(result3.getParties().get(0).getNotReadNumber()).isEqualTo(0);
 
-        stompChannelInterceptor.exitChatRoom(member1Attributes, partyId); // 1번 파티 나감
+        chatRoomService.exit(member1Attributes, partyId); // 1번 파티 나감
 
     }
 

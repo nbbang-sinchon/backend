@@ -36,22 +36,17 @@ public class MessageService {
 
     @Transactional
     public Message send(Long partyId, Long senderId, String content) {
-        Party party = partyRepository.findById(partyId).orElseThrow(()->new NotFoundException(PARTY_NOT_FOUND));
-        Member sender = memberService.findById(senderId);
-        Integer readNumber = socketPartyMemberService.getActiveNumber(partyId);
-        Message message =Message.createMessage(sender, party, content, MessageType.CHAT, readNumber);
-        Message savedMessage = messageRepository.save(message);
-        return savedMessage;
+        return send(partyId, senderId, content,MessageType.CHAT);
     }
 
     @Transactional
-    public Long send(Long partyId, Long senderId, String content, MessageType type) {
+    public Message send(Long partyId, Long senderId, String content, MessageType type) {
         Party party = partyRepository.findById(partyId).orElseThrow(()->new NotFoundException(PARTY_NOT_FOUND));
         Member sender = memberService.findById(senderId);
         Integer readNumber = socketPartyMemberService.getActiveNumber(partyId);
         Message message =Message.createMessage(sender, party, content, type, readNumber);
         Message savedMessage = messageRepository.save(message);
-        return savedMessage.getId();
+        return savedMessage;
     }
 
     public Message findById(Long id){

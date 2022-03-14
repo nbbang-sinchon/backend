@@ -10,7 +10,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import nbbang.com.nbbang.domain.chat.service.ChatService;
 import net.bytebuddy.pool.TypePool;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +27,10 @@ import org.springframework.web.bind.annotation.RestController;
 //@Controller
 @RestController
 @Slf4j
+@RequiredArgsConstructor
 public class SampleController {
+
+    private final ChatService chatService;
 
     @Operation(summary = "샘플 조회.", description = "id 를 이용하여 샘플을 조회합니다.")
     @ApiResponses(value = {
@@ -40,11 +45,11 @@ public class SampleController {
         return new SampleDto("BHC 뿌링클 8시", "오늘 저녁 연대서문 뿌링클 먹을 파티 구합니다. 배달비 엔빵 하실분, 사이드 가능입니다.");
     }
 
-    @GetMapping("/log-test")
-    public String logTest() {
-        log.info("log test");
-        return "log test success";
-     }
+    @GetMapping("/test")
+    public String hello() {
+        chatService.readMessage(70L, 1L);
+        return "test success";
+    }
 
     @Data @NoArgsConstructor @AllArgsConstructor
     static class SampleDto {
