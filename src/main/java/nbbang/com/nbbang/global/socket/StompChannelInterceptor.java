@@ -40,7 +40,7 @@ public class StompChannelInterceptor implements ChannelInterceptor {
     private final MemberService memberService;
     private final PartyMemberRepository partyMemberRepository;
     private final PartyMemberService partyMemberService;
-    private final SocketPartyMemberRepository sessionPartyGlobalRepository;
+    private final SocketPartyMemberRepository socketPartyMemberRepository;
     private final SocketSender socketSender;
     private final CurrentMember currentMember;
     private final PartyMemberValidator partyMemberValidator;
@@ -48,7 +48,7 @@ public class StompChannelInterceptor implements ChannelInterceptor {
 
     public StompChannelInterceptor(ChatService chatService, PartyService partyService, MemberService memberService,
                                    PartyMemberRepository partyMemberRepository, PartyMemberService partyMemberService,
-                                   SocketPartyMemberRepository sessionPartyGlobalRepository,
+                                   SocketPartyMemberRepository socketPartyMemberRepository,
                                    @Lazy SocketSender socketSender, CurrentMember currentMember,
                                    PartyMemberValidator partyMemberValidator) {
         this.chatService = chatService;
@@ -57,7 +57,7 @@ public class StompChannelInterceptor implements ChannelInterceptor {
         this.partyMemberRepository = partyMemberRepository;
         this.partyMemberService = partyMemberService;
         this.socketSender = socketSender;
-        this.sessionPartyGlobalRepository = sessionPartyGlobalRepository;
+        this.socketPartyMemberRepository = socketPartyMemberRepository;
         this.currentMember = currentMember;
         this.partyMemberValidator = partyMemberValidator;
     }
@@ -117,7 +117,7 @@ public class StompChannelInterceptor implements ChannelInterceptor {
         attributes.put("partyId", partyId);
         Long memberId = (Long) attributes.get("memberId");
         readMessage(partyId, memberId);
-        sessionPartyGlobalRepository.subscribe(partyId, memberId);
+        socketPartyMemberRepository.subscribe(partyId, memberId);
         attributes.put("status", "subscribe");
     }
 
@@ -130,7 +130,7 @@ public class StompChannelInterceptor implements ChannelInterceptor {
 
     public void exitChatRoom(Map<String, Object> attributes, Long partyId) {
         Long memberId = (Long) attributes.get("memberId");
-        sessionPartyGlobalRepository.unsubscribe(partyId, memberId);
+        socketPartyMemberRepository.unsubscribe(partyId, memberId);
         attributes.put("status", "unsubscribe");
         PartyMember partyMember = partyMemberRepository.findByMemberIdAndPartyId(memberId, partyId);
         nbbang.com.nbbang.domain.chat.domain.Message currentLastMessage = partyService.findLastMessage(partyId);

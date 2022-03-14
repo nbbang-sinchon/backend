@@ -4,7 +4,6 @@ package nbbang.com.nbbang.global.socket;
 import com.mysema.commons.lang.Pair;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Repository;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -12,7 +11,7 @@ import java.util.concurrent.ConcurrentMap;
 //@Repository
 @RequiredArgsConstructor
 @Slf4j
-public class SessionPartyGlobalRepository implements SocketPartyMemberRepository {
+public class TomcatSocketPartyMemberRepository implements SocketPartyMemberRepository {
     private static ConcurrentMap<Pair<Long, Long>, Integer> sessionPartyMap = new ConcurrentHashMap<>();
 
     @Override

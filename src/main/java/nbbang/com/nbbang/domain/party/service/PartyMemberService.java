@@ -14,7 +14,6 @@ import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.domain.PartyStatus;
 import nbbang.com.nbbang.domain.party.exception.PartyExitForbiddenException;
 import nbbang.com.nbbang.domain.party.exception.PartyJoinException;
-import nbbang.com.nbbang.global.socket.SessionPartyGlobalRepository;
 import nbbang.com.nbbang.global.error.exception.NotPartyMemberException;
 import nbbang.com.nbbang.global.socket.SocketPartyMemberRepository;
 import org.springframework.stereotype.Service;
@@ -33,7 +32,7 @@ public class PartyMemberService {
     private final PartyMemberRepository partyMemberRepository;
     private final MessageService messageService;
     private final MessageRepository messageRepository;
-    private final SocketPartyMemberRepository sessionPartyGlobalRepository;
+    private final SocketPartyMemberRepository socketPartyMemberRepository;
 
     public boolean isPartyOwnerOrMember(Party party, Member member) {
         return Optional.ofNullable(party.getOwner()).equals(member) || party.getPartyMembers().stream().anyMatch(mp -> mp.getMember().equals(member));
@@ -105,7 +104,7 @@ public class PartyMemberService {
     public List getNotReadNumber(List<Party> parties, Long memberId) {
         List<Integer> notReadNumbers = new ArrayList<>();
         for (Party party : parties) {
-            if(sessionPartyGlobalRepository.isActive(party.getId(), memberId)){
+            if(socketPartyMemberRepository.isActive(party.getId(), memberId)){
                 notReadNumbers.add(0);
             }
             else{
