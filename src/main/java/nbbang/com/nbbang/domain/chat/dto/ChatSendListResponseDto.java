@@ -20,7 +20,7 @@ public class ChatSendListResponseDto {
         Collections.sort(ms);
         return ChatSendListResponseDto.builder()
                 .messages(ms.stream()
-                        .map(message -> ChatSendResponseDto.createByMessage(message, memberId))
+                        .map(message -> ChatSendResponseDto.createByMessage(message))
                         .collect(Collectors.toList()))
                 .build();
     }

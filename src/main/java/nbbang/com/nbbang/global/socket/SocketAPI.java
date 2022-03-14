@@ -43,7 +43,7 @@ public class SocketAPI {
     @PostMapping("/chatting")
     public SocketSendDto socketEmitApi(@RequestBody ChatSendRequestDto chatSendRequestDto){
         Message message = messageService.send(1L, 1L, chatSendRequestDto.getContent());
-        ChatSendResponseDto data = ChatSendResponseDto.createByMessage(message, currentMember.id());
+        ChatSendResponseDto data = ChatSendResponseDto.createByMessage(message);
         return SocketSendDto.builder().type(CHATTING).data(data).build();
     }
 
@@ -71,7 +71,7 @@ public class SocketAPI {
     @PostMapping("/global")
     public SocketSendDto global(){
         Message message = messageService.send(1L, 2L, "다른 사람이 보낸 채팅");
-        ChatSendResponseDto data = ChatSendResponseDto.createByMessage(message, currentMember.id());
+        ChatSendResponseDto data = ChatSendResponseDto.createByMessage(message);
         return SocketSendDto.builder().type(GLOBAL).data(ChatAlarmResponseDto.create(Party.builder().id(0L).title("test party").build(), data)).build();
     }
 

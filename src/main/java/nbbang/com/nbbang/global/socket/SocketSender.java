@@ -10,6 +10,8 @@ import nbbang.com.nbbang.domain.party.service.PartyService;
 import nbbang.com.nbbang.global.interceptor.CurrentMember;
 import nbbang.com.nbbang.global.socket.redisPubSub.RedisPublisher;
 import nbbang.com.nbbang.global.socket.redisPubSub.RedisTopicRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -20,13 +22,12 @@ import static nbbang.com.nbbang.global.socket.SocketDestination.*;
 @RequiredArgsConstructor
 @Slf4j
 public class SocketSender {
-    private final CurrentMember currentMember;
     private final PartyService partyService;
     private final RedisPublisher redisPublisher;
     private final RedisTopicRepository redisTopicRepository;
 
     public void sendChattingByMessage(Message message){
-        ChatSendResponseDto chatSendResponseDto = ChatSendResponseDto.createByMessage(message, currentMember.id());
+        ChatSendResponseDto chatSendResponseDto = ChatSendResponseDto.createByMessage(message);
         Long partyId = message.getParty().getId();
         send(CHATTING, partyId,  chatSendResponseDto);
         List<Member> members = partyService.findMembers(partyId);
