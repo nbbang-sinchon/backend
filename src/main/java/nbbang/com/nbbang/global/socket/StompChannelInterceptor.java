@@ -10,22 +10,19 @@ import nbbang.com.nbbang.domain.member.service.MemberService;
 import nbbang.com.nbbang.domain.party.service.PartyMemberService;
 import nbbang.com.nbbang.domain.party.service.PartyService;
 import nbbang.com.nbbang.global.interceptor.CurrentMember;
+import nbbang.com.nbbang.global.socket.service.SocketPartyMemberService;
 import nbbang.com.nbbang.global.validator.PartyMemberValidator;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
-import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.MultiValueMap;
 
 import java.util.Map;
-import java.util.List;
 
 // https://daddyprogrammer.org/post/5290/spring-websocket-chatting-server-enter-qut-event-view-user-count/
 // https://stackoverflow.com/questions/44852776/spring-mvc-websockets-with-stomp-authenticate-against-specific-channels
@@ -40,7 +37,7 @@ public class StompChannelInterceptor implements ChannelInterceptor {
     private final MemberService memberService;
     private final PartyMemberRepository partyMemberRepository;
     private final PartyMemberService partyMemberService;
-    private final SocketPartyMemberRepository socketPartyMemberRepository;
+    private final SocketPartyMemberService socketPartyMemberService;
     private final SocketSender socketSender;
     private final CurrentMember currentMember;
     private final PartyMemberValidator partyMemberValidator;
@@ -48,7 +45,7 @@ public class StompChannelInterceptor implements ChannelInterceptor {
 
     public StompChannelInterceptor(ChatService chatService, PartyService partyService, MemberService memberService,
                                    PartyMemberRepository partyMemberRepository, PartyMemberService partyMemberService,
-                                   SocketPartyMemberRepository socketPartyMemberRepository,
+                                   SocketPartyMemberService socketPartyMemberService,
                                    @Lazy SocketSender socketSender, CurrentMember currentMember,
                                    PartyMemberValidator partyMemberValidator) {
         this.chatService = chatService;
@@ -57,7 +54,7 @@ public class StompChannelInterceptor implements ChannelInterceptor {
         this.partyMemberRepository = partyMemberRepository;
         this.partyMemberService = partyMemberService;
         this.socketSender = socketSender;
-        this.socketPartyMemberRepository = socketPartyMemberRepository;
+        this.socketPartyMemberService = socketPartyMemberService;
         this.currentMember = currentMember;
         this.partyMemberValidator = partyMemberValidator;
     }
@@ -117,7 +114,7 @@ public class StompChannelInterceptor implements ChannelInterceptor {
         attributes.put("partyId", partyId);
         Long memberId = (Long) attributes.get("memberId");
         readMessage(partyId, memberId);
-        socketPartyMemberRepository.subscribe(partyId, memberId);
+        socketPartyMemberService.subscribe(partyId, memberId);
         attributes.put("status", "subscribe");
     }
 
@@ -130,7 +127,7 @@ public class StompChannelInterceptor implements ChannelInterceptor {
 
     public void exitChatRoom(Map<String, Object> attributes, Long partyId) {
         Long memberId = (Long) attributes.get("memberId");
-        socketPartyMemberRepository.unsubscribe(partyId, memberId);
+        socketPartyMemberService.unsubscribe(partyId, memberId);
         attributes.put("status", "unsubscribe");
         PartyMember partyMember = partyMemberRepository.findByMemberIdAndPartyId(memberId, partyId);
         nbbang.com.nbbang.domain.chat.domain.Message currentLastMessage = partyService.findLastMessage(partyId);
