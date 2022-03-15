@@ -53,13 +53,6 @@ public class OAuthAttributes {
 
     private static OAuthAttributes ofKakao(String userNameAttributeName,
                                             Map<String, Object> attributes) {
-        System.out.println(userNameAttributeName);
-        System.out.println("KAKAO LOGIN");
-        attributes.keySet().stream().forEach(k -> {
-            System.out.print(k + " : ");
-            System.out.println(attributes.get(k));
-        });
-        System.out.println(((Map)attributes.get("properties")).get("nickname"));
         return OAuthAttributes.builder()
                 .nickname((String)((Map)attributes.get("properties")).get("nickname"))
                 .email(attributes.get("id").toString())

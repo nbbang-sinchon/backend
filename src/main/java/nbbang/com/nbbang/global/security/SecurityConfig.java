@@ -73,8 +73,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/oauth2/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/parties").permitAll()
                 .antMatchers(HttpMethod.GET, "/parties/**").permitAll()
-//                .antMatchers("/ws-stomp/**").permitAll()
-
                 .anyRequest().authenticated()
 
                 .and()

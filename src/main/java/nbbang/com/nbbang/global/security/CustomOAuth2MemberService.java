@@ -28,12 +28,6 @@ public class CustomOAuth2MemberService implements OAuth2UserService<OAuth2UserRe
         OAuth2UserService delegate = new DefaultOAuth2UserService();
         OAuth2User oAuth2User = delegate.loadUser(userRequest);
 
-        /*oAuth2User.getAttributes().keySet().stream().forEach(k ->{
-                System.out.print(k + " : ");
-                System.out.println(oAuth2User.getAttributes().get(k));
-        });*/
-
-
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
         String userNameAttributeName = userRequest.getClientRegistration()
                 .getProviderDetails().getUserInfoEndpoint().getUserNameAttributeName();
