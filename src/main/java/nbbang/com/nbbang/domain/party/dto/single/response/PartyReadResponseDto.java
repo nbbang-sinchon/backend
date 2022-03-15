@@ -34,8 +34,8 @@ public class PartyReadResponseDto {
         /* 유저 정보(닉네임, 빵 수), 지역, 모집 현황(참여 인원수/모집 인원수, 모집 상태), 작성 시간, 해시태그, 하트 수,
         작성자와 조회자 일치 여부, 파티 참여 여부, 제목, 내용, 최근 파티 목록을 제공한다.
         */
-        boolean isMember = party.getPartyMembers().stream()
-                .anyMatch(memberParty -> memberParty.getMember().getId().equals(userId));
+        boolean isMember = (userId!=null?party.getPartyMembers().stream()
+                .anyMatch(memberParty -> memberParty.getMember().getId().equals(userId)):false);
         PartyReadResponseDto partyReadResponseDto =  PartyReadResponseDto.builder()
                 .owner(MemberResponseDto.createByEntity(party.getOwner()))
                 .place(party.getPlace().name())
@@ -44,9 +44,9 @@ public class PartyReadResponseDto {
                 .goalNumber(party.getGoalNumber())
                 .createTime(party.getCreateTime())
                 .hashtags(hashtags)
-                .isOwner((party.getOwner()!=null)?((party.getOwner().getId())==userId):false)
+                .isOwner((party.getOwner()!=null && userId!=null)?((party.getOwner().getId())==userId):false)
                 .isMember(isMember)
-                .isWishlist(party.isWishlistOf(userId))
+                .isWishlist(userId!=null?party.isWishlistOf(userId):false)
                 .title(party.getTitle())
                 .content(party.getContent())
                 .parties(parties)
