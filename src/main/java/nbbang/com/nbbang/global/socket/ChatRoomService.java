@@ -1,5 +1,6 @@
 package nbbang.com.nbbang.global.socket;
 
+import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.domain.bbangpan.domain.PartyMember;
 import nbbang.com.nbbang.domain.bbangpan.repository.PartyMemberRepository;
 import nbbang.com.nbbang.domain.chat.dto.ChatReadSocketDto;
@@ -15,6 +16,7 @@ import java.util.Map;
 
 @Transactional(readOnly = true)
 @Service
+@Slf4j
 public class ChatRoomService {
 
     private final ChatService chatService;
@@ -52,6 +54,7 @@ public class ChatRoomService {
         socketSender.sendChattingReadMessage(partyId, chatReadSocketDto);
     }
 
+    @Transactional
     public void exit(Map<String, Object> attributes, Long partyId) {
         Long memberId = (Long) attributes.get("memberId");
         socketPartyMemberService.unsubscribe(partyId, memberId);
@@ -61,6 +64,7 @@ public class ChatRoomService {
         partyMemberService.updateLastReadMessage(partyMember, currentLastMessage);
     }
 
+    @Transactional
     public void exitIfSubscribing(Map<String, Object> attributes) {
         if(attributes.get("status").equals("subscribe")){
             Long partyId = (Long) attributes.get("partyId");
