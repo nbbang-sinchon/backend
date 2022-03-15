@@ -50,7 +50,6 @@ public class ChatRoomService {
     @Transactional
     public void readMessage(Long partyId, Long memberId) {
         Long lastReadMessageId = chatService.readMessage(partyId, memberId);
-        log.info("[enter] last read message for socket: {}", lastReadMessageId);
         ChatReadSocketDto chatReadSocketDto = ChatReadSocketDto.builder().lastReadMessageId(lastReadMessageId).build();
         socketSender.sendChattingReadMessage(partyId, chatReadSocketDto);
     }
@@ -62,7 +61,6 @@ public class ChatRoomService {
         attributes.put("status", "unsubscribe");
         PartyMember partyMember = partyMemberRepository.findByMemberIdAndPartyId(memberId, partyId);
         nbbang.com.nbbang.domain.chat.domain.Message currentLastMessage = partyService.findLastMessage(partyId);
-        log.info("[EXIT] last message: {}", currentLastMessage.getId());
         partyMemberService.updateLastReadMessage(partyMember, currentLastMessage);
     }
 
