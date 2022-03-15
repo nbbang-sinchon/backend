@@ -113,4 +113,8 @@ public class PartyMemberService {
         }
         return notReadNumbers;
     }
+
+    public void getNotReadChatNumber(){
+        partyMemberRepository.isNotReadNumberByMemberId(1L);
+    }
 }
