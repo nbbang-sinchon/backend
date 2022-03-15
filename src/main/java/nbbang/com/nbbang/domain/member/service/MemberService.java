@@ -1,13 +1,12 @@
 package nbbang.com.nbbang.domain.member.service;
 
 import lombok.RequiredArgsConstructor;
-import nbbang.com.nbbang.domain.chat.domain.Message;
+import nbbang.com.nbbang.domain.bbangpan.repository.PartyMemberRepository;
 import nbbang.com.nbbang.domain.member.controller.MemberResponseMessage;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.dto.Place;
 import nbbang.com.nbbang.domain.member.repository.MemberRepository;
 import nbbang.com.nbbang.global.FileUpload.FileUploadService;
-import nbbang.com.nbbang.global.FileUpload.S3Uploader;
 import nbbang.com.nbbang.global.security.Role;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,7 +14,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.webjars.NotFoundException;
 
 import java.io.IOException;
-import java.util.UUID;
 
 import static nbbang.com.nbbang.global.FileUpload.UploadDirName.DIR_AVATAR;
 
@@ -26,6 +24,7 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final FileUploadService fileUploadService;
+    private final PartyMemberRepository partyMemberRepository;
 
     @Transactional
     @Deprecated
@@ -69,6 +68,10 @@ public class MemberService {
     public void deleteMember(Long memberId) {
         Member member = findById(memberId);
         member.leaveMember();
+    }
+
+    public Boolean isThereNotReadChat(Long memberId) {
+        return partyMemberRepository.isThereNotReadMessageByMemberId(memberId);
     }
 
 }

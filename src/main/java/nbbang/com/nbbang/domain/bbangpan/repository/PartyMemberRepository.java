@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 
-public interface PartyMemberRepository extends JpaRepository<PartyMember, Long> {
+public interface PartyMemberRepository extends JpaRepository<PartyMember, Long>, PartyMemberRepositorySupport {
 
     PartyMember findByMemberIdAndPartyId(Long memberId, Long partyId);
 }
