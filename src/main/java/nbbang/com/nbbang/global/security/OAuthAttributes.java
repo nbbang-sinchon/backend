@@ -29,6 +29,14 @@ public class OAuthAttributes {
     public static OAuthAttributes of(String registrationId,
                                      String userNameAttributeName,
                                      Map<String, Object> attributes) {
+        switch (registrationId) {
+            case "google":
+                return ofGoogle(userNameAttributeName, attributes);
+            case "kakao":
+                return ofKakao(userNameAttributeName, attributes);
+            case "naver":
+                return ofNaver(userNameAttributeName, attributes);
+        }
         return ofGoogle(userNameAttributeName, attributes);
     }
 
@@ -43,6 +51,35 @@ public class OAuthAttributes {
                 .build();
     }
 
+    private static OAuthAttributes ofKakao(String userNameAttributeName,
+                                            Map<String, Object> attributes) {
+        System.out.println(userNameAttributeName);
+        System.out.println("KAKAO LOGIN");
+        attributes.keySet().stream().forEach(k -> {
+            System.out.print(k + " : ");
+            System.out.println(attributes.get(k));
+        });
+        System.out.println(((Map)attributes.get("properties")).get("nickname"));
+        return OAuthAttributes.builder()
+                .nickname((String)((Map)attributes.get("properties")).get("nickname"))
+                .email(attributes.get("id").toString())
+                .avatar((String) attributes.get("picture"))
+                .attributes(attributes)
+                .nameAttributeKey(userNameAttributeName)
+                .build();
+    }
+
+    private static OAuthAttributes ofNaver(String userNameAttributeName,
+                                           Map<String, Object> attributes) {
+        Map attrs = (Map)attributes.get("response");
+        return OAuthAttributes.builder()
+                .nickname((String) attrs.get("name"))
+                .email((String) attrs.get("email"))
+                .avatar((String) attributes.get("picture"))
+                .attributes(attributes)
+                .nameAttributeKey(userNameAttributeName)
+                .build();
+    }
 
     public Member toEntity() {
         return Member.builder()

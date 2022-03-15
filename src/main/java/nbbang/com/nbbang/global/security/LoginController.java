@@ -33,13 +33,17 @@ public class LoginController {
     public void memberLogin() {
     }
 
-    /*
-    @Operation(summary = "카카오 로그인", description = "로그인 페이지로 이동합니다(카카오). 올바른 요청 시 자신의 정보를 리턴합니다. 직접 DNS 주소로 GET 을 보내세요. (IP 주소가 아닌 DNS 주소)")
+
+    @Operation(summary = "카카오 로그인", description = "로그인 페이지로 이동합니다(카카오).")
     @GetMapping("/oauth2/authorization/kakao")
     public void memberLoginKakao() {
-        log.info("kakao login");
     }
-    */
+
+    @Operation(summary = "네이버 로그인", description = "로그인 페이지로 이동합니다(네이버).")
+    @GetMapping("/oauth2/authorization/naver")
+    public void memberLoginNaver() {
+    }
+
 
     @Operation(summary = "로그아웃", description = "로그아웃합니다.")
     @PostMapping("/gologout")
