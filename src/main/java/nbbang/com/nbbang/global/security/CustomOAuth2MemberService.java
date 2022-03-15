@@ -35,7 +35,6 @@ public class CustomOAuth2MemberService implements OAuth2UserService<OAuth2UserRe
         OAuthAttributes attributes = OAuthAttributes.
                 of(registrationId, userNameAttributeName, oAuth2User.getAttributes());
 
-
         Member member = saveOrSelect(attributes);
         httpSession.setAttribute("member", new SessionMember(member));
         return new DefaultOAuth2User(
