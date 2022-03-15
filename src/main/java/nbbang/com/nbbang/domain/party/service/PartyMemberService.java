@@ -115,6 +115,6 @@ public class PartyMemberService {
     }
 
     public void getNotReadChatNumber(){
-        partyMemberRepository.isNotReadNumberByMemberId(1L);
+        partyMemberRepository.isThereNotReadMessageByMemberId(1L);
     }
 }

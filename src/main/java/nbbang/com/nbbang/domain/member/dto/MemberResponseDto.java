@@ -17,7 +17,7 @@ public class MemberResponseDto {
     private String nickname;
     private Integer breadNumber;
     private String place;
-    private Boolean isThereNotReadChat;
+    private Boolean isThereNotReadMessage;
 
     public static MemberResponseDto createByEntity(Member member) {
         return MemberResponseDto.builder()
@@ -28,13 +28,13 @@ public class MemberResponseDto {
                 .build();
     }
 
-    public static MemberResponseDto createByEntity(Member member, Boolean isThereNotReadChat) {
+    public static MemberResponseDto createByEntity(Member member, Boolean isThereNotReadMessage) {
         return MemberResponseDto.builder()
                 .id(member.getId())
                 .avatar(member.getAvatar()!=null?member.getAvatar():null)
                 .nickname(member.getNickname())
                 .place(member.getPlace()!=null?member.getPlace().toString():Place.NONE.toString())
-                .isThereNotReadChat(isThereNotReadChat)
+                .isThereNotReadMessage(isThereNotReadMessage)
                 .build();
     }
 }

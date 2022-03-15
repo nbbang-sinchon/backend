@@ -12,7 +12,7 @@ import static nbbang.com.nbbang.domain.chat.domain.QMessage.message;
 public class PartyMemberRepositorySupportImpl implements PartyMemberRepositorySupport{
     private final JPAQueryFactory query;
     @Override
-    public Boolean isNotReadNumberByMemberId(Long memberId) {
+    public Boolean isThereNotReadMessageByMemberId(Long memberId) {
         QPartyMember partyMember = QPartyMember.partyMember;
         int size = query.selectFrom(partyMember)
                 .where(partyMember.member.id.eq(memberId))
