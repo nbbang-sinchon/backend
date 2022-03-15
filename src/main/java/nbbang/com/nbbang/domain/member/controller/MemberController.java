@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import nbbang.com.nbbang.domain.bbangpan.repository.PartyMemberRepository;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.dto.*;
 import nbbang.com.nbbang.domain.member.repository.MemberRepository;
@@ -44,13 +45,15 @@ public class MemberController {
 
     private final MemberService memberService;
     private final CurrentMember currentMember;
+    private final PartyMemberRepository partyMemberRepository;
 
     @Operation(summary = "마이페이지 정보 조회", description = "자신의 정보를 조회합니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MemberResponseDto.class)))
     @GetMapping
     public DefaultResponse select(HttpServletRequest request) {
         Member member = memberService.findById(currentMember.id());
-        MemberResponseDto dto = MemberResponseDto.createByEntity(member);
+        Boolean isThereNotReadChat = partyMemberRepository.isNotReadNumberByMemberId(currentMember.id());
+        MemberResponseDto dto = MemberResponseDto.createByEntity(member, isThereNotReadChat);
         return DefaultResponse.res(StatusCode.OK, MemberResponseMessage.READ_MEMBER, dto);
     }
 
