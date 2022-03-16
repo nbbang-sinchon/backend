@@ -51,16 +51,16 @@ public class MessageRepositorySupportImpl implements MessageRepositorySupport {
     }
 
     @Override
-    public void bulkReadNumberPlus(Long lastReadId, Long partyId) {
+    public void bulkNotReadMinusPlus(Long lastReadId, Long partyId) {
         QMessage message = QMessage.message;
                 query
                 .update(message)
-                .set(message.readNumber,message.readNumber.add(1)) // (1)
+                .set(message.notReadNumber,message.notReadNumber.subtract(1))
                 .where(message.id.gt(lastReadId))
                 .where(message.party.id.eq(partyId))
                 .execute();
         em.flush();
         em.clear();
-        log.info("[Add] read number 1 gt{}", lastReadId);
+        log.info("[Subtract] Not Read Number -1 gt{}", lastReadId);
     }
 }

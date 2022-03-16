@@ -134,12 +134,6 @@ public class PartyService {
         hashtagService.deleteIfNotReferred(partyHashtag.getHashtag());
     }
 
-    public Integer countPartyMemberNumber(Long partyId) {
-        Party party = findById(partyId);
-        Integer partyMemberNumber = party.countPartyMemberNumber();
-        return partyMemberNumber;
-    }
-
     public Message findLastMessage(Long partyId) {
         Message lastMessage = messageRepository.findLastMessage(partyId);
         return Optional.ofNullable(lastMessage).orElse(Message.builder().id(0L).build());
@@ -165,9 +159,4 @@ public class PartyService {
 
     }
 
-    public Integer getNotActiveNumber(Long partyId)  {
-        Integer activeNumber = socketPartyMemberService.getPartyActiveNumber(partyId);
-        Integer partyMemberNumber = findById(partyId).countPartyMemberNumber();
-        return partyMemberNumber - activeNumber;
-    }
 }

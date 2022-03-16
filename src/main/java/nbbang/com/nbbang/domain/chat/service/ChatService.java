@@ -2,7 +2,6 @@ package nbbang.com.nbbang.domain.chat.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import nbbang.com.nbbang.domain.bbangpan.domain.BreadBoardPartyMemberService;
 import nbbang.com.nbbang.domain.bbangpan.domain.PartyMember;
 import nbbang.com.nbbang.domain.bbangpan.repository.PartyMemberRepository;
 import nbbang.com.nbbang.domain.chat.controller.ChatResponseMessage;
@@ -12,7 +11,6 @@ import nbbang.com.nbbang.domain.chat.repository.MessageRepository;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.service.MemberService;
 import nbbang.com.nbbang.domain.party.domain.Party;
-import nbbang.com.nbbang.domain.party.domain.PartyStatus;
 import nbbang.com.nbbang.domain.party.repository.PartyRepository;
 import nbbang.com.nbbang.domain.party.service.PartyService;
 import nbbang.com.nbbang.global.error.exception.NotPartyMemberException;
@@ -72,7 +70,7 @@ public class ChatService {
             throw new NotPartyMemberException();
         }
 
-        Message message = Message.createMessage(member, party, content, localDateTime); // 수정
+        Message message = Message.createMessage(member, party, content, localDateTime);
         messageRepository.save(message);
         return message.getId();
     }
@@ -83,7 +81,7 @@ public class ChatService {
         PartyMember partyMember = partyMemberRepository.findByMemberIdAndPartyId(memberId, partyId);
 
         Long lastReadMessageId = ((Optional.ofNullable(partyMember.getLastReadMessage())).orElse(Message.builder().id(-1L).build())).getId();
-        messageRepository.bulkReadNumberPlus(lastReadMessageId, partyId);
+        messageRepository.bulkNotReadMinusPlus(lastReadMessageId, partyId);
 
         PartyMember reFoundPartyMember = partyMemberRepository.findByMemberIdAndPartyId(memberId, partyId);
         Message currentLastMessage = partyService.findLastMessage(partyId);

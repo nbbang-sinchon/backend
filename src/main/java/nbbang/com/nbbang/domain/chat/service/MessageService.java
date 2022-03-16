@@ -7,6 +7,7 @@ import nbbang.com.nbbang.domain.chat.domain.MessageType;
 import nbbang.com.nbbang.domain.chat.repository.MessageRepository;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.service.MemberService;
+import nbbang.com.nbbang.domain.party.controller.PartyResponseMessage;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.repository.PartyRepository;
 import nbbang.com.nbbang.domain.party.service.PartyService;
@@ -34,7 +35,7 @@ public class MessageService {
     private final PartyRepository partyRepository;
     private final MemberService memberService;
     private final FileUploadService fileUploadService;
-    private final PartyService partyService;
+    private final SocketPartyMemberService socketPartyMemberService;
 
     @Transactional
     public Message send(Long partyId, Long senderId, String content) {
@@ -45,10 +46,16 @@ public class MessageService {
     public Message send(Long partyId, Long senderId, String content, MessageType type) {
         Party party = partyRepository.findById(partyId).orElseThrow(()->new NotFoundException(PARTY_NOT_FOUND));
         Member sender = memberService.findById(senderId);
-        Integer notReadNumber = partyService.getNotActiveNumber(partyId);
+
+        Integer notReadNumber = getNotActiveNumber(party);
         Message message =Message.createMessage(sender, party, content, type, notReadNumber);
         Message savedMessage = messageRepository.save(message);
         return savedMessage;
+    }
+    public Integer getNotActiveNumber(Party party) {
+        Integer activeNumber = socketPartyMemberService.getPartyActiveNumber(party.getId());
+        Integer partyMemberNumber = party.countPartyMemberNumber();
+        return partyMemberNumber - activeNumber;
     }
 
 
