@@ -114,8 +114,8 @@ public class PartyMemberService {
         return notReadNumbers;
     }
 
-    public Message getFirstMessage(Long partyId, Long memberId) {
-        Message message = messageRepository.findByTypeAndPartyIdAndSenderId(MessageType.ENTER, partyId, memberId);
+    public Message getEnterMessage(Long partyId, Long memberId) {
+        Message message = messageRepository.findFirstByTypeAndPartyIdAndSenderId(MessageType.ENTER, partyId, memberId);
         return message;
     }
 }

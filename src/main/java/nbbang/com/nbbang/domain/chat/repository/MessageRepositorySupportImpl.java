@@ -5,6 +5,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.domain.chat.domain.Message;
+import nbbang.com.nbbang.domain.chat.domain.MessageType;
 import nbbang.com.nbbang.domain.chat.domain.QMessage;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import org.springframework.data.domain.Page;
@@ -62,5 +63,18 @@ public class MessageRepositorySupportImpl implements MessageRepositorySupport {
         em.flush();
         em.clear();
         log.info("[Subtract] Not Read Number -1 gt{}", lastReadId);
+    }
+
+    @Override
+    public Message findFirstByTypeAndPartyIdAndSenderId(MessageType messageType, Long partyId, Long memberId) {
+        QMessage message = QMessage.message;
+        Message m = query
+                .selectFrom(message)
+                .where(message.type.eq(messageType))
+                .where(message.party.id.eq(partyId))
+                .where(message.sender.id.eq(memberId))
+                .orderBy(message.id.desc())
+                .fetchFirst();
+        return m;
     }
 }

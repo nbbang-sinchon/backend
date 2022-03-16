@@ -17,8 +17,5 @@ public interface MessageRepository extends JpaRepository<Message, Long>, Message
 
     Integer countByPartyIdAndIdGreaterThan(Long partyId, Long id);
 
-    Message findByTypeAndPartyIdAndSenderId(MessageType messageType, Long partyId, Long memberId);
-    // And
-    // findFistByOrderByIdDesc
 }
 

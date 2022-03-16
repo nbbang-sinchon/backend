@@ -1,22 +1,19 @@
 package nbbang.com.nbbang.domain.party.service;
 
 import nbbang.com.nbbang.domain.chat.domain.Message;
-import nbbang.com.nbbang.domain.chat.repository.MessageRepository;
 import nbbang.com.nbbang.domain.chat.service.MessageService;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.repository.MemberRepository;
 import nbbang.com.nbbang.domain.member.service.MemberService;
 import nbbang.com.nbbang.domain.party.domain.Party;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 import static nbbang.com.nbbang.domain.member.dto.Place.SINCHON;
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -31,7 +28,6 @@ class PartyMemberServiceTest {
     @Autowired PartyService partyService;
     @Autowired
     MemberService memberService;
-    @Autowired MessageRepository messageRepository;
 
     @Test
     void getFirstMessageId() {
@@ -44,17 +40,15 @@ class PartyMemberServiceTest {
         Member saveMember2 = memberRepository.save(member2);
 
         join(partyId, saveMember2.getId());
-/*        Message message1 = partyMemberService.getFirstMessage(partyId, saveMember2.getId());
-        System.out.println("Content = " + message1.getContent());
-        System.out.println("message1.getId = " + message1.getId());
+       Message message1 = partyMemberService.getEnterMessage(partyId, saveMember2.getId());
 
         exit(partyId, saveMember2.getId());
         join(partyId, saveMember2.getId());
 
 
-        Message message2 = partyMemberService.getFirstMessage(partyId, saveMember2.getId());
-        System.out.println("Content = " + message2.getContent());
-        System.out.println("message2.getId = " + message2.getId());*/
+        Message message2 = partyMemberService.getEnterMessage(partyId, saveMember2.getId());
+        Assertions.assertThat(message1.getContent()).isEqualTo(message2.getContent());
+        Assertions.assertThat(message2.getId()).isGreaterThan(message1.getId());
     }
 
     void join(Long partyId, Long memberId) {
