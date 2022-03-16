@@ -115,7 +115,8 @@ public class PartyMemberService {
     }
 
     public Message getEnterMessage(Long partyId, Long memberId) {
-        Message message = messageRepository.findFirstByTypeAndPartyIdAndSenderId(MessageType.ENTER, partyId, memberId);
+        Message message = Optional.ofNullable(messageRepository.findFirstByTypeAndPartyIdAndSenderId(MessageType.ENTER, partyId, memberId))
+                .orElse(Message.builder().id(0L).build());
         return message;
     }
 }

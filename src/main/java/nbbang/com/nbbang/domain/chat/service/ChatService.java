@@ -36,7 +36,6 @@ public class ChatService {
     private final PartyService partyService;
     private final PartyMemberRepository partyMemberRepository;
     private final PartyMemberService partyMemberService;
-    private final CurrentMember currentMember;
 
     public Message findLastMessage(Party party) {
         return messageRepository.findLastMessage(party.getId());
@@ -46,13 +45,13 @@ public class ChatService {
         return messageRepository.findById(messageId).orElseThrow(() -> new NotFoundException(ChatResponseMessage.MESSAGE_NOT_FOUND));
     }
 
-    public Page<Message> findMessages(Party party, Pageable pageable) {
-        Long enterMessageId = partyMemberService.getEnterMessage(party.getId(), currentMember.id()).getId();
+    public Page<Message> findMessages(Party party, Long memberId, Pageable pageable) {
+        Long enterMessageId = partyMemberService.getEnterMessage(party.getId(), memberId).getId();
         return messageRepository.findAllByPartyIdAndIdGreaterThanOrderByIdDesc(party.getId(),enterMessageId, pageable);
     }
 
-    public Page<Message> findMessagesByCursorId(Party party, Pageable pageable, Long cursorId) {
-        Long enterMessageId = partyMemberService.getEnterMessage(party.getId(), currentMember.id()).getId();
+    public Page<Message> findMessagesByCursorId(Party party, Long memberId, Pageable pageable, Long cursorId) {
+        Long enterMessageId = partyMemberService.getEnterMessage(party.getId(), memberId).getId();
         return messageRepository.findAllByCursorId(party.getId(), enterMessageId, pageable, cursorId);
     }
 
