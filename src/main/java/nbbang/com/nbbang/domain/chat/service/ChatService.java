@@ -7,6 +7,7 @@ import nbbang.com.nbbang.domain.bbangpan.domain.PartyMember;
 import nbbang.com.nbbang.domain.bbangpan.repository.PartyMemberRepository;
 import nbbang.com.nbbang.domain.chat.controller.ChatResponseMessage;
 import nbbang.com.nbbang.domain.chat.domain.Message;
+import nbbang.com.nbbang.domain.chat.dto.ReadMessageDto;
 import nbbang.com.nbbang.domain.chat.repository.MessageRepository;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.service.MemberService;
@@ -77,7 +78,7 @@ public class ChatService {
     }
 
     @Transactional
-    public Long readMessage(Long partyId, Long memberId) {
+    public ReadMessageDto readMessage(Long partyId, Long memberId) {
 
         PartyMember partyMember = partyMemberRepository.findByMemberIdAndPartyId(memberId, partyId);
 
@@ -87,7 +88,8 @@ public class ChatService {
         PartyMember reFoundPartyMember = partyMemberRepository.findByMemberIdAndPartyId(memberId, partyId);
         Message currentLastMessage = partyService.findLastMessage(partyId);
         reFoundPartyMember.changeLastReadMessage(currentLastMessage);
-        return lastReadMessageId;
+        ReadMessageDto dto = ReadMessageDto.builder().lastReadMessageId(lastReadMessageId).senderId(memberId).build();
+        return dto;
     }
 
 }

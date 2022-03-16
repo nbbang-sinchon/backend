@@ -3,6 +3,7 @@ package nbbang.com.nbbang.domain.chat.repository;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.domain.chat.domain.Message;
 import nbbang.com.nbbang.domain.chat.domain.QMessage;
 import nbbang.com.nbbang.domain.party.domain.Party;
@@ -15,6 +16,7 @@ import java.util.Collections;
 import java.util.List;
 
 @RequiredArgsConstructor
+@Slf4j
 public class MessageRepositorySupportImpl implements MessageRepositorySupport {
 
     private final JPAQueryFactory query;
@@ -59,5 +61,6 @@ public class MessageRepositorySupportImpl implements MessageRepositorySupport {
                 .execute();
         em.flush();
         em.clear();
+        log.info("[Add] read number 1 gt{}", lastReadId);
     }
 }

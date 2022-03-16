@@ -18,6 +18,7 @@ import nbbang.com.nbbang.domain.party.service.PartyService;
 import nbbang.com.nbbang.global.dto.PageableDto;
 import nbbang.com.nbbang.global.interceptor.CurrentMember;
 import nbbang.com.nbbang.global.response.DefaultResponse;
+import nbbang.com.nbbang.global.socket.ChatRoomService;
 import nbbang.com.nbbang.global.socket.SocketSender;
 import nbbang.com.nbbang.global.response.StatusCode;
 import nbbang.com.nbbang.global.validator.PartyMemberValidator;
@@ -43,6 +44,7 @@ public class ChatRoomController {
     private final PartyService partyService;
     private final PartyRepository partyRepository;
     private final CurrentMember currentMember;
+    private final ChatRoomService chatRoomService;
 
     @Operation(summary = "채팅방 조회", description = "채팅방을 파티 id 로 조회합니다. ")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ChatResponseDto.class)))
@@ -52,6 +54,7 @@ public class ChatRoomController {
         if (pageSize == null) {
             pageSize = 10;
         }
+        chatRoomService.readMessage(partyId, currentMember.id());
         Party party = partyService.findById(partyId);
         Page<Message> messages = chatService.findMessages(party, PageRequest.of(0, pageSize));
         return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.READ_CHAT, ChatResponseDto.createByPartyAndMessagesEntity(party, messages.getContent(), currentMember.id()));
