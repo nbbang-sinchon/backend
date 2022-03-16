@@ -1,13 +1,10 @@
 package nbbang.com.nbbang.domain.chat.repository;
 
 import nbbang.com.nbbang.domain.chat.domain.Message;
-import nbbang.com.nbbang.domain.party.domain.Party;
+import nbbang.com.nbbang.domain.chat.domain.MessageType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
 public interface MessageRepository extends JpaRepository<Message, Long>, MessageRepositorySupport {
 
@@ -20,4 +17,8 @@ public interface MessageRepository extends JpaRepository<Message, Long>, Message
 
     Integer countByPartyIdAndIdGreaterThan(Long partyId, Long id);
 
+    Message findByTypeAndPartyIdAndSenderId(MessageType messageType, Long partyId, Long memberId);
+    // And
+    // findFistByOrderByIdDesc
 }
+
