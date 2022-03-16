@@ -59,11 +59,13 @@ class MemberServiceTest {
         stompChannelInterceptor.connect(member2Attributes);
 
         chatRoomService.enter(member1Attributes, partyId); // 1번 파티 입장
+        chatRoomService.readMessage(partyId, member.getId());
         Long messageId1 = messageService.send(partyId, saveMember1.getId(), "hello").getId();
 
         assertThat(memberService.isThereNotReadChat(saveMember2.getId())).isEqualTo(true);
 
         chatRoomService.enter(member2Attributes, partyId); // 2번 파티 입장. 채팅 읽음.
+        chatRoomService.readMessage(partyId, member2.getId());
 
         assertThat(memberService.isThereNotReadChat(saveMember2.getId())).isEqualTo(false);
     }
