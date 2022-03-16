@@ -25,8 +25,7 @@ public class Message implements Comparable<Message> {
     @Column(updatable = false)
     private LocalDateTime createTime;
 
-    @Builder.Default
-    private Integer readNumber=0;
+    private Integer notReadNumber;
 
     @Column(columnDefinition = "TEXT")
     private String content;
@@ -44,13 +43,13 @@ public class Message implements Comparable<Message> {
 
     protected Message() {}
 
-    public static Message createMessage(Member sender, Party party, String content, MessageType type, Integer readNumber) {
+    public static Message createMessage(Member sender, Party party, String content, MessageType type, Integer notReadNumber) {
         return Message.builder()
                 .sender(sender)
                 .party(party)
                 .content(content)
                 .type(type)
-                .readNumber(readNumber)
+                .notReadNumber(notReadNumber)
                 .build();
     }
 

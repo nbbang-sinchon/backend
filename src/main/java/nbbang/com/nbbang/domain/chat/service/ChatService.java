@@ -72,7 +72,7 @@ public class ChatService {
             throw new NotPartyMemberException();
         }
 
-        Message message = Message.createMessage(member, party, content, localDateTime);
+        Message message = Message.createMessage(member, party, content, localDateTime); // 수정
         messageRepository.save(message);
         return message.getId();
     }
