@@ -50,7 +50,8 @@ public class MemberController {
     @GetMapping
     public DefaultResponse select(HttpServletRequest request) {
         Member member = memberService.findById(currentMember.id());
-        MemberResponseDto dto = MemberResponseDto.createByEntity(member);
+        Boolean isThereNotReadMessage = memberService.isThereNotReadChat(currentMember.id());
+        MemberResponseDto dto = MemberResponseDto.createByEntity(member, isThereNotReadMessage);
         return DefaultResponse.res(StatusCode.OK, MemberResponseMessage.READ_MEMBER, dto);
     }
 
