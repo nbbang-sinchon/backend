@@ -13,6 +13,7 @@ import nbbang.com.nbbang.domain.party.dto.single.PartyUpdateServiceDto;
 import nbbang.com.nbbang.domain.party.repository.PartyHashtagRepository;
 import nbbang.com.nbbang.domain.party.repository.PartyRepository;
 import nbbang.com.nbbang.global.error.exception.NotOwnerException;
+import nbbang.com.nbbang.global.socket.service.SocketPartyMemberService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
@@ -35,10 +36,10 @@ public class PartyService {
     private final PartyRepository partyRepository;
     private final PartyHashtagRepository partyHashtagRepository;
     private final HashtagService hashtagService;
-    private final PartyMemberRepository partyMemberRepository;
     private final MemberService memberService;
     private final PartyMemberService partyMemberService;
     private final MessageRepository messageRepository;
+    private final SocketPartyMemberService socketPartyMemberService;
 
     @Transactional
     public Party create(Party party, Long memberId, List<String> hashtagContents) {
@@ -133,12 +134,6 @@ public class PartyService {
         hashtagService.deleteIfNotReferred(partyHashtag.getHashtag());
     }
 
-    public Integer countPartyMemberNumber(Long partyId) {
-        Party party = findById(partyId);
-        Integer partyMemberNumber = party.countPartyMemberNumber();
-        return partyMemberNumber;
-    }
-
     public Message findLastMessage(Long partyId) {
         Message lastMessage = messageRepository.findLastMessage(partyId);
         return Optional.ofNullable(lastMessage).orElse(Message.builder().id(0L).build());
@@ -163,4 +158,5 @@ public class PartyService {
                 .map(partyMember -> partyMember.getMember()).collect(Collectors.toList());
 
     }
+
 }

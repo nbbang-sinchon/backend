@@ -31,7 +31,7 @@ public class MemorySocketPartyMemberRepository implements SocketPartyMemberRepos
     }
 
     @Override
-    public Integer getActiveNumber(PartyMemberPair pair) {
+    public Integer getPartyMemberActiveNumber(PartyMemberPair pair) {
         return sessionPartyMap.get(pair);
     }
 

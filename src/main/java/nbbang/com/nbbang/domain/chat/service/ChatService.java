@@ -2,16 +2,15 @@ package nbbang.com.nbbang.domain.chat.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import nbbang.com.nbbang.domain.bbangpan.domain.BreadBoardPartyMemberService;
 import nbbang.com.nbbang.domain.bbangpan.domain.PartyMember;
 import nbbang.com.nbbang.domain.bbangpan.repository.PartyMemberRepository;
 import nbbang.com.nbbang.domain.chat.controller.ChatResponseMessage;
 import nbbang.com.nbbang.domain.chat.domain.Message;
+import nbbang.com.nbbang.domain.chat.dto.ReadMessageDto;
 import nbbang.com.nbbang.domain.chat.repository.MessageRepository;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.service.MemberService;
 import nbbang.com.nbbang.domain.party.domain.Party;
-import nbbang.com.nbbang.domain.party.domain.PartyStatus;
 import nbbang.com.nbbang.domain.party.repository.PartyRepository;
 import nbbang.com.nbbang.domain.party.service.PartyService;
 import nbbang.com.nbbang.global.error.exception.NotPartyMemberException;
@@ -77,17 +76,18 @@ public class ChatService {
     }
 
     @Transactional
-    public Long readMessage(Long partyId, Long memberId) {
+    public ReadMessageDto readMessage(Long partyId, Long memberId) {
 
         PartyMember partyMember = partyMemberRepository.findByMemberIdAndPartyId(memberId, partyId);
 
         Long lastReadMessageId = ((Optional.ofNullable(partyMember.getLastReadMessage())).orElse(Message.builder().id(-1L).build())).getId();
-        messageRepository.bulkReadNumberPlus(lastReadMessageId, partyId);
+        messageRepository.bulkNotReadMinusPlus(lastReadMessageId, partyId);
 
         PartyMember reFoundPartyMember = partyMemberRepository.findByMemberIdAndPartyId(memberId, partyId);
         Message currentLastMessage = partyService.findLastMessage(partyId);
         reFoundPartyMember.changeLastReadMessage(currentLastMessage);
-        return lastReadMessageId;
+        ReadMessageDto dto = ReadMessageDto.builder().lastReadMessageId(lastReadMessageId).senderId(memberId).build();
+        return dto;
     }
 
 }

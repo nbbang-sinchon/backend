@@ -23,13 +23,13 @@ public class SocketPartyMemberService {
     public void unsubscribe(Long partyId, Long memberId) {
         PartyMemberPair pair = PartyMemberPair.create(partyId, memberId);
 
-        if (!socketPartyMemberRepository.hasKey(pair) || socketPartyMemberRepository.getActiveNumber(pair) < 1){
+        if (!socketPartyMemberRepository.hasKey(pair) || socketPartyMemberRepository.getPartyMemberActiveNumber(pair) < 1){
             throw new IllegalArgumentException("[UNSUBSCRIBE ERROR] partyId, memberId에 해당하는 소켓 연결을 찾을 수 없습니다.");
         }
         socketPartyMemberRepository.updateActiveNumber(pair, -1);
     }
 
-    public Integer getActiveNumber(Long partyId) {
+    public Integer getPartyActiveNumber(Long partyId) {
         Map<PartyMemberPair, Integer> entries = socketPartyMemberRepository.getAllEntries();
         long count = entries.entrySet().stream().filter(entry -> entry.getKey().getPartyId().equals(partyId) && entry.getValue() > 0).count();
         return Integer.valueOf((int) count);
@@ -37,7 +37,7 @@ public class SocketPartyMemberService {
 
     public Boolean isActive(Long partyId, Long memberId) {
         PartyMemberPair pair = PartyMemberPair.create(partyId, memberId);
-        if(socketPartyMemberRepository.hasKey(pair) &&  socketPartyMemberRepository.getActiveNumber(pair) > 0){
+        if(socketPartyMemberRepository.hasKey(pair) &&  socketPartyMemberRepository.getPartyMemberActiveNumber(pair) > 0){
             return true;
         }
         return false;

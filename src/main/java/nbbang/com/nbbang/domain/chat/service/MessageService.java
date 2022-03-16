@@ -7,8 +7,10 @@ import nbbang.com.nbbang.domain.chat.domain.MessageType;
 import nbbang.com.nbbang.domain.chat.repository.MessageRepository;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.service.MemberService;
+import nbbang.com.nbbang.domain.party.controller.PartyResponseMessage;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.repository.PartyRepository;
+import nbbang.com.nbbang.domain.party.service.PartyService;
 import nbbang.com.nbbang.global.FileUpload.FileUploadService;
 import nbbang.com.nbbang.global.socket.service.SocketPartyMemberService;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,7 @@ import org.webjars.NotFoundException;
 import java.io.IOException;
 
 import static nbbang.com.nbbang.domain.chat.controller.ChatResponseMessage.MESSAGE_NOT_FOUND;
+import static nbbang.com.nbbang.domain.chat.domain.MessageType.IMAGE;
 import static nbbang.com.nbbang.domain.party.controller.PartyResponseMessage.PARTY_NOT_FOUND;
 import static nbbang.com.nbbang.global.FileUpload.UploadDirName.DIR_CHATS;
 
@@ -43,11 +46,18 @@ public class MessageService {
     public Message send(Long partyId, Long senderId, String content, MessageType type) {
         Party party = partyRepository.findById(partyId).orElseThrow(()->new NotFoundException(PARTY_NOT_FOUND));
         Member sender = memberService.findById(senderId);
-        Integer readNumber = socketPartyMemberService.getActiveNumber(partyId);
-        Message message =Message.createMessage(sender, party, content, type, readNumber);
+
+        Integer notReadNumber = getNotActiveNumber(party);
+        Message message =Message.createMessage(sender, party, content, type, notReadNumber);
         Message savedMessage = messageRepository.save(message);
         return savedMessage;
     }
+    public Integer getNotActiveNumber(Party party) {
+        Integer activeNumber = socketPartyMemberService.getPartyActiveNumber(party.getId());
+        Integer partyMemberNumber = party.countPartyMemberNumber();
+        return partyMemberNumber - activeNumber;
+    }
+
 
     public Message findById(Long id){
         return messageRepository.findById(id).orElseThrow(()->new NotFoundException(MESSAGE_NOT_FOUND));
@@ -57,13 +67,7 @@ public class MessageService {
     public Message sendImage(Long partyId, Long senderId, MultipartFile imgFile) throws IOException {
 
         String uploadUrl = fileUploadService.upload(imgFile, DIR_CHATS);
-
-        Party party = partyRepository.findById(partyId).orElseThrow(()->new NotFoundException(PARTY_NOT_FOUND));
-        Member sender = memberService.findById(senderId);
-        Integer readNumber = socketPartyMemberService.getActiveNumber(partyId);
-        Message message =Message.createMessage(sender, party, uploadUrl, MessageType.IMAGE, readNumber);
-        Message savedMessage = messageRepository.save(message);
-        return savedMessage;
+        return send(partyId, senderId, uploadUrl,IMAGE);
     }
 
 }

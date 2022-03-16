@@ -3,6 +3,7 @@ package nbbang.com.nbbang.domain.chat.repository;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.domain.chat.domain.Message;
 import nbbang.com.nbbang.domain.chat.domain.QMessage;
 import nbbang.com.nbbang.domain.party.domain.Party;
@@ -15,6 +16,7 @@ import java.util.Collections;
 import java.util.List;
 
 @RequiredArgsConstructor
+@Slf4j
 public class MessageRepositorySupportImpl implements MessageRepositorySupport {
 
     private final JPAQueryFactory query;
@@ -49,15 +51,16 @@ public class MessageRepositorySupportImpl implements MessageRepositorySupport {
     }
 
     @Override
-    public void bulkReadNumberPlus(Long lastReadId, Long partyId) {
+    public void bulkNotReadMinusPlus(Long lastReadId, Long partyId) {
         QMessage message = QMessage.message;
                 query
                 .update(message)
-                .set(message.readNumber,message.readNumber.add(1)) // (1)
+                .set(message.notReadNumber,message.notReadNumber.subtract(1))
                 .where(message.id.gt(lastReadId))
                 .where(message.party.id.eq(partyId))
                 .execute();
         em.flush();
         em.clear();
+        log.info("[Subtract] Not Read Number -1 gt{}", lastReadId);
     }
 }

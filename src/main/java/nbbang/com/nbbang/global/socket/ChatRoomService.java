@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.domain.bbangpan.domain.PartyMember;
 import nbbang.com.nbbang.domain.bbangpan.repository.PartyMemberRepository;
 import nbbang.com.nbbang.domain.chat.dto.ChatReadSocketDto;
+import nbbang.com.nbbang.domain.chat.dto.ReadMessageDto;
 import nbbang.com.nbbang.domain.chat.service.ChatService;
 import nbbang.com.nbbang.domain.party.service.PartyMemberService;
 import nbbang.com.nbbang.domain.party.service.PartyService;
@@ -42,16 +43,14 @@ public class ChatRoomService {
     public void enter(Map<String, Object> attributes, Long partyId){
         attributes.put("partyId", partyId);
         Long memberId = (Long) attributes.get("memberId");
-        readMessage(partyId, memberId);
         socketPartyMemberService.subscribe(partyId, memberId);
         attributes.put("status", "subscribe");
     }
 
     @Transactional
     public void readMessage(Long partyId, Long memberId) {
-        Long lastReadMessageId = chatService.readMessage(partyId, memberId);
-        ChatReadSocketDto chatReadSocketDto = ChatReadSocketDto.builder().lastReadMessageId(lastReadMessageId).build();
-        socketSender.sendChattingReadMessage(partyId, chatReadSocketDto);
+        ReadMessageDto readMessageDto = chatService.readMessage(partyId, memberId);
+        socketSender.sendChattingReadMessage(partyId, readMessageDto);
     }
 
     @Transactional
