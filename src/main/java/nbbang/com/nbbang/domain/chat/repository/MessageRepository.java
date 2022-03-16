@@ -8,12 +8,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MessageRepository extends JpaRepository<Message, Long>, MessageRepositorySupport {
 
-    Page<Message> findAllByPartyIdOrderByIdDesc(Long partyId, Pageable pageable);
+    Page<Message> findAllByPartyIdAndIdGreaterThanOrderByIdDesc(Long partyId, Long messageId, Pageable pageable);
 
     @Override
-    Page<Message> findAllByCursorId(Long partyId, Pageable pageable, Long cursorId);
-
-    Long countByPartyId(Long partyId);
+    Page<Message> findAllByCursorId(Long partyId, Long enterMessageId, Pageable pageable, Long cursorId);
 
     Integer countByPartyIdAndIdGreaterThan(Long partyId, Long id);
 

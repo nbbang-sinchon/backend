@@ -38,11 +38,12 @@ public class MessageRepositorySupportImpl implements MessageRepositorySupport {
     }
 
     @Override
-    public Page<Message> findAllByCursorId(Long partyId, Pageable pageable, Long cursorId) {
+    public Page<Message> findAllByCursorId(Long partyId, Long enterMessageId, Pageable pageable, Long cursorId) {
         QMessage message = QMessage.message;
         JPQLQuery<Message> q = query.selectFrom(message)
                 .where(message.party.id.eq(partyId))
                 .where(message.id.lt(cursorId))
+                .where(message.id.goe(enterMessageId))
                 .orderBy(message.id.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize());

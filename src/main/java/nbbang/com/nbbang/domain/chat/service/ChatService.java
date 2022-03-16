@@ -12,8 +12,10 @@ import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.service.MemberService;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.repository.PartyRepository;
+import nbbang.com.nbbang.domain.party.service.PartyMemberService;
 import nbbang.com.nbbang.domain.party.service.PartyService;
 import nbbang.com.nbbang.global.error.exception.NotPartyMemberException;
+import nbbang.com.nbbang.global.interceptor.CurrentMember;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -33,6 +35,8 @@ public class ChatService {
     private final PartyRepository partyRepository;
     private final PartyService partyService;
     private final PartyMemberRepository partyMemberRepository;
+    private final PartyMemberService partyMemberService;
+    private final CurrentMember currentMember;
 
     public Message findLastMessage(Party party) {
         return messageRepository.findLastMessage(party.getId());
@@ -43,11 +47,13 @@ public class ChatService {
     }
 
     public Page<Message> findMessages(Party party, Pageable pageable) {
-        return messageRepository.findAllByPartyIdOrderByIdDesc(party.getId(), pageable);
+        Long enterMessageId = partyMemberService.getEnterMessage(party.getId(), currentMember.id()).getId();
+        return messageRepository.findAllByPartyIdAndIdGreaterThanOrderByIdDesc(party.getId(),enterMessageId, pageable);
     }
 
     public Page<Message> findMessagesByCursorId(Party party, Pageable pageable, Long cursorId) {
-        return messageRepository.findAllByCursorId(party.getId(), pageable, cursorId);
+        Long enterMessageId = partyMemberService.getEnterMessage(party.getId(), currentMember.id()).getId();
+        return messageRepository.findAllByCursorId(party.getId(), enterMessageId, pageable, cursorId);
     }
 
     @Transactional
