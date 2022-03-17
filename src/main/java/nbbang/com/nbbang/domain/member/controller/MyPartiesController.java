@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.domain.party.controller.ManyPartyResponseMessage;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.dto.many.PartyListRequestDto;
-import nbbang.com.nbbang.domain.party.dto.many.PartyListResponseDto;
 import nbbang.com.nbbang.domain.party.dto.my.MyClosedPartyListRequestDto;
 import nbbang.com.nbbang.domain.party.dto.my.MyOnPartyListRequestDto;
 import nbbang.com.nbbang.domain.party.dto.my.MyPartyListResponseDto;
@@ -58,7 +57,7 @@ public class MyPartiesController {
             throw new CustomIllegalArgumentException(ManyPartyResponseMessage.ILLEGAL_PARTY_LIST_REQUEST, bindingResult);
         }
         Page<Party> res = manyPartyService.findAllParties(requestDto.createPageRequest(), true, requestDto.createPartyListRequestFilterDto(), requestDto.getCursorId(), currentMember.id(), null);
-        List<Integer> notReadNumbers = partyMemberService.getNotReadNumber(res.getContent(), currentMember.id());
+        List<Integer> notReadNumbers = partyMemberService.getNotReadNumbers(res.getContent(), currentMember.id());
         return DefaultResponse.res(StatusCode.OK, MemberResponseMessage.READ_MY_PARTY, MyPartyListResponseDto.createFromEntity(res.getContent(), currentMember.id(), notReadNumbers));
     }
 
