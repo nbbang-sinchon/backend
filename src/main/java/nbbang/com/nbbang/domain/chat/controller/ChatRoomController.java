@@ -56,7 +56,7 @@ public class ChatRoomController {
         }
         chatRoomService.readMessage(partyId, currentMember.id());
         Party party = partyService.findById(partyId);
-        Page<Message> messages = chatService.findMessages(party, PageRequest.of(0, pageSize));
+        Page<Message> messages = chatService.findMessages(party, currentMember.id(), PageRequest.of(0, pageSize));
         return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.READ_CHAT, ChatResponseDto.createByPartyAndMessagesEntity(party, messages.getContent(), currentMember.id()));
     }
 
@@ -70,7 +70,7 @@ public class ChatRoomController {
         if (cursorId == null) {
             cursorId = chatService.findLastMessage(party).getId();
         }
-        Page<Message> messages = chatService.findMessagesByCursorId(party, pageableDto.createPageRequest(), cursorId);
+        Page<Message> messages = chatService.findMessagesByCursorId(party, currentMember.id(), pageableDto.createPageRequest(), cursorId);
         return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.READ_CHAT, ChatSendListResponseDto.createByEntity(messages.getContent(), currentMember.id()));
     }
 
@@ -96,7 +96,7 @@ public class ChatRoomController {
         }
         Party party = partyRepository.findById(partyId).get(); // Party Service 구현 시 바꿔야 할 것 같습니다.
         Message lastMessage = chatService.findLastMessage(party);
-        Page<Message> messages = chatService.findMessagesByCursorId(party, PageRequest.of(0, pageSize), lastMessage.getId());
+        Page<Message> messages = chatService.findMessagesByCursorId(party, currentMember.id(), PageRequest.of(0, pageSize), lastMessage.getId());
         Cookie cursorIdCookie = new Cookie("cursorId", partyId.toString()+"="+lastMessage.getId().toString());
         cursorIdCookie.setPath("/");
         cursorIdCookie.setMaxAge(1000000);
@@ -115,7 +115,7 @@ public class ChatRoomController {
         Long cookiePartyId = Long.parseLong(cookieVals[0]);
         Long cursorId = Long.parseLong(cookieVals[1]);
         if (cookiePartyId != partyId) throw new RuntimeException();
-        Page<Message> messages = chatService.findMessagesByCursorId(party, pageableDto.createPageRequest(), cursorId);
+        Page<Message> messages = chatService.findMessagesByCursorId(party, currentMember.id(), pageableDto.createPageRequest(), cursorId);
         return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.READ_CHAT, ChatSendListResponseDto.createByEntity(messages.getContent(), currentMember.id()));
     }
 

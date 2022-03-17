@@ -101,7 +101,7 @@ public class PartyMemberService {
     }
 
 
-    public List getNotReadNumber(List<Party> parties, Long memberId) {
+    public List getNotReadNumbers(List<Party> parties, Long memberId) {
         List<Integer> notReadNumbers = new ArrayList<>();
         for (Party party : parties) {
             if(socketPartyMemberService.isActive(party.getId(), memberId)){
@@ -114,7 +114,10 @@ public class PartyMemberService {
         return notReadNumbers;
     }
 
-    public void getNotReadChatNumber(){
-        partyMemberRepository.isThereNotReadMessageByMemberId(1L);
+    public Message getEnterMessage(Long partyId, Long memberId) {
+        Message message = Optional.ofNullable(messageRepository.findFirstByTypeAndPartyIdAndSenderId(MessageType.ENTER, partyId, memberId))
+                .orElse(Message.builder().id(0L).build());
+        return message;
     }
+
 }

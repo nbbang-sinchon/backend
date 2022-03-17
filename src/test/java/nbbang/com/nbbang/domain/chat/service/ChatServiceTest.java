@@ -62,16 +62,16 @@ class ChatServiceTest {
             Long savedMessageId = chatService.sendMessage(memberA.getId(), partyA.getId(), content, LocalDateTime.now());
         }
         // then
-        Page<Message> findMessages = chatService.findMessages(partyA, PageRequest.of(0, 10));
+        Page<Message> findMessages = chatService.findMessages(partyA, memberA.getId(), PageRequest.of(0, 10));
         assertThat(findMessages.getContent().size() == 10);
 
-        findMessages = chatService.findMessages(partyA, PageRequest.of(1, 10));
+        findMessages = chatService.findMessages(partyA,  memberA.getId(),PageRequest.of(1, 10));
         assertThat(findMessages.getContent().size() == 10);
 
-        findMessages = chatService.findMessages(partyA, PageRequest.of(0, 20));
+        findMessages = chatService.findMessages(partyA,  memberA.getId(),PageRequest.of(0, 20));
         assertThat(findMessages.getContent().size() == 20);
 
-        findMessages = chatService.findMessages(partyB, PageRequest.of(0, 10));
+        findMessages = chatService.findMessages(partyB,  memberA.getId(),PageRequest.of(0, 10));
         assertThat(findMessages.getContent().size() == 0);
     }
 
@@ -122,7 +122,7 @@ class ChatServiceTest {
             chatService.sendMessage(memberA.getId(), partyA.getId(), content, LocalDateTime.now());
         }
         // when
-        Page<Message> findMessages = chatService.findMessagesByCursorId(partyA, PageRequest.of(0, 10), idx);
+        Page<Message> findMessages = chatService.findMessagesByCursorId(partyA, memberA.getId(), PageRequest.of(0, 10), idx);
         // then
         findMessages.getContent().stream().forEach(m -> System.out.println(m.getContent()));
         assertThat(findMessages.getContent().get(0).getContent().equals(targ1));

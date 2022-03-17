@@ -12,6 +12,7 @@ import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.service.MemberService;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.repository.PartyRepository;
+import nbbang.com.nbbang.domain.party.service.PartyMemberService;
 import nbbang.com.nbbang.domain.party.service.PartyService;
 import nbbang.com.nbbang.global.error.exception.NotPartyMemberException;
 import org.springframework.data.domain.Page;
@@ -33,6 +34,7 @@ public class ChatService {
     private final PartyRepository partyRepository;
     private final PartyService partyService;
     private final PartyMemberRepository partyMemberRepository;
+    private final PartyMemberService partyMemberService;
 
     public Message findLastMessage(Party party) {
         return messageRepository.findLastMessage(party.getId());
@@ -42,12 +44,14 @@ public class ChatService {
         return messageRepository.findById(messageId).orElseThrow(() -> new NotFoundException(ChatResponseMessage.MESSAGE_NOT_FOUND));
     }
 
-    public Page<Message> findMessages(Party party, Pageable pageable) {
-        return messageRepository.findAllByPartyIdOrderByIdDesc(party.getId(), pageable);
+    public Page<Message> findMessages(Party party, Long memberId, Pageable pageable) {
+        Long enterMessageId = partyMemberService.getEnterMessage(party.getId(), memberId).getId();
+        return messageRepository.findAllByPartyIdAndIdGreaterThanEqualOrderByIdDesc(party.getId(),enterMessageId, pageable);
     }
 
-    public Page<Message> findMessagesByCursorId(Party party, Pageable pageable, Long cursorId) {
-        return messageRepository.findAllByCursorId(party.getId(), pageable, cursorId);
+    public Page<Message> findMessagesByCursorId(Party party, Long memberId, Pageable pageable, Long cursorId) {
+        Long enterMessageId = partyMemberService.getEnterMessage(party.getId(), memberId).getId();
+        return messageRepository.findAllByCursorId(party.getId(), enterMessageId, pageable, cursorId);
     }
 
     @Transactional
