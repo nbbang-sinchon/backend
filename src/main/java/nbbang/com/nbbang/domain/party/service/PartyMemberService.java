@@ -120,7 +120,4 @@ public class PartyMemberService {
         return message;
     }
 
-    public void getNotReadChatNumber(){
-        partyMemberRepository.isThereNotReadMessageByMemberId(1L);
-    }
 }
