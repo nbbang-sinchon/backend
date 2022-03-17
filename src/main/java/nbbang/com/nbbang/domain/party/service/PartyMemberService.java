@@ -101,7 +101,7 @@ public class PartyMemberService {
     }
 
 
-    public List getNotReadNumber(List<Party> parties, Long memberId) {
+    public List getNotReadNumbers(List<Party> parties, Long memberId) {
         List<Integer> notReadNumbers = new ArrayList<>();
         for (Party party : parties) {
             if(socketPartyMemberService.isActive(party.getId(), memberId)){
