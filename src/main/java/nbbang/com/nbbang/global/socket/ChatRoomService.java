@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
+import java.util.Optional;
 
 @Transactional(readOnly = true)
 @Service
@@ -59,8 +60,7 @@ public class ChatRoomService {
         socketPartyMemberService.unsubscribe(partyId, memberId);
         attributes.put("status", "unsubscribe");
         PartyMember partyMember = partyMemberRepository.findByMemberIdAndPartyId(memberId, partyId);
-        nbbang.com.nbbang.domain.chat.domain.Message currentLastMessage = partyService.findLastMessage(partyId);
-        partyMemberService.updateLastReadMessage(partyMember, currentLastMessage);
+        Optional.ofNullable(partyMember).ifPresent(pm->partyMemberService.updateLastReadMessage(pm, partyService.findLastMessage(partyId)));
     }
 
     @Transactional
