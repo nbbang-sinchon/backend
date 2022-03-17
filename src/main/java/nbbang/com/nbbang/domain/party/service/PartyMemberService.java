@@ -95,20 +95,20 @@ public class PartyMemberService {
         partyMember.changeLastReadMessage(currentLastMessage);
     }
 
-    public Message findLastReadMessageId(Long partyId, Long memberId) {
+    public Message findLastReadMessage(Long partyId, Long memberId) {
         PartyMember partyMember = partyMemberRepository.findByMemberIdAndPartyId(memberId, partyId);
-        return Optional.ofNullable(partyMember.getLastReadMessage()).orElse(getEnterMessage(partyId, memberId));
+        return Optional.ofNullable(partyMember.getLastReadMessage()).orElse(Message.builder().id(0L).build());
     }
 
 
-    public List getNotReadNumbers(List<Party> parties, Long memberId) {
+    public List getNotReadNumber(List<Party> parties, Long memberId) {
         List<Integer> notReadNumbers = new ArrayList<>();
         for (Party party : parties) {
             if(socketPartyMemberService.isActive(party.getId(), memberId)){
                 notReadNumbers.add(0);
             }
             else{
-                notReadNumbers.add(messageRepository.countByPartyIdAndIdGreaterThan(party.getId(), findLastReadMessageId(party.getId(), memberId).getId()));
+                notReadNumbers.add(messageRepository.countByPartyIdAndIdGreaterThan(party.getId(), findLastReadMessage(party.getId(), memberId).getId()));
             }
         }
         return notReadNumbers;
@@ -118,5 +118,9 @@ public class PartyMemberService {
         Message message = Optional.ofNullable(messageRepository.findFirstByTypeAndPartyIdAndSenderId(MessageType.ENTER, partyId, memberId))
                 .orElse(Message.builder().id(0L).build());
         return message;
+    }
+
+    public void getNotReadChatNumber(){
+        partyMemberRepository.isThereNotReadMessageByMemberId(1L);
     }
 }
