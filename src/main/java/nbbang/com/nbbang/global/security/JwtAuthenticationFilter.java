@@ -26,7 +26,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static AuthenticationManager authenticationManager = new JwtAuthenticationManager();
     private TokenProvider tokenProvider = new TokenProvider();
     private LogoutService logoutService;
-    @Value("${deploy}")
+    @Value("${deploy:false}")
     private Boolean isDeploy;
 
     public JwtAuthenticationFilter(AuthenticationManager authenticationManager) {
