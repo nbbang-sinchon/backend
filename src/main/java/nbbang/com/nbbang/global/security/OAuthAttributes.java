@@ -15,6 +15,12 @@ public class OAuthAttributes {
     private String email;
     private String avatar;
 
+    private static String randomNickname() {
+        String [] randomNickname = { "루피", "군침이 도는 루피", "요리공주 루피", "카레빵맨", "호빵맨", "식빵맨", "엔빵맨", "빵을 좋아하는 루피", "엔빵 루피", "엔빵 회원1" };
+        int randomIdx = (int)(Math.random() * 10);
+        return randomNickname[randomIdx];
+    }
+
     @Builder
     public OAuthAttributes(Map<String, Object> attributes,
                            String nameAttributeKey, String nickname,
@@ -65,10 +71,14 @@ public class OAuthAttributes {
     private static OAuthAttributes ofNaver(String userNameAttributeName,
                                            Map<String, Object> attributes) {
         Map attrs = (Map)attributes.get("response");
+        attrs.keySet().stream().forEach(k -> {
+            System.out.print(k + " : ");
+            System.out.println(attrs.get(k).toString());
+        });
+
         return OAuthAttributes.builder()
-                .nickname((String) attrs.get("name"))
-                .email((String) attrs.get("email"))
-                .avatar((String) attributes.get("picture"))
+                .nickname(randomNickname())
+                .email((String) attrs.get("id"))
                 .attributes(attributes)
                 .nameAttributeKey(userNameAttributeName)
                 .build();
