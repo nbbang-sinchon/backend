@@ -2,6 +2,7 @@ plugins {
 	id 'org.springframework.boot' version '2.6.3'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'java'
+	id "io.freefair.lombok" version "6.4.1"
 }
 
 group = 'nbbang.com'
@@ -21,11 +22,53 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.projectlombok:lombok:1.18.20'
+	implementation 'org.projectlombok:lombok:1.18.20'
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
 	annotationProcessor 'org.projectlombok:lombok'
+	runtimeOnly 'com.h2database:h2'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	implementation 'org.springdoc:springdoc-openapi-ui:1.5.7'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	implementation 'com.querydsl:querydsl-jpa'
+	annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jpa"
+	annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+	annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+
+	//implementation "org.springframework.boot:spring-boot-starter-data-redis"
+	//implementation 'org.springframework.session:spring-session-data-redis'
+	//implementation 'org.springframework.session:spring-session-core'
+
+	implementation platform('com.amazonaws:aws-java-sdk-bom:1.11.1000')
+	implementation 'com.amazonaws:aws-java-sdk-s3'
+	//implementation 'org.springframework.cloud:spring-cloud-starter-aws'
+
+	implementation 'org.springframework.boot:spring-boot-starter-aop'
+
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+	implementation 'io.jsonwebtoken:jjwt:0.9.1'
+
+
+	implementation 'javax.xml.bind:jaxb-api'
+	implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
+	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.2'
+	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.2'
+
+	implementation "org.springframework.boot:spring-boot-starter-data-redis"
+	testImplementation("org.springframework.security:spring-security-test")
+
+	implementation group: 'it.ozimov', name: 'embedded-redis', version: '0.7.1' //0311
+
+	implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.4'
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+
 }
 
 tasks.named('test') {
