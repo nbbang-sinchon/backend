@@ -46,12 +46,17 @@ public class ChatRoomService {
         Long memberId = (Long) attributes.get("memberId");
         socketPartyMemberService.subscribe(partyId, memberId);
         attributes.put("status", "subscribe");
+        if(socketPartyMemberService.getPartyMemberActiveNumber(partyId, memberId)==1){
+            readMessage(partyId, memberId, true);
+        }
     }
 
     @Transactional
-    public void readMessage(Long partyId, Long memberId) {
-        ReadMessageDto readMessageDto = chatService.readMessage(partyId, memberId);
-        socketSender.sendChattingReadMessage(partyId, readMessageDto);
+    public void readMessage(Long partyId, Long memberId, Boolean isSocket) {
+        if((!socketPartyMemberService.isActive(partyId, memberId))||isSocket){
+            ReadMessageDto readMessageDto = chatService.readMessage(partyId, memberId);
+            socketSender.sendChattingReadMessage(partyId, readMessageDto);
+        }
     }
 
     @Transactional

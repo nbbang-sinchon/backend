@@ -9,6 +9,5 @@ public interface SocketPartyMemberRepository {
     void updateActiveNumber(PartyMemberPair pair, Integer cnt);
     Map getAllEntries();
     Boolean hasKey(PartyMemberPair pair);
-    Integer getPartyMemberActiveNumber(PartyMemberPair pair);
-
+    Integer getPartyMemberPairActiveNumber(PartyMemberPair pair);
 }
