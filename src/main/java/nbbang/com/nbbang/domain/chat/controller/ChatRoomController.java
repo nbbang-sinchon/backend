@@ -54,7 +54,7 @@ public class ChatRoomController {
         if (pageSize == null) {
             pageSize = 10;
         }
-        chatRoomService.readMessage(partyId, currentMember.id());
+        chatRoomService.readMessage(partyId, currentMember.id(), false);
         Party party = partyService.findById(partyId);
         Page<Message> messages = chatService.findMessages(party, currentMember.id(), PageRequest.of(0, pageSize));
         return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.READ_CHAT, ChatResponseDto.createByPartyAndMessagesEntity(party, messages.getContent(), currentMember.id()));
