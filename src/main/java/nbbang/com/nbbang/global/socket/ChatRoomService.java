@@ -50,8 +50,10 @@ public class ChatRoomService {
 
     @Transactional
     public void readMessage(Long partyId, Long memberId) {
-        ReadMessageDto readMessageDto = chatService.readMessage(partyId, memberId);
-        socketSender.sendChattingReadMessage(partyId, readMessageDto);
+        if(!socketPartyMemberService.isActive(partyId, memberId)) {
+            ReadMessageDto readMessageDto = chatService.readMessage(partyId, memberId);
+            socketSender.sendChattingReadMessage(partyId, readMessageDto);
+        }
     }
 
     @Transactional
