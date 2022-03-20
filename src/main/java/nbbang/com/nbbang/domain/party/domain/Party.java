@@ -70,15 +70,15 @@ public class Party {
     private String accountNumber;
 
     @Builder.Default // https://www.inflearn.com/questions/151658
-    @OneToMany(mappedBy = "party", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "party", cascade = CascadeType.ALL, fetch = LAZY)
     private List<PartyHashtag> partyHashtags = new ArrayList<>();
 
     @Builder.Default
-    @OneToMany(mappedBy = "party")
+    @OneToMany(mappedBy = "party" , fetch = LAZY)
     private List<PartyMember> partyMembers = new ArrayList<>();
 
     @Builder.Default
-    @OneToMany(mappedBy = "party")
+    @OneToMany(mappedBy = "party", fetch = LAZY)
     private List<PartyWishlist> wishlists = new ArrayList<>();
 
     protected Party() {}
