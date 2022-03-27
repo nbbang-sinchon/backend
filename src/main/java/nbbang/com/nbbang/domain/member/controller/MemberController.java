@@ -68,6 +68,7 @@ public class MemberController {
     }
 
 
+    @Hidden
     @Operation(summary = "회원 탈퇴", description = "서비스에서 탈퇴합니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
     @DeleteMapping
