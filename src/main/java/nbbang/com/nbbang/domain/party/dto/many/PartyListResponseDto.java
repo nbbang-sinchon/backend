@@ -28,4 +28,10 @@ public class PartyListResponseDto implements Serializable {
                 .parties(parties.stream().map(p -> PartyFindResponseDto.createByEntity(p, member)).collect(Collectors.toList()))
                 .build();
     }
+
+    public static PartyListResponseDto createByEntity(List<Party> parties, Long memberId) {
+        return PartyListResponseDto.builder()
+                .parties(parties.stream().map(p -> PartyFindResponseDto.createByEntity(p, memberId)).collect(Collectors.toList()))
+                .build();
+    }
 }

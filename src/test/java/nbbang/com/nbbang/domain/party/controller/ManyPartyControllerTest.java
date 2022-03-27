@@ -66,7 +66,8 @@ class ManyPartyControllerTest extends ControllerTestParent {
     @Test
     public void manyPartyTest1() throws Exception {
         PageRequest pageable = PageRequest.of(0, 10);
-        when(manyPartyService.findAllParties(pageable, false, PartyListRequestFilterDto.builder().build(), null, memberA.getId(), null))
+        //when(manyPartyService.findAllParties(pageable, false, PartyListRequestFilterDto.builder().build(), null, memberA.getId(), null))
+        when(manyPartyService.findAllParties(pageable, PartyListRequestFilterDto.builder().build(), 1000L, memberA.getId()))
                 .thenReturn(new PageImpl<>(Arrays.asList(partyA), pageable, 1));
         when(currentMember.id()).thenReturn(memberA.getId());
         DefaultResponse res = controllerTestUtil.expectDefaultResponseObject(get("/parties"));

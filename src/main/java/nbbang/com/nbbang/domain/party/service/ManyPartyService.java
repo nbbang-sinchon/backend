@@ -18,13 +18,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ManyPartyService {
     private final ManyPartyRepository manyPartyRepository;
-    private final MessageRepository messageRepository;
 
-    public Page<Party> findAllParties(Pageable pageable, Boolean isMyParties, PartyListRequestFilterDto filter, Long cursorId, Long memberId, List<String> hashtags, Long ... partyId) {
-        return manyPartyRepository.findAllParties(pageable, isMyParties, filter, cursorId, memberId, hashtags, partyId);
+    public Page<Party> findAllParties(Pageable pageable, PartyListRequestFilterDto filter, Long cursorId, Long memberId) {
+        return manyPartyRepository.findAllParties(pageable, filter, cursorId, memberId);
     }
 
-    public Page<PartyListDtoV2> findAllPartiesV2(Pageable pageable, PartyListRequestFilterDto filter, Long cursorId, Long memberId) {
-        return manyPartyRepository.findAllPartiesV2(pageable, filter, cursorId, memberId);
-    }
 }

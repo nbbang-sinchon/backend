@@ -18,14 +18,12 @@ public interface ManyPartyRepository extends JpaRepository<Party, Long>, ManyPar
     Page<Party> findAllParties(Pageable pageable, Boolean isMyParties, PartyListRequestFilterDto filter, Long cursorId, Long memberId, List<String> hashtags, Long ... partyId);
 
     @Override
-    Page<PartyListDtoV2> findAllPartiesV2(Pageable pageable, PartyListRequestFilterDto filter, Long cursorId, Long memberId);
+    Page<Party> findAllParties(Pageable pageable, PartyListRequestFilterDto filter, Long cursorId, Long memberId);
 
     @Override
     Page<Party> findAllByRequestDto(Pageable pageable, PartyFindRequestFilterDto requestFilterDto);
 
     Page<Party> findMyParties(Pageable pageable, PartyListRequestFilterDto filter, Long memberId);
-
-    Party findTopByOrderByIdDesc();
 
     @Override
     Page<Party> findAllByCursoredFilterDto(Pageable pageable, PartyFindRequestFilterDto requestFilterDto, Long cursorId);

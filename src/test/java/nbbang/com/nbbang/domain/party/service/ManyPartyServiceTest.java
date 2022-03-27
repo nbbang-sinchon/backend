@@ -46,7 +46,8 @@ class ManyPartyServiceTest {
         PartyHashtag ph = PartyHashtag.builder().party(party).hashtag(hashtag1).build();
         partyHashtagRepository.save(ph);
         party.addPartyHashtag(ph);
-        Page<Party> parties = manyPartyService.findAllParties(PageRequest.of(0, 10), false, PartyListRequestFilterDto.builder().build(), null, memberA.getId(), null);
+        //Page<Party> parties = manyPartyService.findAllParties(PageRequest.of(0, 10), false, PartyListRequestFilterDto.builder().build(), null, memberA.getId(), null);
+        Page<Party> parties = manyPartyService.findAllParties(PageRequest.of(0, 10), PartyListRequestFilterDto.builder().build(), 1000L, memberA.getId());
         Party findParty = parties.getContent().get(0);
         System.out.println(parties.getContent().get(0).getTitle());
         assertThat(findParty.getPartyHashtags().size()).isEqualTo(1);

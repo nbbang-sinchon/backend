@@ -24,16 +24,10 @@ public class ManyPartyRepositorySupportImpl implements ManyPartyRepositorySuppor
 
     private final JPAQueryFactory query;
 
-
-
-/*
     @Override
-    public Page<Party> findAllParties(Pageable pageable, Boolean isMyParties, PartyListRequestFilterDto filter, Long cursorId, Long memberId, List<String> hashtags, Long... partyId) {
+    public Page<Party> findAllParties(Pageable pageable, PartyListRequestFilterDto filter, Long cursorId, Long memberId) {
         QParty party = QParty.party;
-        QPartyHashtag hashtag = QPartyHashtag.partyHashtag;
         QMember member = QMember.member;
-
-        List<Hashtag> hashtagList = null;
 
         JPQLQuery<Party> q = query.selectFrom(party)
                 .leftJoin(party.owner, member)
@@ -66,30 +60,6 @@ public class ManyPartyRepositorySupportImpl implements ManyPartyRepositorySuppor
         // 커서 페이징을 제공합니다
         if (cursorId != null) {
             q.where(party.id.lt(cursorId));
-        }
-
-        // 자신이 속한 파티 필터링을 제공합니다
-        if (isMyParties && memberId != null) {
-            q.where(isMemberOfParty(memberId))
-                    .join(party.partyMembers, partyMember).fetchJoin()
-                    .where(partyMember.member.id.eq(memberId));
-        }
-
-        // 표시하지 않을 파티를 제공합니다
-        for (Long idBlock : partyId) {
-            if (idBlock != null) {
-                q.where(party.id.ne(idBlock));
-            }
-        }
-
-        // 해시태그를 포함한 파티만 조회합니다
-        if (hashtags != null) {
-            for (String content : hashtags) {
-                q.where(party.partyHashtags.any().hashtag.content.eq(content));
-                //q.where(party.partyHashtags.any().hashtag.content.eq(content));
-                //byte[] bytes = content.getBytes();
-                //q.where(party.partyHashtags.any().hashtag.content.castToNum( (byte[]).class).eq(bytes));
-            }
         }
 
         // 소팅은 id 기준으로 제공합니다 (비지니스 로직이 그럼)
@@ -102,18 +72,9 @@ public class ManyPartyRepositorySupportImpl implements ManyPartyRepositorySuppor
         }
 
         List<Party> res = q.fetch();
-
-        Long count = query.selectFrom(party)
-                .stream().count();
-
-        return new PageImpl<>(res, pageable, count);
-    }
-*/
-
-
-    @Override
-    public Page<PartyListDtoV2> findAllPartiesV2(Pageable pageable, PartyListRequestFilterDto filter, Long cursorId, Long memberId) {
-        return null;
+        //Long count = query.selectFrom(party)
+        //        .stream().count();
+        return new PageImpl<>(res, pageable, 0L);
     }
 
     @Override
@@ -140,7 +101,7 @@ public class ManyPartyRepositorySupportImpl implements ManyPartyRepositorySuppor
             q.where(placeEquals(places));
         }
 
-        // 파티 상태 필터를 제공합니다
+            // 파티 상태 필터를 제공합니다
         List<PartyStatus> statuses = filter.getStatuses();
         if (statuses != null) {
             q.where(statusEquals(statuses));
@@ -175,9 +136,6 @@ public class ManyPartyRepositorySupportImpl implements ManyPartyRepositorySuppor
         if (hashtags != null) {
             for (String content : hashtags) {
                 q.where(party.partyHashtags.any().hashtag.content.eq(content));
-                //q.where(party.partyHashtags.any().hashtag.content.eq(content));
-                //byte[] bytes = content.getBytes();
-                //q.where(party.partyHashtags.any().hashtag.content.castToNum( (byte[]).class).eq(bytes));
             }
         }
 

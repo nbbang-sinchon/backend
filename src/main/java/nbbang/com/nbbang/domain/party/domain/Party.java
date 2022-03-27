@@ -70,8 +70,8 @@ public class Party {
     private String accountNumber;
 
     @Builder.Default // https://www.inflearn.com/questions/151658
-    @OneToMany(mappedBy = "party", cascade = CascadeType.ALL, fetch = LAZY)
-    private List<PartyHashtag> partyHashtags = new ArrayList<>();
+    @OneToMany(mappedBy = "party")
+    private List<PartyHashtag> partyHashtags;// = new ArrayList<>();
 
     @Builder.Default
     @OneToMany(mappedBy = "party" , fetch = LAZY)

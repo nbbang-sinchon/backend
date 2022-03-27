@@ -28,6 +28,10 @@ public class PartyHashtag {
 
     protected PartyHashtag() {}
 
+    public String hashtagContent() {
+        return hashtag.getContent();
+    }
+
     public static PartyHashtag createPartyHashtag(Party party, Hashtag findHashtag) {
         PartyHashtag partyHashtag = PartyHashtag.builder().party(party).hashtag(findHashtag).build();
         party.addPartyHashtag(partyHashtag);

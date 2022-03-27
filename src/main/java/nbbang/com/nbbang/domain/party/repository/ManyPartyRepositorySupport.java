@@ -14,7 +14,7 @@ public interface ManyPartyRepositorySupport {
 
     Page<Party> findMyParties(Pageable pageable, PartyListRequestFilterDto filter, Long memberId);
 
-    Page<PartyListDtoV2> findAllPartiesV2(Pageable pageable, PartyListRequestFilterDto filter, Long cursorId, Long memberId);
+    Page<Party> findAllParties(Pageable pageable, PartyListRequestFilterDto filter, Long cursorId, Long memberId);
 
     Page<Party> findAllByCursoredFilterDto(Pageable pageable, PartyFindRequestFilterDto requestFilterDto, Long cursorId);
 
