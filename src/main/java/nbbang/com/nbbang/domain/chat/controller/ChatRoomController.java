@@ -53,28 +53,11 @@ public class ChatRoomController {
         if (pageSize == null) {
             pageSize = 10;
         }
-    //    chatRoomService.readMessage(partyId, currentMember.id());
+        chatRoomService.readMessage(partyId, currentMember.id());
         Party party = partyService.findById(partyId);
         Page<Message> messages = chatService.findMessages(party, currentMember.id(), PageRequest.of(0, pageSize));
         return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.READ_CHAT, ChatResponseDto.createByPartyAndMessagesEntity(party, messages.getContent(), currentMember.id()));
     }
-
-    /*@Operation(summary = "채팅 메시지 조회", description = "페이징이 적용된 채팅 메시지를 조회합니다. 쿼리 파라미터로 커서 id 를 전송하면 쿼리에 커서 페이징이 적용됩니다.")
-    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ChatResponseDto.class)))
-    @ApiResponse(responseCode = "400", description = "잘못된 요청입니다.", content = @Content(mediaType = "application/json"))
-    @ApiResponse(responseCode = "403", description = "Not Party Member", content = @Content(mediaType = "application/json"))
-    @GetMapping("/{party-id}/messages")
-    public DefaultResponse selectChatMessages(@PathVariable("party-id") Long partyId, @ParameterObject PageableDto pageableDto, @RequestParam(required = false) Long cursorId) {
-        System.out.println("party==================");
-        Party party = partyService.findById(partyId);
-        if (cursorId == null) {
-            cursorId = chatService.findLastMessage(party).getId();
-        }
-        System.out.println("message==================");
-        Page<Message> messages = chatService.findMessagesByCursorId(party, currentMember.id(), pageableDto.createPageRequest(), cursorId);
-        System.out.println("dto==================");
-        return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.READ_CHAT, ChatSendListResponseDto.createByEntity(messages.getContent(), currentMember.id()));
-    }*/
 
     @Operation(summary = "채팅 메시지 조회", description = "페이징이 적용된 채팅 메시지를 조회합니다. 쿼리 파라미터로 커서 id 를 전송하면 쿼리에 커서 페이징이 적용됩니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ChatResponseDto.class)))
