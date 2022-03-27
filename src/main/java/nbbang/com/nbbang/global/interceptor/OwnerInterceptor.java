@@ -26,11 +26,11 @@ public class OwnerInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-        //if (HttpMethod.GET.matches(request.getMethod())){
-        //    return true;
-        //}
-        //PartyMemberValidatorDto dto = partyMemberValidatorService.createByUriAndMemberId(request.getRequestURI(), currentMember.id());
-        //return partyMemberValidator.isOwner(dto);
-        return true;
+        if (HttpMethod.GET.matches(request.getMethod())){
+            return true;
+        }
+        PartyMemberValidatorDto dto = partyMemberValidatorService.createByUriAndMemberId(request.getRequestURI(), currentMember.id());
+        return partyMemberValidator.isOwner(dto);
+        //return true;
     }
 }

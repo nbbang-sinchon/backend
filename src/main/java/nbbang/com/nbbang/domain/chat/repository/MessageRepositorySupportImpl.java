@@ -56,8 +56,8 @@ public class MessageRepositorySupportImpl implements MessageRepositorySupport {
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize());
         List<Message> res = q.fetch();
-        Long count = query.selectFrom(message).stream().count();
-        return new PageImpl<>(res, pageable, count);
+        //Long count = query.selectFrom(message).stream().count();
+        return new PageImpl<>(res, pageable, 0L);
     }
 
     @Override

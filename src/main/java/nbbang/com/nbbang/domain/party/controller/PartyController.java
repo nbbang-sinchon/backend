@@ -13,6 +13,7 @@ import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.service.MemberService;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.dto.*;
+import nbbang.com.nbbang.domain.party.dto.many.PartyListResponseDto;
 import nbbang.com.nbbang.domain.party.dto.single.*;
 import nbbang.com.nbbang.domain.party.dto.single.request.PartyChangeGoalNumberRequestDto;
 import nbbang.com.nbbang.domain.party.dto.single.request.PartyRequestDto;
@@ -72,7 +73,7 @@ public class PartyController {
     @GetMapping("/{party-id}")
     public DefaultResponse readParty(@PathVariable("party-id") Long partyId){
         Party party = partyService.findById(partyId);
-        List<Party> parties = partyService.findNearAndSimilar(partyId);
+        List<Party> parties = partyService.findNearAndSimilar(partyId, party.getPlace());
         List<PartyFindResponseDto> collect = parties.stream().map(PartyFindResponseDto::createByEntity).collect(Collectors.toList());
         List<String> hashtags = party.getHashtagContents();
         PartyReadResponseDto partyReadResponseDto = PartyReadResponseDto.createDto(party, currentMember.id(), hashtags, collect);

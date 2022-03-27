@@ -72,6 +72,11 @@ public class PartyService {
         List<Party> parties = partyRepository.findByPlaceAndNotSelf(partyId);
         return parties;
     }
+
+    public List<Party> findNearAndSimilar(Long partyId, Place place) {
+        List<Party> parties = partyRepository.findByPlaceAndNotSelf(partyId, place);
+        return parties;
+    }
     
     @Transactional
     //public Long update(Long partyId, PartyUpdateServiceDto partyUpdateServiceDto) {

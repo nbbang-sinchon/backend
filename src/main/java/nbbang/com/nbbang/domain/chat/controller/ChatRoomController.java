@@ -42,7 +42,6 @@ public class ChatRoomController {
 
     private final ChatService chatService;
     private final PartyService partyService;
-    private final PartyRepository partyRepository;
     private final CurrentMember currentMember;
     private final ChatRoomService chatRoomService;
 
@@ -54,7 +53,7 @@ public class ChatRoomController {
         if (pageSize == null) {
             pageSize = 10;
         }
-        chatRoomService.readMessage(partyId, currentMember.id());
+    //    chatRoomService.readMessage(partyId, currentMember.id());
         Party party = partyService.findById(partyId);
         Page<Message> messages = chatService.findMessages(party, currentMember.id(), PageRequest.of(0, pageSize));
         return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.READ_CHAT, ChatResponseDto.createByPartyAndMessagesEntity(party, messages.getContent(), currentMember.id()));
@@ -81,42 +80,6 @@ public class ChatRoomController {
     @PostMapping("/{party-id}/out")
     public DefaultResponse exitChat(@PathVariable("party-id") Long partyId) {
         return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.EXIT_CHAT);
-    }
-
-    /**
-     * 무한 스크롤을 쿠키로 구현한 메소드입니다.
-     */
-    @Operation(summary = "채팅방 조회-쿠키", description = "채팅방을 파티 id 로 조회합니다. 가장 마지막에 조회한 메시지 id 를 쿠키로 받습니다.")
-    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ChatResponseDto.class)))
-    @ApiResponse(responseCode = "403", description = "Not Party Member", content = @Content(mediaType = "application/json"))
-    @GetMapping("/{party-id}/develop")
-    public DefaultResponse selectWithCookie(@PathVariable("party-id") Long partyId, @RequestParam(required = false) Integer pageSize, HttpServletResponse response) {
-        if (pageSize == null) {
-            pageSize = 10;
-        }
-        Party party = partyRepository.findById(partyId).get(); // Party Service 구현 시 바꿔야 할 것 같습니다.
-        Message lastMessage = chatService.findLastMessage(party);
-        Page<Message> messages = chatService.findMessagesByCursorId(party, currentMember.id(), PageRequest.of(0, pageSize), lastMessage.getId());
-        Cookie cursorIdCookie = new Cookie("cursorId", partyId.toString()+"="+lastMessage.getId().toString());
-        cursorIdCookie.setPath("/");
-        cursorIdCookie.setMaxAge(1000000);
-        response.addCookie(cursorIdCookie);
-        return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.READ_CHAT, ChatResponseDto.createByPartyAndMessagesEntity(party, messages.getContent(), currentMember.id()));
-    }
-
-    @Operation(summary = "채팅 메시지 조회-쿠키", description = "커서 페이징이 적용된 채팅 메시지를 조회합니다. 클라이언트는 쿠키로 커서 id 를 전송합니다.")
-    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ChatResponseDto.class)))
-    @ApiResponse(responseCode = "400", description = "잘못된 요청입니다.", content = @Content(mediaType = "application/json"))
-    @ApiResponse(responseCode = "403", description = "Not Party Member", content = @Content(mediaType = "application/json"))
-    @GetMapping("/{party-id}/messages/develop")
-    public DefaultResponse selectChatMessagesWithCookie(@PathVariable("party-id") Long partyId, @ParameterObject PageableDto pageableDto, HttpServletRequest request, @CookieValue(value = "cursorId", required = false) Cookie cookie) {
-        Party party = partyService.findById(partyId);
-        String [] cookieVals = cookie.getValue().split("=");
-        Long cookiePartyId = Long.parseLong(cookieVals[0]);
-        Long cursorId = Long.parseLong(cookieVals[1]);
-        if (cookiePartyId != partyId) throw new RuntimeException();
-        Page<Message> messages = chatService.findMessagesByCursorId(party, currentMember.id(), pageableDto.createPageRequest(), cursorId);
-        return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.READ_CHAT, ChatSendListResponseDto.createByEntity(messages.getContent(), currentMember.id()));
     }
 
 }
