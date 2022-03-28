@@ -1,4 +1,4 @@
-package nbbang.com.nbbang.domain.party.controller;
+package nbbang.com.nbbang.domain.parties.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -7,11 +7,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import nbbang.com.nbbang.domain.member.service.MemberService;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.dto.many.PartyListRequestDto;
 import nbbang.com.nbbang.domain.party.dto.many.PartyListResponseDto;
-import nbbang.com.nbbang.domain.party.service.ManyPartyService;
+import nbbang.com.nbbang.domain.parties.service.ManyPartyService;
 import nbbang.com.nbbang.global.error.exception.CustomIllegalArgumentException;
 import nbbang.com.nbbang.global.interceptor.CurrentMember;
 import nbbang.com.nbbang.global.response.*;
@@ -38,10 +37,8 @@ public class ManyPartyController {
         if (bindingResult.hasErrors()) {
             throw new CustomIllegalArgumentException(ManyPartyResponseMessage.ILLEGAL_PARTY_LIST_REQUEST, bindingResult);
         }
-        System.out.println("Controller ==============================================");
         Page<Party> res = manyPartyService.findAllParties(requestDto.createPageRequest(), requestDto.createPartyListRequestFilterDto(), requestDto.getCursorId(), currentMember.id());
         PartyListResponseDto dto = PartyListResponseDto.createByEntity(res.getContent(), currentMember.id());
-        System.out.println("EOController ============================================");
         return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_FIND_SUCCESS, dto);
     }
 

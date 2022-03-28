@@ -1,4 +1,4 @@
-package nbbang.com.nbbang.domain.party.service;
+package nbbang.com.nbbang.domain.parties.service;
 
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.dto.Place;
@@ -7,13 +7,10 @@ import nbbang.com.nbbang.domain.party.domain.Hashtag;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.domain.PartyHashtag;
 import nbbang.com.nbbang.domain.party.domain.PartyStatus;
-import nbbang.com.nbbang.domain.party.dto.many.PartyFindRequestFilterDto;
 import nbbang.com.nbbang.domain.party.dto.many.PartyListRequestFilterDto;
 import nbbang.com.nbbang.domain.party.repository.HashtagRepository;
 import nbbang.com.nbbang.domain.party.repository.PartyHashtagRepository;
 import nbbang.com.nbbang.domain.party.repository.PartyRepository;
-import nbbang.com.nbbang.domain.party.service.ManyPartyService;
-import org.apache.commons.lang3.builder.ToStringExclude;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

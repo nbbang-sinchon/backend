@@ -1,8 +1,7 @@
-package nbbang.com.nbbang.domain.party.service;
+package nbbang.com.nbbang.domain.parties.service;
 
 import lombok.RequiredArgsConstructor;
 import nbbang.com.nbbang.domain.bbangpan.domain.PartyMember;
-import nbbang.com.nbbang.domain.bbangpan.repository.PartyMemberRepository;
 import nbbang.com.nbbang.domain.chat.domain.Message;
 import nbbang.com.nbbang.domain.chat.repository.MessageRepository;
 import nbbang.com.nbbang.domain.member.domain.Member;
@@ -22,13 +21,10 @@ import org.webjars.NotFoundException;
 import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-import static nbbang.com.nbbang.domain.party.controller.PartyResponseMessage.PARTY_NOT_FOUND;
-import static nbbang.com.nbbang.global.socket.SocketDestination.GLOBAL;
+import static nbbang.com.nbbang.domain.parties.controller.PartyResponseMessage.PARTY_NOT_FOUND;
 
 @Service
 @Transactional(readOnly=true)

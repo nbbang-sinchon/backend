@@ -10,27 +10,17 @@ import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.domain.chat.domain.Message;
 import nbbang.com.nbbang.domain.chat.dto.*;
 import nbbang.com.nbbang.domain.chat.service.ChatService;
-import nbbang.com.nbbang.domain.member.domain.Member;
-import nbbang.com.nbbang.domain.member.service.MemberService;
 import nbbang.com.nbbang.domain.party.domain.Party;
-import nbbang.com.nbbang.domain.party.repository.PartyRepository;
-import nbbang.com.nbbang.domain.party.service.PartyService;
+import nbbang.com.nbbang.domain.parties.service.PartyService;
 import nbbang.com.nbbang.global.dto.PageableDto;
 import nbbang.com.nbbang.global.interceptor.CurrentMember;
 import nbbang.com.nbbang.global.response.DefaultResponse;
 import nbbang.com.nbbang.global.socket.ChatRoomService;
-import nbbang.com.nbbang.global.socket.SocketSender;
 import nbbang.com.nbbang.global.response.StatusCode;
-import nbbang.com.nbbang.global.validator.PartyMemberValidator;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 @Tag(name = "ChatRoom", description = "채팅방 api")
 @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(mediaType = "application/json"))

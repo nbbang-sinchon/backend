@@ -16,7 +16,7 @@ import nbbang.com.nbbang.domain.chat.dto.message.ChatSendRequestDto;
 import nbbang.com.nbbang.domain.chat.dto.message.ChatSendResponseDto;
 import nbbang.com.nbbang.domain.chat.service.MessageService;
 import nbbang.com.nbbang.domain.party.domain.Party;
-import nbbang.com.nbbang.domain.party.service.PartyService;
+import nbbang.com.nbbang.domain.parties.service.PartyService;
 import nbbang.com.nbbang.global.interceptor.CurrentMember;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;

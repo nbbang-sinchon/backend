@@ -1,4 +1,4 @@
-package nbbang.com.nbbang.domain.party.controller;
+package nbbang.com.nbbang.domain.parties.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -7,13 +7,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import nbbang.com.nbbang.domain.party.service.PartyWishlistService;
+import nbbang.com.nbbang.domain.parties.service.PartyWishlistService;
 import nbbang.com.nbbang.global.interceptor.CurrentMember;
 import nbbang.com.nbbang.global.response.DefaultResponse;
 import nbbang.com.nbbang.global.response.StatusCode;
 import org.springframework.web.bind.annotation.*;
 
-import static nbbang.com.nbbang.domain.party.controller.PartyResponseMessage.*;
+import static nbbang.com.nbbang.domain.parties.controller.PartyResponseMessage.*;
 
 @Tag(name = "Party Wishlist", description = "위시리스트에 파티를 추가 / 삭제합니다.")
 @ApiResponses(value = {

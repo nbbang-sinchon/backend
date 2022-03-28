@@ -6,12 +6,9 @@ import nbbang.com.nbbang.domain.chat.domain.Message;
 import nbbang.com.nbbang.domain.chat.dto.message.ChatAlarmResponseDto;
 import nbbang.com.nbbang.domain.chat.dto.message.ChatSendResponseDto;
 import nbbang.com.nbbang.domain.member.domain.Member;
-import nbbang.com.nbbang.domain.party.service.PartyService;
-import nbbang.com.nbbang.global.interceptor.CurrentMember;
+import nbbang.com.nbbang.domain.parties.service.PartyService;
 import nbbang.com.nbbang.global.socket.redisPubSub.RedisPublisher;
 import nbbang.com.nbbang.global.socket.redisPubSub.RedisTopicRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

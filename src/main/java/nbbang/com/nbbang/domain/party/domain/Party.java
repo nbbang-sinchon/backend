@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import nbbang.com.nbbang.domain.bbangpan.domain.PartyMember;
-import nbbang.com.nbbang.domain.chat.domain.ChatSession;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.dto.Place;
 import nbbang.com.nbbang.domain.party.dto.single.PartyUpdateServiceDto;
@@ -18,14 +17,11 @@ import java.time.LocalDateTime;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.*;
-import static nbbang.com.nbbang.domain.party.controller.PartyResponseMessage.HASHTAG_NOT_FOUND;
+import static nbbang.com.nbbang.domain.parties.controller.PartyResponseMessage.HASHTAG_NOT_FOUND;
 
 @EntityListeners(AuditingEntityListener.class)
 @Entity @Getter @Builder
@@ -71,7 +67,7 @@ public class Party {
 
     @Builder.Default // https://www.inflearn.com/questions/151658
     @OneToMany(mappedBy = "party")
-    private List<PartyHashtag> partyHashtags;// = new ArrayList<>();
+    private List<PartyHashtag> partyHashtags = new ArrayList<>();
 
     @Builder.Default
     @OneToMany(mappedBy = "party" , fetch = LAZY)

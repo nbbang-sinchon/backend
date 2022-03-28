@@ -1,7 +1,7 @@
 package nbbang.com.nbbang.global.support.controller;
 
 import nbbang.com.nbbang.domain.member.service.MemberService;
-import nbbang.com.nbbang.domain.party.service.PartyService;
+import nbbang.com.nbbang.domain.parties.service.PartyService;
 import nbbang.com.nbbang.global.config.WebMvcConfig;
 import nbbang.com.nbbang.global.interceptor.CurrentMember;
 import nbbang.com.nbbang.global.security.CustomOAuth2MemberService;

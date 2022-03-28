@@ -7,14 +7,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import nbbang.com.nbbang.domain.party.controller.ManyPartyResponseMessage;
+import nbbang.com.nbbang.domain.parties.controller.ManyPartyResponseMessage;
 import nbbang.com.nbbang.domain.party.domain.Party;
-import nbbang.com.nbbang.domain.party.dto.many.PartyListRequestDto;
 import nbbang.com.nbbang.domain.party.dto.my.MyClosedPartyListRequestDto;
 import nbbang.com.nbbang.domain.party.dto.my.MyOnPartyListRequestDto;
 import nbbang.com.nbbang.domain.party.dto.my.MyPartyListResponseDto;
-import nbbang.com.nbbang.domain.party.service.ManyPartyService;
-import nbbang.com.nbbang.domain.party.service.PartyMemberService;
+import nbbang.com.nbbang.domain.parties.service.ManyPartyService;
+import nbbang.com.nbbang.domain.parties.service.PartyMemberService;
 import nbbang.com.nbbang.global.error.exception.CustomIllegalArgumentException;
 import nbbang.com.nbbang.global.interceptor.CurrentMember;
 import nbbang.com.nbbang.global.response.DefaultResponse;
@@ -45,9 +44,7 @@ public class MyPartiesController {
         if (bindingResult.hasErrors()) {
             throw new CustomIllegalArgumentException(ManyPartyResponseMessage.ILLEGAL_PARTY_LIST_REQUEST, bindingResult);
         }
-        System.out.println("AllParties------------------------------");
         Page<Party> res = manyPartyService.findAllParties(requestDto.createPageRequest(), requestDto.createPartyListRequestFilterDto(), requestDto.getCursorId(), currentMember.id());
-        System.out.println("EOAllParties----------------------------");
         List<Integer> notReadNumbers = partyMemberService.getNotReadNumbers(res.getContent(), currentMember.id());
         return DefaultResponse.res(StatusCode.OK, MemberResponseMessage.READ_MY_PARTY, MyPartyListResponseDto.createFromEntity(res.getContent(), currentMember.id(), notReadNumbers));
     }
@@ -59,9 +56,7 @@ public class MyPartiesController {
         if (bindingResult.hasErrors()) {
             throw new CustomIllegalArgumentException(ManyPartyResponseMessage.ILLEGAL_PARTY_LIST_REQUEST, bindingResult);
         }
-        System.out.println("AllParties------------------------------");
         Page<Party> res = manyPartyService.findAllParties(requestDto.createPageRequest(), requestDto.createPartyListRequestFilterDto(), requestDto.getCursorId(), currentMember.id());
-        System.out.println("EOAllParties----------------------------");
         return DefaultResponse.res(StatusCode.OK, MemberResponseMessage.READ_MY_PARTY, MyPartyListResponseDto.createFromEntity(res.getContent(), currentMember.id()));
     }
 

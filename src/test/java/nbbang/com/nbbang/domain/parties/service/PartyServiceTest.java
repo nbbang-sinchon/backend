@@ -1,7 +1,6 @@
-package nbbang.com.nbbang.domain.party.service;
+package nbbang.com.nbbang.domain.parties.service;
 
 import nbbang.com.nbbang.domain.member.domain.Member;
-import nbbang.com.nbbang.domain.member.dto.Place;
 import nbbang.com.nbbang.domain.member.repository.MemberRepository;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.domain.PartyStatus;

@@ -1,13 +1,12 @@
 package nbbang.com.nbbang.domain.member.service;
 
-import jdk.jfr.Name;
 import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.domain.chat.service.MessageService;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.repository.MemberRepository;
 import nbbang.com.nbbang.domain.party.domain.Party;
-import nbbang.com.nbbang.domain.party.service.PartyMemberService;
-import nbbang.com.nbbang.domain.party.service.PartyService;
+import nbbang.com.nbbang.domain.parties.service.PartyMemberService;
+import nbbang.com.nbbang.domain.parties.service.PartyService;
 import nbbang.com.nbbang.global.socket.ChatRoomService;
 import nbbang.com.nbbang.global.socket.StompChannelInterceptor;
 import org.junit.jupiter.api.Test;
@@ -21,7 +20,6 @@ import java.util.Map;
 
 import static nbbang.com.nbbang.domain.member.dto.Place.SINCHON;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional

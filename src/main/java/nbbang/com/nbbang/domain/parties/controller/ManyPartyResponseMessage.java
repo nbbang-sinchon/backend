@@ -1,4 +1,4 @@
-package nbbang.com.nbbang.domain.party.controller;
+package nbbang.com.nbbang.domain.parties.controller;
 
 public class ManyPartyResponseMessage {
     public static final String ILLEGAL_PLACE = "위치 정보를 올바르게 입력하세요.";

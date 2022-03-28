@@ -1,37 +1,27 @@
 package nbbang.com.nbbang.global.interceptor;
 
 import lombok.extern.slf4j.Slf4j;
-import nbbang.com.nbbang.domain.chat.dto.message.ChatSendRequestDto;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.dto.Place;
 import nbbang.com.nbbang.domain.member.repository.MemberRepository;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.dto.single.request.PartyRequestDto;
-import nbbang.com.nbbang.domain.party.dto.single.response.PartyIdResponseDto;
-import nbbang.com.nbbang.domain.party.service.PartyMemberService;
-import nbbang.com.nbbang.global.error.ErrorResponse;
-import nbbang.com.nbbang.global.error.GlobalErrorResponseMessage;
+import nbbang.com.nbbang.domain.parties.service.PartyMemberService;
 import nbbang.com.nbbang.global.response.DefaultResponse;
 import nbbang.com.nbbang.global.support.controller.ControllerTestUtil;
-import nbbang.com.nbbang.domain.party.service.PartyService;
+import nbbang.com.nbbang.domain.parties.service.PartyService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.http.MediaType;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 
-import static nbbang.com.nbbang.global.error.GlobalErrorResponseMessage.NOT_OWNER_ERROR;
-import static nbbang.com.nbbang.global.response.StatusCode.FORBIDDEN;
 import static nbbang.com.nbbang.global.response.StatusCode.OK;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 

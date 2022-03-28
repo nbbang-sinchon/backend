@@ -1,4 +1,4 @@
-package nbbang.com.nbbang.domain.party.controller;
+package nbbang.com.nbbang.domain.parties.controller;
 
 import nbbang.com.nbbang.domain.bbangpan.domain.PartyMember;
 import nbbang.com.nbbang.domain.member.domain.Member;
@@ -9,8 +9,7 @@ import nbbang.com.nbbang.domain.party.domain.PartyHashtag;
 import nbbang.com.nbbang.domain.party.domain.PartyStatus;
 import nbbang.com.nbbang.domain.party.dto.many.PartyListRequestFilterDto;
 import nbbang.com.nbbang.domain.party.dto.many.PartyListResponseDto;
-import nbbang.com.nbbang.domain.party.service.ManyPartyService;
-import nbbang.com.nbbang.domain.party.service.PartyMemberService;
+import nbbang.com.nbbang.domain.parties.service.ManyPartyService;
 import nbbang.com.nbbang.global.interceptor.CurrentMember;
 import nbbang.com.nbbang.global.response.DefaultResponse;
 import nbbang.com.nbbang.global.support.controller.ControllerTestParent;
@@ -67,7 +66,7 @@ class ManyPartyControllerTest extends ControllerTestParent {
     public void manyPartyTest1() throws Exception {
         PageRequest pageable = PageRequest.of(0, 10);
         //when(manyPartyService.findAllParties(pageable, false, PartyListRequestFilterDto.builder().build(), null, memberA.getId(), null))
-        when(manyPartyService.findAllParties(pageable, PartyListRequestFilterDto.builder().build(), 1000L, memberA.getId()))
+        when(manyPartyService.findAllParties(pageable, PartyListRequestFilterDto.builder().build(), null, memberA.getId()))
                 .thenReturn(new PageImpl<>(Arrays.asList(partyA), pageable, 1));
         when(currentMember.id()).thenReturn(memberA.getId());
         DefaultResponse res = controllerTestUtil.expectDefaultResponseObject(get("/parties"));

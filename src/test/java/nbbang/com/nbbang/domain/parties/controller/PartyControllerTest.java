@@ -1,10 +1,10 @@
-package nbbang.com.nbbang.domain.party.controller;
+package nbbang.com.nbbang.domain.parties.controller;
 
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.dto.Place;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.domain.PartyStatus;
-import nbbang.com.nbbang.domain.party.service.PartyService;
+import nbbang.com.nbbang.domain.parties.service.PartyService;
 import nbbang.com.nbbang.global.response.DefaultResponse;
 import nbbang.com.nbbang.global.support.controller.ControllerTestParent;
 import nbbang.com.nbbang.global.support.controller.ControllerTestUtil;

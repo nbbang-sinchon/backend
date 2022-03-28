@@ -1,4 +1,4 @@
-package nbbang.com.nbbang.domain.party.service;
+package nbbang.com.nbbang.domain.parties.service;
 
 
 import lombok.RequiredArgsConstructor;
