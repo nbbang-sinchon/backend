@@ -53,7 +53,7 @@ public class PartyService {
         return savedParty;
     }
 
-    @Transactional
+    @Transactional //
     public Long createParty(PartyRequestDto dto, Long memberId) {
         Party party = dto.createEntityByDto();
         Member owner = memberService.findById(memberId);
