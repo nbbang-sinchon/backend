@@ -17,7 +17,7 @@ public class OpenAPIConfiguration {
     @Bean
     public OpenAPI customOpenAPI() {
         Server server = new Server();
-        server.setUrl("https://www.nbbang.shop/api");
+        server.setUrl("https://www.nbbang.shop");
         return new OpenAPI().servers(List.of(server));
     }
 }
