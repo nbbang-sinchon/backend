@@ -21,6 +21,7 @@ public class ChatResponseDto {
     private Integer joinNumber;
     private Integer goalNumber;
     private String status;
+    private Boolean isWishlist;
     private MemberResponseDto owner;
     private List<MemberResponseDto> members;
     private List<ChatSendResponseDto> messages;
@@ -38,6 +39,7 @@ public class ChatResponseDto {
                 .goalNumber(party.getGoalNumber())
                 .joinNumber(party.getPartyMembers().size())
                 .status(party.getStatus().toString())
+                .isWishlist(memberId!=null?party.isWishlistOf(memberId):false)
                 .messages(ms.stream()
                         .map(message -> ChatSendResponseDto.createByMessage(message))
                         .collect(Collectors.toList()))

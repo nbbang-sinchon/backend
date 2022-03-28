@@ -75,7 +75,7 @@ public class BbangpanController {
         if (bindingResult.hasErrors()) {
             throw new CustomIllegalArgumentException(GlobalErrorResponseMessage.ILLEGAL_ARGUMENT_ERROR, bindingResult);
         }
-        changePartyField(partyId, currentMember.id(), Party.getField("account"), bbangpanAccountChangeRequestDto.getAccount());
+        changePartyField(partyId, currentMember.id(), Party.getField("accountNumber"), bbangpanAccountChangeRequestDto.getAccount());
         return DefaultResponse.res(StatusCode.OK, BbangpanResponseMessage.ACCOUNT_CHANGE_SUCCESS);
     }
 

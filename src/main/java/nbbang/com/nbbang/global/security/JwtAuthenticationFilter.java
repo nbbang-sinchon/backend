@@ -1,6 +1,7 @@
 package nbbang.com.nbbang.global.security;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -25,6 +26,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static AuthenticationManager authenticationManager = new JwtAuthenticationManager();
     private TokenProvider tokenProvider = new TokenProvider();
     private LogoutService logoutService;
+    @Value("${deploy:false}")
+    private Boolean isDeploy;
 
     public JwtAuthenticationFilter(AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
@@ -51,8 +54,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             log.info("Successfully authenticated");
         } catch (Exception e) {
             log.error("Failed to authenticate");
-            // 배포 서버에서는 주석처리 합니다
-            testAuthentication(request); 
+            if (!isDeploy) {
+                testAuthentication(request);
+            }
         }
         filterChain.doFilter(request, response);
     }

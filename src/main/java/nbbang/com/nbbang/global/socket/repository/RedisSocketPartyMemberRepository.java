@@ -43,9 +43,11 @@ public class RedisSocketPartyMemberRepository implements SocketPartyMemberReposi
     }
 
     @Override
-    public Integer getPartyMemberActiveNumber(PartyMemberPair pair){
+    public Integer getPartyMemberPairActiveNumber(PartyMemberPair pair){
+        if(!hasKey(pair)){return 0;}
         return opsHashChatRoom.get(CHAT_ROOM, pair);
     }
+
 
     @PreDestroy
     private void deleteAllData(){

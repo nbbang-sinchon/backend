@@ -66,12 +66,12 @@ class ChatReadTest {
         stompChannelInterceptor.connect(member3Attributes);
 
         chatRoomService.enter(member1Attributes, partyId); // 1번 파티 입장
-        chatRoomService.readMessage(partyId, saveMember1.getId());
+        chatRoomService.readMessage(partyId, saveMember1.getId(), false);
         Long messageId1 = messageService.send(partyId, saveMember1.getId(), "hello").getId();
         assertThat(messageService.findById(messageId1).getNotReadNumber()).isEqualTo(2);
 
         chatRoomService.enter(member2Attributes, partyId); // 2번 파티 입장
-        chatRoomService.readMessage(partyId, saveMember2.getId());
+        chatRoomService.readMessage(partyId, saveMember2.getId(), false);
         assertThat(messageService.findById(messageId1).getNotReadNumber()).isEqualTo(1);
 
         Long messageId2 = messageService.send(partyId, saveMember2.getId(), "hello here 2").getId();
@@ -82,7 +82,7 @@ class ChatReadTest {
         assertThat(messageService.findById(messageId1).getNotReadNumber()).isEqualTo(1);
 
         chatRoomService.enter(member3Attributes, partyId); // 3번 파티 입장
-        chatRoomService.readMessage(partyId, saveMember3.getId());
+        chatRoomService.readMessage(partyId, saveMember3.getId(), false);
 
 
         assertThat(messageService.findById(messageId1).getNotReadNumber()).isEqualTo(0);
@@ -92,7 +92,7 @@ class ChatReadTest {
         assertThat(messageService.findById(messageId3).getNotReadNumber()).isEqualTo(1);
 
         chatRoomService.enter(member1Attributes, partyId); // 1번 파티 입장
-        chatRoomService.readMessage(partyId, saveMember1.getId());
+        chatRoomService.readMessage(partyId, saveMember1.getId(), false);
 
         assertThat(messageService.findById(messageId1).getNotReadNumber()).isEqualTo(0);
         assertThat(messageService.findById(messageId2).getNotReadNumber()).isEqualTo(0);

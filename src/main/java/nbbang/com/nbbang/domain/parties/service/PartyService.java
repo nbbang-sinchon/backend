@@ -159,7 +159,7 @@ public class PartyService {
         if(field.equals(Party.getField("deliveryFee"))){
             party.changeDeliveryFee((Integer) value);
         }
-        else if(field.equals(Party.getField("account"))){
+        else if(field.equals(Party.getField("accountNumber"))){
             party.changeAccount((Account) value);
         }
     }
