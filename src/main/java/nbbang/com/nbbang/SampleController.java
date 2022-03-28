@@ -1,5 +1,6 @@
 package nbbang.com.nbbang;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -32,6 +33,7 @@ public class SampleController {
 
     private final ChatService chatService;
 
+    @Hidden
     @Operation(summary = "샘플 조회.", description = "id 를 이용하여 샘플을 조회합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "샘플 조회 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = SampleDto.class))),
@@ -45,6 +47,7 @@ public class SampleController {
         return new SampleDto("BHC 뿌링클 8시", "오늘 저녁 연대서문 뿌링클 먹을 파티 구합니다. 배달비 엔빵 하실분, 사이드 가능입니다.");
     }
 
+    @Hidden
     @GetMapping("/test")
     public String hello() {
         chatService.readMessage(70L, 1L);

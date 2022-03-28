@@ -10,6 +10,7 @@ import nbbang.com.nbbang.domain.member.dto.Place;
 import nbbang.com.nbbang.domain.member.service.MemberService;
 import nbbang.com.nbbang.domain.party.domain.*;
 import nbbang.com.nbbang.domain.party.dto.single.PartyUpdateServiceDto;
+import nbbang.com.nbbang.domain.party.dto.single.request.PartyRequestDto;
 import nbbang.com.nbbang.domain.party.repository.PartyHashtagRepository;
 import nbbang.com.nbbang.domain.party.repository.PartyRepository;
 import nbbang.com.nbbang.global.error.exception.NotOwnerException;
@@ -55,6 +56,16 @@ public class PartyService {
 
         return savedParty;
     }
+
+    /*@Transactional
+    public Long createParty(PartyRequestDto dto, Long memberId) {
+        Party party = dto.createEntityByDto();
+        Member owner = memberService.findById(memberId);
+        PartyMember.createMemberParty(owner, party);
+
+        dto.getHashtags();
+
+    }*/
 
     public Party findById(Long partyId) {
         Party party = partyRepository.findById(partyId).orElseThrow(() -> new NotFoundException(PARTY_NOT_FOUND));

@@ -31,6 +31,6 @@ public class OwnerInterceptor implements HandlerInterceptor {
         }
         PartyMemberValidatorDto dto = partyMemberValidatorService.createByUriAndMemberId(request.getRequestURI(), currentMember.id());
         return partyMemberValidator.isOwner(dto);
-        //return true;
+
     }
 }
