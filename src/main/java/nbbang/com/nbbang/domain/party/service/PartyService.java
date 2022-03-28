@@ -57,15 +57,16 @@ public class PartyService {
         return savedParty;
     }
 
-    /*@Transactional
+    @Transactional
     public Long createParty(PartyRequestDto dto, Long memberId) {
         Party party = dto.createEntityByDto();
         Member owner = memberService.findById(memberId);
         PartyMember.createMemberParty(owner, party);
-
-        dto.getHashtags();
-
-    }*/
+        Optional.ofNullable(dto.getHashtags()).orElseGet(Collections::emptyList).
+                stream().forEach(content-> addHashtag(party.getId(), content));
+        party.addOwner(owner);
+        return party.getId();
+    }
 
     public Party findById(Long partyId) {
         Party party = partyRepository.findById(partyId).orElseThrow(() -> new NotFoundException(PARTY_NOT_FOUND));

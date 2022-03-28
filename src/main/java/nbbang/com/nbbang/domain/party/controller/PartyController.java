@@ -52,7 +52,7 @@ public class PartyController {
     private final MemberService memberService;
     private final CurrentMember currentMember;
 
-    @Operation(summary = "파티 생성", description = "파티를 생성합니다. Place 는 none, sinchon, yeonhui, changcheon 중 하나, 모집 인원은 2~10, 해시태그는 중복 없이 10개 이하")
+    /*@Operation(summary = "파티 생성", description = "파티를 생성합니다. Place 는 none, sinchon, yeonhui, changcheon 중 하나, 모집 인원은 2~10, 해시태그는 중복 없이 10개 이하")
     @ApiResponse(responseCode = "200", description = "OK",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = PartyIdResponseDto.class)))
     @PostMapping
@@ -65,9 +65,9 @@ public class PartyController {
         Party createParty = partyService.create(party, currentMember.id(), partyRequestDto.getHashtags());
         Long partyId = partyService.findIdByParty(createParty);
         return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_CREATE_SUCCESS, PartyIdResponseDto.builder().id(partyId).build());
-    }
+    }*/
 
-    /*@Operation(summary = "파티 생성", description = "파티를 생성합니다. Place 는 none, sinchon, yeonhui, changcheon 중 하나, 모집 인원은 2~10, 해시태그는 중복 없이 10개 이하")
+    @Operation(summary = "파티 생성", description = "파티를 생성합니다. Place 는 none, sinchon, yeonhui, changcheon 중 하나, 모집 인원은 2~10, 해시태그는 중복 없이 10개 이하")
     @ApiResponse(responseCode = "200", description = "OK",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = PartyIdResponseDto.class)))
     @PostMapping
@@ -77,7 +77,7 @@ public class PartyController {
         }
         Long partyId = partyService.createParty(partyRequestDto, currentMember.id());
         return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_CREATE_SUCCESS, PartyIdResponseDto.builder().id(partyId).build());
-    }*/
+    }
 
     @Operation(summary = "파티 상세", description = "파티의 상세 정보입니다.")
     @ApiResponse(responseCode = "200", description = "OK",
