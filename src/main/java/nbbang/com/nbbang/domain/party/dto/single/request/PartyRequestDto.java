@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.dto.Place;
 import nbbang.com.nbbang.domain.party.domain.Party;
+import nbbang.com.nbbang.domain.party.domain.PartyStatus;
 import nbbang.com.nbbang.domain.party.validation.HashtagNumberAndDuplicate;
 import nbbang.com.nbbang.domain.party.validation.PartyCreateGroup;
 import nbbang.com.nbbang.global.support.validation.ValueOfEnum;
@@ -53,6 +54,7 @@ public class PartyRequestDto {
                 .place(Place.valueOf(place.toUpperCase()))
                 .goalNumber(this.goalNumber)
                 .createTime(LocalDateTime.now())
+                .status(PartyStatus.OPEN)
                 .build();
     }
 }

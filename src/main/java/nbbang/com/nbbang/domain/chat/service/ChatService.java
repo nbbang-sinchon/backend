@@ -79,6 +79,7 @@ public class ChatService {
         return message.getId();
     }
 
+    // 이 메소드 한번 호출하면 9개의 쿼리가 나가요
     @Transactional
     public ReadMessageDto readMessage(Long partyId, Long memberId) {
 

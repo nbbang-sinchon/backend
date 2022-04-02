@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.party.domain.Party;
+import nbbang.com.nbbang.domain.party.domain.PartyHashtag;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -49,6 +50,21 @@ public class PartyFindResponseDto{
                 .hashtags(party.getHashtagContents())
                 .place(party.getPlace().toString())
                 .isWishlist(party.isWishlistOf(member))
+                .build();
+    }
+
+
+    public static PartyFindResponseDto createByEntity(Party party, Long memberId) {
+        return PartyFindResponseDto.builder()
+                .id(party.getId())
+                .title(party.getTitle())
+                .createTime(party.getCreateTime())
+                .goalNumber(party.getGoalNumber())
+                .joinNumber(party.getPartyMembers().size())
+                .status(party.getStatus()!=null?party.getStatus().toString():null)
+                .hashtags(party.getHashtagContents())
+                .place(party.getPlace().toString())
+                .isWishlist(party.isWishlistOf(memberId))
                 .build();
     }
 

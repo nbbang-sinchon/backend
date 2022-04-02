@@ -1,5 +1,6 @@
 package nbbang.com.nbbang.domain.chat.repository;
 
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -7,7 +8,10 @@ import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.domain.chat.domain.Message;
 import nbbang.com.nbbang.domain.chat.domain.MessageType;
 import nbbang.com.nbbang.domain.chat.domain.QMessage;
+import nbbang.com.nbbang.domain.member.domain.QMember;
 import nbbang.com.nbbang.domain.party.domain.Party;
+import nbbang.com.nbbang.domain.party.domain.PartyStatus;
+import nbbang.com.nbbang.domain.party.domain.QParty;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -40,16 +44,24 @@ public class MessageRepositorySupportImpl implements MessageRepositorySupport {
     @Override
     public Page<Message> findAllByCursorId(Long partyId, Long enterMessageId, Pageable pageable, Long cursorId) {
         QMessage message = QMessage.message;
+        QParty party = QParty.party;
+        QMember member = QMember.member;
         JPQLQuery<Message> q = query.selectFrom(message)
+                .leftJoin(message.party, party)
+                .fetchJoin()
+                .leftJoin(message.sender, member)
+                .fetchJoin()
                 .where(message.party.id.eq(partyId))
-                .where(message.id.lt(cursorId))
                 .where(message.id.goe(enterMessageId))
                 .orderBy(message.id.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize());
+        if (cursorId != null) {
+            q.where(message.id.lt(cursorId));
+        }
         List<Message> res = q.fetch();
-        Long count = query.selectFrom(message).stream().count();
-        return new PageImpl<>(res, pageable, count);
+        //Long count = query.selectFrom(message).stream().count();
+        return new PageImpl<>(res, pageable, 0L);
     }
 
     @Override

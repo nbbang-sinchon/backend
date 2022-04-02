@@ -77,6 +77,7 @@ public class GlobalControllerAdvice {
         return ErrorResponse.res(StatusCode.NOT_FOUND, GlobalErrorResponseMessage.REQUEST_URL_ERROR);
     }
 
+
     @ExceptionHandler
     public ErrorResponse exHandle(Exception e) {
         log.error("[ExceptionHandle] Exception: ", e);

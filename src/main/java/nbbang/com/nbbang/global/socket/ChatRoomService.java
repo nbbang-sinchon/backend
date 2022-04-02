@@ -3,7 +3,6 @@ package nbbang.com.nbbang.global.socket;
 import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.domain.bbangpan.domain.PartyMember;
 import nbbang.com.nbbang.domain.bbangpan.repository.PartyMemberRepository;
-import nbbang.com.nbbang.domain.chat.dto.ChatReadSocketDto;
 import nbbang.com.nbbang.domain.chat.dto.ReadMessageDto;
 import nbbang.com.nbbang.domain.chat.service.ChatService;
 import nbbang.com.nbbang.domain.party.service.PartyMemberService;

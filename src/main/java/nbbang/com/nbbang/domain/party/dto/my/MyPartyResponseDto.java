@@ -9,6 +9,7 @@ import nbbang.com.nbbang.domain.member.dto.MemberSimpleResponseDto;
 import nbbang.com.nbbang.domain.party.domain.Party;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,7 +40,7 @@ public class MyPartyResponseDto{
                 .joinNumber(party.getPartyMembers().size() + 1)
                 .owner(MemberSimpleResponseDto.createByEntity(party.getOwner()))
                 .status(party.getStatus()!=null?party.getStatus().toString():null)
-                .hashtags(party.getHashtagContents())
+                .hashtags(party.getHashtagContents()!=null?party.getHashtagContents():new ArrayList<>())
                 .isOwner(memberId == party.getOwner().getId())
                 .members(party.getPartyMembers().stream().map(mp -> MemberSimpleResponseDto.createByEntity(mp.getMember())).collect(Collectors.toList()))
                 .place(party.getPlace().toString())
@@ -55,7 +56,7 @@ public class MyPartyResponseDto{
                 .joinNumber(party.getPartyMembers().size() + 1)
                 .owner(MemberSimpleResponseDto.createByEntity(party.getOwner()))
                 .status(party.getStatus()!=null?party.getStatus().toString():null)
-                .hashtags(party.getHashtagContents())
+                .hashtags(party.getHashtagContents()!=null?party.getHashtagContents():new ArrayList<>())
                 .isOwner(memberId == party.getOwner().getId())
                 .members(party.getPartyMembers().stream().map(mp -> MemberSimpleResponseDto.createByEntity(mp.getMember())).collect(Collectors.toList()))
                 .place(party.getPlace().toString())

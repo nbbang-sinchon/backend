@@ -1,7 +1,5 @@
 package nbbang.com.nbbang.domain.party.controller;
 
-import org.webjars.NotFoundException;
-
 public class PartyResponseMessage {
     public static final String PARTY_FIND_SUCCESS = "파티 조회 성공";
 
