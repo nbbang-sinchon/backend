@@ -1,4 +1,4 @@
-package nbbang.com.nbbang.domain.parties.controller;
+package nbbang.com.nbbang.domain.party.controller;
 
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.party.domain.Party;

@@ -1,4 +1,4 @@
-package nbbang.com.nbbang.domain.parties.service;
+package nbbang.com.nbbang.domain.party.service;
 
 import nbbang.com.nbbang.domain.chat.domain.Message;
 import nbbang.com.nbbang.domain.chat.service.MessageService;

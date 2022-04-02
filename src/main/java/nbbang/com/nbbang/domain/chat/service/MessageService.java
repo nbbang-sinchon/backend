@@ -20,7 +20,7 @@ import java.io.IOException;
 
 import static nbbang.com.nbbang.domain.chat.controller.ChatResponseMessage.MESSAGE_NOT_FOUND;
 import static nbbang.com.nbbang.domain.chat.domain.MessageType.IMAGE;
-import static nbbang.com.nbbang.domain.parties.controller.PartyResponseMessage.PARTY_NOT_FOUND;
+import static nbbang.com.nbbang.domain.party.controller.PartyResponseMessage.PARTY_NOT_FOUND;
 import static nbbang.com.nbbang.global.FileUpload.UploadDirName.DIR_CHATS;
 
 @Transactional(readOnly = true)

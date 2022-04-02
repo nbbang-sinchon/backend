@@ -1,4 +1,4 @@
-package nbbang.com.nbbang.domain.parties.controller;
+package nbbang.com.nbbang.domain.party.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.dto.many.PartyListRequestDto;
 import nbbang.com.nbbang.domain.party.dto.many.PartyListResponseDto;
-import nbbang.com.nbbang.domain.parties.service.ManyPartyService;
+import nbbang.com.nbbang.domain.party.service.ManyPartyService;
 import nbbang.com.nbbang.global.error.exception.CustomIllegalArgumentException;
 import nbbang.com.nbbang.global.interceptor.CurrentMember;
 import nbbang.com.nbbang.global.response.*;

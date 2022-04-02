@@ -1,4 +1,4 @@
-package nbbang.com.nbbang.domain.parties.service;
+package nbbang.com.nbbang.domain.party.service;
 
 import lombok.RequiredArgsConstructor;
 import nbbang.com.nbbang.domain.member.domain.Member;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
 
-import static nbbang.com.nbbang.domain.parties.controller.PartyResponseMessage.*;
+import static nbbang.com.nbbang.domain.party.controller.PartyResponseMessage.*;
 
 @Service
 @RequiredArgsConstructor

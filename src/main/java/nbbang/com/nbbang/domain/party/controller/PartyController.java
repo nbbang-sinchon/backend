@@ -1,4 +1,4 @@
-package nbbang.com.nbbang.domain.parties.controller;
+package nbbang.com.nbbang.domain.party.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -19,7 +19,7 @@ import nbbang.com.nbbang.domain.party.dto.single.request.PartyRequestDto;
 import nbbang.com.nbbang.domain.party.dto.single.request.PartyStatusChangeRequestDto;
 import nbbang.com.nbbang.domain.party.dto.single.response.PartyIdResponseDto;
 import nbbang.com.nbbang.domain.party.dto.single.response.PartyReadResponseDto;
-import nbbang.com.nbbang.domain.parties.service.PartyService;
+import nbbang.com.nbbang.domain.party.service.PartyService;
 import nbbang.com.nbbang.domain.party.validation.PartyCreateGroup;
 import nbbang.com.nbbang.global.error.exception.CustomIllegalArgumentException;
 import nbbang.com.nbbang.global.interceptor.CurrentMember;

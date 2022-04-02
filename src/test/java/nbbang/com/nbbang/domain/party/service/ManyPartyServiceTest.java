@@ -1,4 +1,4 @@
-package nbbang.com.nbbang.domain.parties.service;
+package nbbang.com.nbbang.domain.party.service;
 
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.dto.Place;

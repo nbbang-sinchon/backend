@@ -1,4 +1,4 @@
-package nbbang.com.nbbang.domain.parties.service;
+package nbbang.com.nbbang.domain.party.service;
 
 import lombok.RequiredArgsConstructor;
 import nbbang.com.nbbang.domain.bbangpan.domain.PartyMember;
@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static nbbang.com.nbbang.domain.parties.controller.PartyResponseMessage.PARTY_NOT_FOUND;
+import static nbbang.com.nbbang.domain.party.controller.PartyResponseMessage.PARTY_NOT_FOUND;
 
 @Service
 @Transactional(readOnly=true)
@@ -57,7 +57,7 @@ public class PartyService {
     public Long createParty(PartyRequestDto dto, Long memberId) {
         Party party = dto.createEntityByDto();
         Member owner = memberService.findById(memberId);
-        PartyMember.createMemberParty(owner, party);
+        PartyMember.createPartyMember(owner, party);
         Optional.ofNullable(dto.getHashtags()).orElseGet(Collections::emptyList).
                 stream().forEach(content-> addHashtag(party.getId(), content));
         party.addOwner(owner);

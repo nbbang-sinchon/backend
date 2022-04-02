@@ -1,6 +1,6 @@
-package nbbang.com.nbbang.domain.parties.controller;
+package nbbang.com.nbbang.domain.party.controller;
 
-import nbbang.com.nbbang.domain.parties.service.PartyWishlistService;
+import nbbang.com.nbbang.domain.party.service.PartyWishlistService;
 import nbbang.com.nbbang.global.error.ErrorResponse;
 import nbbang.com.nbbang.global.error.exception.UserException;
 import nbbang.com.nbbang.global.response.DefaultResponse;
@@ -16,7 +16,7 @@ import org.webjars.NotFoundException;
 
 
 import static nbbang.com.nbbang.domain.member.controller.MemberResponseMessage.MEMBER_NOT_FOUND;
-import static nbbang.com.nbbang.domain.parties.controller.PartyResponseMessage.*;
+import static nbbang.com.nbbang.domain.party.controller.PartyResponseMessage.*;
 import static nbbang.com.nbbang.global.response.StatusCode.*;
 import static org.assertj.core.api.Assertions.assertThat;
 

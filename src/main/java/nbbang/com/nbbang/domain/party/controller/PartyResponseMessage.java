@@ -1,4 +1,4 @@
-package nbbang.com.nbbang.domain.parties.controller;
+package nbbang.com.nbbang.domain.party.controller;
 
 public class PartyResponseMessage {
     public static final String PARTY_FIND_SUCCESS = "파티 조회 성공";

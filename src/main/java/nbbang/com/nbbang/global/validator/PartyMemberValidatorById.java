@@ -2,7 +2,7 @@ package nbbang.com.nbbang.global.validator;
 
 import lombok.RequiredArgsConstructor;
 import nbbang.com.nbbang.domain.member.service.MemberService;
-import nbbang.com.nbbang.domain.parties.service.PartyService;
+import nbbang.com.nbbang.domain.party.service.PartyService;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 

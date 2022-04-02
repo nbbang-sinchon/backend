@@ -4,7 +4,7 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.util.List;
 
-import static nbbang.com.nbbang.domain.parties.controller.PartyResponseMessage.*;
+import static nbbang.com.nbbang.domain.party.controller.PartyResponseMessage.*;
 
 public class HashtagNumberAndDuplicateValidator implements ConstraintValidator<HashtagNumberAndDuplicate, List<String>> {
 

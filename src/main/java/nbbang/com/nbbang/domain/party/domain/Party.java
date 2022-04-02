@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 
 import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.*;
-import static nbbang.com.nbbang.domain.parties.controller.PartyResponseMessage.HASHTAG_NOT_FOUND;
+import static nbbang.com.nbbang.domain.party.controller.PartyResponseMessage.HASHTAG_NOT_FOUND;
 
 @EntityListeners(AuditingEntityListener.class)
 @Entity @Getter @Builder
