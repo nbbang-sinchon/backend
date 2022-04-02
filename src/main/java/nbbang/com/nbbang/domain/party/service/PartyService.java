@@ -57,7 +57,7 @@ public class PartyService {
     public Long createParty(PartyRequestDto dto, Long memberId) {
         Party party = dto.createEntityByDto();
         Member owner = memberService.findById(memberId);
-        PartyMember.createPartyMember(owner, party);
+        PartyMember.createPartyMember(party, owner);
         Optional.ofNullable(dto.getHashtags()).orElseGet(Collections::emptyList).
                 stream().forEach(content-> addHashtag(party.getId(), content));
         party.addOwner(owner);

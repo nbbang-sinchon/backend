@@ -35,7 +35,7 @@ class PartyMemberRepositoryTest {
         memberRepository.save(member);
         Party party = Party.builder().owner(member).goalNumber(10).status(PartyStatus.OPEN).title("party").build();
         partyRepository.save(party);
-        PartyMember savePartyMember = PartyMember.createPartyMember(member, party, messageRepository.findLastMessage(party.getId()));
+        PartyMember savePartyMember = PartyMember.createPartyMember(party, member, messageRepository.findLastMessage(party.getId()));
         memberPartyRepository.save(savePartyMember);
         // when
         PartyMember findPartyMember = memberPartyRepository.findByMemberIdAndPartyId(member.getId(), party.getId());

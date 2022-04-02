@@ -53,7 +53,7 @@ public class PartyMemberService {
             throw new PartyJoinException(PartyResponseMessage.PARTY_JOIN_NONOPEN_ERROR);
         }
         // 이 부분 빵판 로직이 들어가야 할 거 같아서 나중에 bbangpan service 로 메소드를 만들어야 할 거 같습니다.
-        PartyMember partyMember = PartyMember.createPartyMember(member, party, messageRepository.findLastMessage(party.getId()));
+        PartyMember partyMember = PartyMember.createPartyMember(party, member, messageRepository.findLastMessage(party.getId()));
         partyMemberRepository.save(partyMember);
 
         return messageService.send(party.getId(), member.getId(), member.getNickname() + " 님이 입장하셨습니다.", MessageType.ENTER).getId();
