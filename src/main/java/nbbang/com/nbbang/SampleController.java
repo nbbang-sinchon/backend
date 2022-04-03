@@ -13,6 +13,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import nbbang.com.nbbang.domain.chat.event.EventPublisher;
 import nbbang.com.nbbang.domain.chat.service.ChatService;
 import net.bytebuddy.pool.TypePool;
 import org.springframework.http.HttpStatus;
@@ -47,10 +48,16 @@ public class SampleController {
         return new SampleDto("BHC 뿌링클 8시", "오늘 저녁 연대서문 뿌링클 먹을 파티 구합니다. 배달비 엔빵 하실분, 사이드 가능입니다.");
     }
 
+    private final EventPublisher eventPublisher;
+
     @Hidden
     @GetMapping("/test")
-    public String hello() {
-        chatService.readMessage(70L, 1L);
+    public String hello() throws Exception {
+        //chatService.readMessage(70L, 1L);
+        log.info("test******");
+        log.info(String.valueOf(Thread.currentThread().hashCode()));
+        log.info("test******");
+        eventPublisher.publish();
         return "test success";
     }
 
