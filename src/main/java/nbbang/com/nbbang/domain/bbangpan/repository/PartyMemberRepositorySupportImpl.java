@@ -11,6 +11,7 @@ import static nbbang.com.nbbang.domain.chat.domain.QMessage.message;
 @RequiredArgsConstructor
 public class PartyMemberRepositorySupportImpl implements PartyMemberRepositorySupport{
     private final JPAQueryFactory query;
+
     @Override
     public Boolean isThereNotReadMessageByMemberId(Long memberId) {
         QPartyMember partyMember = QPartyMember.partyMember;

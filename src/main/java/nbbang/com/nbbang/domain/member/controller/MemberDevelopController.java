@@ -1,5 +1,6 @@
 package nbbang.com.nbbang.domain.member.controller;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -64,6 +65,7 @@ public class MemberDevelopController {
         return DefaultResponse.res(StatusCode.OK, "테스트 멤버가 생성되었고 로그인 되었습니다.");
     }*/
 
+    @Hidden
     @Operation(summary = "테스트 회원 로그인", description = "다른 회원으로 로그인 합니다.")
     @GetMapping("/{memberId}/login")
     public void loginToId(@PathVariable("memberId") Long memberId, HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -74,7 +76,7 @@ public class MemberDevelopController {
     }
 
 
-
+    @Hidden
     @Operation(summary = "모든 멤버 조회")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
     @PostMapping("/select/all")

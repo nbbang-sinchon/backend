@@ -38,7 +38,16 @@ public class PartyMember {
 
     protected PartyMember() {}
 
-    public static PartyMember createMemberParty(Member member, Party party, Message lastReadMessage) {
+    public static PartyMember createPartyMember(Party party, Member member) {
+        PartyMember partyMember = PartyMember.builder()
+                .member(member)
+                .party(party)
+                .build();
+        party.getPartyMembers().add(partyMember);
+        return partyMember;
+    }
+
+    public static PartyMember createPartyMember(Party party, Member member, Message lastReadMessage) {
         PartyMember partyMember = PartyMember.builder()
                 .member(member)
                 .party(party)

@@ -2,11 +2,8 @@ package nbbang.com.nbbang.domain.party.service;
 
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.repository.MemberRepository;
-import nbbang.com.nbbang.domain.member.service.MemberService;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.domain.PartyStatus;
-import nbbang.com.nbbang.domain.party.dto.single.request.PartyRequestDto;
-import nbbang.com.nbbang.domain.party.dto.single.PartyUpdateServiceDto;
 import nbbang.com.nbbang.domain.party.repository.PartyRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +13,6 @@ import org.springframework.test.context.ActiveProfiles;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 

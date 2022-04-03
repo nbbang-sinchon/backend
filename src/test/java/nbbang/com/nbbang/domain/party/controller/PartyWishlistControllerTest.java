@@ -4,25 +4,14 @@ import nbbang.com.nbbang.domain.party.service.PartyWishlistService;
 import nbbang.com.nbbang.global.error.ErrorResponse;
 import nbbang.com.nbbang.global.error.exception.UserException;
 import nbbang.com.nbbang.global.response.DefaultResponse;
-import nbbang.com.nbbang.global.security.SecurityConfig;
 import nbbang.com.nbbang.global.support.controller.ControllerTestParent;
 import nbbang.com.nbbang.global.support.controller.ControllerTestUtil;
-import org.aspectj.lang.annotation.Before;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
-import org.springframework.mock.web.MockFilterConfig;
-import org.springframework.security.config.BeanIds;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.filter.DelegatingFilterProxy;
 import org.webjars.NotFoundException;
 
 

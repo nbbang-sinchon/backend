@@ -7,7 +7,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import nbbang.com.nbbang.domain.member.service.MemberService;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.dto.many.PartyListRequestDto;
 import nbbang.com.nbbang.domain.party.dto.many.PartyListResponseDto;
@@ -29,7 +28,6 @@ public class ManyPartyController {
 
     private final ManyPartyService manyPartyService;
     private final CurrentMember currentMember;
-    private final MemberService memberService;
 
     @Operation(summary = "여러 개 파티 리스트 조회, 로그인이 안된 유저는 isWishlist 가 false 로 표시됩니다.", description = "여러 개의 파티 리스트를 전송합니다. 기본값으로 10개의 파티를 조회합니다. json이 아닌 query parameter로 데이터를 전송해야 합니다. 예시 : http://15.165.132.250:8094/parties?places=YEONHUI&places=CHANGCHEON&showOngoing=true&search=BHC")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PartyListResponseDto.class)))
@@ -39,9 +37,8 @@ public class ManyPartyController {
         if (bindingResult.hasErrors()) {
             throw new CustomIllegalArgumentException(ManyPartyResponseMessage.ILLEGAL_PARTY_LIST_REQUEST, bindingResult);
         }
-        Page<Party> res = manyPartyService.findAllParties(requestDto.createPageRequest(), false, requestDto.createPartyListRequestFilterDto(), requestDto.getCursorId(), currentMember.id(), requestDto.getHashtags());
-        PartyListResponseDto dto = currentMember.id() == null ? PartyListResponseDto.createByEntity(res.getContent())
-                : PartyListResponseDto.createByEntity(res.getContent(), memberService.findById(currentMember.id()));
+        Page<Party> res = manyPartyService.findAllParties(requestDto.createPageRequest(), requestDto.createPartyListRequestFilterDto(), requestDto.getCursorId(), currentMember.id());
+        PartyListResponseDto dto = PartyListResponseDto.createByEntity(res.getContent(), currentMember.id());
         return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_FIND_SUCCESS, dto);
     }
 

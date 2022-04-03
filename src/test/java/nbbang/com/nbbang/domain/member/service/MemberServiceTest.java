@@ -1,6 +1,5 @@
 package nbbang.com.nbbang.domain.member.service;
 
-import jdk.jfr.Name;
 import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.domain.chat.service.MessageService;
 import nbbang.com.nbbang.domain.member.domain.Member;
@@ -21,7 +20,6 @@ import java.util.Map;
 
 import static nbbang.com.nbbang.domain.member.dto.Place.SINCHON;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional

@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.domain.party.controller.ManyPartyResponseMessage;
 import nbbang.com.nbbang.domain.party.domain.Party;
-import nbbang.com.nbbang.domain.party.dto.many.PartyListRequestDto;
 import nbbang.com.nbbang.domain.party.dto.my.MyClosedPartyListRequestDto;
 import nbbang.com.nbbang.domain.party.dto.my.MyOnPartyListRequestDto;
 import nbbang.com.nbbang.domain.party.dto.my.MyPartyListResponseDto;
@@ -38,17 +37,6 @@ public class MyPartiesController {
     private final PartyMemberService partyMemberService;
     private final CurrentMember currentMember;
 
-    @Operation(summary = "나의 파티", description = "자신이 속한 파티 목록을 조회합니다.")
-    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MyPartyListResponseDto.class)))
-    @GetMapping("/develop")
-    public DefaultResponse parties(@ParameterObject PartyListRequestDto requestDto, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            throw new CustomIllegalArgumentException(ManyPartyResponseMessage.ILLEGAL_PARTY_LIST_REQUEST, bindingResult);
-        }
-        Page<Party> res = manyPartyService.findAllParties(requestDto.createPageRequest(), true, requestDto.createPartyListRequestFilterDto(), requestDto.getCursorId(), currentMember.id(), null);
-        return DefaultResponse.res(StatusCode.OK, MemberResponseMessage.READ_MY_PARTY, MyPartyListResponseDto.createFromEntity(res.getContent(), currentMember.id()));
-    }
-
     @Operation(summary = "나의 참여중인 파티", description = "자신이 속한 참여 중(OPEN, FULL)인 파티 목록을 조회합니다.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MyPartyListResponseDto.class)))
     @GetMapping("/on")
@@ -56,7 +44,7 @@ public class MyPartiesController {
         if (bindingResult.hasErrors()) {
             throw new CustomIllegalArgumentException(ManyPartyResponseMessage.ILLEGAL_PARTY_LIST_REQUEST, bindingResult);
         }
-        Page<Party> res = manyPartyService.findAllParties(requestDto.createPageRequest(), true, requestDto.createPartyListRequestFilterDto(), requestDto.getCursorId(), currentMember.id(), null);
+        Page<Party> res = manyPartyService.findAllParties(requestDto.createPageRequest(), requestDto.createPartyListRequestFilterDto(), requestDto.getCursorId(), currentMember.id());
         List<Integer> notReadNumbers = partyMemberService.getNotReadNumbers(res.getContent(), currentMember.id());
         return DefaultResponse.res(StatusCode.OK, MemberResponseMessage.READ_MY_PARTY, MyPartyListResponseDto.createFromEntity(res.getContent(), currentMember.id(), notReadNumbers));
     }
@@ -68,7 +56,7 @@ public class MyPartiesController {
         if (bindingResult.hasErrors()) {
             throw new CustomIllegalArgumentException(ManyPartyResponseMessage.ILLEGAL_PARTY_LIST_REQUEST, bindingResult);
         }
-        Page<Party> res = manyPartyService.findAllParties(requestDto.createPageRequest(), true, requestDto.createPartyListRequestFilterDto(), requestDto.getCursorId(), currentMember.id(), null);
+        Page<Party> res = manyPartyService.findAllParties(requestDto.createPageRequest(), requestDto.createPartyListRequestFilterDto(), requestDto.getCursorId(), currentMember.id());
         return DefaultResponse.res(StatusCode.OK, MemberResponseMessage.READ_MY_PARTY, MyPartyListResponseDto.createFromEntity(res.getContent(), currentMember.id()));
     }
 

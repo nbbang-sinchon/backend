@@ -2,7 +2,6 @@ package nbbang.com.nbbang.domain.party.service;
 
 import lombok.RequiredArgsConstructor;
 import nbbang.com.nbbang.domain.bbangpan.domain.PartyMember;
-import nbbang.com.nbbang.domain.bbangpan.repository.PartyMemberRepository;
 import nbbang.com.nbbang.domain.chat.domain.Message;
 import nbbang.com.nbbang.domain.chat.repository.MessageRepository;
 import nbbang.com.nbbang.domain.member.domain.Member;
@@ -10,6 +9,7 @@ import nbbang.com.nbbang.domain.member.dto.Place;
 import nbbang.com.nbbang.domain.member.service.MemberService;
 import nbbang.com.nbbang.domain.party.domain.*;
 import nbbang.com.nbbang.domain.party.dto.single.PartyUpdateServiceDto;
+import nbbang.com.nbbang.domain.party.dto.single.request.PartyRequestDto;
 import nbbang.com.nbbang.domain.party.repository.PartyHashtagRepository;
 import nbbang.com.nbbang.domain.party.repository.PartyRepository;
 import nbbang.com.nbbang.global.error.exception.NotOwnerException;
@@ -21,13 +21,10 @@ import org.webjars.NotFoundException;
 import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import static nbbang.com.nbbang.domain.party.controller.PartyResponseMessage.PARTY_NOT_FOUND;
-import static nbbang.com.nbbang.global.socket.SocketDestination.GLOBAL;
 
 @Service
 @Transactional(readOnly=true)
@@ -56,6 +53,17 @@ public class PartyService {
         return savedParty;
     }
 
+    @Transactional
+    public Long createParty(PartyRequestDto dto, Long memberId) {
+        Party party = dto.createEntityByDto();
+        Member owner = memberService.findById(memberId);
+        PartyMember.createPartyMember(party, owner);
+        Optional.ofNullable(dto.getHashtags()).orElseGet(Collections::emptyList).
+                stream().forEach(content-> addHashtag(party.getId(), content));
+        party.addOwner(owner);
+        return party.getId();
+    }
+
     public Party findById(Long partyId) {
         Party party = partyRepository.findById(partyId).orElseThrow(() -> new NotFoundException(PARTY_NOT_FOUND));
         return party;
@@ -70,6 +78,11 @@ public class PartyService {
         Party party = findById(partyId);
         Place place = party.getPlace();
         List<Party> parties = partyRepository.findByPlaceAndNotSelf(partyId);
+        return parties;
+    }
+
+    public List<Party> findNearAndSimilar(Long partyId, Place place) {
+        List<Party> parties = partyRepository.findByPlaceAndNotSelf(partyId, place);
         return parties;
     }
     

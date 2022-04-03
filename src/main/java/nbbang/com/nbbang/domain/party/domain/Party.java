@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import nbbang.com.nbbang.domain.bbangpan.domain.PartyMember;
-import nbbang.com.nbbang.domain.chat.domain.ChatSession;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.dto.Place;
 import nbbang.com.nbbang.domain.party.dto.single.PartyUpdateServiceDto;
@@ -18,9 +17,6 @@ import java.time.LocalDateTime;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import static javax.persistence.EnumType.STRING;
@@ -70,15 +66,15 @@ public class Party {
     private String accountNumber;
 
     @Builder.Default // https://www.inflearn.com/questions/151658
-    @OneToMany(mappedBy = "party", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "party")
     private List<PartyHashtag> partyHashtags = new ArrayList<>();
 
     @Builder.Default
-    @OneToMany(mappedBy = "party")
+    @OneToMany(mappedBy = "party" , fetch = LAZY)
     private List<PartyMember> partyMembers = new ArrayList<>();
 
     @Builder.Default
-    @OneToMany(mappedBy = "party")
+    @OneToMany(mappedBy = "party", fetch = LAZY)
     private List<PartyWishlist> wishlists = new ArrayList<>();
 
     protected Party() {}
