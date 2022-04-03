@@ -11,11 +11,13 @@ import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.repository.PartyRepository;
 import nbbang.com.nbbang.global.FileUpload.FileUploadService;
 import nbbang.com.nbbang.global.socket.service.SocketPartyMemberService;
+import nbbang.com.nbbang.global.validator.PartyMemberValidator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.webjars.NotFoundException;
 
+import javax.persistence.EntityManager;
 import java.io.IOException;
 
 import static nbbang.com.nbbang.domain.chat.controller.ChatResponseMessage.MESSAGE_NOT_FOUND;
@@ -34,6 +36,8 @@ public class MessageService {
     private final MemberService memberService;
     private final FileUploadService fileUploadService;
     private final SocketPartyMemberService socketPartyMemberService;
+    private final EntityManager em;
+    private final PartyMemberValidator partyMemberValidator;
 
     @Transactional
     public Message send(Long partyId, Long senderId, String content) {
@@ -43,7 +47,8 @@ public class MessageService {
     @Transactional
     public Message send(Long partyId, Long senderId, String content, MessageType type) {
         Party party = partyRepository.findById(partyId).orElseThrow(()->new NotFoundException(PARTY_NOT_FOUND));
-        Member sender = memberService.findById(senderId);
+        Member sender = em.getReference(Member.class, senderId);
+        partyMemberValidator.validatePartyMember(party, sender);
 
         Integer notReadNumber = getNotActiveNumber(party);
         Message message =Message.createMessage(sender, party, content, type, notReadNumber);

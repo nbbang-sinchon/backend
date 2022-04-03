@@ -15,24 +15,21 @@ import java.util.Optional;
 @Slf4j
 public class PartyMemberValidator {
 
-    public boolean isPartyMember(PartyMemberValidatorDto dto) {
-        return isPartyMember(dto.getParty(), dto.getMember());
+    public boolean validatePartyMember(PartyMemberValidatorDto dto) {
+        return validatePartyMember(dto.getParty(), dto.getMember());
     }
 
-    public boolean isOwner(PartyMemberValidatorDto dto) {
-        log.info("dto in validator: {}", dto);
-        return isOwner(dto.getParty(), dto.getMember());
+    public boolean validateOwner(PartyMemberValidatorDto dto) {
+        return validateOwner(dto.getParty(), dto.getMember());
     }
 
-    public boolean isPartyMember(Party party, Member member) {
+    public boolean validatePartyMember(Party party, Member member) {
         if(!party.getPartyMembers().stream().anyMatch(mp -> mp.getMember().equals(member))){
             throw new NotPartyMemberException();
         }
         return true;
     }
-    public boolean isOwner(Party party, Member member) {
-        log.info("party: {}", party);
-        log.info("member: {}", member);
+    public boolean validateOwner(Party party, Member member) {
         if(!(Optional.ofNullable(party.getOwner()).orElse(Member.builder().build()).equals(member))){
              throw new NotOwnerException();
         }

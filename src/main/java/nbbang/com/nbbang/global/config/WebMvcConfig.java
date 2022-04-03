@@ -10,7 +10,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import java.util.Arrays;
 import java.util.List;
 
-@Configuration
+// @Configuration // validator 기능을 서비스 단으로 옮깁니다.
 @RequiredArgsConstructor
 public class WebMvcConfig implements WebMvcConfigurer {
 

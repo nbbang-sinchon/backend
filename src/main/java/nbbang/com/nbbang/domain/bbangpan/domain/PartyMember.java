@@ -11,6 +11,8 @@ import javax.persistence.*;
 
 import java.lang.reflect.Field;
 
+import static javax.persistence.FetchType.LAZY;
+
 @Entity @Getter @Builder
 @AllArgsConstructor
 public class PartyMember {
@@ -23,16 +25,16 @@ public class PartyMember {
     @Builder.Default
     private Boolean isSent = false;
 
-    @OneToOne
+    @OneToOne(fetch = LAZY)
     @JoinColumn(name = "message_id")
     @Builder.Default
     private Message lastReadMessage = Message.builder().build();
 
-    @ManyToOne
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @ManyToOne
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "party_id")
     private Party party;
 

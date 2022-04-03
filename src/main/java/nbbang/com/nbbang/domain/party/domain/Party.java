@@ -51,8 +51,6 @@ public class Party {
     @Enumerated(STRING)
     private Place place;
 
-    // private LocalDateTime cancelTime;
-
     @Builder.Default
     private Integer deliveryFee=0;
 
@@ -65,16 +63,16 @@ public class Party {
 
     private String accountNumber;
 
-    @Builder.Default // https://www.inflearn.com/questions/151658
+    @Builder.Default
     @OneToMany(mappedBy = "party")
     private List<PartyHashtag> partyHashtags = new ArrayList<>();
 
     @Builder.Default
-    @OneToMany(mappedBy = "party" , fetch = LAZY)
+    @OneToMany(mappedBy = "party" )
     private List<PartyMember> partyMembers = new ArrayList<>();
 
     @Builder.Default
-    @OneToMany(mappedBy = "party", fetch = LAZY)
+    @OneToMany(mappedBy = "party")
     private List<PartyWishlist> wishlists = new ArrayList<>();
 
     protected Party() {}

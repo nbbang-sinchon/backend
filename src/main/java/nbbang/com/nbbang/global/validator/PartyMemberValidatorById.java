@@ -17,6 +17,6 @@ public class PartyMemberValidatorById {
 
     @Transactional
     public void isPartyMember(Long partyId, Long memberId){
-        partyMemberValidator.isPartyMember(partyService.findById(partyId),memberService.findById(memberId));
+        partyMemberValidator.validatePartyMember(partyService.findById(partyId),memberService.findById(memberId));
     }
 }

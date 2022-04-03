@@ -50,7 +50,7 @@ public class MessageController {
             throw new CustomIllegalArgumentException(GlobalErrorResponseMessage.ILLEGAL_ARGUMENT_ERROR, bindingResult);
         }
         Message message = messageService.send(partyId, currentMember.id(), chatSendRequestDto.getContent());
-        socketSender.sendChattingByMessage(message);
+        //socketSender.sendChattingByMessage(message);
         return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.UPLOADED_MESSAGE);
     }
 
