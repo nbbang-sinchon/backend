@@ -63,6 +63,8 @@ public class ChatService {
         return messageRepository.findAllByCursorId(party.getId(), enterMessageId, pageable, cursorId);
     }
 
+    // 아래 메소드를 사용하지 않아서 주석 처리합니다. 삭제해도 될 것 같습니다.
+/*
     @Transactional
     public Long sendMessage(Long memberId, Long partyId, String content, LocalDateTime localDateTime) {
         Member member = memberService.findById(memberId);
@@ -87,6 +89,7 @@ public class ChatService {
         messageRepository.save(message);
         return message.getId();
     }
+*/
 
     // 이 메소드 한번 호출하면 9개의 쿼리가 나가요
     @Transactional

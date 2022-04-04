@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.webjars.NotFoundException;
 
 import static nbbang.com.nbbang.domain.chat.controller.ChatResponseMessage.MESSAGE_NOT_FOUND;
+import static nbbang.com.nbbang.domain.chat.domain.MessageType.EXIT;
 import static nbbang.com.nbbang.domain.chat.domain.MessageType.IMAGE;
 import static nbbang.com.nbbang.domain.party.controller.PartyResponseMessage.PARTY_NOT_FOUND;
 import static nbbang.com.nbbang.global.FileUpload.UploadDirName.DIR_CHATS;
@@ -66,7 +67,9 @@ public class MessageService {
     @Transactional
     public Message send(Long partyId, Long senderId, String content, MessageType type) {
 
-        partyMemberValidator.validatePartyMember(partyId, senderId);
+        if(type!=EXIT){
+            partyMemberValidator.validatePartyMember(partyId, senderId);
+        }
 
         Message message = createMessage(partyId, senderId, content, type);
         Message savedMessage = messageRepository.save(message);
