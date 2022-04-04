@@ -2,8 +2,8 @@ package nbbang.com.nbbang.global.socket;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import nbbang.com.nbbang.domain.cache.CacheService;
-import nbbang.com.nbbang.domain.cache.PartyMemberIdCache;
+import nbbang.com.nbbang.global.cache.CacheService;
+import nbbang.com.nbbang.global.cache.PartyMemberIdCache;
 import nbbang.com.nbbang.domain.chat.domain.Message;
 import nbbang.com.nbbang.domain.chat.dto.message.ChatAlarmResponseDto;
 import nbbang.com.nbbang.domain.chat.dto.message.ChatSendResponseDto;

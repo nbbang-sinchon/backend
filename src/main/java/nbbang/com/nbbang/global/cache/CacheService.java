@@ -1,9 +1,8 @@
-package nbbang.com.nbbang.domain.cache;
+package nbbang.com.nbbang.global.cache;
 
 import lombok.RequiredArgsConstructor;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.repository.MemberRepository;
-import nbbang.com.nbbang.domain.member.service.MemberService;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.repository.PartyRepository;
 import org.springframework.cache.annotation.CacheEvict;

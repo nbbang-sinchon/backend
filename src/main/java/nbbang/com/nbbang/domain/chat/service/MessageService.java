@@ -1,7 +1,7 @@
 package nbbang.com.nbbang.domain.chat.service;
 
 import lombok.extern.slf4j.Slf4j;
-import nbbang.com.nbbang.domain.cache.CacheService;
+import nbbang.com.nbbang.global.cache.CacheService;
 import nbbang.com.nbbang.domain.chat.domain.Message;
 import nbbang.com.nbbang.domain.chat.domain.MessageType;
 import nbbang.com.nbbang.domain.chat.event.ChatEventPublisher;

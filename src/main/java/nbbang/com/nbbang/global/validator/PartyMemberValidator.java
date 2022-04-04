@@ -2,19 +2,16 @@ package nbbang.com.nbbang.global.validator;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import nbbang.com.nbbang.domain.cache.CacheService;
+import nbbang.com.nbbang.global.cache.CacheService;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.repository.PartyRepository;
 import nbbang.com.nbbang.global.error.exception.NotOwnerException;
 import nbbang.com.nbbang.global.error.exception.NotPartyMemberException;
 import org.springframework.stereotype.Component;
-import org.webjars.NotFoundException;
 
 import javax.persistence.EntityManager;
 import java.util.Optional;
-
-import static nbbang.com.nbbang.domain.party.controller.PartyResponseMessage.PARTY_NOT_FOUND;
 
 @Component
 @RequiredArgsConstructor

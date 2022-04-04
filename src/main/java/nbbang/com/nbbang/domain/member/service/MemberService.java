@@ -2,14 +2,13 @@ package nbbang.com.nbbang.domain.member.service;
 
 import lombok.RequiredArgsConstructor;
 import nbbang.com.nbbang.domain.bbangpan.repository.PartyMemberRepository;
-import nbbang.com.nbbang.domain.cache.CacheService;
+import nbbang.com.nbbang.global.cache.CacheService;
 import nbbang.com.nbbang.domain.member.controller.MemberResponseMessage;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.dto.Place;
 import nbbang.com.nbbang.domain.member.repository.MemberRepository;
 import nbbang.com.nbbang.global.FileUpload.FileUploadService;
 import nbbang.com.nbbang.global.security.Role;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;

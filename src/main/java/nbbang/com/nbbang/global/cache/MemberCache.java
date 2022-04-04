@@ -1,4 +1,4 @@
-package nbbang.com.nbbang.domain.cache;
+package nbbang.com.nbbang.global.cache;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
