@@ -38,7 +38,7 @@ class ChatServiceTest {
         Member memberA = Member.builder().nickname("memberA").build();
         memberRepository.save(memberA);
         Party partyA = Party.builder().owner(memberA).build();
-        partyRepository.save(partyA);
+        partyA = partyService.create(partyA, memberA.getId(),null);
         String content = "hello 뿌링클";
         // when
 
