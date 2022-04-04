@@ -94,24 +94,24 @@ class MyPartiesIntegrationTest {
         messageService.send(partyId, saveMember3.getId(), "hello here 3");
 
 
-        DefaultResponse res = controllerTestUtil.expectDefaultResponseObject(get("/members/parties/on"));
-        MyPartyListResponseDto result = controllerTestUtil.convert(res.getData(), MyPartyListResponseDto.class);
+        //DefaultResponse res = controllerTestUtil.expectDefaultResponseObject(get("/members/parties/on"));
+        //MyPartyListResponseDto result = controllerTestUtil.convert(res.getData(), MyPartyListResponseDto.class);
         // assertThat(result.getParties().get(0).getNotReadNumber()).isEqualTo(2);
 
-        chatRoomService.enter(member1Attributes, partyId); // 1번 파티 입장
+        //chatRoomService.enter(member1Attributes, partyId); // 1번 파티 입장
 
-        DefaultResponse res2 = controllerTestUtil.expectDefaultResponseObject(get("/members/parties/on"));
-        MyPartyListResponseDto result2 = controllerTestUtil.convert(res2.getData(), MyPartyListResponseDto.class);
+        //DefaultResponse res2 = controllerTestUtil.expectDefaultResponseObject(get("/members/parties/on"));
+        //MyPartyListResponseDto result2 = controllerTestUtil.convert(res2.getData(), MyPartyListResponseDto.class);
         // assertThat(result2.getParties().get(0).getNotReadNumber()).isEqualTo(0);
 
-        messageService.send(partyId, saveMember3.getId(), "hoho 3");
+       // messageService.send(partyId, saveMember3.getId(), "hoho 3");
 
 
-        DefaultResponse res3 = controllerTestUtil.expectDefaultResponseObject(get("/members/parties/on"));
-        MyPartyListResponseDto result3 = controllerTestUtil.convert(res3.getData(), MyPartyListResponseDto.class);
+        //DefaultResponse res3 = controllerTestUtil.expectDefaultResponseObject(get("/members/parties/on"));
+        //MyPartyListResponseDto result3 = controllerTestUtil.convert(res3.getData(), MyPartyListResponseDto.class);
         // assertThat(result3.getParties().get(0).getNotReadNumber()).isEqualTo(0);
 
-        chatRoomService.exit(member1Attributes, partyId); // 1번 파티 나감
+        //chatRoomService.exit(member1Attributes, partyId); // 1번 파티 나감
 
     }
 

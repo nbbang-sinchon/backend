@@ -34,10 +34,7 @@ public class PartyMemberValidator {
     }
 
     public boolean validatePartyMember(Party party, Member member) {
-        if(!cacheService.getPartyMembersCacheByPartyId(party.getId()).stream().anyMatch(mp -> mp.getMemberId().equals(member.getId()))){
-            throw new NotPartyMemberException();
-        }
-        return true;
+        return validatePartyMember(party.getId(), member.getId());
     }
 
     public boolean validateOwner(Party party, Member member) {
@@ -47,9 +44,10 @@ public class PartyMemberValidator {
         return true;
     }
 
-    public void validatePartyMember(Long partyId, Long senderId) {
-        Party party = partyRepository.findById(partyId).orElseThrow(()->new NotFoundException(PARTY_NOT_FOUND));
-        Member senderProxy = em.getReference(Member.class, senderId);
-        validatePartyMember(party, senderProxy);
+    public boolean validatePartyMember(Long partyId, Long memberId) {
+        if(!cacheService.getPartyMembersCacheByPartyId(partyId).stream().anyMatch(mp -> mp.getMemberId().equals(memberId))){
+            throw new NotPartyMemberException();
+        }
+        return true;
     }
 }

@@ -5,6 +5,7 @@ import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.service.MemberService;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.repository.PartyRepository;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
@@ -27,11 +28,21 @@ public class CacheService {
         return new MemberCache(memberId, member.getNickname(), member.getAvatar());
     }
 
+    @CacheEvict(key="#memberId", value="memberCache")
+    public void evictMemberCache(Long memberId){}
+
     @Cacheable(key="#partyId", value="partyMemberCache")
     public List<PartyMemberIdCache> getPartyMembersCacheByPartyId(Long partyId){
         Party party = partyRepository.findById(partyId).orElseThrow(() -> new NotFoundException(PARTY_NOT_FOUND));
         List<PartyMemberIdCache> caches = party.getPartyMembers().stream().map(pm -> PartyMemberIdCache.createByPartyMember(pm)).collect(Collectors.toList());
+        for (PartyMemberIdCache cach : caches) {
+            System.out.println("cach.getMemberId() = " + cach.getMemberId());
+        }
         return caches;
     }
+
+    @CacheEvict(key="#partyId", value="partyMemberCache")
+    public void evictPartyMemberCache(Long partyId){}
+
 
 }
