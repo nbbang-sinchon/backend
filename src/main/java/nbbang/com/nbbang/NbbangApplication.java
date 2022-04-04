@@ -16,7 +16,6 @@ import java.util.TimeZone;
 public class NbbangApplication {
 
 	public static void main(String[] args) {
-		log.info("[main] hashcode: {}", Thread.currentThread().hashCode());
 		SpringApplication.run(NbbangApplication.class, args);
 	}
 

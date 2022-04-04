@@ -1,22 +1,19 @@
 package nbbang.com.nbbang.domain.chat.event;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
-import org.springframework.context.ApplicationContext;
+import nbbang.com.nbbang.domain.chat.domain.Message;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
 @EnableAsync
-public class EventPublisher {
+public class ChatEventPublisher {
 
     private final ApplicationEventPublisher applicationEventPublisher;
 
-    public void publish() throws Exception {
-        applicationEventPublisher.publishEvent(new ChatEvent("chats!"));
+    public void publish(Message message) {
+        applicationEventPublisher.publishEvent(message);
     }
 }
