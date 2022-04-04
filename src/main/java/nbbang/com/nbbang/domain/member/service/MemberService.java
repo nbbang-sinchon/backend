@@ -8,6 +8,7 @@ import nbbang.com.nbbang.domain.member.dto.Place;
 import nbbang.com.nbbang.domain.member.repository.MemberRepository;
 import nbbang.com.nbbang.global.FileUpload.FileUploadService;
 import nbbang.com.nbbang.global.security.Role;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;

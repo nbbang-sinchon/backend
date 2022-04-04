@@ -12,6 +12,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.webjars.NotFoundException;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 

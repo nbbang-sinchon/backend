@@ -13,9 +13,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import nbbang.com.nbbang.domain.chat.domain.CacheService;
+import nbbang.com.nbbang.domain.chat.domain.MemberCache;
 import nbbang.com.nbbang.domain.chat.event.EventPublisher;
 import nbbang.com.nbbang.domain.chat.service.ChatService;
+import nbbang.com.nbbang.domain.chat.service.MessageService;
+import nbbang.com.nbbang.domain.test.Board;
+import nbbang.com.nbbang.domain.test.BoardService;
 import net.bytebuddy.pool.TypePool;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -23,6 +29,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 
 //@Tag(name = "sample", description = "테스트 api")
@@ -50,15 +58,17 @@ public class SampleController {
 
     private final EventPublisher eventPublisher;
 
+    @Autowired
+    CacheService service;
+
     @Hidden
     @GetMapping("/test")
     public String hello() throws Exception {
-        //chatService.readMessage(70L, 1L);
-        log.info("test******");
-        log.info(String.valueOf(Thread.currentThread().hashCode()));
-        log.info("test******");
-        eventPublisher.publish();
-        return "test success";
+        //List<MemberCache> boards = service.getBoards("5");
+        String dbCount = String.valueOf(BoardService.getDbCount());
+        return dbCount;
+        //eventPublisher.publish();
+        //return "test success";
     }
 
     @Data @NoArgsConstructor @AllArgsConstructor
