@@ -1,4 +1,4 @@
-package nbbang.com.nbbang.domain.chat.domain;
+package nbbang.com.nbbang.domain.cache;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

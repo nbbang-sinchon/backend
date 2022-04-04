@@ -2,21 +2,19 @@ package nbbang.com.nbbang.global.socket;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import nbbang.com.nbbang.domain.bbangpan.domain.PartyMember;
+import nbbang.com.nbbang.domain.cache.CacheService;
+import nbbang.com.nbbang.domain.cache.PartyMemberIdCache;
 import nbbang.com.nbbang.domain.chat.domain.Message;
 import nbbang.com.nbbang.domain.chat.dto.message.ChatAlarmResponseDto;
 import nbbang.com.nbbang.domain.chat.dto.message.ChatSendResponseDto;
-import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.repository.PartyRepository;
-import nbbang.com.nbbang.domain.party.service.PartyService;
 import nbbang.com.nbbang.global.socket.redisPubSub.RedisPublisher;
 import nbbang.com.nbbang.global.socket.redisPubSub.RedisTopicRepository;
 import org.springframework.stereotype.Component;
 import org.webjars.NotFoundException;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static nbbang.com.nbbang.domain.party.controller.PartyResponseMessage.PARTY_NOT_FOUND;
 import static nbbang.com.nbbang.global.socket.SocketDestination.*;
@@ -28,17 +26,17 @@ public class SocketSender {
     private final PartyRepository partyRepository;
     private final RedisPublisher redisPublisher;
     private final RedisTopicRepository redisTopicRepository;
+    private final CacheService cacheService;
 
     public void sendChattingByMessage(Message message){
         ChatSendResponseDto chatSendResponseDto = ChatSendResponseDto.createByMessage(message);
         Long partyId = message.getParty().getId();
         send(CHATTING, partyId,  chatSendResponseDto);
         Party party = partyRepository.findById(partyId).orElseThrow(() -> new NotFoundException(PARTY_NOT_FOUND));
-        List<PartyMember> partyMembers = party.getPartyMembers();
-        List<Member> members = partyMembers.stream()
-                .map(partyMember -> partyMember.getMember()).collect(Collectors.toList());
         ChatAlarmResponseDto chatAlarmResponseDto = ChatAlarmResponseDto.create(party, chatSendResponseDto);
-        members.stream().forEach(member -> sendGlobal(member.getId(),chatAlarmResponseDto));
+
+        List<PartyMemberIdCache> partyMembers = cacheService.getPartyMembersCacheByPartyId(partyId);
+        partyMembers.stream().forEach(pm -> sendGlobal(pm.getMemberId(), chatAlarmResponseDto));
     }
 
     public void sendChattingReadMessage(Long partyId, Object data){

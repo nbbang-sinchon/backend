@@ -12,7 +12,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import nbbang.com.nbbang.domain.chat.domain.CacheService;
+import nbbang.com.nbbang.domain.cache.CacheService;
 import nbbang.com.nbbang.domain.chat.event.ChatEventPublisher;
 import nbbang.com.nbbang.domain.chat.service.ChatService;
 import nbbang.com.nbbang.domain.test.BoardService;

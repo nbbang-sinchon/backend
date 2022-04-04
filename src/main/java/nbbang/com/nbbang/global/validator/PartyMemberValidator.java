@@ -2,18 +2,28 @@ package nbbang.com.nbbang.global.validator;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import nbbang.com.nbbang.domain.cache.CacheService;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.party.domain.Party;
+import nbbang.com.nbbang.domain.party.repository.PartyRepository;
 import nbbang.com.nbbang.global.error.exception.NotOwnerException;
 import nbbang.com.nbbang.global.error.exception.NotPartyMemberException;
 import org.springframework.stereotype.Component;
+import org.webjars.NotFoundException;
 
+import javax.persistence.EntityManager;
 import java.util.Optional;
+
+import static nbbang.com.nbbang.domain.party.controller.PartyResponseMessage.PARTY_NOT_FOUND;
 
 @Component
 @RequiredArgsConstructor
 @Slf4j
 public class PartyMemberValidator {
+
+    private final CacheService cacheService;
+    private final PartyRepository partyRepository;
+    private final EntityManager em;
 
     public boolean validatePartyMember(PartyMemberValidatorDto dto) {
         return validatePartyMember(dto.getParty(), dto.getMember());
@@ -24,11 +34,12 @@ public class PartyMemberValidator {
     }
 
     public boolean validatePartyMember(Party party, Member member) {
-        if(!party.getPartyMembers().stream().anyMatch(mp -> mp.getMember().equals(member))){
+        if(!cacheService.getPartyMembersCacheByPartyId(party.getId()).stream().anyMatch(mp -> mp.getMemberId().equals(member.getId()))){
             throw new NotPartyMemberException();
         }
         return true;
     }
+
     public boolean validateOwner(Party party, Member member) {
         if(!(Optional.ofNullable(party.getOwner()).orElse(Member.builder().build()).equals(member))){
              throw new NotOwnerException();
@@ -36,4 +47,9 @@ public class PartyMemberValidator {
         return true;
     }
 
+    public void validatePartyMember(Long partyId, Long senderId) {
+        Party party = partyRepository.findById(partyId).orElseThrow(()->new NotFoundException(PARTY_NOT_FOUND));
+        Member senderProxy = em.getReference(Member.class, senderId);
+        validatePartyMember(party, senderProxy);
+    }
 }
