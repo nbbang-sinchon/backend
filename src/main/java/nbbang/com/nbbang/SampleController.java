@@ -15,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.global.cache.CacheService;
 import nbbang.com.nbbang.domain.chat.event.ChatEventPublisher;
 import nbbang.com.nbbang.domain.chat.service.ChatService;
-import nbbang.com.nbbang.domain.test.BoardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -56,11 +55,7 @@ public class SampleController {
     @Hidden
     @GetMapping("/test")
     public String hello() throws Exception {
-        //List<MemberCache> boards = service.getBoards("5");
-        String dbCount = String.valueOf(BoardService.getDbCount());
-        return dbCount;
-        //eventPublisher.publish();
-        //return "test success";
+        return "test success";
     }
 
     @Data @NoArgsConstructor @AllArgsConstructor
