@@ -65,7 +65,7 @@ public class MessageRepositorySupportImpl implements MessageRepositorySupport {
     }
 
     @Override
-    public void bulkNotReadMinusPlus(Long lastReadId, Long partyId) {
+    public void bulkNotReadSubtract(Long lastReadId, Long partyId) {
         QMessage message = QMessage.message;
                 query
                 .update(message)
