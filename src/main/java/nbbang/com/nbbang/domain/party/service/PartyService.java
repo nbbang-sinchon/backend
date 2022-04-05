@@ -127,7 +127,8 @@ public class PartyService {
     public void addHashtag(Long partyId, String content){
         Party party = findById(partyId);
         Hashtag hashtag = hashtagService.findOrCreateByContent(content);
-        PartyHashtag.createPartyHashtag(party, hashtag);
+        PartyHashtag partyHashtag = PartyHashtag.createPartyHashtag(party, hashtag);
+        partyHashtagRepository.save(partyHashtag);
     }
 
     @Transactional // ************** 구현 필요(쿼리 최적화) ************** /

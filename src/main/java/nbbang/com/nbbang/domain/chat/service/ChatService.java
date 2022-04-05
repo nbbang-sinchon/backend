@@ -69,12 +69,11 @@ public class ChatService {
 
         PartyMember partyMember = partyMemberRepository.findByMemberIdAndPartyId(memberId, partyId);
 
-        Long lastReadMessageId = ((Optional.ofNullable(partyMember.getLastReadMessage())).orElse(Message.builder().id(0L).build())).getId();
+        Long lastReadMessageId = (partyMember.getLastReadMessage()).getId();
         messageRepository.bulkNotReadSubtract(lastReadMessageId, partyId);
 
         PartyMember reFoundPartyMember = partyMemberRepository.findByMemberIdAndPartyId(memberId, partyId);
-        Message lastMessage = messageRepository.findLastMessage(partyId);
-        Message currentLastMessage = Optional.ofNullable(lastMessage).orElse(Message.builder().id(0L).build());
+        Message currentLastMessage = messageRepository.findLastMessage(partyId);
         reFoundPartyMember.changeLastReadMessage(currentLastMessage);
         ReadMessageDto dto = ReadMessageDto.builder().lastReadMessageId(lastReadMessageId).senderId(memberId).build();
         return dto;
