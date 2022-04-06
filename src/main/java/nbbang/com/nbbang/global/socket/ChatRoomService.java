@@ -45,6 +45,7 @@ public class ChatRoomService {
         Long memberId = (Long) attributes.get("memberId");
         socketPartyMemberService.subscribe(partyId, memberId);
         attributes.put("status", "subscribe");
+        System.out.println("active number: "+socketPartyMemberService.getPartyMemberActiveNumber(partyId, memberId));
         if(socketPartyMemberService.getPartyMemberActiveNumber(partyId, memberId)==1){
             readMessage(partyId, memberId, true);
         }

@@ -59,13 +59,15 @@ public class ChatService {
     @Transactional
     public ReadMessageDto readMessage(Long partyId, Long memberId) {
 
-        PartyMember partyMember = partyMemberRepository.findByMemberIdAndPartyId(memberId, partyId);
-        Long lastReadMessageId = partyMember.getLastReadMessage().getId();
+        // PartyMember partyMember = partyMemberRepository.findByMemberIdAndPartyId(memberId, partyId);
+        // Long lastReadMessageId = partyMember.getLastReadMessage().getId();
 
-        messageRepository.bulkNotReadSubtract(lastReadMessageId, partyId);
+        messageRepository.bulkNotReadSubtract(partyId, memberId);
 
         Message currentLastMessage = messageRepository.findLastMessage(partyId);
 
+        PartyMember partyMember = partyMemberRepository.findByMemberIdAndPartyId(memberId, partyId);
+        Long lastReadMessageId = partyMember.getLastReadMessage().getId();
         partyMember.changeLastReadMessage(currentLastMessage);
         ReadMessageDto dto = ReadMessageDto.builder().lastReadMessageId(lastReadMessageId).senderId(memberId).build();
         return dto;

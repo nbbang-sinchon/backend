@@ -8,6 +8,7 @@ import nbbang.com.nbbang.domain.party.repository.PartyRepository;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
 
 import java.util.List;
@@ -18,6 +19,7 @@ import static nbbang.com.nbbang.domain.party.controller.PartyResponseMessage.PAR
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class CacheService {
 
     private final MemberRepository memberRepository;
@@ -34,8 +36,9 @@ public class CacheService {
 
     @Cacheable(key="#partyId", value="partyMemberCache")
     public List<PartyMemberIdCache> getPartyMembersCacheByPartyId(Long partyId){
-        Party party = partyRepository.findById(partyId).orElseThrow(() -> new NotFoundException(PARTY_NOT_FOUND));
+        Party party = partyRepository.findWithPartyMember(partyId);
         List<PartyMemberIdCache> caches = party.getPartyMembers().stream().map(pm -> PartyMemberIdCache.createByPartyMember(pm)).collect(Collectors.toList());
+
         return caches;
     }
 

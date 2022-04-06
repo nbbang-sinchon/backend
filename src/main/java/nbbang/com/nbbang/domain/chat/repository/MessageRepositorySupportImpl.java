@@ -1,10 +1,13 @@
 package nbbang.com.nbbang.domain.chat.repository;
 
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import nbbang.com.nbbang.domain.bbangpan.domain.PartyMember;
+import nbbang.com.nbbang.domain.bbangpan.domain.QPartyMember;
 import nbbang.com.nbbang.domain.chat.domain.Message;
 import nbbang.com.nbbang.domain.chat.domain.MessageType;
 import nbbang.com.nbbang.domain.chat.domain.QMessage;
@@ -65,16 +68,26 @@ public class MessageRepositorySupportImpl implements MessageRepositorySupport {
     }
 
     @Override
-    public void bulkNotReadSubtract(Long lastReadId, Long partyId) {
+    public void bulkNotReadSubtract(Long partyId, Long memberId) {
+
+        QPartyMember partyMember = QPartyMember.partyMember;
         QMessage message = QMessage.message;
-                query
+
+        query
                 .update(message)
                 .set(message.notReadNumber,message.notReadNumber.subtract(1))
-                .where(message.id.gt(lastReadId))
+                .where(message.id.gt(
+                        JPAExpressions
+                                .select(partyMember.lastReadMessage.id)
+                                .from(partyMember)
+                                .where(partyMember.member.id.eq(memberId))
+                                .where(partyMember.party.id.eq(partyId))
+                ))
                 .where(message.party.id.eq(partyId))
                 .execute();
         em.flush();
         em.clear();
+
     }
 
     @Override
