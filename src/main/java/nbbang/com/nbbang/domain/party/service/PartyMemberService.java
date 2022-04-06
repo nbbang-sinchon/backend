@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.domain.bbangpan.domain.PartyMember;
 import nbbang.com.nbbang.domain.bbangpan.repository.PartyMemberRepository;
+import nbbang.com.nbbang.global.cache.CacheService;
 import nbbang.com.nbbang.domain.chat.domain.Message;
 import nbbang.com.nbbang.domain.chat.domain.MessageType;
 import nbbang.com.nbbang.domain.chat.repository.MessageRepository;
@@ -19,6 +20,7 @@ import nbbang.com.nbbang.global.socket.service.SocketPartyMemberService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,10 +35,13 @@ public class PartyMemberService {
     private final MessageService messageService;
     private final MessageRepository messageRepository;
     private final SocketPartyMemberService socketPartyMemberService;
+    private final EntityManager em;
+    private final CacheService cacheService;
 
     public boolean isPartyOwnerOrMember(Party party, Member member) {
         return Optional.ofNullable(party.getOwner()).equals(member) || party.getPartyMembers().stream().anyMatch(mp -> mp.getMember().equals(member));
     }
+
 
     @Transactional
     public Long joinParty(Party party, Member member) {
@@ -56,6 +61,8 @@ public class PartyMemberService {
         PartyMember partyMember = PartyMember.createPartyMember(party, member, messageRepository.findLastMessage(party.getId()));
         partyMemberRepository.save(partyMember);
 
+        cacheService.evictPartyMemberCache(party.getId());
+
         return messageService.send(party.getId(), member.getId(), member.getNickname() + " 님이 입장하셨습니다.", MessageType.ENTER).getId();
     }
 
@@ -74,6 +81,8 @@ public class PartyMemberService {
         PartyMember partyMember = partyMemberRepository.findByMemberIdAndPartyId(member.getId(), party.getId());
         party.exitMemberParty(partyMember);
         partyMemberRepository.delete(partyMember);
+
+        cacheService.evictPartyMemberCache(party.getId());
         return messageService.send(party.getId(), member.getId(), member.getNickname() + " 님이 퇴장하셨습니다.", MessageType.EXIT).getId();
     }
 

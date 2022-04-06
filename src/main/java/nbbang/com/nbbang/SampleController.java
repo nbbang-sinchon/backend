@@ -7,17 +7,17 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import nbbang.com.nbbang.global.cache.CacheService;
+import nbbang.com.nbbang.domain.chat.event.ChatEventPublisher;
 import nbbang.com.nbbang.domain.chat.service.ChatService;
-import net.bytebuddy.pool.TypePool;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -47,10 +47,14 @@ public class SampleController {
         return new SampleDto("BHC 뿌링클 8시", "오늘 저녁 연대서문 뿌링클 먹을 파티 구합니다. 배달비 엔빵 하실분, 사이드 가능입니다.");
     }
 
+    private final ChatEventPublisher chatEventPublisher;
+
+    @Autowired
+    CacheService service;
+
     @Hidden
     @GetMapping("/test")
-    public String hello() {
-        chatService.readMessage(70L, 1L);
+    public String hello() throws Exception {
         return "test success";
     }
 

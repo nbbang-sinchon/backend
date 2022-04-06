@@ -43,9 +43,9 @@ class PartyMemberPartyMemberValidatorTestById {
         partyMemberService.joinParty(createdParty, savedMemberB);
 
         // then
-        assertDoesNotThrow(()->{partyMemberValidator.isOwner(createdParty, savedMemberA);});
-        assertThrows(NotOwnerException.class,()->{partyMemberValidator.isOwner(createdParty, savedMemberB);});
-        assertThrows(NotOwnerException.class,()->{partyMemberValidator.isOwner(createdParty, savedMemberC);});
+        assertDoesNotThrow(()->{partyMemberValidator.validateOwner(createdParty, savedMemberA);});
+        assertThrows(NotOwnerException.class,()->{partyMemberValidator.validateOwner(createdParty, savedMemberB);});
+        assertThrows(NotOwnerException.class,()->{partyMemberValidator.validateOwner(createdParty, savedMemberC);});
     }
 
     @Test
@@ -63,12 +63,12 @@ class PartyMemberPartyMemberValidatorTestById {
         Party createdParty = partyService.create(partyA, savedMemberA.getId(), null);
         partyMemberService.joinParty(createdParty, savedMemberB);
 
-        partyMemberValidator.isPartyMember(createdParty, savedMemberA);
+        partyMemberValidator.validatePartyMember(createdParty, savedMemberA);
 
         // then
-        assertDoesNotThrow(()->{partyMemberValidator.isPartyMember(createdParty, savedMemberA);});
-        assertDoesNotThrow(()->{partyMemberValidator.isPartyMember(createdParty, savedMemberB);});
-        assertThrows(NotPartyMemberException.class,()->{partyMemberValidator.isPartyMember(createdParty, savedMemberC);});
+        assertDoesNotThrow(()->{partyMemberValidator.validatePartyMember(createdParty, savedMemberA);});
+        assertDoesNotThrow(()->{partyMemberValidator.validatePartyMember(createdParty, savedMemberB);});
+        assertThrows(NotPartyMemberException.class,()->{partyMemberValidator.validatePartyMember(createdParty, savedMemberC);});
 
     }
 

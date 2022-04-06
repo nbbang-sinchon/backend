@@ -2,6 +2,7 @@ package nbbang.com.nbbang.domain.member.service;
 
 import lombok.RequiredArgsConstructor;
 import nbbang.com.nbbang.domain.bbangpan.repository.PartyMemberRepository;
+import nbbang.com.nbbang.global.cache.CacheService;
 import nbbang.com.nbbang.domain.member.controller.MemberResponseMessage;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.dto.Place;
@@ -25,6 +26,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final FileUploadService fileUploadService;
     private final PartyMemberRepository partyMemberRepository;
+    private final CacheService cacheService;
 
     @Transactional
     @Deprecated
@@ -56,11 +58,13 @@ public class MemberService {
     public void updateMember(Long memberId, String nickname, Place place) {
         Member member = findById(memberId);
         member.updateMember(nickname, place);
+        cacheService.evictMemberCache(memberId);
     }
 
     @Transactional
     public String uploadAndUpdateAvatar(Long memberId, MultipartFile imgFile) throws IOException {
         Member member = findById(memberId);
+        cacheService.evictMemberCache(memberId);
         return member.uploadAvatar(fileUploadService.deleteAndUpload(member.getAvatar(), imgFile, DIR_AVATAR));
     }
 

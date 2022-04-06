@@ -41,14 +41,8 @@ dependencies {
 
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 
-
-	//implementation "org.springframework.boot:spring-boot-starter-data-redis"
-	//implementation 'org.springframework.session:spring-session-data-redis'
-	//implementation 'org.springframework.session:spring-session-core'
-
 	implementation platform('com.amazonaws:aws-java-sdk-bom:1.11.1000')
 	implementation 'com.amazonaws:aws-java-sdk-s3'
-	//implementation 'org.springframework.cloud:spring-cloud-starter-aws'
 
 	implementation 'org.springframework.boot:spring-boot-starter-aop'
 
@@ -68,6 +62,9 @@ dependencies {
 
 	implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.4'
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+
+
+	implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.5.6'
 
 }
 

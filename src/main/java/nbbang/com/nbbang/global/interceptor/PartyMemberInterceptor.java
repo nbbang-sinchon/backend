@@ -21,7 +21,7 @@ public class PartyMemberInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         PartyMemberValidatorDto dto = partyMemberValidatorService.createByUriAndMemberId(request.getRequestURI(), currentMember.id());
-        return partyMemberValidator.isPartyMember(dto);
+        return partyMemberValidator.validatePartyMember(dto);
 
     }
 }

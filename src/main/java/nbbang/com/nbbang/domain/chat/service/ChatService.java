@@ -6,6 +6,7 @@ import nbbang.com.nbbang.domain.bbangpan.domain.PartyMember;
 import nbbang.com.nbbang.domain.bbangpan.repository.PartyMemberRepository;
 import nbbang.com.nbbang.domain.chat.controller.ChatResponseMessage;
 import nbbang.com.nbbang.domain.chat.domain.Message;
+import nbbang.com.nbbang.domain.chat.domain.MessageType;
 import nbbang.com.nbbang.domain.chat.dto.ReadMessageDto;
 import nbbang.com.nbbang.domain.chat.repository.MessageRepository;
 import nbbang.com.nbbang.domain.member.domain.Member;
@@ -15,6 +16,7 @@ import nbbang.com.nbbang.domain.party.repository.PartyRepository;
 import nbbang.com.nbbang.domain.party.service.PartyMemberService;
 import nbbang.com.nbbang.domain.party.service.PartyService;
 import nbbang.com.nbbang.global.error.exception.NotPartyMemberException;
+import nbbang.com.nbbang.global.validator.PartyMemberValidator;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -32,9 +34,8 @@ public class ChatService {
     private final MessageRepository messageRepository;
     private final MemberService memberService;
     private final PartyRepository partyRepository;
-    private final PartyService partyService;
     private final PartyMemberRepository partyMemberRepository;
-    private final PartyMemberService partyMemberService;
+    private final PartyMemberValidator partyMemberValidator;
 
     public Message findLastMessage(Party party) {
         return messageRepository.findLastMessage(party.getId());
@@ -44,16 +45,26 @@ public class ChatService {
         return messageRepository.findById(messageId).orElseThrow(() -> new NotFoundException(ChatResponseMessage.MESSAGE_NOT_FOUND));
     }
 
+    public Message getEnterMessage(Long partyId, Long memberId) {
+        Message message = Optional.ofNullable(messageRepository.findFirstByTypeAndPartyIdAndSenderId(MessageType.ENTER, partyId, memberId))
+                .orElse(Message.builder().id(0L).build());
+        return message;
+    }
+
     public Page<Message> findMessages(Party party, Long memberId, Pageable pageable) {
-        Long enterMessageId = partyMemberService.getEnterMessage(party.getId(), memberId).getId();
+        partyMemberValidator.validatePartyMember(party.getId(), memberId);
+        Long enterMessageId = getEnterMessage(party.getId(), memberId).getId();
         return messageRepository.findAllByPartyIdAndIdGreaterThanEqualOrderByIdDesc(party.getId(),enterMessageId, pageable);
     }
 
     public Page<Message> findMessagesByCursorId(Party party, Long memberId, Pageable pageable, Long cursorId) {
-        Long enterMessageId = partyMemberService.getEnterMessage(party.getId(), memberId).getId();
+        partyMemberValidator.validatePartyMember(party.getId(), memberId);
+        Long enterMessageId = getEnterMessage(party.getId(), memberId).getId();
         return messageRepository.findAllByCursorId(party.getId(), enterMessageId, pageable, cursorId);
     }
 
+    // 아래 메소드를 사용하지 않아서 주석 처리합니다. 삭제해도 될 것 같습니다.
+/*
     @Transactional
     public Long sendMessage(Long memberId, Long partyId, String content, LocalDateTime localDateTime) {
         Member member = memberService.findById(memberId);
@@ -78,6 +89,7 @@ public class ChatService {
         messageRepository.save(message);
         return message.getId();
     }
+*/
 
     // 이 메소드 한번 호출하면 9개의 쿼리가 나가요
     @Transactional
@@ -89,7 +101,8 @@ public class ChatService {
         messageRepository.bulkNotReadMinusPlus(lastReadMessageId, partyId);
 
         PartyMember reFoundPartyMember = partyMemberRepository.findByMemberIdAndPartyId(memberId, partyId);
-        Message currentLastMessage = partyService.findLastMessage(partyId);
+        Message lastMessage = messageRepository.findLastMessage(partyId);
+        Message currentLastMessage = Optional.ofNullable(lastMessage).orElse(Message.builder().id(0L).build());
         reFoundPartyMember.changeLastReadMessage(currentLastMessage);
         ReadMessageDto dto = ReadMessageDto.builder().lastReadMessageId(lastReadMessageId).senderId(memberId).build();
         return dto;
