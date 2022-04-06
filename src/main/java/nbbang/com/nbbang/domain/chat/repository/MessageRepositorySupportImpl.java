@@ -23,6 +23,9 @@ import javax.persistence.EntityManager;
 import java.util.Collections;
 import java.util.List;
 
+import static nbbang.com.nbbang.domain.bbangpan.domain.QPartyMember.*;
+import static nbbang.com.nbbang.domain.chat.domain.QMessage.*;
+
 @RequiredArgsConstructor
 @Slf4j
 public class MessageRepositorySupportImpl implements MessageRepositorySupport {
@@ -35,7 +38,7 @@ public class MessageRepositorySupportImpl implements MessageRepositorySupport {
         QMessage message = QMessage.message;
         return query.selectFrom(message)
                 .where(message.party.id.eq(partyId))
-                .orderBy(message.id.desc())
+                .orderBy(message.id.desc()).limit(1)
                 .fetchOne();
     }
 
@@ -64,10 +67,6 @@ public class MessageRepositorySupportImpl implements MessageRepositorySupport {
 
     @Override
     public void bulkNotReadSubtract(Long partyId, Long memberId) {
-
-        QPartyMember partyMember = QPartyMember.partyMember;
-        QMessage message = QMessage.message;
-
         query
                 .update(message)
                 .set(message.notReadNumber,message.notReadNumber.subtract(1))

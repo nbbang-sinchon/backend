@@ -1,6 +1,8 @@
 package nbbang.com.nbbang.domain.bbangpan.repository;
 
 import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.JPQLQuery;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import nbbang.com.nbbang.domain.bbangpan.domain.QPartyMember;
@@ -32,12 +34,11 @@ public class PartyMemberRepositorySupportImpl implements PartyMemberRepositorySu
     @Override
     public void updateLastReadMessage(Long partyId, Long memberId) {
         query.update(partyMember)
+                .set(partyMember.lastReadMessage.id, JPAExpressions.select(message.id.max()).from(message)
+                        .where(message.party.id.eq(partyId)))
                 .where(partyMember.member.id.eq(memberId))
                 .where(partyMember.party.id.eq(partyId))
-                .set(partyMember.lastReadMessage, JPAExpressions.selectFrom(message)
-                        .where(message.party.id.eq(partyId))
-                        .orderBy(message.id.desc())
-                        .fetchOne())
                 .execute();
+
     }
 }

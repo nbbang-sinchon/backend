@@ -8,6 +8,7 @@ import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.domain.PartyStatus;
 import nbbang.com.nbbang.domain.party.domain.QParty;
 
+import static nbbang.com.nbbang.domain.bbangpan.domain.QPartyMember.partyMember;
 import static nbbang.com.nbbang.domain.party.domain.QParty.party; // JPA 책 432p.
 
 import java.util.List;
@@ -45,9 +46,8 @@ public class PartyRepositorySupportImpl implements PartyRepositorySupport{
     @Override
     public Party findWithPartyMember(Long partyId) {
         return query.selectFrom(party)
-                .where(QParty.party.id.eq(partyId))
-                .join(party.partyMembers, QPartyMember.partyMember)
-                .fetchJoin()
+                .where(party.id.eq(partyId))
+                .leftJoin(party.partyMembers).fetchJoin()
                 .fetchOne();
     }
 }
