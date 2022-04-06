@@ -12,11 +12,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import nbbang.com.nbbang.global.cache.CacheService;
-import nbbang.com.nbbang.domain.chat.event.ChatEventPublisher;
 import nbbang.com.nbbang.domain.chat.service.ChatService;
-import nbbang.com.nbbang.global.socket.ChatRoomService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -45,9 +41,6 @@ public class SampleController {
         return new SampleDto("BHC 뿌링클 8시", "오늘 저녁 연대서문 뿌링클 먹을 파티 구합니다. 배달비 엔빵 하실분, 사이드 가능입니다.");
     }
 
-
-
-
     @Hidden
     @GetMapping("/test")
     public String hello() throws Exception {
@@ -70,11 +63,6 @@ public class SampleController {
 
         @Schema(description = "샘플 내용")
         private String content;
-    }
-
-    @ExceptionHandler(IllegalStateException.class)
-    public ResponseEntity notExistExceptionHandler(IllegalStateException e) {
-        return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
 }
