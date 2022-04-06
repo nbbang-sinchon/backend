@@ -54,22 +54,19 @@ public class MessageService {
 
     @Transactional
     public Message send(Long partyId, Long senderId, String content) {
+        partyMemberValidator.validatePartyMember(partyId, senderId);
         return send(partyId, senderId, content,MessageType.CHAT);
     }
 
     @Transactional
     public Message sendImage(Long partyId, Long senderId, MultipartFile imgFile) throws Exception {
-
+        partyMemberValidator.validatePartyMember(partyId, senderId);
         String uploadUrl = fileUploadService.upload(imgFile, DIR_CHATS);
         return send(partyId, senderId, uploadUrl,IMAGE);
     }
 
     @Transactional
     public Message send(Long partyId, Long senderId, String content, MessageType type) {
-
-        if(type!=EXIT){
-            partyMemberValidator.validatePartyMember(partyId, senderId);
-        }
 
         Message message = createMessage(partyId, senderId, content, type);
         Message savedMessage = messageRepository.save(message);

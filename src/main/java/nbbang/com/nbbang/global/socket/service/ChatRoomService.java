@@ -1,19 +1,15 @@
-package nbbang.com.nbbang.global.socket;
+package nbbang.com.nbbang.global.socket.service;
 
 import lombok.extern.slf4j.Slf4j;
-import nbbang.com.nbbang.domain.bbangpan.domain.PartyMember;
 import nbbang.com.nbbang.domain.bbangpan.repository.PartyMemberRepository;
 import nbbang.com.nbbang.domain.chat.dto.ReadMessageDto;
 import nbbang.com.nbbang.domain.chat.service.ChatService;
-import nbbang.com.nbbang.domain.party.service.PartyMemberService;
-import nbbang.com.nbbang.domain.party.service.PartyService;
-import nbbang.com.nbbang.global.socket.service.SocketPartyMemberService;
+import nbbang.com.nbbang.global.socket.SocketSender;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
-import java.util.Optional;
 
 @Transactional(readOnly = true)
 @Service
@@ -40,7 +36,6 @@ public class ChatRoomService {
         Long memberId = (Long) attributes.get("memberId");
         socketPartyMemberService.subscribe(partyId, memberId);
         attributes.put("status", "subscribe");
-        System.out.println("active number: "+socketPartyMemberService.getPartyMemberActiveNumber(partyId, memberId));
         if(socketPartyMemberService.getPartyMemberActiveNumber(partyId, memberId)==1){
             readMessage(partyId, memberId, true);
         }

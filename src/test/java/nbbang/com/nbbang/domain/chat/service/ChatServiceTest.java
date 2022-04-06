@@ -100,7 +100,6 @@ class ChatServiceTest {
         // then
         Long findLastMessageId = chatService.findLastMessage(partyA).getId();
         assertThat(findLastMessageId.equals(saveLastMessageId));
-        System.out.println(saveLastMessageId);
     }
 
     @Test
