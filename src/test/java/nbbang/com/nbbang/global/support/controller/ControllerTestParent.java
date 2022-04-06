@@ -7,7 +7,6 @@ import nbbang.com.nbbang.global.interceptor.CurrentMember;
 import nbbang.com.nbbang.global.security.CustomOAuth2MemberService;
 import nbbang.com.nbbang.global.security.LogoutService;
 import nbbang.com.nbbang.global.validator.PartyMemberValidator;
-import nbbang.com.nbbang.global.validator.PartyMemberValidatorService;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.MockBeans;
 import org.springframework.context.annotation.Import;

@@ -3,7 +3,7 @@ package nbbang.com.nbbang.global.socket;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import nbbang.com.nbbang.global.validator.PartyMemberValidatorById;
+import nbbang.com.nbbang.global.validator.PartyMemberValidator;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
@@ -22,7 +22,7 @@ import java.util.Map;
 public class StompChannelInterceptor implements ChannelInterceptor {
 
     private final ChatRoomService chatRoomService;
-    private final PartyMemberValidatorById partyMemberValidatorById;
+    private final PartyMemberValidator partyMemberValidator;
 
     private static final String TOPIC_GLOBAL = "/topic/global";
     private static final String TOPIC_CHATTING = "/topic/chatting";
@@ -53,11 +53,11 @@ public class StompChannelInterceptor implements ChannelInterceptor {
             }
             else if(destination.startsWith(TOPIC_CHATTING)){
                 Long partyId = Long.valueOf(destination.substring(16));
-                partyMemberValidatorById.isPartyMember(partyId, memberId);
+                partyMemberValidator.validatePartyMember(partyId, memberId);
                 chatRoomService.enter(attributes, partyId);
             }else if(destination.startsWith(TOPIC_BREAD_BOARD)){
                 Long partyId = Long.valueOf(destination.substring(18));
-                partyMemberValidatorById.isPartyMember(partyId, memberId);
+                partyMemberValidator.validatePartyMember(partyId, memberId);
             }
             else{
                 throw new IllegalArgumentException("올바른 토픽을 입력해주세요.");

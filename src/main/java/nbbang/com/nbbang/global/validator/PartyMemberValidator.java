@@ -22,13 +22,6 @@ public class PartyMemberValidator {
     private final PartyRepository partyRepository;
     private final EntityManager em;
 
-    public boolean validatePartyMember(PartyMemberValidatorDto dto) {
-        return validatePartyMember(dto.getParty(), dto.getMember());
-    }
-
-    public boolean validateOwner(PartyMemberValidatorDto dto) {
-        return validateOwner(dto.getParty(), dto.getMember());
-    }
 
     public boolean validatePartyMember(Party party, Member member) {
         return validatePartyMember(party.getId(), member.getId());
