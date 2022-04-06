@@ -73,9 +73,6 @@ public class MessageRepositorySupportImpl implements MessageRepositorySupport {
                 .where(message.id.gt(lastReadId))
                 .where(message.party.id.eq(partyId))
                 .execute();
-        em.flush();
-        em.clear();
-        log.info("[Subtract] Not Read Number -1 gt{}", lastReadId);
     }
 
     @Override

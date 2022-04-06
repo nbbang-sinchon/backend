@@ -58,25 +58,18 @@ public class ChatService {
         return messageRepository.findAllByCursorId(party.getId(), enterMessageId, pageable, cursorId);
     }
 
-    // 이 메소드 한번 호출하면 9개의 쿼리가 나가요
-    // 파티 멤버 join 멤버, 파티
-    // 메시지 업데이트
-    // 파티 멤버 조회 join 멤버, 파티
-    // 메시지 조회
-
     @Transactional
     public ReadMessageDto readMessage(Long partyId, Long memberId) {
 
         PartyMember partyMember = partyMemberRepository.findByMemberIdAndPartyId(memberId, partyId);
+        Long lastReadMessageId = partyMember.getLastReadMessage().getId();
 
-        Long lastReadMessageId = (partyMember.getLastReadMessage()).getId();
         messageRepository.bulkNotReadSubtract(lastReadMessageId, partyId);
 
-        PartyMember reFoundPartyMember = partyMemberRepository.findByMemberIdAndPartyId(memberId, partyId);
         Message currentLastMessage = messageRepository.findLastMessage(partyId);
-        reFoundPartyMember.changeLastReadMessage(currentLastMessage);
+
+        partyMember.changeLastReadMessage(currentLastMessage);
         ReadMessageDto dto = ReadMessageDto.builder().lastReadMessageId(lastReadMessageId).senderId(memberId).build();
         return dto;
     }
-
 }
