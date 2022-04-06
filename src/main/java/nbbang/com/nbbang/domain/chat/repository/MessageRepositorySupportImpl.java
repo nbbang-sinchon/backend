@@ -33,15 +33,10 @@ public class MessageRepositorySupportImpl implements MessageRepositorySupport {
     @Override
     public Message findLastMessage(Long partyId) {
         QMessage message = QMessage.message;
-        JPQLQuery<Message> q = query.selectFrom(message)
+        return query.selectFrom(message)
                 .where(message.party.id.eq(partyId))
                 .orderBy(message.id.desc())
-                .limit(1);
-        Message res = q.fetchOne();
-        if (res == null) {
-            return null;
-        }
-        return res;
+                .fetchOne();
     }
 
     @Override

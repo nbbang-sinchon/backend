@@ -21,20 +21,15 @@ import java.util.Optional;
 public class ChatRoomService {
 
     private final ChatService chatService;
-    private final PartyService partyService;
     private final PartyMemberRepository partyMemberRepository;
-    private final PartyMemberService partyMemberService;
     private final SocketPartyMemberService socketPartyMemberService;
     private final SocketSender socketSender;
 
-    public ChatRoomService(ChatService chatService, PartyService partyService,
-                                   PartyMemberRepository partyMemberRepository, PartyMemberService partyMemberService,
+    public ChatRoomService(ChatService chatService, PartyMemberRepository partyMemberRepository,
                                    SocketPartyMemberService socketPartyMemberService,
                                    @Lazy SocketSender socketSender) {
         this.chatService = chatService;
-        this.partyService = partyService;
         this.partyMemberRepository = partyMemberRepository;
-        this.partyMemberService = partyMemberService;
         this.socketSender = socketSender;
         this.socketPartyMemberService = socketPartyMemberService;
     }
@@ -64,8 +59,7 @@ public class ChatRoomService {
         Long memberId = (Long) attributes.get("memberId");
         socketPartyMemberService.unsubscribe(partyId, memberId);
         attributes.put("status", "unsubscribe");
-        PartyMember partyMember = partyMemberRepository.findByMemberIdAndPartyId(memberId, partyId);
-        Optional.ofNullable(partyMember).ifPresent(pm->partyMemberService.updateLastReadMessage(pm, partyService.findLastMessage(partyId)));
+        partyMemberRepository.updateLastReadMessage(partyId, memberId);
     }
 
     @Transactional

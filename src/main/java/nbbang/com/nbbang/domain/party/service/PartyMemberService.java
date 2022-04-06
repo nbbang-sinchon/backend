@@ -103,11 +103,6 @@ public class PartyMemberService {
         }
     }
 
-    @Transactional
-    public void updateLastReadMessage(PartyMember partyMember, Message currentLastMessage) {
-        partyMember.changeLastReadMessage(currentLastMessage);
-    }
-
     public Message findLastReadMessage(Long partyId, Long memberId) {
         PartyMember partyMember = partyMemberRepository.findByMemberIdAndPartyId(memberId, partyId);
         return Optional.ofNullable(partyMember.getLastReadMessage()).orElse(Message.builder().id(0L).build());
