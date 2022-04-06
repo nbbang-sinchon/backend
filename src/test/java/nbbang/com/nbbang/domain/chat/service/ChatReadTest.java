@@ -60,7 +60,6 @@ class ChatReadTest {
         Map<String, Object> member3Attributes = new HashMap<>();
         member3Attributes.put("memberId", saveMember3.getId());
 
-        //
         stompChannelInterceptor.connect(member1Attributes);
         stompChannelInterceptor.connect(member2Attributes);
         stompChannelInterceptor.connect(member3Attributes);

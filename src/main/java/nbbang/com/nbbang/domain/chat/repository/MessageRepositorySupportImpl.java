@@ -73,6 +73,8 @@ public class MessageRepositorySupportImpl implements MessageRepositorySupport {
                 .where(message.id.gt(lastReadId))
                 .where(message.party.id.eq(partyId))
                 .execute();
+        em.flush();
+        em.clear();
     }
 
     @Override
