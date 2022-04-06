@@ -27,8 +27,6 @@ import java.util.Optional;
 @Slf4j
 public class ChatService {
     private final MessageRepository messageRepository;
-    private final MemberService memberService;
-    private final PartyRepository partyRepository;
     private final PartyMemberRepository partyMemberRepository;
     private final PartyMemberValidator partyMemberValidator;
 

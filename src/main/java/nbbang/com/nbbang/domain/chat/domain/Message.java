@@ -53,17 +53,6 @@ public class Message implements Comparable<Message> {
                 .build();
     }
 
-    public static Message createMessage(Member member, Party party, String content, LocalDateTime createTime) {
-        return Message.builder()
-                .sender(member)
-                .party(party)
-                .content(content)
-                .createTime(createTime)
-                .type(MessageType.CHAT)
-                .build();
-    }
-
-
     public int compareTo(Message o) {
         if (this.id < o.getId()) {
             return -1;
