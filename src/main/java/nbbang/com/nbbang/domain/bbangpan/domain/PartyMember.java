@@ -49,16 +49,6 @@ public class PartyMember {
         return partyMember;
     }
 
-    public static PartyMember createPartyMember(Party party, Member member, Message lastReadMessage) {
-        PartyMember partyMember = PartyMember.builder()
-                .member(member)
-                .party(party)
-                .lastReadMessage(lastReadMessage)
-                .build();
-        party.getPartyMembers().add(partyMember);
-        return partyMember;
-    }
-
     public void changeLastReadMessage(Message message) {
         this.lastReadMessage = message;
     }

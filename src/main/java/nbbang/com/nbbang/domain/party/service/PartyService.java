@@ -42,7 +42,6 @@ public class PartyService {
         Party savedParty = partyRepository.save(party);
         savedParty.changeStatus(PartyStatus.OPEN);
         Long partyId = savedParty.getId();
-        // https://sigmasabjil.tistory.com/43
         Optional.ofNullable(hashtagContents).orElseGet(Collections::emptyList).
                 stream().forEach(content-> addHashtag(partyId, content));
         Member owner = memberService.findById(memberId);
@@ -128,7 +127,8 @@ public class PartyService {
     public void addHashtag(Long partyId, String content){
         Party party = findById(partyId);
         Hashtag hashtag = hashtagService.findOrCreateByContent(content);
-        PartyHashtag.createPartyHashtag(party, hashtag);
+        PartyHashtag partyHashtag = PartyHashtag.createPartyHashtag(party, hashtag);
+        partyHashtagRepository.save(partyHashtag);
     }
 
     @Transactional // ************** 구현 필요(쿼리 최적화) ************** /

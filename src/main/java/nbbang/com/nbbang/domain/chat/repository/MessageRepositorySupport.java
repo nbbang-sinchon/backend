@@ -8,6 +8,6 @@ import org.springframework.data.domain.Pageable;
 public interface MessageRepositorySupport {
     Message findLastMessage(Long partyId);
     Page<Message> findAllByCursorId(Long partyId, Long enterMessageId, Pageable pageable, Long cursorId);
-    void bulkNotReadMinusPlus(Long lastReadId, Long partyId);
+    void bulkNotReadSubtract(Long partyId, Long memberId);
     Message findFirstByTypeAndPartyIdAndSenderId(MessageType messageType, Long partyId, Long memberId);
 }

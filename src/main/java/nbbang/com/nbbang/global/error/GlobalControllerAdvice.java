@@ -87,24 +87,28 @@ public class GlobalControllerAdvice {
    // @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ErrorResponse exHandle(MethodArgumentTypeMismatchException e) {
+        log.error("[ExceptionHandle] Exception: ", e);
         return new ErrorResponse(StatusCode.INTERNAL_SERVER_ERROR, GlobalErrorResponseMessage.ILLEGAL_TYPE_CONVERSION_ERROR);
     }
 
     // @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(NotOwnerException.class)
     public ErrorResponse exHandle(NotOwnerException e) {
+        log.error("[ExceptionHandle] Exception: ", e);
         return new ErrorResponse(StatusCode.FORBIDDEN, GlobalErrorResponseMessage.NOT_OWNER_ERROR);
     }
 
     // @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(NotPartyMemberException.class)
     public ErrorResponse exHandle(NotPartyMemberException e) {
+        log.error("[ExceptionHandle] Exception: ", e);
         return new ErrorResponse(StatusCode.FORBIDDEN, GlobalErrorResponseMessage.NOT_PARTY_MEMBER_ERROR);
     }
 
     // @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(UnauthorizedException.class)
     public ErrorResponse exHandle(UnauthorizedException e) {
+        log.error("[ExceptionHandle] Exception: ", e);
         return new ErrorResponse(StatusCode.UNAUTHORIZED, GlobalErrorResponseMessage.UNAUTHORIZED_ERROR);
     }
 

@@ -2,7 +2,7 @@ package nbbang.com.nbbang.global.socket;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import nbbang.com.nbbang.global.cache.CacheService;
+import nbbang.com.nbbang.global.cache.PartyMemberCacheService;
 import nbbang.com.nbbang.global.cache.PartyMemberIdCache;
 import nbbang.com.nbbang.domain.chat.domain.Message;
 import nbbang.com.nbbang.domain.chat.dto.message.ChatAlarmResponseDto;
@@ -26,7 +26,7 @@ public class SocketSender {
     private final PartyRepository partyRepository;
     private final RedisPublisher redisPublisher;
     private final RedisTopicRepository redisTopicRepository;
-    private final CacheService cacheService;
+    private final PartyMemberCacheService partyMemberCacheService;
 
     public void sendChattingByMessage(Message message){
         ChatSendResponseDto chatSendResponseDto = ChatSendResponseDto.createByMessage(message);
@@ -35,7 +35,7 @@ public class SocketSender {
         Party party = partyRepository.findById(partyId).orElseThrow(() -> new NotFoundException(PARTY_NOT_FOUND));
         ChatAlarmResponseDto chatAlarmResponseDto = ChatAlarmResponseDto.create(party, chatSendResponseDto);
 
-        List<PartyMemberIdCache> partyMembers = cacheService.getPartyMembersCacheByPartyId(partyId);
+        List<PartyMemberIdCache> partyMembers = partyMemberCacheService.getPartyMembersCacheByPartyId(partyId);
         partyMembers.stream().forEach(pm -> sendGlobal(pm.getMemberId(), chatAlarmResponseDto));
     }
 

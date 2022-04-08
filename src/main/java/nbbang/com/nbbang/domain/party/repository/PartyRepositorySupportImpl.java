@@ -2,9 +2,13 @@ package nbbang.com.nbbang.domain.party.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import nbbang.com.nbbang.domain.bbangpan.domain.QPartyMember;
 import nbbang.com.nbbang.domain.member.dto.Place;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.domain.PartyStatus;
+import nbbang.com.nbbang.domain.party.domain.QParty;
+
+import static nbbang.com.nbbang.domain.bbangpan.domain.QPartyMember.partyMember;
 import static nbbang.com.nbbang.domain.party.domain.QParty.party; // JPA 책 432p.
 
 import java.util.List;
@@ -37,5 +41,13 @@ public class PartyRepositorySupportImpl implements PartyRepositorySupport{
                 .limit(6)
                 .fetch();
         return parties;
+    }
+
+    @Override
+    public Party findWithPartyMember(Long partyId) {
+        return query.selectFrom(party)
+                .where(party.id.eq(partyId))
+                .leftJoin(party.partyMembers).fetchJoin()
+                .fetchOne();
     }
 }

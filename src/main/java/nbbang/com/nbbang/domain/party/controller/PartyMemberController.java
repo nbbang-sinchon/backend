@@ -44,10 +44,7 @@ public class PartyMemberController {
         Party party = partyService.findById(partyId);
         Member member = memberService.findById(currentMember.id());
 
-        Long messageId = partyMemberService.joinParty(party, member);
-        Message message = messageService.findById(messageId);
-        socketSender.sendChattingByMessage(message);
-
+        partyMemberService.joinParty(party, member);
         return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_JOIN_SUCCESS);
     }
 
@@ -59,9 +56,7 @@ public class PartyMemberController {
     public DefaultResponse exitParty(@PathVariable("party-id") Long partyId) {
         Party party = partyService.findById(partyId);
         Member member = memberService.findById(currentMember.id());
-        Long messageId = partyMemberService.exitParty(party, member);
-        Message message = messageService.findById(messageId);
-        socketSender.sendChattingByMessage(message);
+        partyMemberService.exitParty(party, member);
         return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_EXIT_SUCCESS);
     }
 

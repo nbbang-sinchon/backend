@@ -8,6 +8,7 @@ import nbbang.com.nbbang.domain.member.repository.MemberRepository;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.domain.PartyStatus;
 import nbbang.com.nbbang.domain.party.repository.PartyRepository;
+import nbbang.com.nbbang.domain.party.service.PartyService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,7 +27,7 @@ class PartyMemberRepositoryTest {
     @Autowired MemberRepository memberRepository;
     @Autowired PartyRepository partyRepository;
     @Autowired
-    MessageRepository messageRepository;
+    PartyService partyService;
 
     @Test
     public void memberPartySaveAndFindTest() {
@@ -34,12 +35,11 @@ class PartyMemberRepositoryTest {
         Member member = Member.builder().nickname("member").build();
         memberRepository.save(member);
         Party party = Party.builder().owner(member).goalNumber(10).status(PartyStatus.OPEN).title("party").build();
-        partyRepository.save(party);
-        PartyMember savePartyMember = PartyMember.createPartyMember(party, member, messageRepository.findLastMessage(party.getId()));
-        memberPartyRepository.save(savePartyMember);
+        partyService.create(party, member.getId(), null);
         // when
         PartyMember findPartyMember = memberPartyRepository.findByMemberIdAndPartyId(member.getId(), party.getId());
         // then
-        assertThat(savePartyMember).isEqualTo(findPartyMember);
+        assertThat(party).isEqualTo(findPartyMember.getParty());
+        assertThat(member).isEqualTo(findPartyMember.getMember());
     }
 }

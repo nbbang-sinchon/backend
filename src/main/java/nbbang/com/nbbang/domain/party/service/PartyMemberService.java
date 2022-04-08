@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.domain.bbangpan.domain.PartyMember;
 import nbbang.com.nbbang.domain.bbangpan.repository.PartyMemberRepository;
-import nbbang.com.nbbang.global.cache.CacheService;
+import nbbang.com.nbbang.global.cache.PartyMemberCacheService;
 import nbbang.com.nbbang.domain.chat.domain.Message;
 import nbbang.com.nbbang.domain.chat.domain.MessageType;
 import nbbang.com.nbbang.domain.chat.repository.MessageRepository;
@@ -36,7 +36,7 @@ public class PartyMemberService {
     private final MessageRepository messageRepository;
     private final SocketPartyMemberService socketPartyMemberService;
     private final EntityManager em;
-    private final CacheService cacheService;
+    private final PartyMemberCacheService partyMemberCacheService;
 
     public boolean isPartyOwnerOrMember(Party party, Member member) {
         return Optional.ofNullable(party.getOwner()).equals(member) || party.getPartyMembers().stream().anyMatch(mp -> mp.getMember().equals(member));
@@ -44,7 +44,7 @@ public class PartyMemberService {
 
 
     @Transactional
-    public Long joinParty(Party party, Member member) {
+    public PartyMember joinParty(Party party, Member member) {
         // 이미 참여한 파티일 경우
         if (isPartyOwnerOrMember(party, member)) {
             throw new PartyJoinException(PartyResponseMessage.PARTY_DUPLICATE_JOIN_ERROR);
@@ -58,12 +58,16 @@ public class PartyMemberService {
             throw new PartyJoinException(PartyResponseMessage.PARTY_JOIN_NONOPEN_ERROR);
         }
         // 이 부분 빵판 로직이 들어가야 할 거 같아서 나중에 bbangpan service 로 메소드를 만들어야 할 거 같습니다.
-        PartyMember partyMember = PartyMember.createPartyMember(party, member, messageRepository.findLastMessage(party.getId()));
+        PartyMember partyMember = PartyMember.createPartyMember(party, member);
+        partyMemberCacheService.evictPartyMemberCache(party.getId());
+
+        Message enterMessage = messageService.send(party.getId(), member.getId(), member.getNickname() + " 님이 입장하셨습니다.", MessageType.ENTER);
+
+        partyMember.changeLastReadMessage(enterMessage);
         partyMemberRepository.save(partyMember);
 
-        cacheService.evictPartyMemberCache(party.getId());
-
-        return messageService.send(party.getId(), member.getId(), member.getNickname() + " 님이 입장하셨습니다.", MessageType.ENTER).getId();
+        // 제가 이 코드를 message를 return하도록 수정하였던 것 같은데, 상식적이지 않은 것 같아서 partymember를 return하도록 바꾸었습니다.
+        return partyMember;
     }
 
 
@@ -82,7 +86,7 @@ public class PartyMemberService {
         party.exitMemberParty(partyMember);
         partyMemberRepository.delete(partyMember);
 
-        cacheService.evictPartyMemberCache(party.getId());
+        partyMemberCacheService.evictPartyMemberCache(party.getId());
         return messageService.send(party.getId(), member.getId(), member.getNickname() + " 님이 퇴장하셨습니다.", MessageType.EXIT).getId();
     }
 
@@ -97,11 +101,6 @@ public class PartyMemberService {
         }else{
             log.info("no such field");
         }
-    }
-
-    @Transactional
-    public void updateLastReadMessage(PartyMember partyMember, Message currentLastMessage) {
-        partyMember.changeLastReadMessage(currentLastMessage);
     }
 
     public Message findLastReadMessage(Long partyId, Long memberId) {

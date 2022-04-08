@@ -7,7 +7,7 @@ import nbbang.com.nbbang.domain.member.repository.MemberRepository;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.service.PartyMemberService;
 import nbbang.com.nbbang.domain.party.service.PartyService;
-import nbbang.com.nbbang.global.socket.ChatRoomService;
+import nbbang.com.nbbang.global.socket.service.ChatRoomService;
 import nbbang.com.nbbang.global.socket.StompChannelInterceptor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -2,15 +2,17 @@ package nbbang.com.nbbang.global.validator;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import nbbang.com.nbbang.global.cache.CacheService;
+import nbbang.com.nbbang.global.cache.PartyMemberCacheService;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.repository.PartyRepository;
+import nbbang.com.nbbang.global.cache.PartyMemberIdCache;
 import nbbang.com.nbbang.global.error.exception.NotOwnerException;
 import nbbang.com.nbbang.global.error.exception.NotPartyMemberException;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -18,17 +20,10 @@ import java.util.Optional;
 @Slf4j
 public class PartyMemberValidator {
 
-    private final CacheService cacheService;
+    private final PartyMemberCacheService partyMemberCacheService;
     private final PartyRepository partyRepository;
     private final EntityManager em;
 
-    public boolean validatePartyMember(PartyMemberValidatorDto dto) {
-        return validatePartyMember(dto.getParty(), dto.getMember());
-    }
-
-    public boolean validateOwner(PartyMemberValidatorDto dto) {
-        return validateOwner(dto.getParty(), dto.getMember());
-    }
 
     public boolean validatePartyMember(Party party, Member member) {
         return validatePartyMember(party.getId(), member.getId());
@@ -41,8 +36,17 @@ public class PartyMemberValidator {
         return true;
     }
 
+    public boolean validatePartyMember(Party party, Long memberId) {
+        return validatePartyMember(party, null, memberId);
+    }
+
     public boolean validatePartyMember(Long partyId, Long memberId) {
-        if(!cacheService.getPartyMembersCacheByPartyId(partyId).stream().anyMatch(mp -> mp.getMemberId().equals(memberId))){
+        return validatePartyMember(null, partyId, memberId);
+    }
+
+    private boolean validatePartyMember(Party party, Long partyId, Long memberId){
+        List<PartyMemberIdCache> partyMemberIdCaches = (party!=null? partyMemberCacheService.getPartyMembersCacheByParty(party): partyMemberCacheService.getPartyMembersCacheByPartyId(partyId));
+        if(!partyMemberIdCaches.stream().anyMatch(mp -> mp.getMemberId().equals(memberId))){
             throw new NotPartyMemberException();
         }
         return true;

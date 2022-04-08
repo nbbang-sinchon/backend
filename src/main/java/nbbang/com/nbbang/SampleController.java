@@ -12,10 +12,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import nbbang.com.nbbang.global.cache.CacheService;
-import nbbang.com.nbbang.domain.chat.event.ChatEventPublisher;
 import nbbang.com.nbbang.domain.chat.service.ChatService;
-import org.springframework.beans.factory.annotation.Autowired;
+import nbbang.com.nbbang.domain.party.domain.Party;
+import nbbang.com.nbbang.domain.party.repository.PartyRepository;
+import nbbang.com.nbbang.domain.party.service.PartyService;
+import nbbang.com.nbbang.global.validator.PartyMemberValidator;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -23,15 +24,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-
-//@Tag(name = "sample", description = "테스트 api")
-//@Controller
 @RestController
 @Slf4j
 @RequiredArgsConstructor
 public class SampleController {
 
     private final ChatService chatService;
+    private final PartyMemberValidator partyMemberValidator;
+    private final PartyService partyService;
+    private final PartyRepository partyRepository;
 
     @Hidden
     @Operation(summary = "샘플 조회.", description = "id 를 이용하여 샘플을 조회합니다.")
@@ -47,14 +48,11 @@ public class SampleController {
         return new SampleDto("BHC 뿌링클 8시", "오늘 저녁 연대서문 뿌링클 먹을 파티 구합니다. 배달비 엔빵 하실분, 사이드 가능입니다.");
     }
 
-    private final ChatEventPublisher chatEventPublisher;
-
-    @Autowired
-    CacheService service;
-
     @Hidden
     @GetMapping("/test")
     public String hello() throws Exception {
+        Party party = partyRepository.findWithPartyMember(1L);
+        partyMemberValidator.validatePartyMember(party, 1L);
         return "test success";
     }
 
@@ -73,11 +71,6 @@ public class SampleController {
 
         @Schema(description = "샘플 내용")
         private String content;
-    }
-
-    @ExceptionHandler(IllegalStateException.class)
-    public ResponseEntity notExistExceptionHandler(IllegalStateException e) {
-        return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
 }
