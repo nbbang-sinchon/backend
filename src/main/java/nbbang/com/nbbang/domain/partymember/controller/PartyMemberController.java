@@ -16,7 +16,7 @@ import nbbang.com.nbbang.domain.party.exception.PartyJoinException;
 import nbbang.com.nbbang.domain.partymember.service.PartyMemberService;
 import nbbang.com.nbbang.domain.party.service.PartyService;
 import nbbang.com.nbbang.global.error.ErrorResponse;
-import nbbang.com.nbbang.global.interceptor.CurrentMember;
+import nbbang.com.nbbang.global.security.context.CurrentMember;
 import nbbang.com.nbbang.global.response.DefaultResponse;
 import nbbang.com.nbbang.global.socket.SocketSender;
 import nbbang.com.nbbang.global.response.StatusCode;

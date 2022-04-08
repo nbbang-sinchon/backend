@@ -19,7 +19,7 @@ import nbbang.com.nbbang.domain.partymember.service.PartyMemberService;
 import nbbang.com.nbbang.domain.party.service.PartyService;
 import nbbang.com.nbbang.global.error.GlobalErrorResponseMessage;
 import nbbang.com.nbbang.global.error.exception.CustomIllegalArgumentException;
-import nbbang.com.nbbang.global.interceptor.CurrentMember;
+import nbbang.com.nbbang.global.security.context.CurrentMember;
 import nbbang.com.nbbang.global.response.*;
 import nbbang.com.nbbang.global.socket.SocketSender;
 import org.springframework.validation.BindingResult;

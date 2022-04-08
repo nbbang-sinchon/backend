@@ -13,7 +13,7 @@ import nbbang.com.nbbang.domain.chat.service.ChatService;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.service.PartyService;
 import nbbang.com.nbbang.global.dto.PageableDto;
-import nbbang.com.nbbang.global.interceptor.CurrentMember;
+import nbbang.com.nbbang.global.security.context.CurrentMember;
 import nbbang.com.nbbang.global.response.DefaultResponse;
 import nbbang.com.nbbang.global.socket.service.ChatRoomService;
 import nbbang.com.nbbang.global.response.StatusCode;

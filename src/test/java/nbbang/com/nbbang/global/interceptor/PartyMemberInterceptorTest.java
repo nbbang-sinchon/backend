@@ -8,6 +8,7 @@ import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.dto.single.request.PartyRequestDto;
 import nbbang.com.nbbang.domain.partymember.service.PartyMemberService;
 import nbbang.com.nbbang.global.response.DefaultResponse;
+import nbbang.com.nbbang.global.security.context.CurrentMember;
 import nbbang.com.nbbang.global.support.controller.ControllerTestUtil;
 import nbbang.com.nbbang.domain.party.service.PartyService;
 import org.assertj.core.api.Assertions;

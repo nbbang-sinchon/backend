@@ -15,7 +15,7 @@ import nbbang.com.nbbang.domain.party.dto.my.MyPartyListResponseDto;
 import nbbang.com.nbbang.domain.party.service.ManyPartyService;
 import nbbang.com.nbbang.domain.partymember.service.PartyMemberService;
 import nbbang.com.nbbang.global.error.exception.CustomIllegalArgumentException;
-import nbbang.com.nbbang.global.interceptor.CurrentMember;
+import nbbang.com.nbbang.global.security.context.CurrentMember;
 import nbbang.com.nbbang.global.response.DefaultResponse;
 import nbbang.com.nbbang.global.response.StatusCode;
 import org.springdoc.api.annotations.ParameterObject;
