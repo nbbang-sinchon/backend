@@ -3,7 +3,7 @@ package nbbang.com.nbbang.domain.party.domain;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import nbbang.com.nbbang.domain.bbangpan.domain.PartyMember;
+import nbbang.com.nbbang.domain.partyMember.domain.PartyMember;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.dto.Place;
 import nbbang.com.nbbang.domain.party.dto.single.PartyUpdateServiceDto;
@@ -12,7 +12,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.webjars.NotFoundException;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 

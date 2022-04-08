@@ -6,7 +6,7 @@ import nbbang.com.nbbang.domain.member.dto.Place;
 import nbbang.com.nbbang.domain.member.repository.MemberRepository;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.dto.single.request.PartyRequestDto;
-import nbbang.com.nbbang.domain.party.service.PartyMemberService;
+import nbbang.com.nbbang.domain.partyMember.service.PartyMemberService;
 import nbbang.com.nbbang.global.response.DefaultResponse;
 import nbbang.com.nbbang.global.support.controller.ControllerTestUtil;
 import nbbang.com.nbbang.domain.party.service.PartyService;

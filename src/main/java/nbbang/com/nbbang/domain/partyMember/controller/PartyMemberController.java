@@ -1,4 +1,4 @@
-package nbbang.com.nbbang.domain.party.controller;
+package nbbang.com.nbbang.domain.partyMember.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -6,14 +6,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import nbbang.com.nbbang.domain.chat.domain.Message;
 import nbbang.com.nbbang.domain.chat.service.MessageService;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.service.MemberService;
+import nbbang.com.nbbang.domain.party.controller.PartyResponseMessage;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.exception.PartyExitForbiddenException;
 import nbbang.com.nbbang.domain.party.exception.PartyJoinException;
-import nbbang.com.nbbang.domain.party.service.PartyMemberService;
+import nbbang.com.nbbang.domain.partyMember.service.PartyMemberService;
 import nbbang.com.nbbang.domain.party.service.PartyService;
 import nbbang.com.nbbang.global.error.ErrorResponse;
 import nbbang.com.nbbang.global.interceptor.CurrentMember;

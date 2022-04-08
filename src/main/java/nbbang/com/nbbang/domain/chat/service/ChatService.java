@@ -2,16 +2,14 @@ package nbbang.com.nbbang.domain.chat.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import nbbang.com.nbbang.domain.bbangpan.domain.PartyMember;
-import nbbang.com.nbbang.domain.bbangpan.repository.PartyMemberRepository;
+import nbbang.com.nbbang.domain.partyMember.domain.PartyMember;
+import nbbang.com.nbbang.domain.partyMember.repository.PartyMemberRepository;
 import nbbang.com.nbbang.domain.chat.controller.ChatResponseMessage;
 import nbbang.com.nbbang.domain.chat.domain.Message;
 import nbbang.com.nbbang.domain.chat.domain.MessageType;
 import nbbang.com.nbbang.domain.chat.dto.ReadMessageDto;
 import nbbang.com.nbbang.domain.chat.repository.MessageRepository;
-import nbbang.com.nbbang.domain.member.service.MemberService;
 import nbbang.com.nbbang.domain.party.domain.Party;
-import nbbang.com.nbbang.domain.party.repository.PartyRepository;
 import nbbang.com.nbbang.global.validator.PartyMemberValidator;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
