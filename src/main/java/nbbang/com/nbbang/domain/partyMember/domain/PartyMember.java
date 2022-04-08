@@ -1,4 +1,4 @@
-package nbbang.com.nbbang.domain.bbangpan.domain;
+package nbbang.com.nbbang.domain.partyMember.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,29 +1,23 @@
 package nbbang.com.nbbang.domain.chat.repository;
 
-import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import nbbang.com.nbbang.domain.bbangpan.domain.PartyMember;
-import nbbang.com.nbbang.domain.bbangpan.domain.QPartyMember;
 import nbbang.com.nbbang.domain.chat.domain.Message;
 import nbbang.com.nbbang.domain.chat.domain.MessageType;
 import nbbang.com.nbbang.domain.chat.domain.QMessage;
 import nbbang.com.nbbang.domain.member.domain.QMember;
-import nbbang.com.nbbang.domain.party.domain.Party;
-import nbbang.com.nbbang.domain.party.domain.PartyStatus;
 import nbbang.com.nbbang.domain.party.domain.QParty;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import javax.persistence.EntityManager;
-import java.util.Collections;
 import java.util.List;
 
-import static nbbang.com.nbbang.domain.bbangpan.domain.QPartyMember.*;
+import static nbbang.com.nbbang.domain.partyMember.domain.QPartyMember.*;
 import static nbbang.com.nbbang.domain.chat.domain.QMessage.*;
 
 @RequiredArgsConstructor

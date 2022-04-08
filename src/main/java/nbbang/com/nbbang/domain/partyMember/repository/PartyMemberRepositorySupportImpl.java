@@ -1,22 +1,16 @@
-package nbbang.com.nbbang.domain.bbangpan.repository;
+package nbbang.com.nbbang.domain.partyMember.repository;
 
 import com.querydsl.jpa.JPAExpressions;
-import com.querydsl.jpa.JPQLQuery;
-import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import nbbang.com.nbbang.domain.bbangpan.domain.QPartyMember;
-import nbbang.com.nbbang.domain.chat.domain.Message;
-import nbbang.com.nbbang.domain.chat.domain.QMessage;
-import nbbang.com.nbbang.domain.party.domain.QParty;
+import nbbang.com.nbbang.domain.partyMember.repository.PartyMemberRepositorySupport;
 
-import static nbbang.com.nbbang.domain.bbangpan.domain.QPartyMember.*;
+import static nbbang.com.nbbang.domain.partyMember.domain.QPartyMember.*;
 import static nbbang.com.nbbang.domain.chat.domain.QMessage.message;
-import static nbbang.com.nbbang.domain.party.domain.QParty.*;
 
 
 @RequiredArgsConstructor
-public class PartyMemberRepositorySupportImpl implements PartyMemberRepositorySupport{
+public class PartyMemberRepositorySupportImpl implements PartyMemberRepositorySupport {
     private final JPAQueryFactory query;
 
     @Override

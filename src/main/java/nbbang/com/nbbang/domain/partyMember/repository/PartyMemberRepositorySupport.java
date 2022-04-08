@@ -1,4 +1,4 @@
-package nbbang.com.nbbang.domain.bbangpan.repository;
+package nbbang.com.nbbang.domain.partyMember.repository;
 
 public interface PartyMemberRepositorySupport {
     Boolean isThereNotReadMessageByMemberId(Long memberId);

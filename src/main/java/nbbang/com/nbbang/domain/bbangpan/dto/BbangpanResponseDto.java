@@ -3,6 +3,7 @@ package nbbang.com.nbbang.domain.bbangpan.dto;
 import lombok.Builder;
 import lombok.Data;
 import nbbang.com.nbbang.domain.party.domain.Party;
+import nbbang.com.nbbang.domain.partyMember.dto.PartyMemberResponseDto;
 
 import java.util.List;
 import java.util.stream.Collectors;
