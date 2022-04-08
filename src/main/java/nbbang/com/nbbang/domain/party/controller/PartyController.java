@@ -61,7 +61,8 @@ public class PartyController {
         }
         Party party = partyRequestDto.createEntityByDto();
         Party createParty = partyService.create(party, currentMember.id(), partyRequestDto.getHashtags());
-        return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_CREATE_SUCCESS, PartyIdResponseDto.builder().id(createParty.getId()).build());
+        Long partyId = partyService.findIdByParty(createParty);
+        return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_CREATE_SUCCESS, PartyIdResponseDto.builder().id(partyId).build());
     }
 
 

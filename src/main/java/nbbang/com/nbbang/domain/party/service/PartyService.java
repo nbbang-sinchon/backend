@@ -38,6 +38,19 @@ public class PartyService {
 
     @Transactional
     public Party create(Party party, Long memberId, List<String> hashtagContents) {
+        System.out.println("PartyService.create");
+        Party savedParty = partyRepository.save(party);
+        savedParty.changeStatus(PartyStatus.OPEN);
+        Long partyId = savedParty.getId();
+        Optional.ofNullable(hashtagContents).orElseGet(Collections::emptyList).
+                stream().forEach(content-> addHashtag(savedParty, content));
+        Member owner = memberService.findById(memberId);
+        partyMemberService.joinParty(savedParty, owner);
+        party.addOwner(owner);
+
+        return savedParty;
+        /*
+        System.out.println("PartyService.create");
         party.changeStatus(PartyStatus.OPEN);
         Party savedParty = partyRepository.save(party);
 
@@ -48,8 +61,11 @@ public class PartyService {
         partyMemberService.joinParty(savedParty, owner);
 
         savedParty.addOwner(owner);
+        System.out.println("savedParty = " + savedParty.getId());
 
         return savedParty;
+
+         */
     }
 
 
