@@ -13,6 +13,10 @@ import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.domain.chat.service.ChatService;
+import nbbang.com.nbbang.domain.party.domain.Party;
+import nbbang.com.nbbang.domain.party.repository.PartyRepository;
+import nbbang.com.nbbang.domain.party.service.PartyService;
+import nbbang.com.nbbang.global.validator.PartyMemberValidator;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -26,6 +30,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class SampleController {
 
     private final ChatService chatService;
+    private final PartyMemberValidator partyMemberValidator;
+    private final PartyService partyService;
+    private final PartyRepository partyRepository;
 
     @Hidden
     @Operation(summary = "샘플 조회.", description = "id 를 이용하여 샘플을 조회합니다.")
@@ -44,7 +51,8 @@ public class SampleController {
     @Hidden
     @GetMapping("/test")
     public String hello() throws Exception {
-        chatService.readMessage(1L, 1L);
+        Party party = partyRepository.findWithPartyMember(1L);
+        partyMemberValidator.validatePartyMember(party, 1L);
         return "test success";
     }
 

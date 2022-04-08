@@ -1,7 +1,8 @@
 package nbbang.com.nbbang.domain.chat.service;
 
 import lombok.extern.slf4j.Slf4j;
-import nbbang.com.nbbang.global.cache.CacheService;
+import nbbang.com.nbbang.global.cache.MemberCacheService;
+import nbbang.com.nbbang.global.cache.PartyMemberCacheService;
 import nbbang.com.nbbang.domain.chat.domain.Message;
 import nbbang.com.nbbang.domain.chat.domain.MessageType;
 import nbbang.com.nbbang.domain.chat.event.ChatEventPublisher;
@@ -20,7 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.webjars.NotFoundException;
 
 import static nbbang.com.nbbang.domain.chat.controller.ChatResponseMessage.MESSAGE_NOT_FOUND;
-import static nbbang.com.nbbang.domain.chat.domain.MessageType.EXIT;
 import static nbbang.com.nbbang.domain.chat.domain.MessageType.IMAGE;
 import static nbbang.com.nbbang.domain.party.controller.PartyResponseMessage.PARTY_NOT_FOUND;
 import static nbbang.com.nbbang.global.FileUpload.UploadDirName.DIR_CHATS;
@@ -34,20 +34,23 @@ public class MessageService {
     private FileUploadService fileUploadService;
     private SocketPartyMemberService socketPartyMemberService;
     private PartyMemberValidator partyMemberValidator;
-    private CacheService cacheService;
+    private PartyMemberCacheService partyMemberCacheService;
+    private MemberCacheService memberCacheService;
     private SocketSender socketSender;
     private ChatEventPublisher chatEventPublisher;
 
     public MessageService(MessageRepository messageRepository, PartyRepository partyRepository,
                           FileUploadService fileUploadService, SocketPartyMemberService socketPartyMemberService,
-                          PartyMemberValidator partyMemberValidator, CacheService cacheService,
+                          PartyMemberValidator partyMemberValidator, PartyMemberCacheService partyMemberCacheService,
+                          MemberCacheService memberCacheService,
                           ChatEventPublisher chatEventPublisher, @Lazy SocketSender socketSender) {
         this.messageRepository = messageRepository;
         this.partyRepository = partyRepository;
         this.fileUploadService = fileUploadService;
         this.socketPartyMemberService = socketPartyMemberService;
         this.partyMemberValidator = partyMemberValidator;
-        this.cacheService = cacheService;
+        this.partyMemberCacheService = partyMemberCacheService;
+        this.memberCacheService = memberCacheService;
         this.chatEventPublisher = chatEventPublisher;
         this.socketSender = socketSender;
     }
@@ -77,7 +80,7 @@ public class MessageService {
 
     private Message createMessage(Long partyId, Long senderId, String content, MessageType type){
         Party party = partyRepository.findById(partyId).orElseThrow(()->new NotFoundException(PARTY_NOT_FOUND));
-        Member sender = cacheService.getMemberCache(senderId).createMember();
+        Member sender = memberCacheService.getMemberCache(senderId).createMember();
         Integer notReadNumber = getNotActiveNumber(party);
         Message message =Message.createMessage(sender, party, content, type, notReadNumber);
         return message;
@@ -86,7 +89,7 @@ public class MessageService {
 
     private Integer getNotActiveNumber(Party party) {
         Integer activeNumber = socketPartyMemberService.getPartyActiveNumber(party.getId());
-        Integer partyMemberNumber = cacheService.getPartyMembersCacheByPartyId(party.getId()).size();
+        Integer partyMemberNumber = partyMemberCacheService.getPartyMembersCacheByPartyId(party.getId()).size();
         return partyMemberNumber - activeNumber;
     }
 

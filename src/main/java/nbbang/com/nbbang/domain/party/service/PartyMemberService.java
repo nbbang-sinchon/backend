@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.domain.bbangpan.domain.PartyMember;
 import nbbang.com.nbbang.domain.bbangpan.repository.PartyMemberRepository;
-import nbbang.com.nbbang.global.cache.CacheService;
+import nbbang.com.nbbang.global.cache.PartyMemberCacheService;
 import nbbang.com.nbbang.domain.chat.domain.Message;
 import nbbang.com.nbbang.domain.chat.domain.MessageType;
 import nbbang.com.nbbang.domain.chat.repository.MessageRepository;
@@ -36,7 +36,7 @@ public class PartyMemberService {
     private final MessageRepository messageRepository;
     private final SocketPartyMemberService socketPartyMemberService;
     private final EntityManager em;
-    private final CacheService cacheService;
+    private final PartyMemberCacheService partyMemberCacheService;
 
     public boolean isPartyOwnerOrMember(Party party, Member member) {
         return Optional.ofNullable(party.getOwner()).equals(member) || party.getPartyMembers().stream().anyMatch(mp -> mp.getMember().equals(member));
@@ -59,7 +59,7 @@ public class PartyMemberService {
         }
         // 이 부분 빵판 로직이 들어가야 할 거 같아서 나중에 bbangpan service 로 메소드를 만들어야 할 거 같습니다.
         PartyMember partyMember = PartyMember.createPartyMember(party, member);
-        cacheService.evictPartyMemberCache(party.getId());
+        partyMemberCacheService.evictPartyMemberCache(party.getId());
 
         Message enterMessage = messageService.send(party.getId(), member.getId(), member.getNickname() + " 님이 입장하셨습니다.", MessageType.ENTER);
 
@@ -86,7 +86,7 @@ public class PartyMemberService {
         party.exitMemberParty(partyMember);
         partyMemberRepository.delete(partyMember);
 
-        cacheService.evictPartyMemberCache(party.getId());
+        partyMemberCacheService.evictPartyMemberCache(party.getId());
         return messageService.send(party.getId(), member.getId(), member.getNickname() + " 님이 퇴장하셨습니다.", MessageType.EXIT).getId();
     }
 
