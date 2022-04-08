@@ -5,7 +5,7 @@ import lombok.Getter;
 
 import javax.validation.constraints.NotBlank;
 
-import static nbbang.com.nbbang.domain.bbangpan.controller.BbangpanResponseMessage.*;
+import static nbbang.com.nbbang.domain.breadboard.controller.BreadBoardResponseMessage.*;
 
 @Getter
 @Builder

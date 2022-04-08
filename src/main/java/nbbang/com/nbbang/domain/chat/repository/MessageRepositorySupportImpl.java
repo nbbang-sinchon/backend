@@ -17,7 +17,7 @@ import org.springframework.data.domain.Pageable;
 import javax.persistence.EntityManager;
 import java.util.List;
 
-import static nbbang.com.nbbang.domain.partyMember.domain.QPartyMember.*;
+import static nbbang.com.nbbang.domain.partymember.domain.QPartyMember.*;
 import static nbbang.com.nbbang.domain.chat.domain.QMessage.*;
 
 @RequiredArgsConstructor

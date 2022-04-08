@@ -1,13 +1,13 @@
-package nbbang.com.nbbang.domain.bbangpan.repository;
+package nbbang.com.nbbang.domain.breadboard.repository;
 
-import nbbang.com.nbbang.domain.partyMember.domain.PartyMember;
+import nbbang.com.nbbang.domain.partymember.domain.PartyMember;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.repository.MemberRepository;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.domain.PartyStatus;
 import nbbang.com.nbbang.domain.party.repository.PartyRepository;
 import nbbang.com.nbbang.domain.party.service.PartyService;
-import nbbang.com.nbbang.domain.partyMember.repository.PartyMemberRepository;
+import nbbang.com.nbbang.domain.partymember.repository.PartyMemberRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

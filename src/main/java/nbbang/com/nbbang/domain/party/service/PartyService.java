@@ -1,7 +1,7 @@
 package nbbang.com.nbbang.domain.party.service;
 
 import lombok.RequiredArgsConstructor;
-import nbbang.com.nbbang.domain.partyMember.domain.PartyMember;
+import nbbang.com.nbbang.domain.partymember.domain.PartyMember;
 import nbbang.com.nbbang.domain.chat.domain.Message;
 import nbbang.com.nbbang.domain.chat.repository.MessageRepository;
 import nbbang.com.nbbang.domain.member.domain.Member;
@@ -9,10 +9,9 @@ import nbbang.com.nbbang.domain.member.dto.Place;
 import nbbang.com.nbbang.domain.member.service.MemberService;
 import nbbang.com.nbbang.domain.party.domain.*;
 import nbbang.com.nbbang.domain.party.dto.single.PartyUpdateServiceDto;
-import nbbang.com.nbbang.domain.party.dto.single.request.PartyRequestDto;
 import nbbang.com.nbbang.domain.party.repository.PartyHashtagRepository;
 import nbbang.com.nbbang.domain.party.repository.PartyRepository;
-import nbbang.com.nbbang.domain.partyMember.service.PartyMemberService;
+import nbbang.com.nbbang.domain.partymember.service.PartyMemberService;
 import nbbang.com.nbbang.global.error.exception.NotOwnerException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,28 +38,36 @@ public class PartyService {
 
     @Transactional
     public Party create(Party party, Long memberId, List<String> hashtagContents) {
+        System.out.println("PartyService.create");
         Party savedParty = partyRepository.save(party);
         savedParty.changeStatus(PartyStatus.OPEN);
         Long partyId = savedParty.getId();
         Optional.ofNullable(hashtagContents).orElseGet(Collections::emptyList).
-                stream().forEach(content-> addHashtag(partyId, content));
+                stream().forEach(content-> addHashtag(savedParty, content));
         Member owner = memberService.findById(memberId);
         partyMemberService.joinParty(savedParty, owner);
         party.addOwner(owner);
 
         return savedParty;
+        /*
+        System.out.println("PartyService.create");
+        party.changeStatus(PartyStatus.OPEN);
+        Party savedParty = partyRepository.save(party);
+
+        Optional.ofNullable(hashtagContents).orElseGet(Collections::emptyList).
+                stream().forEach(content-> addHashtag(savedParty, content));
+        Member owner = memberService.findById(memberId);
+
+        partyMemberService.joinParty(savedParty, owner);
+
+        savedParty.addOwner(owner);
+        System.out.println("savedParty = " + savedParty.getId());
+
+        return savedParty;
+
+         */
     }
 
-    @Transactional
-    public Long createParty(PartyRequestDto dto, Long memberId) {
-        Party party = dto.createEntityByDto();
-        Member owner = memberService.findById(memberId);
-        PartyMember.createPartyMember(party, owner);
-        Optional.ofNullable(dto.getHashtags()).orElseGet(Collections::emptyList).
-                stream().forEach(content-> addHashtag(party.getId(), content));
-        party.addOwner(owner);
-        return party.getId();
-    }
 
     public Party findById(Long partyId) {
         Party party = partyRepository.findById(partyId).orElseThrow(() -> new NotFoundException(PARTY_NOT_FOUND));
@@ -102,7 +109,7 @@ public class PartyService {
             Optional.ofNullable(oldHashtagContents).orElseGet(Collections::emptyList)
                     .stream().forEach(content -> removeHashtag(partyId, content));
             Optional.ofNullable(newHashtagContents).orElseGet(Collections::emptyList)
-                    .stream().forEach(content -> addHashtag(partyId, content));
+                    .stream().forEach(content -> addHashtag(party, content));
         }
         return partyId;
     }
@@ -124,16 +131,14 @@ public class PartyService {
     }
 
     @Transactional
-    public void addHashtag(Long partyId, String content){
-        Party party = findById(partyId);
+    public void addHashtag(Party party, String content){
         Hashtag hashtag = hashtagService.findOrCreateByContent(content);
         PartyHashtag partyHashtag = PartyHashtag.createPartyHashtag(party, hashtag);
         partyHashtagRepository.save(partyHashtag);
     }
 
     @Transactional // ************** 구현 필요(쿼리 최적화) ************** /
-    public void addHashtags(Long partyId, List<String> hashtagContents){
-        Party party = findById(partyId);
+    public void addHashtags(Party party, List<String> hashtagContents){
         List<Hashtag> hashtags = hashtagService.findOrCreateByContent(hashtagContents);
         PartyHashtag.createPartyHashtags(party, hashtags);
     }

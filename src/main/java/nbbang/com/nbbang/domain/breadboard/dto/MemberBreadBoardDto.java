@@ -1,4 +1,4 @@
-package nbbang.com.nbbang.domain.bbangpan.dto;
+package nbbang.com.nbbang.domain.breadboard.dto;
 
 
 import lombok.AllArgsConstructor;
@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class MemberBbangpanDto{
+public class MemberBreadBoardDto {
     private String nickname;
     private Integer price;
     private String sendStatus;

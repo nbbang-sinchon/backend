@@ -1,4 +1,4 @@
-package nbbang.com.nbbang.domain.bbangpan.dto.request;
+package nbbang.com.nbbang.domain.breadboard.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -6,18 +6,13 @@ import lombok.NoArgsConstructor;
 import nbbang.com.nbbang.domain.party.domain.Account;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import static nbbang.com.nbbang.domain.bbangpan.controller.BbangpanResponseMessage.*;
+import static nbbang.com.nbbang.domain.breadboard.controller.BreadBoardResponseMessage.*;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class BbangpanAccountChangeRequestDto {
+public class BreadBoardAccountChangeRequestDto {
     @NotBlank(message =ILLEGAL_ARGUMENT_BANK)
     private String bank;
 
