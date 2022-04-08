@@ -2,8 +2,8 @@ package nbbang.com.nbbang.domain.chat.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import nbbang.com.nbbang.domain.partyMember.domain.PartyMember;
-import nbbang.com.nbbang.domain.partyMember.repository.PartyMemberRepository;
+import nbbang.com.nbbang.domain.partymember.domain.PartyMember;
+import nbbang.com.nbbang.domain.partymember.repository.PartyMemberRepository;
 import nbbang.com.nbbang.domain.chat.controller.ChatResponseMessage;
 import nbbang.com.nbbang.domain.chat.domain.Message;
 import nbbang.com.nbbang.domain.chat.domain.MessageType;

@@ -1,7 +1,7 @@
 package nbbang.com.nbbang.domain.member.service;
 
 import lombok.RequiredArgsConstructor;
-import nbbang.com.nbbang.domain.partyMember.repository.PartyMemberRepository;
+import nbbang.com.nbbang.domain.partymember.repository.PartyMemberRepository;
 import nbbang.com.nbbang.global.cache.MemberCacheService;
 import nbbang.com.nbbang.domain.member.controller.MemberResponseMessage;
 import nbbang.com.nbbang.domain.member.domain.Member;

@@ -3,7 +3,7 @@ package nbbang.com.nbbang.domain.party.domain;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import nbbang.com.nbbang.domain.partyMember.domain.PartyMember;
+import nbbang.com.nbbang.domain.partymember.domain.PartyMember;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.dto.Place;
 import nbbang.com.nbbang.domain.party.dto.single.PartyUpdateServiceDto;
@@ -93,7 +93,6 @@ public class Party {
     }
 
     public void addOwner(Member member) {
-
         this.owner = member;
     }
 

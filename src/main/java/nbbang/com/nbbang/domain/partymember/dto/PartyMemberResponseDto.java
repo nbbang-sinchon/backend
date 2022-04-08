@@ -1,8 +1,8 @@
-package nbbang.com.nbbang.domain.partyMember.dto;
+package nbbang.com.nbbang.domain.partymember.dto;
 
 import lombok.Builder;
 import lombok.Data;
-import nbbang.com.nbbang.domain.partyMember.domain.PartyMember;
+import nbbang.com.nbbang.domain.partymember.domain.PartyMember;
 
 @Builder
 @Data

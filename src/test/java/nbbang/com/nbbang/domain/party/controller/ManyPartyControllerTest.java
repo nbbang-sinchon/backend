@@ -1,6 +1,6 @@
 package nbbang.com.nbbang.domain.party.controller;
 
-import nbbang.com.nbbang.domain.partyMember.domain.PartyMember;
+import nbbang.com.nbbang.domain.partymember.domain.PartyMember;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.dto.Place;
 import nbbang.com.nbbang.domain.party.domain.Hashtag;

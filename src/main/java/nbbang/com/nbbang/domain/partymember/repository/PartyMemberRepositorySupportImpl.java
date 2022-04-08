@@ -1,11 +1,10 @@
-package nbbang.com.nbbang.domain.partyMember.repository;
+package nbbang.com.nbbang.domain.partymember.repository;
 
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import nbbang.com.nbbang.domain.partyMember.repository.PartyMemberRepositorySupport;
 
-import static nbbang.com.nbbang.domain.partyMember.domain.QPartyMember.*;
+import static nbbang.com.nbbang.domain.partymember.domain.QPartyMember.*;
 import static nbbang.com.nbbang.domain.chat.domain.QMessage.message;
 
 
