@@ -1,4 +1,4 @@
-package nbbang.com.nbbang.domain.bbangpan.controller;
+package nbbang.com.nbbang.domain.breadboard.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -8,14 +8,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import nbbang.com.nbbang.domain.partyMember.domain.PartyMember;
-import nbbang.com.nbbang.domain.bbangpan.dto.*;
-import nbbang.com.nbbang.domain.bbangpan.dto.request.BbangpanAccountChangeRequestDto;
-import nbbang.com.nbbang.domain.bbangpan.dto.request.BbangpanPriceChangeRequestDto;
-import nbbang.com.nbbang.domain.bbangpan.dto.request.SendStatusChangeRequestDto;
+import nbbang.com.nbbang.domain.partymember.domain.PartyMember;
+import nbbang.com.nbbang.domain.breadboard.dto.*;
+import nbbang.com.nbbang.domain.breadboard.dto.request.BreadBoardAccountChangeRequestDto;
+import nbbang.com.nbbang.domain.breadboard.dto.request.BreadBoardPriceChangeRequestDto;
+import nbbang.com.nbbang.domain.breadboard.dto.request.SendStatusChangeRequestDto;
 import nbbang.com.nbbang.domain.party.controller.PartyResponseMessage;
 import nbbang.com.nbbang.domain.party.domain.Party;
-import nbbang.com.nbbang.domain.partyMember.service.PartyMemberService;
+import nbbang.com.nbbang.domain.partymember.service.PartyMemberService;
 import nbbang.com.nbbang.domain.party.service.PartyService;
 import nbbang.com.nbbang.global.error.GlobalErrorResponseMessage;
 import nbbang.com.nbbang.global.error.exception.CustomIllegalArgumentException;
@@ -39,7 +39,7 @@ import java.lang.reflect.Field;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/bread-board/{party-id}")
-public class BbangpanController {
+public class BreadBoardController {
 
     private final PartyService partyService;
     private final PartyMemberService partyMemberService;
@@ -48,35 +48,35 @@ public class BbangpanController {
 
     @Operation(summary = "빵판 정보", description = "유저가 빵판을 클릭했을 때, 필요한 정보를 보냅니다.")
     @ApiResponse(responseCode = "200", description = "OK",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = BbangpanResponseDto.class)))
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = BreadBoardResponseDto.class)))
     @GetMapping
-    public DefaultResponse readBbangpan(@PathVariable("party-id") Long partyId) {
+    public DefaultResponse readBreadBoard(@PathVariable("party-id") Long partyId) {
         Party party = partyService.findById(partyId);
-        BbangpanResponseDto bbangpanResponseDto = BbangpanResponseDto.createDtoByParty(party);
-        return DefaultResponse.res(StatusCode.OK, BbangpanResponseMessage.BBANGPAN_READ_SUCCESS, bbangpanResponseDto);
+        BreadBoardResponseDto breadBoardResponseDto = BreadBoardResponseDto.createDtoByParty(party);
+        return DefaultResponse.res(StatusCode.OK, BreadBoardResponseMessage.BREADBOARD_READ_SUCCESS, breadBoardResponseDto);
     }
 
     @Operation(summary = "배달비 설정", description = "방장이 배달비를 설정합니다.")
     @ApiResponse(responseCode = "403", description = "Not Owner", content = @Content(mediaType = "application/json"))
     @PostMapping("/delivery-fee")
-    public DefaultResponse changeDeliveryFee(@PathVariable("party-id") Long partyId, @Valid @RequestBody BbangpanPriceChangeRequestDto bbangpanPriceChangeRequestDto, BindingResult bindingResult) throws NoSuchFieldException {
+    public DefaultResponse changeDeliveryFee(@PathVariable("party-id") Long partyId, @Valid @RequestBody BreadBoardPriceChangeRequestDto breadBoardPriceChangeRequestDto, BindingResult bindingResult) throws NoSuchFieldException {
         if (bindingResult.hasErrors()) {
             throw new CustomIllegalArgumentException(GlobalErrorResponseMessage.ILLEGAL_ARGUMENT_ERROR, bindingResult);
         }
 
-        changePartyField(partyId, currentMember.id(), Party.getField("deliveryFee"), bbangpanPriceChangeRequestDto.getPrice());
-        return DefaultResponse.res(StatusCode.OK, BbangpanResponseMessage.DELIVERYFEE_CHANGE_SUCCESS);
+        changePartyField(partyId, currentMember.id(), Party.getField("deliveryFee"), breadBoardPriceChangeRequestDto.getPrice());
+        return DefaultResponse.res(StatusCode.OK, BreadBoardResponseMessage.DELIVERYFEE_CHANGE_SUCCESS);
     }
 
     @Operation(summary = "계좌번호 설정", description = "방장이 계좌 번호를 설정합니다.")
     @ApiResponse(responseCode = "403", description = "Not Owner", content = @Content(mediaType = "application/json"))
     @PostMapping("/account")
-    public DefaultResponse changeAccount(@PathVariable("party-id") Long partyId, @Valid @RequestBody BbangpanAccountChangeRequestDto bbangpanAccountChangeRequestDto, BindingResult bindingResult) throws NoSuchFieldException {
+    public DefaultResponse changeAccount(@PathVariable("party-id") Long partyId, @Valid @RequestBody BreadBoardAccountChangeRequestDto breadBoardAccountChangeRequestDto, BindingResult bindingResult) throws NoSuchFieldException {
         if (bindingResult.hasErrors()) {
             throw new CustomIllegalArgumentException(GlobalErrorResponseMessage.ILLEGAL_ARGUMENT_ERROR, bindingResult);
         }
-        changePartyField(partyId, currentMember.id(), Party.getField("accountNumber"), bbangpanAccountChangeRequestDto.getAccount());
-        return DefaultResponse.res(StatusCode.OK, BbangpanResponseMessage.ACCOUNT_CHANGE_SUCCESS);
+        changePartyField(partyId, currentMember.id(), Party.getField("accountNumber"), breadBoardAccountChangeRequestDto.getAccount());
+        return DefaultResponse.res(StatusCode.OK, BreadBoardResponseMessage.ACCOUNT_CHANGE_SUCCESS);
     }
 
     public void changePartyField(Long partyId, Long memberId, Field field, Object value) throws NoSuchFieldException {
@@ -87,12 +87,12 @@ public class BbangpanController {
     @Operation(summary = "주문 금액 설정", description = "유저가 주문 금액을 설정합니다.")
     @ApiResponse(responseCode = "403", description = "Not Party Member", content = @Content(mediaType = "application/json"))
     @PostMapping("/price")
-    public DefaultResponse changePrice(@PathVariable("party-id") Long partyId, @Valid @RequestBody BbangpanPriceChangeRequestDto bbangpanPriceChangeRequestDto, BindingResult bindingResult) throws NoSuchFieldException {
+    public DefaultResponse changePrice(@PathVariable("party-id") Long partyId, @Valid @RequestBody BreadBoardPriceChangeRequestDto breadBoardPriceChangeRequestDto, BindingResult bindingResult) throws NoSuchFieldException {
         if (bindingResult.hasErrors()) {
             throw new CustomIllegalArgumentException(GlobalErrorResponseMessage.ILLEGAL_ARGUMENT_ERROR, bindingResult);
         }
-        changePartyMemberField(partyId, currentMember.id(), PartyMember.getField("price"), bbangpanPriceChangeRequestDto.getPrice());
-        return DefaultResponse.res(StatusCode.OK, BbangpanResponseMessage.PRICE_CHANGE_SUCCESS);
+        changePartyMemberField(partyId, currentMember.id(), PartyMember.getField("price"), breadBoardPriceChangeRequestDto.getPrice());
+        return DefaultResponse.res(StatusCode.OK, BreadBoardResponseMessage.PRICE_CHANGE_SUCCESS);
     }
 
     @Operation(summary = "송금 상태 설정", description = "송금 상태를 설정합니다.")
@@ -103,7 +103,7 @@ public class BbangpanController {
             throw new CustomIllegalArgumentException(PartyResponseMessage.ILLEGAL_PARTY_STATUS, bindingResult);
         }
         changePartyMemberField(partyId, currentMember.id(), PartyMember.getField("isSent"), sendStatusChangeRequestDto.getIsSent());
-        return DefaultResponse.res(StatusCode.OK, BbangpanResponseMessage.SENDSTATUS_CHANGE_SUCCESS);
+        return DefaultResponse.res(StatusCode.OK, BreadBoardResponseMessage.SENDSTATUS_CHANGE_SUCCESS);
     }
 
     public void changePartyMemberField(Long partyId, Long memberId, Field field, Object value) throws NoSuchFieldException {
@@ -113,7 +113,7 @@ public class BbangpanController {
 
     public void sendSocket(Long partyId){
         Party party = partyService.findById(partyId);
-        BbangpanResponseDto bbangpanResponseDto = BbangpanResponseDto.createDtoByParty(party);
-        socketSender.sendBreadBoard(partyId, bbangpanResponseDto);
+        BreadBoardResponseDto breadBoardResponseDto = BreadBoardResponseDto.createDtoByParty(party);
+        socketSender.sendBreadBoard(partyId, breadBoardResponseDto);
     }
 }

@@ -1,7 +1,7 @@
-package nbbang.com.nbbang.domain.bbangpan.controller;
+package nbbang.com.nbbang.domain.breadboard.controller;
 
-public class BbangpanResponseMessage {
-    public static final String BBANGPAN_READ_SUCCESS = "빵판 정보 조회 성공";
+public class BreadBoardResponseMessage {
+    public static final String BREADBOARD_READ_SUCCESS = "빵판 정보 조회 성공";
 
     public static final String PRICE_CHANGE_SUCCESS = "주문 가격 설정 성공";
     public static final String ILLEGAL_ARGUMENT_PRICE = "가격은 필수 값입니다.";
