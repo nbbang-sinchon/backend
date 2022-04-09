@@ -1,14 +1,12 @@
-package nbbang.com.nbbang.global.interceptor;
+package nbbang.com.nbbang.global.security.context;
 
-import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
-@Slf4j
 @Component
-@NoArgsConstructor
-public class CurrentMember {
+public class CurrentMemberImpl implements CurrentMember {
+
+    @Override
     public Long id() {
         try {
             String id = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -17,4 +15,5 @@ public class CurrentMember {
             return null;
         }
     }
+
 }

@@ -1,31 +1,26 @@
 package nbbang.com.nbbang.global.socket;
 
 import lombok.RequiredArgsConstructor;
-import nbbang.com.nbbang.global.interceptor.CurrentMember;
+import nbbang.com.nbbang.global.security.context.CurrentMember;
+import nbbang.com.nbbang.global.security.context.SocketIdUtil;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.http.server.ServletServerHttpRequest;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.server.HandshakeInterceptor;
 
-import javax.servlet.http.HttpSession;
 import java.util.Map;
-
-import static org.springframework.security.web.context.HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY;
 
 @Component
 @RequiredArgsConstructor
 public class LoginHandShakeInterceptor implements HandshakeInterceptor {
 
+    private final SocketIdUtil socketIdUtil;
+
     @Override
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
-        if (request instanceof ServletServerHttpRequest) {
-            ServletServerHttpRequest servletRequest = (ServletServerHttpRequest) request;
-            attributes.put("memberId", servletRequest.getPrincipal().getName());
-        }
+        socketIdUtil.rememberIdSocket(request, attributes);
         return true;
     }
 

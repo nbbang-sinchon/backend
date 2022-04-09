@@ -43,7 +43,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        RequestLogUtils.logRequest(request);
         try {
             String token = getJwtFromRequest(request);
             if (logoutService.isInvalid(token)) {
@@ -102,7 +101,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return true;
         }
         if (path.startsWith("/swagger-ui") || path.startsWith("/v3/api-docs") || path.startsWith("/configuration/ui") || path.startsWith("/swagger-resources/**") ||path.startsWith("/configuration/security") || path.startsWith("/swagger-ui.html") || path.startsWith("/webjars/**")) {
-            RequestLogUtils.logRequest(request);
             return true;
         }
         return false;
