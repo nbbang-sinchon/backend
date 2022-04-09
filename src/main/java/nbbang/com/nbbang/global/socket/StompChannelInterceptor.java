@@ -4,6 +4,7 @@ package nbbang.com.nbbang.global.socket;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.global.security.context.CurrentMember;
+import nbbang.com.nbbang.global.security.context.SocketIdUtil;
 import nbbang.com.nbbang.global.socket.service.ChatRoomService;
 import nbbang.com.nbbang.global.validator.PartyMemberValidator;
 import org.springframework.messaging.Message;
@@ -25,7 +26,7 @@ public class StompChannelInterceptor implements ChannelInterceptor {
 
     private final ChatRoomService chatRoomService;
     private final PartyMemberValidator partyMemberValidator;
-    private final CurrentMember currentMember;
+    private final SocketIdUtil socketIdUtil;
 
     private static final String TOPIC_GLOBAL = "/topic/global";
     private static final String TOPIC_CHATTING = "/topic/chatting";
@@ -37,7 +38,7 @@ public class StompChannelInterceptor implements ChannelInterceptor {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
         Map<String, Object> attributes = accessor.getSessionAttributes();
 
-        attributes.put("memberId", currentMember.idFromSocket(message));
+        attributes.put("memberId", socketIdUtil.idFromSocket(message));
         Long memberId = (Long) attributes.get("memberId");
         log.info("[{}] message: {}", accessor.getCommand(), message);
 

@@ -1,5 +1,6 @@
 package nbbang.com.nbbang.global.filter;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -17,34 +18,33 @@ import java.util.Enumeration;
  *  Body 를 로깅하려면 stream 을 복사하는 방법 등의 추가 구현이 필요합니다.
  */
 
+@Slf4j
 public class SimpleRequestHeaderLoggingFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         Enumeration<String> headerNames = request.getHeaderNames();
-
-        System.out.println("=============NEWREQUEST===========");
-        System.out.println(request.getMethod());
-        System.out.println(request.getRequestURL());
+        log.info("=============NEWREQUEST===========");
+        log.info(request.getMethod());
+        log.info(String.valueOf(request.getRequestURL()));
         if (headerNames != null) {
             while (headerNames.hasMoreElements()) {
                 String nextName = headerNames.nextElement();
-                      System.out.print(nextName);
-                      System.out.println(" : "+request.getHeader(nextName));
+                log.info("{} : {}", nextName, request.getHeader(nextName));
             }
         }
-        System.out.println("-------------COOKIES--------------");
+        log.info("-------------COOKIES--------------");
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie c : cookies) {
-                      System.out.println(c.getName());
+                log.info(c.getName());
             }
         }
         else {
-             System.out.println("empty");
+            log.info("empty");
         }
-        System.out.println("----------------------------------");
-        System.out.println("==================================");
+        log.info("----------------------------------");
+        log.info("==================================");
         filterChain.doFilter(request, response);
     }
 }

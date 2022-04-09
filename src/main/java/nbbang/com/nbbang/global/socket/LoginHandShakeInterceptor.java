@@ -2,6 +2,7 @@ package nbbang.com.nbbang.global.socket;
 
 import lombok.RequiredArgsConstructor;
 import nbbang.com.nbbang.global.security.context.CurrentMember;
+import nbbang.com.nbbang.global.security.context.SocketIdUtil;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.http.server.ServletServerHttpRequest;
@@ -15,11 +16,11 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class LoginHandShakeInterceptor implements HandshakeInterceptor {
 
-    private final CurrentMember currentMember;
+    private final SocketIdUtil socketIdUtil;
 
     @Override
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
-        currentMember.rememberIdSocket(request, attributes);
+        socketIdUtil.rememberIdSocket(request, attributes);
         return true;
     }
 
