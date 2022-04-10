@@ -21,7 +21,7 @@ public class PartyWishlistService {
     private final MemberService memberService;
 
     @Transactional
-    public void addWishlistIfNotDuplicate(Long memberId, Long partyId) {
+    public Long addWishlistIfNotDuplicate(Long memberId, Long partyId) {
         partyWishlistRepository.findByMemberIdAndPartyId(memberId, partyId).ifPresent(p -> {
             throw new UserException(WISHLIST_DUPLICATE_ADD_ERROR);
         });
@@ -29,6 +29,7 @@ public class PartyWishlistService {
         Party party = partyService.findById(partyId);
         PartyWishlist partyWishlist = PartyWishlist.createPartyWishlist(member, party);
         partyWishlistRepository.save(partyWishlist);
+        return partyWishlist.getId();
     }
 
     @Transactional
