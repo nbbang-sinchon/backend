@@ -74,6 +74,12 @@ public class PartyService {
         return party;
     }
 
+    public Party findByIdWithPartyMember(Long partyId) {
+        Party party = partyRepository.findWithPartyMember(partyId);
+        if (party == null) throw new NotFoundException(PARTY_NOT_FOUND);
+        return party;
+    }
+
     public Long findIdByParty(Party party) {
         return Optional.ofNullable(party.getId()).orElseThrow(() -> new NotFoundException("파티의 아이디가 존재하지 않습니다."));
     }

@@ -12,4 +12,5 @@ public interface PartyRepositorySupport {
     List<Party> findByPlaceAndNotSelf(Long partyId, Place place);
 
     Party findWithPartyMember(Long partyId);
+
 }

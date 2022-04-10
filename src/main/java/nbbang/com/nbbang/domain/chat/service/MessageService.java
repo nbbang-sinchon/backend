@@ -86,10 +86,29 @@ public class MessageService {
         return message;
     }
 
+    // Keno: Party 를 이미 조회한 경우에 또 조회할 필요가 없으므로 밑의 메소드를 사용하면 쿼리가 적게 나가요.
+    @Transactional
+    public Message send(Party party, Long senderId, String content, MessageType type) {
+
+        Message message = createMessage(party, senderId, content, type);
+        Message savedMessage = messageRepository.save(message);
+
+        socketSender.sendChattingByMessage(savedMessage);
+        return savedMessage;
+    }
+
+    private Message createMessage(Party party, Long senderId, String content, MessageType type){
+        Member sender = memberCacheService.getMemberCache(senderId).createMember();
+        Integer notReadNumber = getNotActiveNumber(party);
+        Message message =Message.createMessage(sender, party, content, type, notReadNumber);
+        return message;
+    }
+
 
     private Integer getNotActiveNumber(Party party) {
         Integer activeNumber = socketPartyMemberService.getPartyActiveNumber(party.getId());
-        Integer partyMemberNumber = partyMemberCacheService.getPartyMembersCacheByPartyId(party.getId()).size();
+        //Integer partyMemberNumber = partyMemberCacheService.getPartyMembersCacheByPartyId(party.getId()).size();
+        Integer partyMemberNumber = partyMemberCacheService.getPartyMembersCacheByParty(party).size();
         return partyMemberNumber - activeNumber;
     }
 

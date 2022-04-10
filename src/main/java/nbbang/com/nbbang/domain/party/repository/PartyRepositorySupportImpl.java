@@ -9,6 +9,7 @@ import nbbang.com.nbbang.domain.party.domain.PartyStatus;
 import static nbbang.com.nbbang.domain.party.domain.QParty.party;
 
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 public class PartyRepositorySupportImpl implements PartyRepositorySupport{
@@ -47,4 +48,5 @@ public class PartyRepositorySupportImpl implements PartyRepositorySupport{
                 .leftJoin(party.partyMembers).fetchJoin()
                 .fetchOne();
     }
+
 }

@@ -32,8 +32,6 @@ public class PartyMemberController {
     private final PartyService partyService;
     private final MemberService memberService;
     private final PartyMemberService partyMemberService;
-    private final SocketSender socketSender;
-    private final MessageService messageService;
     private final CurrentMember currentMember;
 
     @Operation(summary = "파티 참여", description = "파티에 참여합니다.")
@@ -41,9 +39,8 @@ public class PartyMemberController {
     @ApiResponse(responseCode = "400", description = "파티에 참여할 수 없습니다. 이미 참여한 파티이거나 파티가 찼습니다.", content = @Content(mediaType = "application/json"))
     @PostMapping("/{party-id}/join")
     public DefaultResponse joinParty(@PathVariable("party-id") Long partyId) {
-        Party party = partyService.findById(partyId);
+        Party party = partyService.findByIdWithPartyMember(partyId);
         Member member = memberService.findById(currentMember.id());
-
         partyMemberService.joinParty(party, member);
         return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_JOIN_SUCCESS);
     }
@@ -54,7 +51,7 @@ public class PartyMemberController {
     @ApiResponse(responseCode = "403", description = "Not Member", content = @Content(mediaType = "application/json"))
     @PostMapping("/{party-id}/exit")
     public DefaultResponse exitParty(@PathVariable("party-id") Long partyId) {
-        Party party = partyService.findById(partyId);
+        Party party = partyService.findByIdWithPartyMember(partyId);
         Member member = memberService.findById(currentMember.id());
         partyMemberService.exitParty(party, member);
         return DefaultResponse.res(StatusCode.OK, PartyResponseMessage.PARTY_EXIT_SUCCESS);
