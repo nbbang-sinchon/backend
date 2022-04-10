@@ -34,7 +34,8 @@ class PartyWishlistControllerTest extends ControllerTestParent {
 
     @Test
     public void postPartyWishlistTest1() throws Exception {
-        doNothing().when(partyWishlistService).addWishlistIfNotDuplicate(isA(Long.class), isA(Long.class));
+        //doNothing().when(partyWishlistService).addWishlistIfNotDuplicate(isA(Long.class), isA(Long.class));
+        doReturn(1L).when(partyWishlistService).addWishlistIfNotDuplicate(isA(Long.class), isA(Long.class));
         DefaultResponse res = controllerTestUtil.expectDefaultResponseObject(post("/parties/1/wishlist"));
         assertThat(res.getStatusCode() == OK);
         assertThat(res.getMessage().equals(WISHLIST_ADD_SUCCESS));
