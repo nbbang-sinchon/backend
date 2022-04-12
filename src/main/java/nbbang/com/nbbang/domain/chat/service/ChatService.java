@@ -59,7 +59,7 @@ public class ChatService {
 
         messageRepository.bulkNotReadSubtract(partyId, memberId);
 
-        PartyMember partyMember = partyMemberRepository.findByMemberIdAndPartyId(memberId, partyId);
+        PartyMember partyMember = partyMemberRepository.findByPartyIdAndMemberId(partyId, memberId);
         Long lastReadMessageId = partyMember.getLastReadMessage().getId();
         partyMemberRepository.updateLastReadMessage(partyId, memberId);
 

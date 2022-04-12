@@ -21,19 +21,20 @@ public class PartyWishlistService {
     private final MemberService memberService;
 
     @Transactional
-    public void addWishlistIfNotDuplicate(Long memberId, Long partyId) {
-        partyWishlistRepository.findByMemberIdAndPartyId(memberId, partyId).ifPresent(p -> {
+    public Long addWishlistIfNotDuplicate(Long partyId, Long memberId) {
+        partyWishlistRepository.findByPartyIdAndMemberId(partyId, memberId).ifPresent(p -> {
             throw new UserException(WISHLIST_DUPLICATE_ADD_ERROR);
         });
         Member member = memberService.findById(memberId);
         Party party = partyService.findById(partyId);
         PartyWishlist partyWishlist = PartyWishlist.createPartyWishlist(member, party);
         partyWishlistRepository.save(partyWishlist);
+        return partyWishlist.getId();
     }
 
     @Transactional
-    public void deleteWishlist(Long memberId, Long partyId) {
-        PartyWishlist w = partyWishlistRepository.findByMemberIdAndPartyId(memberId, partyId)
+    public void deleteWishlist(Long partyId, Long memberId) {
+        PartyWishlist w = partyWishlistRepository.findByPartyIdAndMemberId(partyId, memberId)
                 .orElseThrow(() -> new NotFoundException(WISHLIST_NOT_FOUND));
         partyWishlistRepository.delete(w);
     }

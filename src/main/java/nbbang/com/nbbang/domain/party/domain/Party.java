@@ -96,11 +96,14 @@ public class Party {
         this.owner = member;
     }
 
-    public void addMemberParty(PartyMember partyMember) {
+    public void addPartyMember(PartyMember partyMember) {
         this.getPartyMembers().add(partyMember);
     }
 
-    public void exitMemberParty(PartyMember partyMember) {
+    public void exitPartyMember(Long partyMemberId) {
+        partyMembers.removeIf(mp -> mp.getId().equals(partyMemberId));
+    }
+    public void exitPartyMember(PartyMember partyMember) {
         partyMembers.removeIf(mp -> mp.equals(partyMember));
     }
 
