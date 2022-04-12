@@ -36,7 +36,7 @@ class PartyMemberRepositoryTest {
         Party party = Party.builder().owner(member).goalNumber(10).status(PartyStatus.OPEN).title("party").build();
         partyService.create(party, member.getId(), null);
         // when
-        PartyMember findPartyMember = memberPartyRepository.findByMemberIdAndPartyId(member.getId(), party.getId());
+        PartyMember findPartyMember = memberPartyRepository.findByPartyIdAndMemberId(party.getId(), member.getId());
         // then
         assertThat(party).isEqualTo(findPartyMember.getParty());
         assertThat(member).isEqualTo(findPartyMember.getMember());

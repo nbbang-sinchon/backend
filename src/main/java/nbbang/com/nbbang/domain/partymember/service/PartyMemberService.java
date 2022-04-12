@@ -39,19 +39,19 @@ public class PartyMemberService {
     private final SocketPartyMemberService socketPartyMemberService;
     private final PartyMemberCacheService partyMemberCacheService;
 
-    public boolean isPartyOwnerOrMember(Party party, Member member) {
+    public boolean isPartyMember(Party party, Member member) {
         return Optional.ofNullable(party.getOwner()).equals(member) || party.getPartyMembers().stream().anyMatch(mp -> mp.getMember().equals(member));
     }
 
     // refactored
-    public boolean isPartyOwnerOrMember(Long memberId, Long partyId) {
-        return partyMemberRepository.findByMemberIdAndPartyId(memberId, partyId) != null;
+    public boolean isPartyOwnerOrMember(Long partyId, Long memberId) {
+        return partyMemberRepository.findByPartyIdAndMemberId(partyId, memberId) != null;
     }
 
     @Transactional
     public PartyMember joinParty(Party party, Member member) {
         // 이미 참여한 파티일 경우
-        if (isPartyOwnerOrMember(party, member)) {
+        if (isPartyMember(party, member)) {
             throw new PartyJoinException(PartyResponseMessage.PARTY_DUPLICATE_JOIN_ERROR);
         }
         // 파티가 찼을 경우
@@ -78,7 +78,7 @@ public class PartyMemberService {
     @Transactional
     public void exitParty(Party party, Member member) {
         // 참여하지 않은 파티일 경우
-        if (!isPartyOwnerOrMember(party, member)) {
+        if (!isPartyMember(party, member)) {
             throw new NotPartyMemberException();
         }
         // 방장이 탈퇴하려 했을 경우
@@ -86,7 +86,7 @@ public class PartyMemberService {
             throw new PartyExitForbiddenException(PartyResponseMessage.PARTY_OWNER_EXIT_ERROR);
         }
 
-        PartyMember partyMember = partyMemberRepository.findByMemberIdAndPartyId(member.getId(), party.getId());
+        PartyMember partyMember = partyMemberRepository.findByPartyIdAndMemberId(party.getId(), member.getId());
         party.exitPartyMember(partyMember);
         partyMemberRepository.delete(partyMember);
 
@@ -98,7 +98,7 @@ public class PartyMemberService {
 
     @Transactional
     public void changeField(Long partyId, Long memberId, Field field, Object value) throws NoSuchFieldException {
-        PartyMember partyMember = partyMemberRepository.findByMemberIdAndPartyId(memberId, partyId);
+        PartyMember partyMember = partyMemberRepository.findByPartyIdAndMemberId(partyId, memberId);
         if (field.equals(PartyMember.getField("price"))){
             partyMember.changePrice((Integer) value);
         }else if(field.equals(PartyMember.getField("isSent"))){
@@ -109,7 +109,7 @@ public class PartyMemberService {
     }
 
     public Message findLastReadMessage(Long partyId, Long memberId) {
-        PartyMember partyMember = partyMemberRepository.findByMemberIdAndPartyId(memberId, partyId);
+        PartyMember partyMember = partyMemberRepository.findByPartyIdAndMemberId(partyId, memberId);
         return Optional.ofNullable(partyMember.getLastReadMessage()).orElse(Message.builder().id(0L).build());
     }
 

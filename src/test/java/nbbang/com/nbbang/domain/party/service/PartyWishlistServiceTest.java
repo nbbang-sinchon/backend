@@ -34,9 +34,9 @@ class PartyWishlistServiceTest {
         Party partyA = Party.builder().owner(memberA).goalNumber(10).status(PartyStatus.OPEN).build();
         partyRepository.save(partyA);
         // when
-        partyWishlistService.addWishlistIfNotDuplicate(memberA.getId(), partyA.getId());
+        partyWishlistService.addWishlistIfNotDuplicate(partyA.getId(), memberA.getId());
         // then
-        assertThat(partyWishlistRepository.findByMemberIdAndPartyId(memberA.getId(), partyA.getId()).isPresent());
+        assertThat(partyWishlistRepository.findByPartyIdAndMemberId(partyA.getId(), memberA.getId()).isPresent());
     }
 
     @Test
@@ -47,10 +47,10 @@ class PartyWishlistServiceTest {
         Party partyA = Party.builder().owner(memberA).goalNumber(10).status(PartyStatus.OPEN).build();
         partyRepository.save(partyA);
         // when
-        partyWishlistService.addWishlistIfNotDuplicate(memberA.getId(), partyA.getId());
+        partyWishlistService.addWishlistIfNotDuplicate(partyA.getId(), memberA.getId());
         // then
         assertThrows(UserException.class, () ->
-            partyWishlistService.addWishlistIfNotDuplicate(memberA.getId(), partyA.getId()));
+            partyWishlistService.addWishlistIfNotDuplicate(partyA.getId(), memberA.getId()));
     }
 
     @Test
@@ -61,9 +61,9 @@ class PartyWishlistServiceTest {
         Party partyA = Party.builder().owner(memberA).goalNumber(10).status(PartyStatus.OPEN).build();
         partyRepository.save(partyA);
         // when
-        partyWishlistService.addWishlistIfNotDuplicate(memberA.getId(), partyA.getId());
+        partyWishlistService.addWishlistIfNotDuplicate(partyA.getId(), memberA.getId());
         // then
-        partyWishlistService.deleteWishlist(memberA.getId(), partyA.getId());
+        partyWishlistService.deleteWishlist(partyA.getId(), memberA.getId());
     }
 
     @Test
@@ -77,7 +77,7 @@ class PartyWishlistServiceTest {
 
         // then
         assertThrows(NotFoundException.class, () ->
-                partyWishlistService.deleteWishlist(memberA.getId(), partyA.getId()));
+                partyWishlistService.deleteWishlist(partyA.getId(), memberA.getId()));
     }
 
 }
