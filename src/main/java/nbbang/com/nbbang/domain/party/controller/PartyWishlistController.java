@@ -8,7 +8,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.domain.party.service.PartyWishlistService;
-import nbbang.com.nbbang.global.interceptor.CurrentMember;
+import nbbang.com.nbbang.global.security.context.CurrentMember;
 import nbbang.com.nbbang.global.response.DefaultResponse;
 import nbbang.com.nbbang.global.response.StatusCode;
 import org.springframework.web.bind.annotation.*;
@@ -33,7 +33,7 @@ public class PartyWishlistController {
     @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(mediaType = "application/json"))
     @PostMapping("/{party-id}/wishlist")
     public DefaultResponse addWishlist(@PathVariable("party-id") Long partyId) {
-        partyWishlistService.addWishlistIfNotDuplicate(currentMember.id(), partyId);
+        partyWishlistService.addWishlistIfNotDuplicate(partyId, currentMember.id());
         return DefaultResponse.res(StatusCode.OK, WISHLIST_ADD_SUCCESS);
     }
 
@@ -42,7 +42,7 @@ public class PartyWishlistController {
     @ApiResponse(responseCode = "404", description = WISHLIST_NOT_FOUND, content = @Content(mediaType = "application/json"))
     @DeleteMapping("/{party-id}/wishlist")
     public DefaultResponse deleteWishlist(@PathVariable("party-id") Long partyId) {
-        partyWishlistService.deleteWishlist(currentMember.id(), partyId);
+        partyWishlistService.deleteWishlist(partyId, currentMember.id());
         return DefaultResponse.res(StatusCode.OK, WISHLIST_DELETE_SUCCESS);
     }
 

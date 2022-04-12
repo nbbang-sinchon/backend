@@ -1,5 +1,6 @@
 package nbbang.com.nbbang.domain.member.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,6 +15,7 @@ import static javax.persistence.EnumType.STRING;
 
 @Entity @Getter @Builder
 @AllArgsConstructor
+@JsonIgnoreProperties(value = {"hibernateLazyInitializer","handler"})
 public class Member {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

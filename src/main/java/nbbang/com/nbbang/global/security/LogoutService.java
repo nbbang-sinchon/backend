@@ -6,6 +6,7 @@ import org.springframework.data.redis.core.SetOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.PostConstruct;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -18,10 +19,13 @@ public class LogoutService {
     private final RedisTemplate<String, String> redisTemplate;
     private String key = "blocked";
 
+    @PostConstruct
+    public void logoutKey() {
+        redisTemplate.expire(key, TOKEN_EXPIRE_TIME, TimeUnit.MILLISECONDS);
+    }
 
     public void invalidate(String token) {
         SetOperations<String, String> setOperations = redisTemplate.opsForSet();
-        redisTemplate.expire(key, TOKEN_EXPIRE_TIME, TimeUnit.MILLISECONDS);
         setOperations.add(key, token);
     }
 

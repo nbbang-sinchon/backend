@@ -1,6 +1,6 @@
 package nbbang.com.nbbang.domain.chat.repository;
 
-import com.querydsl.core.BooleanBuilder;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -9,16 +9,16 @@ import nbbang.com.nbbang.domain.chat.domain.Message;
 import nbbang.com.nbbang.domain.chat.domain.MessageType;
 import nbbang.com.nbbang.domain.chat.domain.QMessage;
 import nbbang.com.nbbang.domain.member.domain.QMember;
-import nbbang.com.nbbang.domain.party.domain.Party;
-import nbbang.com.nbbang.domain.party.domain.PartyStatus;
 import nbbang.com.nbbang.domain.party.domain.QParty;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import javax.persistence.EntityManager;
-import java.util.Collections;
 import java.util.List;
+
+import static nbbang.com.nbbang.domain.partymember.domain.QPartyMember.*;
+import static nbbang.com.nbbang.domain.chat.domain.QMessage.*;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -30,15 +30,10 @@ public class MessageRepositorySupportImpl implements MessageRepositorySupport {
     @Override
     public Message findLastMessage(Long partyId) {
         QMessage message = QMessage.message;
-        JPQLQuery<Message> q = query.selectFrom(message)
+        return query.selectFrom(message)
                 .where(message.party.id.eq(partyId))
-                .orderBy(message.id.desc())
-                .limit(1);
-        Message res = q.fetchOne();
-        if (res == null) {
-            return null;
-        }
-        return res;
+                .orderBy(message.id.desc()).limit(1)
+                .fetchOne();
     }
 
     @Override
@@ -65,17 +60,22 @@ public class MessageRepositorySupportImpl implements MessageRepositorySupport {
     }
 
     @Override
-    public void bulkNotReadMinusPlus(Long lastReadId, Long partyId) {
-        QMessage message = QMessage.message;
-                query
+    public void bulkNotReadSubtract(Long partyId, Long memberId) {
+        query
                 .update(message)
                 .set(message.notReadNumber,message.notReadNumber.subtract(1))
-                .where(message.id.gt(lastReadId))
+                .where(message.id.gt(
+                        JPAExpressions
+                                .select(partyMember.lastReadMessage.id)
+                                .from(partyMember)
+                                .where(partyMember.member.id.eq(memberId))
+                                .where(partyMember.party.id.eq(partyId))
+                ))
                 .where(message.party.id.eq(partyId))
                 .execute();
         em.flush();
         em.clear();
-        log.info("[Subtract] Not Read Number -1 gt{}", lastReadId);
+
     }
 
     @Override

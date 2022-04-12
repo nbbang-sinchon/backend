@@ -3,7 +3,10 @@ package nbbang.com.nbbang.global.socket;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import nbbang.com.nbbang.global.validator.PartyMemberValidatorById;
+import nbbang.com.nbbang.global.security.context.CurrentMember;
+import nbbang.com.nbbang.global.security.context.SocketIdUtil;
+import nbbang.com.nbbang.global.socket.service.ChatRoomService;
+import nbbang.com.nbbang.global.validator.PartyMemberValidator;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
@@ -22,16 +25,12 @@ import java.util.Map;
 public class StompChannelInterceptor implements ChannelInterceptor {
 
     private final ChatRoomService chatRoomService;
-    private final PartyMemberValidatorById partyMemberValidatorById;
+    private final PartyMemberValidator partyMemberValidator;
+    private final SocketIdUtil socketIdUtil;
 
     private static final String TOPIC_GLOBAL = "/topic/global";
     private static final String TOPIC_CHATTING = "/topic/chatting";
     private static final String TOPIC_BREAD_BOARD = "/topic/breadBoard";
-
-    private Long memberId(Message<?> message) {
-        Map<String, Object> sessionHeaders = SimpMessageHeaderAccessor.getSessionAttributes(message.getHeaders());
-        return Long.parseLong(sessionHeaders.get("memberId").toString());
-    }
 
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
@@ -39,7 +38,7 @@ public class StompChannelInterceptor implements ChannelInterceptor {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
         Map<String, Object> attributes = accessor.getSessionAttributes();
 
-        attributes.put("memberId", memberId(message));
+        attributes.put("memberId", socketIdUtil.idFromSocket(message));
         Long memberId = (Long) attributes.get("memberId");
         log.info("[{}] message: {}", accessor.getCommand(), message);
 
@@ -53,11 +52,11 @@ public class StompChannelInterceptor implements ChannelInterceptor {
             }
             else if(destination.startsWith(TOPIC_CHATTING)){
                 Long partyId = Long.valueOf(destination.substring(16));
-                partyMemberValidatorById.isPartyMember(partyId, memberId);
+                partyMemberValidator.validatePartyMember(partyId, memberId);
                 chatRoomService.enter(attributes, partyId);
             }else if(destination.startsWith(TOPIC_BREAD_BOARD)){
                 Long partyId = Long.valueOf(destination.substring(18));
-                partyMemberValidatorById.isPartyMember(partyId, memberId);
+                partyMemberValidator.validatePartyMember(partyId, memberId);
             }
             else{
                 throw new IllegalArgumentException("올바른 토픽을 입력해주세요.");

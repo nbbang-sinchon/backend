@@ -13,14 +13,16 @@ import nbbang.com.nbbang.domain.chat.service.ChatService;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.service.PartyService;
 import nbbang.com.nbbang.global.dto.PageableDto;
-import nbbang.com.nbbang.global.interceptor.CurrentMember;
+import nbbang.com.nbbang.global.security.context.CurrentMember;
 import nbbang.com.nbbang.global.response.DefaultResponse;
-import nbbang.com.nbbang.global.socket.ChatRoomService;
+import nbbang.com.nbbang.global.socket.service.ChatRoomService;
 import nbbang.com.nbbang.global.response.StatusCode;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 @Tag(name = "ChatRoom", description = "채팅방 api")
 @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(mediaType = "application/json"))
@@ -58,15 +60,6 @@ public class ChatRoomController {
         Party party = partyService.findById(partyId);
         Page<Message> messages = chatService.findMessagesByCursorId(party, currentMember.id(), pageableDto.createPageRequest(), cursorId);
         return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.READ_CHAT, ChatSendListResponseDto.createByEntity(messages.getContent(), currentMember.id()));
-    }
-
-    @Operation(summary = "채팅방에서 나가기", description = "채팅방에서 나갑니다. 소켓 종료 용도로 쓰일 것 같습니다. ")
-    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json"))
-    @ApiResponse(responseCode = "400", description = "잘못된 요청입니다.", content = @Content(mediaType = "application/json"))
-    @ApiResponse(responseCode = "403", description = "Not Party Member", content = @Content(mediaType = "application/json"))
-    @PostMapping("/{party-id}/out")
-    public DefaultResponse exitChat(@PathVariable("party-id") Long partyId) {
-        return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.EXIT_CHAT);
     }
 
 }

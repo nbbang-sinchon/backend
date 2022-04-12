@@ -1,6 +1,6 @@
 package nbbang.com.nbbang.domain.party.controller;
 
-import nbbang.com.nbbang.domain.bbangpan.domain.PartyMember;
+import nbbang.com.nbbang.domain.partymember.domain.PartyMember;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.dto.Place;
 import nbbang.com.nbbang.domain.party.domain.Hashtag;
@@ -10,7 +10,7 @@ import nbbang.com.nbbang.domain.party.domain.PartyStatus;
 import nbbang.com.nbbang.domain.party.dto.many.PartyListRequestFilterDto;
 import nbbang.com.nbbang.domain.party.dto.many.PartyListResponseDto;
 import nbbang.com.nbbang.domain.party.service.ManyPartyService;
-import nbbang.com.nbbang.global.interceptor.CurrentMember;
+import nbbang.com.nbbang.global.security.context.CurrentMember;
 import nbbang.com.nbbang.global.response.DefaultResponse;
 import nbbang.com.nbbang.global.support.controller.ControllerTestParent;
 import nbbang.com.nbbang.global.support.controller.ControllerTestUtil;

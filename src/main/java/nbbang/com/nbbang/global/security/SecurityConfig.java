@@ -1,30 +1,21 @@
 package nbbang.com.nbbang.global.security;
 
 import lombok.RequiredArgsConstructor;
-import org.hibernate.annotations.LazyToOne;
-import org.springframework.beans.factory.annotation.Autowired;
+import nbbang.com.nbbang.global.filter.SimpleRequestHeaderLoggingFilter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.BeanIds;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.annotation.web.messaging.MessageSecurityMetadataSourceRegistry;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -37,6 +28,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final CustomOAuth2MemberService customOAuth2MemberService;
     private final LogoutService logoutService;
+
+    @Value("${request.logging:false}")
+    private Boolean requestLogging;
 
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
@@ -53,10 +47,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        if (requestLogging) http.addFilterBefore(new SimpleRequestHeaderLoggingFilter(), WebAsyncManagerIntegrationFilter.class);
         http
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .addFilterBefore(utf8EncodingFilter(), WebAsyncManagerIntegrationFilter.class)
+                //.addFilterBefore(new CustomRequestLoggingFilter(), WebAsyncManagerIntegrationFilter.class)
                 .addFilterBefore(jwtAuthenticationFilter(), BasicAuthenticationFilter.class)
                 .addFilterBefore(new LoginRedirectionFilter(), WebAsyncManagerIntegrationFilter.class)
                 .csrf().disable()

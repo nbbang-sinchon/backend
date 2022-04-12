@@ -6,6 +6,7 @@ import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.repository.MemberRepository;
 import nbbang.com.nbbang.domain.member.service.MemberService;
 import nbbang.com.nbbang.domain.party.domain.Party;
+import nbbang.com.nbbang.domain.partymember.service.PartyMemberService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,8 @@ import static nbbang.com.nbbang.domain.member.dto.Place.SINCHON;
 @Transactional
 class PartyMemberServiceTest {
 
-    @Autowired PartyMemberService partyMemberService;
+    @Autowired
+    PartyMemberService partyMemberService;
     @Autowired
     MessageService messageService;
     @Autowired

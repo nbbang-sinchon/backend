@@ -5,9 +5,9 @@ import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.repository.MemberRepository;
 import nbbang.com.nbbang.domain.member.service.MemberService;
 import nbbang.com.nbbang.domain.party.domain.Party;
-import nbbang.com.nbbang.domain.party.service.PartyMemberService;
+import nbbang.com.nbbang.domain.partymember.service.PartyMemberService;
 import nbbang.com.nbbang.domain.party.service.PartyService;
-import nbbang.com.nbbang.global.socket.ChatRoomService;
+import nbbang.com.nbbang.global.socket.service.ChatRoomService;
 import nbbang.com.nbbang.global.socket.StompChannelInterceptor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +60,6 @@ class ChatReadTest {
         Map<String, Object> member3Attributes = new HashMap<>();
         member3Attributes.put("memberId", saveMember3.getId());
 
-        //
         stompChannelInterceptor.connect(member1Attributes);
         stompChannelInterceptor.connect(member2Attributes);
         stompChannelInterceptor.connect(member3Attributes);

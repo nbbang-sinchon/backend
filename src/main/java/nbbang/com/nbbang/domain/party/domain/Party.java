@@ -3,7 +3,7 @@ package nbbang.com.nbbang.domain.party.domain;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import nbbang.com.nbbang.domain.bbangpan.domain.PartyMember;
+import nbbang.com.nbbang.domain.partymember.domain.PartyMember;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.dto.Place;
 import nbbang.com.nbbang.domain.party.dto.single.PartyUpdateServiceDto;
@@ -51,8 +51,6 @@ public class Party {
     @Enumerated(STRING)
     private Place place;
 
-    // private LocalDateTime cancelTime;
-
     @Builder.Default
     private Integer deliveryFee=0;
 
@@ -65,16 +63,16 @@ public class Party {
 
     private String accountNumber;
 
-    @Builder.Default // https://www.inflearn.com/questions/151658
+    @Builder.Default
     @OneToMany(mappedBy = "party")
     private List<PartyHashtag> partyHashtags = new ArrayList<>();
 
     @Builder.Default
-    @OneToMany(mappedBy = "party" , fetch = LAZY)
+    @OneToMany(mappedBy = "party" )
     private List<PartyMember> partyMembers = new ArrayList<>();
 
     @Builder.Default
-    @OneToMany(mappedBy = "party", fetch = LAZY)
+    @OneToMany(mappedBy = "party")
     private List<PartyWishlist> wishlists = new ArrayList<>();
 
     protected Party() {}
@@ -95,15 +93,17 @@ public class Party {
     }
 
     public void addOwner(Member member) {
-
         this.owner = member;
     }
 
-    public void addMemberParty(PartyMember partyMember) {
+    public void addPartyMember(PartyMember partyMember) {
         this.getPartyMembers().add(partyMember);
     }
 
-    public void exitMemberParty(PartyMember partyMember) {
+    public void exitPartyMember(Long partyMemberId) {
+        partyMembers.removeIf(mp -> mp.getId().equals(partyMemberId));
+    }
+    public void exitPartyMember(PartyMember partyMember) {
         partyMembers.removeIf(mp -> mp.equals(partyMember));
     }
 

@@ -8,6 +8,7 @@ import nbbang.com.nbbang.domain.party.dto.single.request.PartyRequestDto;
 import nbbang.com.nbbang.domain.party.exception.PartyExitForbiddenException;
 import nbbang.com.nbbang.domain.party.exception.PartyJoinException;
 import nbbang.com.nbbang.domain.party.repository.PartyRepository;
+import nbbang.com.nbbang.domain.partymember.service.PartyMemberService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,7 +28,8 @@ class PartyServiceTest {
     @Autowired PartyService partyService;
     @Autowired MemberRepository memberRepository;
     @Autowired PartyRepository partyRepository;
-    @Autowired PartyMemberService partyMemberService;
+    @Autowired
+    PartyMemberService partyMemberService;
 
 
     @Test

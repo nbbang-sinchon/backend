@@ -1,19 +1,14 @@
 package nbbang.com.nbbang.global.support.test;
 
 import lombok.extern.slf4j.Slf4j;
-import nbbang.com.nbbang.domain.bbangpan.repository.PartyMemberRepository;
 import nbbang.com.nbbang.domain.chat.service.ChatService;
+import nbbang.com.nbbang.domain.chat.service.MessageService;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.dto.Place;
-import nbbang.com.nbbang.domain.member.repository.MemberRepository;
 import nbbang.com.nbbang.domain.member.service.MemberService;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.domain.PartyStatus;
-import nbbang.com.nbbang.domain.party.repository.HashtagRepository;
-import nbbang.com.nbbang.domain.party.repository.PartyHashtagRepository;
-import nbbang.com.nbbang.domain.party.repository.PartyRepository;
-import nbbang.com.nbbang.domain.party.service.HashtagService;
-import nbbang.com.nbbang.domain.party.service.PartyMemberService;
+import nbbang.com.nbbang.domain.partymember.service.PartyMemberService;
 import nbbang.com.nbbang.domain.party.service.PartyService;
 import nbbang.com.nbbang.global.security.Role;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +17,6 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -38,17 +31,12 @@ import static nbbang.com.nbbang.domain.party.domain.PartyStatus.*;
 @Slf4j
 public class MockDataCreator implements CommandLineRunner {
 
-    @PersistenceContext EntityManager em;
-    @Autowired MemberRepository memberRepository;
-    @Autowired PartyRepository partyRepository;
-    @Autowired HashtagRepository hashtagRepository;
-    @Autowired PartyMemberRepository memberPartyRepository;
     @Autowired ChatService chatService;
-    @Autowired HashtagService hashtagService;
     @Autowired PartyService partyService;
-    @Autowired PartyHashtagRepository partyHashtagRepository;
     @Autowired PartyMemberService partyMemberService;
     @Autowired MemberService memberService;
+    @Autowired
+    MessageService messageService;
 
     private Long luffyId;
     private Long korungId;
@@ -113,7 +101,8 @@ public class MockDataCreator implements CommandLineRunner {
     }
 
     private void createMockMessage(Long memberId, Long partyId, String content) {
-        chatService.sendMessage(memberId, partyId, content, nextTime());
+        // chatService.sendMessage(memberId, partyId, content, nextTime()); 이 메소드는 사용하지 않아서 메소드를 수정합니다.
+        messageService.send(partyId, memberId, content);
     }
 
     private void createMockParties() {

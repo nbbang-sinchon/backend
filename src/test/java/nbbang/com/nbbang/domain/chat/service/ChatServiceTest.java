@@ -7,6 +7,7 @@ import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.repository.MemberRepository;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.repository.PartyRepository;
+import nbbang.com.nbbang.domain.party.service.PartyService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +25,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ActiveProfiles("test")
 @Transactional
 class ChatServiceTest {
-    @Autowired MessageRepository messageRepository;
     @Autowired ChatService chatService;
     @Autowired PartyRepository partyRepository;
     @Autowired MemberRepository memberRepository;
+    @Autowired MessageService messageService;
+    @Autowired PartyService partyService;
 
 
     @Test
@@ -36,10 +38,11 @@ class ChatServiceTest {
         Member memberA = Member.builder().nickname("memberA").build();
         memberRepository.save(memberA);
         Party partyA = Party.builder().owner(memberA).build();
-        partyRepository.save(partyA);
+        partyA = partyService.create(partyA, memberA.getId(),null);
         String content = "hello 뿌링클";
         // when
-        Long savedMessageId = chatService.sendMessage(memberA.getId(), partyA.getId(), content, LocalDateTime.now());
+
+        Long savedMessageId = messageService.send(partyA.getId(), memberA.getId(), content).getId();
         // then
         Message findMessage = chatService.findById(savedMessageId);
         assertThat(findMessage.getContent().equals(content));
@@ -53,15 +56,18 @@ class ChatServiceTest {
         Member memberA = Member.builder().nickname("memberA").build();
         memberRepository.save(memberA);
         Party partyA = Party.builder().owner(memberA).build();
-        partyRepository.save(partyA);
+        partyA = partyService.create(partyA, memberA.getId(), null);
         Party partyB = Party.builder().owner(memberA).build();
-        partyRepository.save(partyB);
+        partyB = partyService.create(partyB, memberA.getId(), null);
         String content = "뿌링클";
         // when
-        for (int i = 0; i < 20; i++) {
-            Long savedMessageId = chatService.sendMessage(memberA.getId(), partyA.getId(), content, LocalDateTime.now());
+        for (int i = 0; i < 19; i++) {
+            messageService.send(partyA.getId(), memberA.getId(), content);
         }
         // then
+
+        // findMessage에 검증 로직을 추가하였더니 테스트 코드가 잘 돌지 않아서 조금 수정하였습니다.
+
         Page<Message> findMessages = chatService.findMessages(partyA, memberA.getId(), PageRequest.of(0, 10));
         assertThat(findMessages.getContent().size() == 10);
 
@@ -72,7 +78,7 @@ class ChatServiceTest {
         assertThat(findMessages.getContent().size() == 20);
 
         findMessages = chatService.findMessages(partyB,  memberA.getId(),PageRequest.of(0, 10));
-        assertThat(findMessages.getContent().size() == 0);
+        assertThat(findMessages.getContent().size() == 1);
     }
 
     @Test
@@ -81,19 +87,19 @@ class ChatServiceTest {
         Member memberA = Member.builder().nickname("memberA").build();
         memberRepository.save(memberA);
         Party partyA = Party.builder().owner(memberA).build();
-        partyRepository.save(partyA);
+        partyA = partyService.create(partyA, memberA.getId(), null);
         Party partyB = Party.builder().owner(memberA).build();
-        partyRepository.save(partyB);
+        partyB = partyService.create(partyB, memberA.getId(), null);
+
         String content = "뿌링클";
         // when
-        for (int i = 0; i < 20; i++) {
-            chatService.sendMessage(memberA.getId(), partyA.getId(), content, LocalDateTime.now());
+        for (int i = 0; i < 19; i++) {
+            messageService.send(partyA.getId(), memberA.getId(), content);
         }
-        Long saveLastMessageId = chatService.sendMessage(memberA.getId(), partyA.getId(), content, LocalDateTime.now());
+        Long saveLastMessageId = messageService.send(partyA.getId(), memberA.getId(), content).getId();
         // then
         Long findLastMessageId = chatService.findLastMessage(partyA).getId();
         assertThat(findLastMessageId.equals(saveLastMessageId));
-        System.out.println(saveLastMessageId);
     }
 
     @Test
@@ -102,24 +108,25 @@ class ChatServiceTest {
         Member memberA = Member.builder().nickname("memberA").build();
         memberRepository.save(memberA);
         Party partyA = Party.builder().owner(memberA).build();
-        partyRepository.save(partyA);
+        partyA = partyService.create(partyA, memberA.getId(), null);
         String content = "처음";
-        chatService.sendMessage(memberA.getId(), partyA.getId(), content, LocalDateTime.now());
+        messageService.send(partyA.getId(), memberA.getId(), content);
         content = "뿌링클";
         for (int i = 0; i < 20; i++) {
-            chatService.sendMessage(memberA.getId(), partyA.getId(), content, LocalDateTime.now());
+            messageService.send(partyA.getId(), memberA.getId(), content);
         }
         String targ1 = "target1";
-        chatService.sendMessage(memberA.getId(), partyA.getId(), targ1, LocalDateTime.now());
+        messageService.send(partyA.getId(), memberA.getId(), targ1);
+
         content = "뿌링클";
         for (int i = 0; i < 8; i++) {
-            chatService.sendMessage(memberA.getId(), partyA.getId(), content, LocalDateTime.now());
+            messageService.send(partyA.getId(), memberA.getId(), content);
         }
         String targ2 = "target2";
-        Long idx = chatService.sendMessage(memberA.getId(), partyA.getId(), targ2, LocalDateTime.now());
+        Long idx = messageService.send(partyA.getId(), memberA.getId(), targ2).getId();
         content = "햄버거";
         for (int i = 0; i < 20; i++) {
-            chatService.sendMessage(memberA.getId(), partyA.getId(), content, LocalDateTime.now());
+            messageService.send(partyA.getId(), memberA.getId(), content);
         }
         // when
         Page<Message> findMessages = chatService.findMessagesByCursorId(partyA, memberA.getId(), PageRequest.of(0, 10), idx);
