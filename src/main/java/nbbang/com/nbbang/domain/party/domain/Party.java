@@ -3,6 +3,7 @@ package nbbang.com.nbbang.domain.party.domain;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import nbbang.com.nbbang.domain.hashtag.domain.PartyHashtag;
 import nbbang.com.nbbang.domain.partymember.domain.PartyMember;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.dto.Place;
@@ -92,7 +93,7 @@ public class Party {
         return findPartyHashtag;
     }
 
-    public void addOwner(Member member) {
+    public void setOwner(Member member) {
         this.owner = member;
     }
 

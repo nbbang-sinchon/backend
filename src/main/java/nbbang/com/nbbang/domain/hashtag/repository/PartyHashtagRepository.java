@@ -1,6 +1,6 @@
-package nbbang.com.nbbang.domain.party.repository;
+package nbbang.com.nbbang.domain.hashtag.repository;
 
-import nbbang.com.nbbang.domain.party.domain.PartyHashtag;
+import nbbang.com.nbbang.domain.hashtag.domain.PartyHashtag;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

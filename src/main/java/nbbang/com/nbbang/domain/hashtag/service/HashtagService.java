@@ -1,10 +1,10 @@
-package nbbang.com.nbbang.domain.party.service;
+package nbbang.com.nbbang.domain.hashtag.service;
 
 
 import lombok.RequiredArgsConstructor;
-import nbbang.com.nbbang.domain.party.domain.Hashtag;
-import nbbang.com.nbbang.domain.party.repository.HashtagRepository;
-import nbbang.com.nbbang.domain.party.repository.PartyHashtagRepository;
+import nbbang.com.nbbang.domain.hashtag.domain.Hashtag;
+import nbbang.com.nbbang.domain.hashtag.repository.HashtagRepository;
+import nbbang.com.nbbang.domain.hashtag.repository.PartyHashtagRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

@@ -1,23 +1,28 @@
 package nbbang.com.nbbang.domain.party.service;
 
 import lombok.RequiredArgsConstructor;
-import nbbang.com.nbbang.domain.partymember.domain.PartyMember;
 import nbbang.com.nbbang.domain.chat.domain.Message;
 import nbbang.com.nbbang.domain.chat.repository.MessageRepository;
+import nbbang.com.nbbang.domain.hashtag.domain.Hashtag;
+import nbbang.com.nbbang.domain.hashtag.domain.PartyHashtag;
+import nbbang.com.nbbang.domain.hashtag.service.HashtagService;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.dto.Place;
 import nbbang.com.nbbang.domain.member.service.MemberService;
+import nbbang.com.nbbang.domain.party.dto.single.request.PartyRequestDto;
+import nbbang.com.nbbang.domain.partymember.domain.PartyMember;
+import nbbang.com.nbbang.domain.partymember.service.PartyMemberService;
 import nbbang.com.nbbang.domain.party.domain.*;
 import nbbang.com.nbbang.domain.party.dto.single.PartyUpdateServiceDto;
-import nbbang.com.nbbang.domain.party.repository.PartyHashtagRepository;
+import nbbang.com.nbbang.domain.hashtag.repository.PartyHashtagRepository;
 import nbbang.com.nbbang.domain.party.repository.PartyRepository;
-import nbbang.com.nbbang.domain.partymember.service.PartyMemberService;
 import nbbang.com.nbbang.global.error.exception.NotOwnerException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
 
 import java.lang.reflect.Field;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -36,17 +41,36 @@ public class PartyService {
     private final PartyMemberService partyMemberService;
     private final MessageRepository messageRepository;
 
+
+    @Transactional
+    public Party create(PartyRequestDto partyRequestDto, Long memberId, List<String> hashtagContents) {
+        Member owner = memberService.findById(memberId);
+        //Optional.ofNullable(hashtagContents).orElseGet(Collections::emptyList).
+        //        stream().forEach(content-> getPartyHashtag(savedParty, content));
+
+        return Party.builder()
+                .title(partyRequestDto.getTitle())
+                .content(partyRequestDto.getContent())
+                .place(Place.valueOf(partyRequestDto.getPlace().toUpperCase()))
+                .goalNumber(partyRequestDto.getGoalNumber())
+                .createTime(LocalDateTime.now())
+                .status(PartyStatus.OPEN)
+                .owner(owner)
+                //.partyMembers()
+                //.partyHashtags()
+                .build();
+    }
+
     @Transactional
     public Party create(Party party, Long memberId, List<String> hashtagContents) {
         System.out.println("PartyService.create");
         Party savedParty = partyRepository.save(party);
         savedParty.changeStatus(PartyStatus.OPEN);
-        Long partyId = savedParty.getId();
         Optional.ofNullable(hashtagContents).orElseGet(Collections::emptyList).
                 stream().forEach(content-> addHashtag(savedParty, content));
         Member owner = memberService.findById(memberId);
         partyMemberService.joinParty(savedParty, owner);
-        party.addOwner(owner);
+        party.setOwner(owner);
 
         return savedParty;
         /*
