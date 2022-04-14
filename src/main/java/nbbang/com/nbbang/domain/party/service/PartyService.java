@@ -5,6 +5,7 @@ import nbbang.com.nbbang.domain.chat.domain.Message;
 import nbbang.com.nbbang.domain.chat.repository.MessageRepository;
 import nbbang.com.nbbang.domain.hashtag.domain.Hashtag;
 import nbbang.com.nbbang.domain.hashtag.domain.PartyHashtag;
+import nbbang.com.nbbang.domain.hashtag.repository.HashtagRepository;
 import nbbang.com.nbbang.domain.hashtag.service.HashtagService;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.dto.Place;
@@ -23,6 +24,7 @@ import org.webjars.NotFoundException;
 
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -42,13 +44,22 @@ public class PartyService {
     private final MessageRepository messageRepository;
 
 
-    @Transactional
-    public Party create(PartyRequestDto partyRequestDto, Long memberId, List<String> hashtagContents) {
-        Member owner = memberService.findById(memberId);
-        //Optional.ofNullable(hashtagContents).orElseGet(Collections::emptyList).
-        //        stream().forEach(content-> getPartyHashtag(savedParty, content));
+    private List<Hashtag> findOrCreateByContents(List<String> hashtagContents){
+        List<Hashtag> hashtags = hashtagService.findByContents(hashtagContents);
+        List<String> storedHashtags = hashtags.stream().map(hashtag -> hashtag.getContent()).collect(Collectors.toList());
+        hashtagContents.removeAll(storedHashtags);
+        hashtagContents.stream().forEach(content->hashtags.add(Hashtag.createHashtag(content)));
+        return hashtags;
+    }
 
-        return Party.builder()
+
+    @Transactional
+    public Party create(PartyRequestDto partyRequestDto, Long memberId) {
+        Member owner = memberService.findById(memberId);
+        List<Hashtag> hashtags = findOrCreateByContents(partyRequestDto.getHashtags());
+        List<PartyHashtag> partyHashtags = new ArrayList<>();
+
+        Party party =  Party.builder()
                 .title(partyRequestDto.getTitle())
                 .content(partyRequestDto.getContent())
                 .place(Place.valueOf(partyRequestDto.getPlace().toUpperCase()))
@@ -56,9 +67,13 @@ public class PartyService {
                 .createTime(LocalDateTime.now())
                 .status(PartyStatus.OPEN)
                 .owner(owner)
-                //.partyMembers()
-                //.partyHashtags()
                 .build();
+
+        hashtags.stream().forEach(hashtag->partyHashtags.add(PartyHashtag.createPartyHashtag(party, hashtag)));
+        Party savedParty = partyRepository.save(party);
+        partyMemberService.joinParty(savedParty, owner);
+
+        return savedParty;
     }
 
     @Transactional

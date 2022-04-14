@@ -33,8 +33,8 @@ public class PartyHashtag {
         return hashtag.getContent();
     }
 
-    public static PartyHashtag createPartyHashtag(Party party, Hashtag findHashtag) {
-        PartyHashtag partyHashtag = PartyHashtag.builder().party(party).hashtag(findHashtag).build();
+    public static PartyHashtag createPartyHashtag(Party party, Hashtag hashtag) {
+        PartyHashtag partyHashtag = PartyHashtag.builder().party(party).hashtag(hashtag).build();
         party.addPartyHashtag(partyHashtag);
         return partyHashtag;
     }

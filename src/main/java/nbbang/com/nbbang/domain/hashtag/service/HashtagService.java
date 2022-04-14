@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly=true)
@@ -30,6 +31,18 @@ public class HashtagService {
         List<Hashtag> hashtags = hashtagRepository.findByContent(content);
         return Optional.ofNullable(hashtags).orElseGet(Collections::emptyList)
                 .stream().filter(h->h.getContent().equals(content)).findAny().orElse(null);
+    }
+
+    public List<Hashtag> findByContents(List<String> contents) {
+        System.out.println("HashtagService.findByContents");
+        List<Hashtag> hashtags = hashtagRepository.findAllByContentIn(contents);
+        System.out.println("contents = " + contents);
+        for (Hashtag hashtag : hashtags) {
+            System.out.println("hashtag.getContent() = " + hashtag.getContent());
+        }
+
+        return Optional.ofNullable(hashtags).orElseGet(Collections::emptyList)
+                .stream().filter(h->contents.contains(h.getContent())).collect(Collectors.toList());
     }
 
     @Transactional

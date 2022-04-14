@@ -65,7 +65,7 @@ public class Party {
     private String accountNumber;
 
     @Builder.Default
-    @OneToMany(mappedBy = "party")
+    @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "party")
     private List<PartyHashtag> partyHashtags = new ArrayList<>();
 
     @Builder.Default
