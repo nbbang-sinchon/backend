@@ -31,13 +31,6 @@ public class HashtagService {
         }
     }
 
-
-    public Hashtag findByContent(String content) {
-        List<Hashtag> hashtags = hashtagRepository.findByContent(content);
-        return Optional.ofNullable(hashtags).orElseGet(Collections::emptyList)
-                .stream().filter(h->h.getContent().equals(content)).findAny().orElse(null);
-    }
-
     public List<Hashtag> findByContents(List<String> contents) {
         List<Hashtag> hashtags = hashtagRepository.findAllByContentIn(contents);
         return Optional.ofNullable(hashtags).orElseGet(Collections::emptyList)

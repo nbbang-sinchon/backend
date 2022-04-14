@@ -15,13 +15,14 @@ import static javax.persistence.FetchType.*;
 @Builder
 @AllArgsConstructor
 public class PartyHashtag {
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.TABLE)
     @Column(name = "party_hashtag_id")
     private Long id;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name="party_id")
     private Party party;
+
 
     @ManyToOne(cascade = {CascadeType.PERSIST}, fetch = LAZY)
     @JoinColumn(name="hashtag_id")
