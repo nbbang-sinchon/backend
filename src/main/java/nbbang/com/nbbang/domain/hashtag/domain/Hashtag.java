@@ -17,7 +17,6 @@ public class Hashtag {
 
     protected Hashtag() {}
 
-
     public static Hashtag createHashtag(String content) {
         Hashtag hashtag = Hashtag.builder().content(content).build();
         return hashtag;

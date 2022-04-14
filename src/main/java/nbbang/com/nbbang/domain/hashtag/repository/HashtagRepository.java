@@ -7,6 +7,5 @@ import java.util.List;
 
 public interface HashtagRepository extends JpaRepository<Hashtag, Long>, HashtagRepositorySupport {
     List<Hashtag> findAllByContentIn(Iterable<String> contents);
-    List<Hashtag> findByContent(String content);
 
 }
