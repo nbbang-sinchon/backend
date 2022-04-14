@@ -93,6 +93,12 @@ public class Party {
         return findPartyHashtag;
     }
 
+    public List<PartyHashtag> deletePartyHashtags(List<String> contents) {
+        List<PartyHashtag> deletedPartyHashtags = partyHashtags.stream().filter(partyHashtags -> contents.contains(partyHashtags.getContent())).collect(Collectors.toList());
+        partyHashtags.removeAll(deletedPartyHashtags);
+        return deletedPartyHashtags;
+    }
+
     public void setOwner(Member member) {
         this.owner = member;
     }
@@ -148,4 +154,6 @@ public class Party {
     public static Field getField(String field) throws NoSuchFieldException {
         return Party.class.getDeclaredField(field);
     }
+
+
 }

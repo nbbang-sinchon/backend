@@ -29,7 +29,7 @@ public class PartyHashtag {
 
     protected PartyHashtag() {}
 
-    public String hashtagContent() {
+    public String getContent() {
         return hashtag.getContent();
     }
 
@@ -39,7 +39,4 @@ public class PartyHashtag {
         return partyHashtag;
     }
 
-    // ************** 구현 필요(쿼리 최적화) ************** /
-    public static void createPartyHashtags(Party party, List<Hashtag> hashtags) {
-    }
 }

@@ -3,11 +3,14 @@ package nbbang.com.nbbang.domain.hashtag.service;
 
 import lombok.RequiredArgsConstructor;
 import nbbang.com.nbbang.domain.hashtag.domain.Hashtag;
+import nbbang.com.nbbang.domain.hashtag.domain.PartyHashtag;
 import nbbang.com.nbbang.domain.hashtag.repository.HashtagRepository;
 import nbbang.com.nbbang.domain.hashtag.repository.PartyHashtagRepository;
+import nbbang.com.nbbang.domain.party.domain.Party;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -20,12 +23,14 @@ public class HashtagService {
     private final HashtagRepository hashtagRepository;
     private final PartyHashtagRepository partyHashtagRepository;
 
-    @Transactional
-    public Hashtag createHashtag(String content) {
-        Hashtag hashtag = Hashtag.createHashtag(content);
-        hashtagRepository.save(hashtag);
-        return hashtag;
+    public void linkHashtagsToParty(Party party, List<String> hashtagContents){
+        if(hashtagContents!=null) {
+            List<Hashtag> hashtags = findOrCreateByContents(hashtagContents);
+            List<PartyHashtag> partyHashtags = new ArrayList<>();
+            Optional.ofNullable(hashtags).orElseGet(Collections::emptyList).stream().forEach(hashtag -> partyHashtags.add(PartyHashtag.createPartyHashtag(party, hashtag)));
+        }
     }
+
 
     public Hashtag findByContent(String content) {
         List<Hashtag> hashtags = hashtagRepository.findByContent(content);
@@ -45,14 +50,7 @@ public class HashtagService {
             hashtagRepository.delete(hashtag);
         }
     }
-    @Transactional
-    public Hashtag findOrCreateByContent(String content) {
-        Hashtag hashtag = findByContent(content);
-        if(hashtag==null){
-            hashtag = createHashtag(content);
-        }
-        return hashtag;
-    }
+
 
     public List<Hashtag> findOrCreateByContents(List<String> hashtagContents){
         List<Hashtag> hashtags = findByContents(hashtagContents);
@@ -62,5 +60,11 @@ public class HashtagService {
         return hashtags;
     }
 
+    @Transactional
+    public void detachHashtagsFromParty(Party party, List<String> oldHashtagContents) {
+        List<PartyHashtag> partyHashtags = party.deletePartyHashtags(oldHashtagContents);
+        partyHashtags.stream().forEach(partyHashtag -> deleteIfNotReferred(partyHashtag.getHashtag()));
+
+    }
 
 }
