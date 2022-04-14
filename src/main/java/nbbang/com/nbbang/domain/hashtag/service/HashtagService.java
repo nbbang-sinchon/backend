@@ -37,13 +37,6 @@ public class HashtagService {
                 .stream().filter(h->contents.contains(h.getContent())).collect(Collectors.toList());
     }
 
-    @Transactional
-    public void deleteIfNotReferred(Hashtag hashtag) {
-        if (partyHashtagRepository.findByHashtagId(hashtag.getId()).size()==0){
-            hashtagRepository.delete(hashtag);
-        }
-    }
-
 
     public List<Hashtag> findOrCreateByContents(List<String> hashtagContents){
         List<Hashtag> hashtags = findByContents(hashtagContents);
@@ -56,7 +49,8 @@ public class HashtagService {
     @Transactional
     public void detachHashtagsFromParty(Party party, List<String> oldHashtagContents) {
         List<PartyHashtag> partyHashtags = party.deletePartyHashtags(oldHashtagContents);
-        partyHashtags.stream().forEach(partyHashtag -> deleteIfNotReferred(partyHashtag.getHashtag()));
+        List<Hashtag> hashtags = partyHashtags.stream().map(ph -> ph.getHashtag()).collect(Collectors.toList());
+        hashtagRepository.deleteIfNotReferred(hashtags);
 
     }
 

@@ -15,7 +15,7 @@ import static javax.persistence.FetchType.*;
 @Builder
 @AllArgsConstructor
 public class PartyHashtag {
-    @Id @GeneratedValue(strategy = GenerationType.TABLE)
+    @Id @GeneratedValue
     @Column(name = "party_hashtag_id")
     private Long id;
 

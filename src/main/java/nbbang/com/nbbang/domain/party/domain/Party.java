@@ -65,7 +65,7 @@ public class Party {
     private String accountNumber;
 
     @Builder.Default
-    @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "party")
+    @OneToMany(cascade = {CascadeType.ALL}, orphanRemoval = true,mappedBy = "party")
     private List<PartyHashtag> partyHashtags = new ArrayList<>();
 
     @Builder.Default
@@ -87,15 +87,21 @@ public class Party {
     }
 
     public PartyHashtag deletePartyHashtag(String content){
-        PartyHashtag findPartyHashtag = partyHashtags.stream().filter(partyHashtag -> partyHashtag.getHashtag().getContent() == content)
+        PartyHashtag findPartyHashtag = partyHashtags.stream().filter(partyHashtag -> partyHashtag.getContent() == content)
                 .findAny().orElseThrow(() -> new NotFoundException(HASHTAG_NOT_FOUND));
         partyHashtags.remove(findPartyHashtag);
         return findPartyHashtag;
     }
 
     public List<PartyHashtag> deletePartyHashtags(List<String> contents) {
-        List<PartyHashtag> deletedPartyHashtags = partyHashtags.stream().filter(partyHashtags -> contents.contains(partyHashtags.getContent())).collect(Collectors.toList());
+        contents.stream().forEach(ph-> System.out.println("content: "+ ph));
+        partyHashtags.stream().forEach(ph-> System.out.println("ph.getContent() = " + ph.getContent()));
+        List<PartyHashtag> deletedPartyHashtags = partyHashtags.stream().filter(partyHashtag -> contents.contains(partyHashtag.getContent())).collect(Collectors.toList());
+        deletedPartyHashtags.stream().forEach(ph-> System.out.println("deletedPartyHashtags.getContent() = " + ph.getContent()));
+
         partyHashtags.removeAll(deletedPartyHashtags);
+        partyHashtags.stream().forEach(ph-> System.out.println("ph.getContent() = " + ph.getContent()));
+
         return deletedPartyHashtags;
     }
 
