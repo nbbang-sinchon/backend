@@ -56,7 +56,6 @@ public class SampleController {
         List<String> hashtagContents = new ArrayList<>();
         hashtagContents.add("BHC");
         hashtagContents.add("QQ");
-        partyService.test(hashtagContents);
         return "test success";
     }
 

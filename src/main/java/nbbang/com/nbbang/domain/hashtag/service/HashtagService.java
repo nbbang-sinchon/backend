@@ -60,6 +60,15 @@ public class HashtagService {
         return hashtag;
     }
 
+    private List<Hashtag> findOrCreateByContents(List<String> hashtagContents){
+        List<Hashtag> hashtags = findByContents(hashtagContents);
+        List<String> storedHashtags = hashtags.stream().map(hashtag -> hashtag.getContent()).collect(Collectors.toList());
+        hashtagContents.removeAll(storedHashtags);
+        hashtagContents.stream().forEach(content->hashtags.add(Hashtag.createHashtag(content)));
+        return hashtags;
+    }
+
+
     // ************** 구현 필요(쿼리 최적화) ************** /
     public List<Hashtag> findOrCreateByContent(List<String> hashtagContents) {
         return null;

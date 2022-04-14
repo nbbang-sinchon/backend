@@ -23,7 +23,7 @@ public class PartyHashtag {
     @JoinColumn(name="party_id")
     private Party party;
 
-    @ManyToOne(fetch = LAZY)
+    @ManyToOne(cascade = {CascadeType.PERSIST}, fetch = LAZY)
     @JoinColumn(name="hashtag_id")
     private Hashtag hashtag;
 

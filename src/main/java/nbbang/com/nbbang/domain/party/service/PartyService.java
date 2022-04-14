@@ -44,20 +44,9 @@ public class PartyService {
     private final MessageRepository messageRepository;
 
 
-    private List<Hashtag> findOrCreateByContents(List<String> hashtagContents){
-        List<Hashtag> hashtags = hashtagService.findByContents(hashtagContents);
-        List<String> storedHashtags = hashtags.stream().map(hashtag -> hashtag.getContent()).collect(Collectors.toList());
-        hashtagContents.removeAll(storedHashtags);
-        hashtagContents.stream().forEach(content->hashtags.add(Hashtag.createHashtag(content)));
-        return hashtags;
-    }
-
-
     @Transactional
     public Party create(PartyRequestDto partyRequestDto, Long memberId) {
         Member owner = memberService.findById(memberId);
-        List<Hashtag> hashtags = findOrCreateByContents(partyRequestDto.getHashtags());
-        List<PartyHashtag> partyHashtags = new ArrayList<>();
 
         Party party =  Party.builder()
                 .title(partyRequestDto.getTitle())
@@ -69,7 +58,10 @@ public class PartyService {
                 .owner(owner)
                 .build();
 
+        List<Hashtag> hashtags = hashtagService.findOrCreateByContent(partyRequestDto.getHashtags());
+        List<PartyHashtag> partyHashtags = new ArrayList<>();
         hashtags.stream().forEach(hashtag->partyHashtags.add(PartyHashtag.createPartyHashtag(party, hashtag)));
+
         Party savedParty = partyRepository.save(party);
         partyMemberService.joinParty(savedParty, owner);
 
@@ -78,33 +70,19 @@ public class PartyService {
 
     @Transactional
     public Party create(Party party, Long memberId, List<String> hashtagContents) {
-        System.out.println("PartyService.create");
         Party savedParty = partyRepository.save(party);
         savedParty.changeStatus(PartyStatus.OPEN);
-        Optional.ofNullable(hashtagContents).orElseGet(Collections::emptyList).
-                stream().forEach(content-> addHashtag(savedParty, content));
+
+        List<Hashtag> hashtags = hashtagService.findOrCreateByContent(hashtagContents);
+        List<PartyHashtag> partyHashtags = new ArrayList<>();
+        hashtags.stream().forEach(hashtag->partyHashtags.add(PartyHashtag.createPartyHashtag(party, hashtag)));
+
+
         Member owner = memberService.findById(memberId);
         partyMemberService.joinParty(savedParty, owner);
         party.setOwner(owner);
 
         return savedParty;
-        /*
-        System.out.println("PartyService.create");
-        party.changeStatus(PartyStatus.OPEN);
-        Party savedParty = partyRepository.save(party);
-
-        Optional.ofNullable(hashtagContents).orElseGet(Collections::emptyList).
-                stream().forEach(content-> addHashtag(savedParty, content));
-        Member owner = memberService.findById(memberId);
-
-        partyMemberService.joinParty(savedParty, owner);
-
-        savedParty.addOwner(owner);
-        System.out.println("savedParty = " + savedParty.getId());
-
-        return savedParty;
-
-         */
     }
 
 
@@ -182,11 +160,6 @@ public class PartyService {
         partyHashtagRepository.save(partyHashtag);
     }
 
-    @Transactional // ************** 구현 필요(쿼리 최적화) ************** /
-    public void addHashtags(Party party, List<String> hashtagContents){
-        List<Hashtag> hashtags = hashtagService.findOrCreateByContent(hashtagContents);
-        PartyHashtag.createPartyHashtags(party, hashtags);
-    }
 
     @Transactional
     public void removeHashtag(Long partyId, String content) {
