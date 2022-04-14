@@ -34,13 +34,7 @@ public class HashtagService {
     }
 
     public List<Hashtag> findByContents(List<String> contents) {
-        System.out.println("HashtagService.findByContents");
         List<Hashtag> hashtags = hashtagRepository.findAllByContentIn(contents);
-        System.out.println("contents = " + contents);
-        for (Hashtag hashtag : hashtags) {
-            System.out.println("hashtag.getContent() = " + hashtag.getContent());
-        }
-
         return Optional.ofNullable(hashtags).orElseGet(Collections::emptyList)
                 .stream().filter(h->contents.contains(h.getContent())).collect(Collectors.toList());
     }
@@ -60,7 +54,7 @@ public class HashtagService {
         return hashtag;
     }
 
-    private List<Hashtag> findOrCreateByContents(List<String> hashtagContents){
+    public List<Hashtag> findOrCreateByContents(List<String> hashtagContents){
         List<Hashtag> hashtags = findByContents(hashtagContents);
         List<String> storedHashtags = hashtags.stream().map(hashtag -> hashtag.getContent()).collect(Collectors.toList());
         hashtagContents.removeAll(storedHashtags);
@@ -69,8 +63,4 @@ public class HashtagService {
     }
 
 
-    // ************** 구현 필요(쿼리 최적화) ************** /
-    public List<Hashtag> findOrCreateByContent(List<String> hashtagContents) {
-        return null;
-    }
 }
