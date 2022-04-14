@@ -1,8 +1,6 @@
 package nbbang.com.nbbang.domain.party.service;
 
 import lombok.RequiredArgsConstructor;
-import nbbang.com.nbbang.domain.chat.repository.MessageRepository;
-import nbbang.com.nbbang.domain.hashtag.domain.PartyHashtag;
 import nbbang.com.nbbang.domain.hashtag.service.HashtagService;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.dto.Place;
@@ -12,7 +10,6 @@ import nbbang.com.nbbang.domain.partymember.domain.PartyMember;
 import nbbang.com.nbbang.domain.partymember.service.PartyMemberService;
 import nbbang.com.nbbang.domain.party.domain.*;
 import nbbang.com.nbbang.domain.party.dto.single.PartyUpdateServiceDto;
-import nbbang.com.nbbang.domain.hashtag.repository.PartyHashtagRepository;
 import nbbang.com.nbbang.domain.party.repository.PartyRepository;
 import nbbang.com.nbbang.global.error.exception.NotOwnerException;
 import nbbang.com.nbbang.global.validator.PartyMemberValidator;
@@ -22,9 +19,7 @@ import org.webjars.NotFoundException;
 
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static nbbang.com.nbbang.domain.party.controller.PartyResponseMessage.PARTY_NOT_FOUND;
@@ -34,7 +29,6 @@ import static nbbang.com.nbbang.domain.party.controller.PartyResponseMessage.PAR
 @RequiredArgsConstructor
 public class PartyService {
     private final PartyRepository partyRepository;
-    private final PartyHashtagRepository partyHashtagRepository;
     private final HashtagService hashtagService;
     private final MemberService memberService;
     private final PartyMemberService partyMemberService;
@@ -109,8 +103,8 @@ public class PartyService {
         if (partyUpdateServiceDto.getHashtagContents().isPresent()) {
             List<String> oldHashtagContents = party.getHashtagContents();
             List<String> newHashtagContents = partyUpdateServiceDto.getHashtagContents().get();
-            oldHashtagContents.removeAll(newHashtagContents); // 사라진 것들
-            newHashtagContents.removeAll(party.getHashtagContents()); // 새로운된 것들
+            oldHashtagContents.removeAll(newHashtagContents);
+            newHashtagContents.removeAll(party.getHashtagContents());
 
             hashtagService.detachHashtagsFromParty(party,oldHashtagContents);
             hashtagService.linkHashtagsToParty(party, newHashtagContents);

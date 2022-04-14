@@ -19,31 +19,17 @@ public class HashtagRepositorySupportImpl implements HashtagRepositorySupport{
 
     private final JPAQueryFactory query;
 
-    public List<String> findAllByContents(List<String> hashtagContents) {
-        QHashtag hashtag = QHashtag.hashtag;
-        List<Hashtag> hashtags = query.selectFrom(hashtag)
-                .where(hashtag.content.in(hashtagContents)).fetch();
-        List<String> foundHashtagContents = hashtags.stream().map(h -> h.getContent()).collect(Collectors.toList());
-        hashtagContents.removeAll(foundHashtagContents);
-        return hashtagContents;
-    }
-
     @Override
     public void deleteIfNotReferred(List<Hashtag> hashtags) {
         QHashtag hashtag = QHashtag.hashtag;
         QPartyHashtag partyHashtag = QPartyHashtag.partyHashtag;
-        List<Hashtag> existingHashtags = query.select(partyHashtag.hashtag)
-                .distinct()
-                .from(partyHashtag)
-                .where(partyHashtag.hashtag.in(hashtags)).fetch();
-        
-        existingHashtags.stream().forEach(h-> System.out.println("existingHashtag.getContent() = " + h.getContent()));
 
-        hashtags.stream().forEach(h-> System.out.println("hashtag.getContent() = " + h.getContent()));
-        
         query.delete(hashtag)
                 .where(hashtag.in(hashtags))
-                .where(hashtag.notIn(existingHashtags)).execute();
+                .where(hashtag.notIn(JPAExpressions.select(partyHashtag.hashtag)
+                        .distinct()
+                        .from(partyHashtag)
+                        .where(partyHashtag.hashtag.in(hashtags)))).execute();
 
     }
 }

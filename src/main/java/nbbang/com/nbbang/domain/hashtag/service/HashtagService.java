@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import nbbang.com.nbbang.domain.hashtag.domain.Hashtag;
 import nbbang.com.nbbang.domain.hashtag.domain.PartyHashtag;
 import nbbang.com.nbbang.domain.hashtag.repository.HashtagRepository;
-import nbbang.com.nbbang.domain.hashtag.repository.PartyHashtagRepository;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +20,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class HashtagService {
     private final HashtagRepository hashtagRepository;
-    private final PartyHashtagRepository partyHashtagRepository;
 
     public void linkHashtagsToParty(Party party, List<String> hashtagContents){
         if(hashtagContents!=null) {
@@ -31,14 +29,7 @@ public class HashtagService {
         }
     }
 
-    public List<Hashtag> findByContents(List<String> contents) {
-        List<Hashtag> hashtags = hashtagRepository.findAllByContentIn(contents);
-        return Optional.ofNullable(hashtags).orElseGet(Collections::emptyList)
-                .stream().filter(h->contents.contains(h.getContent())).collect(Collectors.toList());
-    }
-
-
-    public List<Hashtag> findOrCreateByContents(List<String> hashtagContents){
+    private List<Hashtag> findOrCreateByContents(List<String> hashtagContents){
         List<Hashtag> hashtags = findByContents(hashtagContents);
         List<String> storedHashtags = hashtags.stream().map(hashtag -> hashtag.getContent()).collect(Collectors.toList());
         hashtagContents.removeAll(storedHashtags);
@@ -46,12 +37,16 @@ public class HashtagService {
         return hashtags;
     }
 
+    private List<Hashtag> findByContents(List<String> contents) {
+        List<Hashtag> hashtags = hashtagRepository.findAllByContentIn(contents);
+        return Optional.ofNullable(hashtags).orElseGet(Collections::emptyList)
+                .stream().filter(h->contents.contains(h.getContent())).collect(Collectors.toList());
+    }
+
     @Transactional
     public void detachHashtagsFromParty(Party party, List<String> oldHashtagContents) {
         List<PartyHashtag> partyHashtags = party.deletePartyHashtags(oldHashtagContents);
         List<Hashtag> hashtags = partyHashtags.stream().map(ph -> ph.getHashtag()).collect(Collectors.toList());
         hashtagRepository.deleteIfNotReferred(hashtags);
-
     }
-
 }

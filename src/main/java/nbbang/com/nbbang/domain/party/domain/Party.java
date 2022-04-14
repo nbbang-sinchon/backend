@@ -86,22 +86,9 @@ public class Party {
         return partyHashtags.stream().map(h -> h.getHashtag().getContent()).collect(Collectors.toList());
     }
 
-    public PartyHashtag deletePartyHashtag(String content){
-        PartyHashtag findPartyHashtag = partyHashtags.stream().filter(partyHashtag -> partyHashtag.getContent() == content)
-                .findAny().orElseThrow(() -> new NotFoundException(HASHTAG_NOT_FOUND));
-        partyHashtags.remove(findPartyHashtag);
-        return findPartyHashtag;
-    }
-
     public List<PartyHashtag> deletePartyHashtags(List<String> contents) {
-        contents.stream().forEach(ph-> System.out.println("content: "+ ph));
-        partyHashtags.stream().forEach(ph-> System.out.println("ph.getContent() = " + ph.getContent()));
         List<PartyHashtag> deletedPartyHashtags = partyHashtags.stream().filter(partyHashtag -> contents.contains(partyHashtag.getContent())).collect(Collectors.toList());
-        deletedPartyHashtags.stream().forEach(ph-> System.out.println("deletedPartyHashtags.getContent() = " + ph.getContent()));
-
         partyHashtags.removeAll(deletedPartyHashtags);
-        partyHashtags.stream().forEach(ph-> System.out.println("ph.getContent() = " + ph.getContent()));
-
         return deletedPartyHashtags;
     }
 
