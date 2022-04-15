@@ -2,7 +2,7 @@ package nbbang.com.nbbang.global.socket.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import nbbang.com.nbbang.global.socket.PartyMemberPair;
+import nbbang.com.nbbang.global.socket.dto.PartyMemberPair;
 import nbbang.com.nbbang.global.socket.repository.SocketPartyMemberRepository;
 import org.springframework.stereotype.Service;
 

@@ -1,4 +1,4 @@
-package nbbang.com.nbbang.global.socket;
+package nbbang.com.nbbang.global.socket.dto;
 
 import lombok.Builder;
 import lombok.EqualsAndHashCode;

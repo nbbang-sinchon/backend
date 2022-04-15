@@ -1,7 +1,7 @@
 package nbbang.com.nbbang.global.socket.repository;
 
 import lombok.RequiredArgsConstructor;
-import nbbang.com.nbbang.global.socket.PartyMemberPair;
+import nbbang.com.nbbang.global.socket.dto.PartyMemberPair;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;

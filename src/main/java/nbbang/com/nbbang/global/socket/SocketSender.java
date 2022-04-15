@@ -9,6 +9,7 @@ import nbbang.com.nbbang.domain.chat.dto.message.ChatAlarmResponseDto;
 import nbbang.com.nbbang.domain.chat.dto.message.ChatSendResponseDto;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.repository.PartyRepository;
+import nbbang.com.nbbang.global.socket.dto.SocketSendRedisDto;
 import nbbang.com.nbbang.global.socket.redisPubSub.RedisPublisher;
 import nbbang.com.nbbang.global.socket.redisPubSub.RedisTopicRepository;
 import org.springframework.stereotype.Component;

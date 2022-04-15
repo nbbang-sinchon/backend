@@ -1,6 +1,6 @@
 package nbbang.com.nbbang.global.socket.repository;
 
-import nbbang.com.nbbang.global.socket.PartyMemberPair;
+import nbbang.com.nbbang.global.socket.dto.PartyMemberPair;
 
 import java.util.Map;
 
