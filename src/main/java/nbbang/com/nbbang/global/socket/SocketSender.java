@@ -24,7 +24,6 @@ import static nbbang.com.nbbang.global.socket.SocketDestination.*;
 @RequiredArgsConstructor
 @Slf4j
 public class SocketSender {
-    private final PartyRepository partyRepository;
     private final RedisPublisher redisPublisher;
     private final RedisTopicRepository redisTopicRepository;
     private final PartyMemberCacheService partyMemberCacheService;
@@ -33,8 +32,7 @@ public class SocketSender {
         ChatSendResponseDto chatSendResponseDto = ChatSendResponseDto.createByMessage(message);
         Long partyId = message.getParty().getId();
         send(CHATTING, partyId,  chatSendResponseDto);
-        Party party = partyRepository.findById(partyId).orElseThrow(() -> new NotFoundException(PARTY_NOT_FOUND));
-        ChatAlarmResponseDto chatAlarmResponseDto = ChatAlarmResponseDto.create(party, chatSendResponseDto);
+        ChatAlarmResponseDto chatAlarmResponseDto = ChatAlarmResponseDto.create(message.getParty(), chatSendResponseDto);
 
         List<PartyMemberIdCache> partyMembers = partyMemberCacheService.getPartyMembersCacheByPartyId(partyId);
         partyMembers.stream().forEach(pm -> sendGlobal(pm.getMemberId(), chatAlarmResponseDto));

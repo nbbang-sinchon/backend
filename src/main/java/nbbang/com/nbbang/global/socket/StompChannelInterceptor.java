@@ -34,14 +34,14 @@ public class StompChannelInterceptor implements ChannelInterceptor {
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
 
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
-        Map<String, Object> attributes = accessor.getSessionAttributes();
-
-        attributes.put("memberId", socketIdUtil.idFromSocket(message));
-        Long memberId = (Long) attributes.get("memberId");
         log.info("[{}] message: {}", accessor.getCommand(), message);
 
+        Map<String, Object> attributes = accessor.getSessionAttributes();
+
+        Long memberId = socketIdUtil.idFromSocket(message);
+
         if (StompCommand.CONNECT == accessor.getCommand()) {
-            connect(attributes);
+            connect(attributes, memberId);
         } else if (StompCommand.SUBSCRIBE == accessor.getCommand()) {
             String destination = accessor.getDestination();
             if(destination.startsWith(TOPIC_GLOBAL))  {
@@ -71,7 +71,8 @@ public class StompChannelInterceptor implements ChannelInterceptor {
         return message;
     }
 
-    public void connect(Map<String, Object> attributes) {
+    public void connect(Map<String, Object> attributes, Long memberId) {
+        attributes.put("memberId", memberId);
         attributes.put("status", "none");
     }
 }
