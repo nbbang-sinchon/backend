@@ -1,5 +1,6 @@
-package nbbang.com.nbbang.global.security.context;
+package nbbang.com.nbbang.global.socket.interceptor;
 
+import nbbang.com.nbbang.global.socket.interceptor.SocketIdUtil;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.messaging.Message;

@@ -1,11 +1,9 @@
-package nbbang.com.nbbang.global.socket;
+package nbbang.com.nbbang.global.socket.interceptor;
 
 import lombok.RequiredArgsConstructor;
-import nbbang.com.nbbang.global.security.context.CurrentMember;
-import nbbang.com.nbbang.global.security.context.SocketIdUtil;
+import nbbang.com.nbbang.global.socket.interceptor.SocketIdUtil;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
-import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.server.HandshakeInterceptor;
