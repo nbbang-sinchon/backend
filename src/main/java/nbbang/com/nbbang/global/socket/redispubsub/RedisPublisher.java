@@ -1,4 +1,4 @@
-package nbbang.com.nbbang.global.socket.redisPubSub;
+package nbbang.com.nbbang.global.socket.redispubsub;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;

@@ -1,4 +1,4 @@
-package nbbang.com.nbbang.global.socket.redisPubSub;
+package nbbang.com.nbbang.global.socket.redispubsub;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

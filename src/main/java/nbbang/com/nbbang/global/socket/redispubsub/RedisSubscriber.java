@@ -1,4 +1,4 @@
-package nbbang.com.nbbang.global.socket.redisPubSub;
+package nbbang.com.nbbang.global.socket.redispubsub;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
