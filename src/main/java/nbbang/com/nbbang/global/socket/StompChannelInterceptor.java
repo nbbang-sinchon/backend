@@ -38,23 +38,23 @@ public class StompChannelInterceptor implements ChannelInterceptor {
 
         Map<String, Object> attributes = accessor.getSessionAttributes();
 
-        Long memberId = socketIdUtil.idFromSocket(message);
+        Long socketMemberId = socketIdUtil.idFromSocket(message);
 
         if (StompCommand.CONNECT == accessor.getCommand()) {
-            connect(attributes, memberId);
+            connect(attributes, socketMemberId);
         } else if (StompCommand.SUBSCRIBE == accessor.getCommand()) {
             String destination = accessor.getDestination();
             if(destination.startsWith(TOPIC_GLOBAL))  {
                 Long globalMemberId = Long.valueOf(destination.substring(14));
-                if(memberId!=globalMemberId){throw new RuntimeException("자신의 소켓만 구독할 수 있습니다. ");}
+                if(socketMemberId!=globalMemberId){throw new RuntimeException("자신의 소켓만 구독할 수 있습니다. ");}
             }
             else if(destination.startsWith(TOPIC_CHATTING)){
                 Long partyId = Long.valueOf(destination.substring(16));
-                partyMemberValidator.validatePartyMember(partyId, memberId);
+                partyMemberValidator.validatePartyMember(partyId, socketMemberId);
                 socketChatRoomService.enter(attributes, partyId);
             }else if(destination.startsWith(TOPIC_BREAD_BOARD)){
                 Long partyId = Long.valueOf(destination.substring(18));
-                partyMemberValidator.validatePartyMember(partyId, memberId);
+                partyMemberValidator.validatePartyMember(partyId, socketMemberId);
             }
             else{
                 throw new IllegalArgumentException("올바른 토픽을 입력해주세요.");

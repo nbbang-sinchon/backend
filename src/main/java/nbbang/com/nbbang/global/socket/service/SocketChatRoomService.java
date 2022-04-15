@@ -2,7 +2,7 @@ package nbbang.com.nbbang.global.socket.service;
 
 import lombok.extern.slf4j.Slf4j;
 import nbbang.com.nbbang.domain.partymember.repository.PartyMemberRepository;
-import nbbang.com.nbbang.domain.chat.dto.ReadMessageDto;
+import nbbang.com.nbbang.global.socket.dto.SocketReadMessageDto;
 import nbbang.com.nbbang.domain.chat.service.ChatService;
 import nbbang.com.nbbang.global.socket.SocketSender;
 import org.springframework.context.annotation.Lazy;
@@ -44,8 +44,8 @@ public class SocketChatRoomService {
     @Transactional
     public void readMessage(Long partyId, Long memberId, Boolean isSocket) {
         if((!socketPartyMemberService.isActive(partyId, memberId))||isSocket){
-            ReadMessageDto readMessageDto = chatService.readMessage(partyId, memberId);
-            socketSender.sendChattingReadMessage(partyId, readMessageDto);
+            SocketReadMessageDto socketReadMessageDto = chatService.readMessage(partyId, memberId);
+            socketSender.sendChattingReadMessage(partyId, socketReadMessageDto);
         }
     }
 

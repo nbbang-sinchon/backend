@@ -7,7 +7,7 @@ import nbbang.com.nbbang.domain.partymember.repository.PartyMemberRepository;
 import nbbang.com.nbbang.domain.chat.controller.ChatResponseMessage;
 import nbbang.com.nbbang.domain.chat.domain.Message;
 import nbbang.com.nbbang.domain.chat.domain.MessageType;
-import nbbang.com.nbbang.domain.chat.dto.ReadMessageDto;
+import nbbang.com.nbbang.global.socket.dto.SocketReadMessageDto;
 import nbbang.com.nbbang.domain.chat.repository.MessageRepository;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.global.validator.PartyMemberValidator;
@@ -55,7 +55,7 @@ public class ChatService {
     }
 
     @Transactional
-    public ReadMessageDto readMessage(Long partyId, Long memberId) {
+    public SocketReadMessageDto readMessage(Long partyId, Long memberId) {
 
         messageRepository.bulkNotReadSubtract(partyId, memberId);
 
@@ -63,7 +63,7 @@ public class ChatService {
         Long lastReadMessageId = partyMember.getLastReadMessage().getId();
         partyMemberRepository.updateLastReadMessage(partyId, memberId);
 
-        ReadMessageDto dto = ReadMessageDto.builder().lastReadMessageId(lastReadMessageId).senderId(memberId).build();
+        SocketReadMessageDto dto = SocketReadMessageDto.builder().lastReadMessageId(lastReadMessageId).senderId(memberId).build();
         return dto;
     }
 }
