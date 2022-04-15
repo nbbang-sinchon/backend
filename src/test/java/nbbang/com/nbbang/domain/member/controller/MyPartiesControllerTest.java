@@ -8,7 +8,7 @@ import nbbang.com.nbbang.domain.member.service.MemberService;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.partymember.service.PartyMemberService;
 import nbbang.com.nbbang.domain.party.service.PartyService;
-import nbbang.com.nbbang.global.socket.service.ChatRoomService;
+import nbbang.com.nbbang.global.socket.service.SocketChatRoomService;
 import nbbang.com.nbbang.global.socket.StompChannelInterceptor;
 import nbbang.com.nbbang.global.support.controller.ControllerTestUtil;
 import org.junit.jupiter.api.Test;
@@ -43,7 +43,7 @@ class MyPartiesIntegrationTest {
     @Autowired MessageService messageService;
     @Autowired StompChannelInterceptor stompChannelInterceptor;
     @Autowired
-    ChatRoomService chatRoomService;
+    SocketChatRoomService socketChatRoomService;
 
     @Test
     void partiesOn() throws Exception {
@@ -78,16 +78,16 @@ class MyPartiesIntegrationTest {
         stompChannelInterceptor.connect(member2Attributes);
         stompChannelInterceptor.connect(member3Attributes);
 
-        chatRoomService.enter(member1Attributes, partyId); // 1번 파티 입장
+        socketChatRoomService.enter(member1Attributes, partyId); // 1번 파티 입장
         messageService.send(partyId, saveMember1.getId(), "hello");
 
-        chatRoomService.exit(member1Attributes, partyId); // 1번 파티 나감
+        socketChatRoomService.exit(member1Attributes, partyId); // 1번 파티 나감
 
-        chatRoomService.enter(member2Attributes, partyId); // 2번 파티 입장
+        socketChatRoomService.enter(member2Attributes, partyId); // 2번 파티 입장
 
         messageService.send(partyId, saveMember2.getId(), "hello here 2");
 
-        chatRoomService.enter(member3Attributes, partyId); // 3번 파티 입장
+        socketChatRoomService.enter(member3Attributes, partyId); // 3번 파티 입장
 
         messageService.send(partyId, saveMember3.getId(), "hello here 3");
 

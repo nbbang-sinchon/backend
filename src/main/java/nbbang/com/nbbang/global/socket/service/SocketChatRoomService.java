@@ -14,16 +14,16 @@ import java.util.Map;
 @Transactional(readOnly = true)
 @Service
 @Slf4j
-public class ChatRoomService {
+public class SocketChatRoomService {
 
     private final ChatService chatService;
     private final PartyMemberRepository partyMemberRepository;
     private final SocketPartyMemberService socketPartyMemberService;
     private final SocketSender socketSender;
 
-    public ChatRoomService(ChatService chatService, PartyMemberRepository partyMemberRepository,
-                                   SocketPartyMemberService socketPartyMemberService,
-                                   @Lazy SocketSender socketSender) {
+    public SocketChatRoomService(ChatService chatService, PartyMemberRepository partyMemberRepository,
+                                 SocketPartyMemberService socketPartyMemberService,
+                                 @Lazy SocketSender socketSender) {
         this.chatService = chatService;
         this.partyMemberRepository = partyMemberRepository;
         this.socketSender = socketSender;

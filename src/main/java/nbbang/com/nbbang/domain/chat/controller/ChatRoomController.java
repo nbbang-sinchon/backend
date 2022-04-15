@@ -15,14 +15,12 @@ import nbbang.com.nbbang.domain.party.service.PartyService;
 import nbbang.com.nbbang.global.dto.PageableDto;
 import nbbang.com.nbbang.global.security.context.CurrentMember;
 import nbbang.com.nbbang.global.response.DefaultResponse;
-import nbbang.com.nbbang.global.socket.service.ChatRoomService;
+import nbbang.com.nbbang.global.socket.service.SocketChatRoomService;
 import nbbang.com.nbbang.global.response.StatusCode;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletRequest;
 
 @Tag(name = "ChatRoom", description = "채팅방 api")
 @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(mediaType = "application/json"))
@@ -35,7 +33,7 @@ public class ChatRoomController {
     private final ChatService chatService;
     private final PartyService partyService;
     private final CurrentMember currentMember;
-    private final ChatRoomService chatRoomService;
+    private final SocketChatRoomService socketChatRoomService;
 
     @Operation(summary = "채팅방 조회", description = "채팅방을 파티 id 로 조회합니다. ")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ChatResponseDto.class)))
@@ -45,7 +43,7 @@ public class ChatRoomController {
         if (pageSize == null) {
             pageSize = 10;
         }
-        chatRoomService.readMessage(partyId, currentMember.id(), false);
+        socketChatRoomService.readMessage(partyId, currentMember.id(), false);
         Party party = partyService.findById(partyId);
         Page<Message> messages = chatService.findMessages(party, currentMember.id(), PageRequest.of(0, pageSize));
         return DefaultResponse.res(StatusCode.OK, ChatResponseMessage.READ_CHAT, ChatResponseDto.createByPartyAndMessagesEntity(party, messages.getContent(), currentMember.id()));

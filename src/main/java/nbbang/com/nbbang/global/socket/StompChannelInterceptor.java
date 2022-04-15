@@ -3,13 +3,11 @@ package nbbang.com.nbbang.global.socket;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import nbbang.com.nbbang.global.security.context.CurrentMember;
 import nbbang.com.nbbang.global.security.context.SocketIdUtil;
-import nbbang.com.nbbang.global.socket.service.ChatRoomService;
+import nbbang.com.nbbang.global.socket.service.SocketChatRoomService;
 import nbbang.com.nbbang.global.validator.PartyMemberValidator;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
-import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
@@ -24,7 +22,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class StompChannelInterceptor implements ChannelInterceptor {
 
-    private final ChatRoomService chatRoomService;
+    private final SocketChatRoomService socketChatRoomService;
     private final PartyMemberValidator partyMemberValidator;
     private final SocketIdUtil socketIdUtil;
 
@@ -53,7 +51,7 @@ public class StompChannelInterceptor implements ChannelInterceptor {
             else if(destination.startsWith(TOPIC_CHATTING)){
                 Long partyId = Long.valueOf(destination.substring(16));
                 partyMemberValidator.validatePartyMember(partyId, memberId);
-                chatRoomService.enter(attributes, partyId);
+                socketChatRoomService.enter(attributes, partyId);
             }else if(destination.startsWith(TOPIC_BREAD_BOARD)){
                 Long partyId = Long.valueOf(destination.substring(18));
                 partyMemberValidator.validatePartyMember(partyId, memberId);
@@ -65,10 +63,10 @@ public class StompChannelInterceptor implements ChannelInterceptor {
             String destination = accessor.getSubscriptionId();
             if(destination.startsWith(TOPIC_CHATTING)){
                 Long partyId = Long.valueOf(destination.substring(16));
-                chatRoomService.exit(attributes, partyId);
+                socketChatRoomService.exit(attributes, partyId);
             }
         } else if (StompCommand.DISCONNECT == accessor.getCommand()) {
-            chatRoomService.exitIfSubscribing(attributes);
+            socketChatRoomService.exitIfSubscribing(attributes);
         }
         return message;
     }
