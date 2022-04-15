@@ -1,4 +1,4 @@
-package nbbang.com.nbbang.global.socket.interceptor;
+package nbbang.com.nbbang.global.socket.handshakeinterceptor;
 
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.messaging.Message;

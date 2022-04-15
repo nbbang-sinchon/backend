@@ -3,7 +3,7 @@ package nbbang.com.nbbang.global.socket;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import nbbang.com.nbbang.global.socket.interceptor.SocketIdUtil;
+import nbbang.com.nbbang.global.socket.handshakeinterceptor.SocketIdUtil;
 import nbbang.com.nbbang.global.socket.service.SocketChatRoomService;
 import nbbang.com.nbbang.global.validator.PartyMemberValidator;
 import org.springframework.messaging.Message;
