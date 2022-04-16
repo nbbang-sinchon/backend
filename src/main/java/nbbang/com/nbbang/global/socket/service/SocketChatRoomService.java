@@ -31,11 +31,8 @@ public class SocketChatRoomService {
     }
 
     @Transactional
-    public void enter(Map<String, Object> attributes, Long partyId){
-        attributes.put("partyId", partyId);
-        Long memberId = (Long) attributes.get("memberId");
+    public void enter(Long partyId, Long memberId){
         socketPartyMemberService.subscribe(partyId, memberId);
-        attributes.put("status", "subscribe");
         if(socketPartyMemberService.getPartyMemberActiveNumber(partyId, memberId)==1){
             readMessage(partyId, memberId, true);
         }
@@ -50,18 +47,9 @@ public class SocketChatRoomService {
     }
 
     @Transactional
-    public void exit(Map<String, Object> attributes, Long partyId) {
-        Long memberId = (Long) attributes.get("memberId");
+    public void exit(Long partyId, Long memberId) {
         socketPartyMemberService.unsubscribe(partyId, memberId);
-        attributes.put("status", "unsubscribe");
         partyMemberRepository.updateLastReadMessage(partyId, memberId);
     }
 
-    @Transactional
-    public void exitIfSubscribing(Map<String, Object> attributes) {
-        if(attributes.get("status").equals("subscribe")){
-            Long partyId = (Long) attributes.get("partyId");
-            exit(attributes, partyId);
-        }
-    }
 }

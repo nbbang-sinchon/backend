@@ -3,12 +3,11 @@ package nbbang.com.nbbang.global.socket;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import nbbang.com.nbbang.global.socket.handshakeinterceptor.SocketIdUtil;
+import nbbang.com.nbbang.global.socket.handshakeinterceptor.SocketAttributeUtil;
 import nbbang.com.nbbang.global.socket.service.SocketChatRoomService;
 import nbbang.com.nbbang.global.validator.PartyMemberValidator;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
-import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.stereotype.Component;
@@ -24,7 +23,7 @@ public class StompChannelInterceptor implements ChannelInterceptor {
 
     private final SocketChatRoomService socketChatRoomService;
     private final PartyMemberValidator partyMemberValidator;
-    private final SocketIdUtil socketIdUtil;
+    private final SocketAttributeUtil socketAttributeUtil;
 
     private static final String TOPIC_GLOBAL = "/topic/global";
     private static final String TOPIC_CHATTING = "/topic/chatting";
@@ -36,43 +35,58 @@ public class StompChannelInterceptor implements ChannelInterceptor {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
         log.info("[{}] message: {}", accessor.getCommand(), message);
 
-        Map<String, Object> attributes = accessor.getSessionAttributes();
-
-        Long socketMemberId = socketIdUtil.idFromSocket(message);
-
-        if (StompCommand.CONNECT == accessor.getCommand()) {
-            connect(attributes, socketMemberId);
-        } else if (StompCommand.SUBSCRIBE == accessor.getCommand()) {
-            String destination = accessor.getDestination();
-            if(destination.startsWith(TOPIC_GLOBAL))  {
-                Long globalMemberId = Long.valueOf(destination.substring(14));
-                if(socketMemberId!=globalMemberId){throw new RuntimeException("자신의 소켓만 구독할 수 있습니다. ");}
-            }
-            else if(destination.startsWith(TOPIC_CHATTING)){
-                Long partyId = Long.valueOf(destination.substring(16));
-                partyMemberValidator.validatePartyMember(partyId, socketMemberId);
-                socketChatRoomService.enter(attributes, partyId);
-            }else if(destination.startsWith(TOPIC_BREAD_BOARD)){
-                Long partyId = Long.valueOf(destination.substring(18));
-                partyMemberValidator.validatePartyMember(partyId, socketMemberId);
-            }
-            else{
-                throw new IllegalArgumentException("올바른 토픽을 입력해주세요.");
-            }
-        } else if (StompCommand.UNSUBSCRIBE == accessor.getCommand()) {
-            String destination = accessor.getSubscriptionId();
-            if(destination.startsWith(TOPIC_CHATTING)){
-                Long partyId = Long.valueOf(destination.substring(16));
-                socketChatRoomService.exit(attributes, partyId);
-            }
-        } else if (StompCommand.DISCONNECT == accessor.getCommand()) {
-            socketChatRoomService.exitIfSubscribing(attributes);
+        switch(accessor.getCommand()) {
+            case CONNECT:
+                break;
+            case SUBSCRIBE:
+                subscribe(accessor.getDestination());
+                break;
+            case UNSUBSCRIBE:
+                unsubscribe(accessor.getDestination());
+                break;
+            case DISCONNECT:
+                disconnect();
+                break;
+            default:
+                throw new IllegalArgumentException("올바른 토픽을 입력해주세요");
         }
         return message;
     }
 
-    public void connect(Map<String, Object> attributes, Long memberId) {
-        attributes.put("memberId", memberId);
-        attributes.put("status", "none");
+    private void subscribe(String destination) {
+        Long socketMemberId = socketAttributeUtil.getMemberId();
+        if (destination.startsWith(TOPIC_GLOBAL)) {
+            Long globalMemberId = Long.valueOf(destination.substring(14));
+            if (socketMemberId != globalMemberId) {
+                throw new RuntimeException("자신의 소켓만 구독할 수 있습니다. ");
+            }
+        } else if (destination.startsWith(TOPIC_CHATTING)) {
+            Long partyId = Long.valueOf(destination.substring(16));
+            partyMemberValidator.validatePartyMember(partyId, socketMemberId);
+            socketAttributeUtil.put("partyId", partyId);
+            socketAttributeUtil.subscribe();
+            socketChatRoomService.enter(partyId, socketMemberId);
+        } else if (destination.startsWith(TOPIC_BREAD_BOARD)) {
+            Long partyId = Long.valueOf(destination.substring(18));
+            partyMemberValidator.validatePartyMember(partyId, socketMemberId);
+        }
+    }
+    private void unsubscribe(String destination) {
+        if (destination.startsWith(TOPIC_CHATTING)) {
+            Long partyId = Long.valueOf(destination.substring(16));
+            socketExit(partyId);
+        }
+    }
+    private void disconnect() {
+        if(socketAttributeUtil.isSubscribing()){
+            Long partyId = (Long) socketAttributeUtil.get("partyId");
+            socketExit(partyId);
+        }
+    }
+
+    private void socketExit(Long partyId){
+        Long memberId = socketAttributeUtil.getMemberId();
+        socketChatRoomService.exit(memberId, partyId);
+        socketAttributeUtil.unsubscribe();
     }
 }
