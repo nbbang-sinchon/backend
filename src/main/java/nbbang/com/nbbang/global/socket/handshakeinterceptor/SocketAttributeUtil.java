@@ -8,8 +8,7 @@ import java.util.Map;
 @Component
 public interface SocketAttributeUtil {
     Long getMemberId();
-    Object get(String key);
-    void put(String key, Object value);
+    Long getPartyId();
     boolean isSubscribing();
     void subscribe(Long partyId);
     void unsubscribe();

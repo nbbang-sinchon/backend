@@ -27,13 +27,8 @@ public class SocketAttributeUtilImpl implements SocketAttributeUtil {
     }
 
     @Override
-    public Object get(String key) {
-        return attributes.get(key);
-    }
-
-    @Override
-    public void put(String key, Object value) {
-        attributes.put(key, value);
+    public Long getPartyId() {
+        return (Long) attributes.get(attrPartyId);
     }
 
     @Override
@@ -50,6 +45,7 @@ public class SocketAttributeUtilImpl implements SocketAttributeUtil {
     @Override
     public void unsubscribe() {
         attributes.put(attrStatus, UNSUBSCRIBE);
+        attributes.put(attrPartyId, null);
     }
 
     @Override
@@ -57,7 +53,7 @@ public class SocketAttributeUtilImpl implements SocketAttributeUtil {
         try {
             this.attributes = attributes;
             ServletServerHttpRequest servletRequest = (ServletServerHttpRequest) request;
-            put(attrMemberId, servletRequest.getPrincipal().getName());
+            this.attributes.put(attrMemberId, servletRequest.getPrincipal().getName());
         } catch (Exception e) {
             throw new IllegalStateException(AUTHENTICATION_ERROR);
         }
