@@ -11,7 +11,7 @@ public interface SocketAttributeUtil {
     Object get(String key);
     void put(String key, Object value);
     boolean isSubscribing();
-    void subscribe();
+    void subscribe(Long partyId);
     void unsubscribe();
 
     void setAttributeWithId(ServerHttpRequest request, Map<String, Object> attributes);

@@ -64,7 +64,7 @@ public class StompChannelInterceptor implements ChannelInterceptor {
             Long partyId = Long.valueOf(destination.substring(16));
             partyMemberValidator.validatePartyMember(partyId, socketMemberId);
             socketAttributeUtil.put("partyId", partyId);
-            socketAttributeUtil.subscribe();
+            socketAttributeUtil.subscribe(partyId);
             socketChatRoomService.enter(partyId, socketMemberId);
         } else if (destination.startsWith(TOPIC_BREAD_BOARD)) {
             Long partyId = Long.valueOf(destination.substring(18));

@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static nbbang.com.nbbang.global.error.GlobalErrorResponseMessage.AUTHENTICATION_ERROR;
+import static nbbang.com.nbbang.global.socket.ChatRoomSubscribeStatus.SUBSCRIBE;
+import static nbbang.com.nbbang.global.socket.ChatRoomSubscribeStatus.UNSUBSCRIBE;
 
 @Component
 public class SocketAttributeUtilImpl implements SocketAttributeUtil {
@@ -36,18 +38,18 @@ public class SocketAttributeUtilImpl implements SocketAttributeUtil {
 
     @Override
     public boolean isSubscribing() {
-        return attributes.getOrDefault("status", "unsubscribe").equals("subscribe");
+        return attributes.getOrDefault(attrStatus, UNSUBSCRIBE).equals(SUBSCRIBE);
     }
 
     @Override
-    public void subscribe() {
-        attributes.put(attrStatus, "subscribe");
+    public void subscribe(Long partyId) {
+        attributes.put(attrStatus, SUBSCRIBE);
+        attributes.put(attrPartyId, partyId);
     }
 
     @Override
     public void unsubscribe() {
-        attributes.put(attrStatus, "unsubscribe");
-
+        attributes.put(attrStatus, UNSUBSCRIBE);
     }
 
     @Override
