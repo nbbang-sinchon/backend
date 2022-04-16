@@ -49,20 +49,13 @@ class MemberServiceTest {
         join(partyId, saveMember2.getId());
 
         //when
-        Map<String, Object> member1Attributes = new HashMap<>();
-        Map<String, Object> member2Attributes = new HashMap<>();
 
-        stompChannelInterceptor.connect(member1Attributes, saveMember1.getId());
-        stompChannelInterceptor.connect(member2Attributes, saveMember2.getId());
-
-        socketChatRoomService.enter(member1Attributes, partyId); // 1번 파티 입장
-        socketChatRoomService.readMessage(partyId, member.getId(), false);
+        socketChatRoomService.enter(partyId, saveMember1.getId()); // 1번 파티 입장
         Long messageId1 = messageService.send(partyId, saveMember1.getId(), "hello").getId();
 
         assertThat(memberService.isThereNotReadChat(saveMember2.getId())).isEqualTo(true);
 
-        socketChatRoomService.enter(member2Attributes, partyId); // 2번 파티 입장. 채팅 읽음.
-        socketChatRoomService.readMessage(partyId, member2.getId(), false);
+        socketChatRoomService.enter(partyId, saveMember2.getId()); // 2번 파티 입장. 채팅 읽음.
 
         assertThat(memberService.isThereNotReadChat(saveMember2.getId())).isEqualTo(false);
     }

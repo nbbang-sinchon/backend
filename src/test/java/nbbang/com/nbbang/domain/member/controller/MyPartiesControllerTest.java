@@ -63,26 +63,16 @@ class MyPartiesIntegrationTest {
         join(partyId, saveMember3.getId());
 
 
-        //when
-        Map<String, Object> member1Attributes = new HashMap<>();
-        Map<String, Object> member2Attributes = new HashMap<>();
-        Map<String, Object> member3Attributes = new HashMap<>();
-
-        //
-        stompChannelInterceptor.connect(member1Attributes, saveMember1.getId());
-        stompChannelInterceptor.connect(member2Attributes, saveMember2.getId());
-        stompChannelInterceptor.connect(member3Attributes, saveMember3.getId());
-
-        socketChatRoomService.enter(member1Attributes, partyId); // 1번 파티 입장
+        socketChatRoomService.enter(partyId, saveMember1.getId()); // 1번 파티 입장
         messageService.send(partyId, saveMember1.getId(), "hello");
 
-        socketChatRoomService.exit(member1Attributes, partyId); // 1번 파티 나감
+        socketChatRoomService.exit(partyId, saveMember1.getId()); // 1번 파티 나감
 
-        socketChatRoomService.enter(member2Attributes, partyId); // 2번 파티 입장
+        socketChatRoomService.enter(partyId, saveMember2.getId()); // 2번 파티 입장
 
         messageService.send(partyId, saveMember2.getId(), "hello here 2");
 
-        socketChatRoomService.enter(member3Attributes, partyId); // 3번 파티 입장
+        socketChatRoomService.enter(partyId, saveMember3.getId()); // 3번 파티 입장
 
         messageService.send(partyId, saveMember3.getId(), "hello here 3");
 
