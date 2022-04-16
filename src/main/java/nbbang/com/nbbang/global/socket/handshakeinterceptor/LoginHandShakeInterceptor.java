@@ -13,11 +13,11 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class LoginHandShakeInterceptor implements HandshakeInterceptor {
 
-    private final SocketIdUtil socketIdUtil;
+    private final SocketAttributeUtil socketAttributeUtil;
 
     @Override
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
-        socketIdUtil.rememberIdSocket(request, attributes);
+        socketAttributeUtil.setAttributeWithId(request, attributes);
         return true;
     }
 
