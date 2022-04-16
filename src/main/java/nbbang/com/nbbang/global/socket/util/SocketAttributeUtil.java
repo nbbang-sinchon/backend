@@ -1,4 +1,4 @@
-package nbbang.com.nbbang.global.socket.handshakeinterceptor;
+package nbbang.com.nbbang.global.socket.util;
 
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.stereotype.Component;

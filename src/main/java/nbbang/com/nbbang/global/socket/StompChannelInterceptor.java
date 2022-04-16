@@ -3,7 +3,7 @@ package nbbang.com.nbbang.global.socket;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import nbbang.com.nbbang.global.socket.handshakeinterceptor.SocketAttributeUtil;
+import nbbang.com.nbbang.global.socket.util.SocketAttributeUtil;
 import nbbang.com.nbbang.global.socket.service.SocketChatRoomService;
 import nbbang.com.nbbang.global.validator.PartyMemberValidator;
 import org.springframework.messaging.Message;
@@ -11,8 +11,6 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.stereotype.Component;
-
-import java.util.Map;
 
 // https://daddyprogrammer.org/post/5290/spring-websocket-chatting-server-enter-qut-event-view-user-count/
 // https://stackoverflow.com/questions/44852776/spring-mvc-websockets-with-stomp-authenticate-against-specific-channels

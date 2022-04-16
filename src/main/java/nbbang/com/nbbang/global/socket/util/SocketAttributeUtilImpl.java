@@ -1,9 +1,7 @@
-package nbbang.com.nbbang.global.socket.handshakeinterceptor;
+package nbbang.com.nbbang.global.socket.util;
 
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServletServerHttpRequest;
-import org.springframework.messaging.Message;
-import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;

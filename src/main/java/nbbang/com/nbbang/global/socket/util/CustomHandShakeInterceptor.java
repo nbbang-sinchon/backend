@@ -1,4 +1,4 @@
-package nbbang.com.nbbang.global.socket.handshakeinterceptor;
+package nbbang.com.nbbang.global.socket.util;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.server.ServerHttpRequest;
@@ -11,7 +11,7 @@ import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
-public class LoginHandShakeInterceptor implements HandshakeInterceptor {
+public class CustomHandShakeInterceptor implements HandshakeInterceptor {
 
     private final SocketAttributeUtil socketAttributeUtil;
 
