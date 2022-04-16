@@ -23,12 +23,12 @@ public class SocketAttributeUtilImpl implements SocketAttributeUtil {
 
     @Override
     public Long getMemberId() {
-        return (Long) attributes.get(attrMemberId);
+        return Long.valueOf(attributes.get(attrMemberId).toString());
     }
 
     @Override
     public Long getPartyId() {
-        return (Long) attributes.get(attrPartyId);
+        return Long.valueOf(attributes.get(attrPartyId).toString());
     }
 
     @Override
