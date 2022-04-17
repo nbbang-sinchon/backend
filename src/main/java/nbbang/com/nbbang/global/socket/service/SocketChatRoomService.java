@@ -9,8 +9,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Map;
-
 @Transactional(readOnly = true)
 @Service
 @Slf4j
@@ -40,7 +38,7 @@ public class SocketChatRoomService {
 
     @Transactional
     public void readMessage(Long partyId, Long memberId, Boolean isSocket) {
-        if((!socketPartyMemberService.isActive(partyId, memberId))||isSocket){
+        if((isSocket||!socketPartyMemberService.isActive(partyId, memberId))){
             SocketReadMessageDto socketReadMessageDto = chatService.readMessage(partyId, memberId);
             socketSender.sendChattingReadMessage(partyId, socketReadMessageDto);
         }
