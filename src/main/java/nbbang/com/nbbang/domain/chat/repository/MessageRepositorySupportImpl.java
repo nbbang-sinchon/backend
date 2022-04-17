@@ -25,7 +25,6 @@ import static nbbang.com.nbbang.domain.chat.domain.QMessage.*;
 public class MessageRepositorySupportImpl implements MessageRepositorySupport {
 
     private final JPAQueryFactory query;
-    private final EntityManager em;
 
     @Override
     public Message findLastMessage(Long partyId) {
@@ -73,9 +72,6 @@ public class MessageRepositorySupportImpl implements MessageRepositorySupport {
                 ))
                 .where(message.party.id.eq(partyId))
                 .execute();
-        em.flush();
-        em.clear();
-
     }
 
     @Override

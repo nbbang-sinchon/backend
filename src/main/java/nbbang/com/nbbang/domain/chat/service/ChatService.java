@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
 
+import javax.persistence.EntityManager;
 import java.util.Optional;
 
 @Service
@@ -27,6 +28,7 @@ public class ChatService {
     private final MessageRepository messageRepository;
     private final PartyMemberRepository partyMemberRepository;
     private final PartyMemberValidator partyMemberValidator;
+    private final EntityManager em;
 
     public Message findLastMessage(Party party) {
         return messageRepository.findLastMessage(party.getId());
@@ -56,8 +58,9 @@ public class ChatService {
 
     @Transactional
     public SocketReadMessageDto readMessage(Long partyId, Long memberId) {
-
         messageRepository.bulkNotReadSubtract(partyId, memberId);
+        em.flush();
+        em.clear();
 
         PartyMember partyMember = partyMemberRepository.findByPartyIdAndMemberId(partyId, memberId);
         Long lastReadMessageId = partyMember.getLastReadMessage().getId();
