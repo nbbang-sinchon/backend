@@ -107,7 +107,6 @@ public class MessageService {
 
     private Integer getNotActiveNumber(Party party) {
         Integer activeNumber = socketPartyMemberService.getPartyActiveNumber(party.getId());
-        //Integer partyMemberNumber = partyMemberCacheService.getPartyMembersCacheByPartyId(party.getId()).size();
         Integer partyMemberNumber = partyMemberCacheService.getPartyMembersCacheByParty(party).size();
         return partyMemberNumber - activeNumber;
     }
