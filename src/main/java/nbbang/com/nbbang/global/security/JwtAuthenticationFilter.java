@@ -14,30 +14,27 @@ import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 import static nbbang.com.nbbang.global.security.SecurityPolicy.TOKEN_COOKIE_KEY;
-import static org.springframework.security.web.context.HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY;
 
+// https://docs.spring.io/spring-security/reference/6.0/servlet/oauth2/resource-server/jwt.html
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-
-    private static AuthenticationManager authenticationManager = new JwtAuthenticationManager();
-    private TokenProvider tokenProvider = new TokenProvider();
+    private AuthenticationManager authenticationManager;
+    private TokenProvider tokenProvider;
     private LogoutService logoutService;
+
     @Value("${deploy:false}")
     private Boolean isDeploy;
 
-    public JwtAuthenticationFilter(AuthenticationManager authenticationManager) {
+    public JwtAuthenticationFilter(
+            AuthenticationManager authenticationManager,
+            TokenProvider tokenProvider,
+            LogoutService logoutService
+    ) {
         this.authenticationManager = authenticationManager;
-    }
-
-    public JwtAuthenticationFilter() {
-
-    }
-
-    public JwtAuthenticationFilter(LogoutService logoutService) {
+        this.tokenProvider = tokenProvider;
         this.logoutService = logoutService;
     }
 
@@ -53,7 +50,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             log.info("Successfully authenticated");
         } catch (Exception e) {
             log.error("Failed to authenticate");
-            if (!isDeploy) {
+            if (isDeploy == null || !isDeploy) {
                 testAuthentication(request);
             }
         }

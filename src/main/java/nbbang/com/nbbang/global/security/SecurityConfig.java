@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -27,15 +28,12 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final CustomOAuth2MemberService customOAuth2MemberService;
+    private final AuthenticationManager authenticationManager;
+    private final TokenProvider tokenProvider;
     private final LogoutService logoutService;
 
     @Value("${request.logging:false}")
-    private Boolean requestLogging;
-
-    @Bean
-    public JwtAuthenticationFilter jwtAuthenticationFilter() {
-        return new JwtAuthenticationFilter(logoutService);
-    }
+    private Boolean doRequestLogging;
 
     @Override
     public void configure(WebSecurity web) throws Exception {
@@ -47,17 +45,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        if (requestLogging) http.addFilterBefore(new SimpleRequestHeaderLoggingFilter(), WebAsyncManagerIntegrationFilter.class);
+        if (doRequestLogging) http.addFilterBefore(new SimpleRequestHeaderLoggingFilter(), WebAsyncManagerIntegrationFilter.class);
         http
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .addFilterBefore(utf8EncodingFilter(), WebAsyncManagerIntegrationFilter.class)
-                //.addFilterBefore(new CustomRequestLoggingFilter(), WebAsyncManagerIntegrationFilter.class)
                 .addFilterBefore(jwtAuthenticationFilter(), BasicAuthenticationFilter.class)
                 .addFilterBefore(new LoginRedirectionFilter(), WebAsyncManagerIntegrationFilter.class)
                 .csrf().disable()
                 .cors()
-
                 .and()
                 .exceptionHandling()
                 .authenticationEntryPoint(new RestAuthenticationEntryPoint())
@@ -85,6 +81,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new HttpStatusEntryPoint(HttpStatus.BAD_GATEWAY);
     }
 
+    private JwtAuthenticationFilter jwtAuthenticationFilter() {
+        return new JwtAuthenticationFilter(authenticationManager, tokenProvider, logoutService);
+    }
 
     private CharacterEncodingFilter utf8EncodingFilter() {
         CharacterEncodingFilter encodingFilter = new CharacterEncodingFilter();
