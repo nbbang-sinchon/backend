@@ -27,13 +27,6 @@ class SinglePartyControllerTest extends ControllerTestParent {
     @Autowired private ControllerTestUtil controllerTestUtil;
 
     @Test
-    void createPartySuccess() throws Exception {
-        PartyRequestDto successDto = PartyRequestDto.builder().title("hello").place("sinchon").goalNumber(4).hashtags(Arrays.asList("hello", "wow")).build();
-        DefaultResponse res = controllerTestUtil.expectDefaultResponseObject(post("/parties"), successDto);
-        assertThat(res.getStatusCode() == OK);
-    }
-
-    @Test
     void createPartyGoalNumberError() throws Exception {
         PartyRequestDto dto = PartyRequestDto.builder().title("hello").place("sinchon").hashtags(Arrays.asList("hello", "wow")).build();
         ErrorResponse res = controllerTestUtil.expectErrorResponseObject(post("/parties"), dto);
