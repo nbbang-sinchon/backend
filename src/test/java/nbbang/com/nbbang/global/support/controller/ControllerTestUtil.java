@@ -5,16 +5,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import nbbang.com.nbbang.global.error.ErrorResponse;
 import nbbang.com.nbbang.global.response.DefaultResponse;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.RequestBuilder;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Map;
+
+import static nbbang.com.nbbang.global.support.controller.ControllerUtilMessage.*;
 
 /**
  * An Utility for controller Mock tests
@@ -25,14 +21,6 @@ import java.util.Map;
  */
 
 public class ControllerTestUtil {
-
-    @Autowired private MockMvc mockMvc;
-
-    private static String EXPECT_OK = "Expected OK, but wasn't";
-    private static String EXPECT_ERROR = "Expected Error, but wasn't";
-
-    private static String ILLEGAL_RESPONSE = "Failed to get Data";
-    private static String ILLEGAL_DEFAULT_RESPONSE = "Failed to get Data from Default Response";
 
     public Map expectMapData(MvcResult res) throws Exception {
         try {
@@ -47,17 +35,12 @@ public class ControllerTestUtil {
         return extractMapData(res);
     }
 
-    public Map expectMapData(RequestBuilder requestBuilder) throws Exception {
-        DefaultResponse res = expectDefaultResponseObject(requestBuilder);
-        return extractMapData(res);
-    }
-
     public <T> Map expectMapData(ResponseEntity<T> responseEntity) throws Exception {
         DefaultResponse res = (DefaultResponse) responseEntity.getBody();
         return extractMapData(res);
     }
 
-    private Map extractMapData(DefaultResponse res) {
+    protected Map extractMapData(DefaultResponse res) {
         try {
             Map data = (Map) res.getData();
             return data;
@@ -66,24 +49,11 @@ public class ControllerTestUtil {
         }
     }
 
-    public DefaultResponse expectDefaultResponseObject(RequestBuilder requestBuilder) throws Exception {
-        MvcResult res = this.mockMvc.perform(requestBuilder).andReturn();
-        return extractDefaultResponse(res);
-    }
-
     public DefaultResponse expectDefaultResponseObject(MvcResult res) throws Exception {
         return extractDefaultResponse(res);
     }
 
-    public DefaultResponse expectDefaultResponseObject(MockHttpServletRequestBuilder mockHttpServletRequestBuilder, Object data) throws Exception {
-        MvcResult res = mockMvc.perform(mockHttpServletRequestBuilder
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(jsonStringify(data)))
-                .andReturn();
-        return extractDefaultResponse(res);
-    }
-
-    private DefaultResponse extractDefaultResponse(MvcResult res) throws Exception {
+    protected DefaultResponse extractDefaultResponse(MvcResult res) throws Exception {
         if (res == null) {
             return null;
         }
@@ -95,24 +65,11 @@ public class ControllerTestUtil {
         }
     }
 
-    public ErrorResponse expectErrorResponseObject(RequestBuilder requestBuilder) throws Exception {
-        MvcResult res = this.mockMvc.perform(requestBuilder).andReturn();
-        return extractErrorResponse(res);
-    }
-
     public ErrorResponse expectErrorResponseObject(MvcResult res) throws Exception {
         return extractErrorResponse(res);
     }
 
-    public ErrorResponse expectErrorResponseObject(MockHttpServletRequestBuilder mockHttpServletRequestBuilder, Object data) throws Exception {
-        MvcResult res = mockMvc.perform(mockHttpServletRequestBuilder
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(jsonStringify(data)))
-                .andReturn();
-        return extractErrorResponse(res);
-    }
-
-    private ErrorResponse extractErrorResponse(MvcResult res) throws Exception {
+    protected ErrorResponse extractErrorResponse(MvcResult res) throws Exception {
         if (res == null) {
             return null;
         }
