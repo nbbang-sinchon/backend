@@ -9,6 +9,7 @@ import nbbang.com.nbbang.domain.party.dto.single.request.PartyRequestDto;
 import nbbang.com.nbbang.domain.partymember.service.PartyMemberService;
 import nbbang.com.nbbang.global.response.DefaultResponse;
 import nbbang.com.nbbang.global.security.context.CurrentMember;
+import nbbang.com.nbbang.global.support.controller.ControllerMockTestUtil;
 import nbbang.com.nbbang.global.support.controller.ControllerTestUtil;
 import nbbang.com.nbbang.domain.party.service.PartyService;
 import org.assertj.core.api.Assertions;
@@ -28,14 +29,14 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@Import({ControllerTestUtil.class, PartyMemberInterceptorTestDto.class})
+@Import({ControllerMockTestUtil.class, PartyMemberInterceptorTestDto.class})
 @Slf4j
 @Transactional
 @ActiveProfiles("test")
 class PartyMemberInterceptorTest {
 
     @Autowired private MockMvc mockMvc;
-    @Autowired private ControllerTestUtil controllerTestUtil;
+    @Autowired private ControllerMockTestUtil controllerTestUtil;
     @Autowired private MemberRepository memberRepository;
     @Autowired private PartyService partyService;
     @Autowired private PartyMemberService partyMemberService;
