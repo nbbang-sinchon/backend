@@ -7,72 +7,72 @@ import nbbang.com.nbbang.global.error.ErrorResponse;
 import nbbang.com.nbbang.global.response.DefaultResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Map;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 /**
  * An Utility for controller Mock tests
+ * Designed to support DefaultResponse class
+ *
+ * Example:
+ *     Map data = expectMapData(
  */
 
 public class ControllerTestUtil {
 
     @Autowired private MockMvc mockMvc;
 
-    private String EXPECT_OK = "Expected OK, but wasn't";
-    private String EXPECT_ERROR = "Expected Error, but wasn't";
+    private static String EXPECT_OK = "Expected OK, but wasn't";
+    private static String EXPECT_ERROR = "Expected Error, but wasn't";
+
+    private static String ILLEGAL_RESPONSE = "Failed to get Data";
+    private static String ILLEGAL_DEFAULT_RESPONSE = "Failed to get Data from Default Response";
 
     public Map expectMapData(MvcResult res) throws Exception {
-        DefaultResponse resp = expectDefaultResponseObject(res);
-        Map data = (Map) resp.getData();
-        return data;
+        try {
+            DefaultResponse resp = expectDefaultResponseObject(res);
+            return extractMapData(resp);
+        } catch (Exception e) {
+            throw new IllegalArgumentException(ILLEGAL_RESPONSE);
+        }
     }
 
     public Map expectMapData(DefaultResponse res) throws Exception {
-        Map data = (Map) res.getData();
-        return data;
+        return extractMapData(res);
     }
 
     public Map expectMapData(RequestBuilder requestBuilder) throws Exception {
         DefaultResponse res = expectDefaultResponseObject(requestBuilder);
-        Map data = (Map) res.getData();
-        return data;
+        return extractMapData(res);
     }
 
-    public <T> T convert(Object fromValue, Class<T> toValueType) {
-        return new ObjectMapper().registerModule(new JavaTimeModule()).convertValue(fromValue, toValueType);
+    public <T> Map expectMapData(ResponseEntity<T> responseEntity) throws Exception {
+        DefaultResponse res = (DefaultResponse) responseEntity.getBody();
+        return extractMapData(res);
+    }
+
+    private Map extractMapData(DefaultResponse res) {
+        try {
+            Map data = (Map) res.getData();
+            return data;
+        } catch (Exception e) {
+            throw new IllegalArgumentException(ILLEGAL_DEFAULT_RESPONSE);
+        }
     }
 
     public DefaultResponse expectDefaultResponseObject(RequestBuilder requestBuilder) throws Exception {
         MvcResult res = this.mockMvc.perform(requestBuilder).andReturn();
-        if (res == null) {
-            return null;
-        }
-        String json = res.getResponse().getContentAsString();
-        try {
-            return new ObjectMapper().readValue(json, DefaultResponse.class);
-        } catch (Exception e) {
-            throw new IllegalArgumentException(EXPECT_OK);
-        }
+        return extractDefaultResponse(res);
     }
 
-
     public DefaultResponse expectDefaultResponseObject(MvcResult res) throws Exception {
-        if (res == null) {
-            return null;
-        }
-        String json = res.getResponse().getContentAsString();
-        try {
-            return new ObjectMapper().readValue(json, DefaultResponse.class);
-        } catch (Exception e) {
-            throw new IllegalArgumentException(EXPECT_OK);
-        }
+        return extractDefaultResponse(res);
     }
 
     public DefaultResponse expectDefaultResponseObject(MockHttpServletRequestBuilder mockHttpServletRequestBuilder, Object data) throws Exception {
@@ -80,6 +80,10 @@ public class ControllerTestUtil {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonStringify(data)))
                 .andReturn();
+        return extractDefaultResponse(res);
+    }
+
+    private DefaultResponse extractDefaultResponse(MvcResult res) throws Exception {
         if (res == null) {
             return null;
         }
@@ -91,31 +95,13 @@ public class ControllerTestUtil {
         }
     }
 
-
     public ErrorResponse expectErrorResponseObject(RequestBuilder requestBuilder) throws Exception {
         MvcResult res = this.mockMvc.perform(requestBuilder).andReturn();
-
-        if (res == null) {
-            return null;
-        }
-        String json = res.getResponse().getContentAsString();
-        try {
-            return new ObjectMapper().readValue(json, ErrorResponse.class);
-        } catch (Exception e) {
-            throw new IllegalArgumentException(EXPECT_ERROR);
-        }
+        return extractErrorResponse(res);
     }
 
     public ErrorResponse expectErrorResponseObject(MvcResult res) throws Exception {
-        if (res == null) {
-            return null;
-        }
-        String json = res.getResponse().getContentAsString();
-        try {
-            return new ObjectMapper().readValue(json, ErrorResponse.class);
-        } catch (Exception e) {
-            throw new IllegalArgumentException(EXPECT_ERROR);
-        }
+        return extractErrorResponse(res);
     }
 
     public ErrorResponse expectErrorResponseObject(MockHttpServletRequestBuilder mockHttpServletRequestBuilder, Object data) throws Exception {
@@ -123,6 +109,10 @@ public class ControllerTestUtil {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonStringify(data)))
                 .andReturn();
+        return extractErrorResponse(res);
+    }
+
+    private ErrorResponse extractErrorResponse(MvcResult res) throws Exception {
         if (res == null) {
             return null;
         }
@@ -140,10 +130,15 @@ public class ControllerTestUtil {
         return jsonString;
     }
 
+    public <T> T convert(Object fromValue, Class<T> toValueType) {
+        return new ObjectMapper().registerModule(new JavaTimeModule()).convertValue(fromValue, toValueType);
+    }
+
     public Object getObject(DefaultResponse res, Class classInfo) throws JsonProcessingException {
         String json = jsonStringify(res.getData());
         ObjectMapper mapper = new ObjectMapper();
         Object object = mapper.readValue(json, classInfo);
         return object;
     }
+
 }
