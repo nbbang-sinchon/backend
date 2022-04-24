@@ -36,11 +36,9 @@ class PartyControllerTest extends ControllerMockTestParent {
     @MockBean private PartyService partyService;
     @MockBean private MemberService memberService;
 
-    @Test
-    public void partyReadTest() throws Exception {
-
-    }
-
+    /*
+     * 파티 조회는 인증 없이 가능합니다.
+     */
     @Test
     public void partyReadTest1() throws Exception {
         String ownerNickname = "루피";
