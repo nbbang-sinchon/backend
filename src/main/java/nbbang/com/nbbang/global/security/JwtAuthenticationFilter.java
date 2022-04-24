@@ -1,5 +1,6 @@
 package nbbang.com.nbbang.global.security;
 
+import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,41 +17,43 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static nbbang.com.nbbang.global.security.SecurityPolicy.TOKEN_COOKIE_KEY;
-
 // https://docs.spring.io/spring-security/reference/6.0/servlet/oauth2/resource-server/jwt.html
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private AuthenticationManager authenticationManager;
     private TokenProvider tokenProvider;
     private LogoutService logoutService;
-
-    @Value("${deploy:false}")
-    private Boolean isDeploy;
+    private SecurityPolicy securityPolicy;
 
     public JwtAuthenticationFilter(
             AuthenticationManager authenticationManager,
             TokenProvider tokenProvider,
-            LogoutService logoutService
+            LogoutService logoutService,
+            SecurityPolicy securityPolicy
     ) {
         this.authenticationManager = authenticationManager;
         this.tokenProvider = tokenProvider;
         this.logoutService = logoutService;
+        this.securityPolicy = securityPolicy;
     }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
             String token = getJwtFromRequest(request);
+            if (token == null) {
+                log.error("null token taken from request");
+                throw new RuntimeException();
+            }
             if (logoutService.isInvalid(token)) {
                 log.error("Logout member");
                 throw new RuntimeException();
             }
-            successAuthentication(token, request);
+            processJwtAuthentication(token, request);
             log.info("Successfully authenticated");
         } catch (Exception e) {
             log.error("Failed to authenticate");
-            if (isDeploy == null || !isDeploy) {
+            if (!securityPolicy.isDeploy()) {
                 testAuthentication(request);
             }
         }
@@ -62,7 +65,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         processAuthentication(memberId.toString(), request);
     }
     
-    private void successAuthentication(String token, HttpServletRequest request) {
+    private void processJwtAuthentication(String token, HttpServletRequest request) {
         Long memberId = tokenProvider.getUserIdFromToken(token);
         processAuthentication(memberId.toString(), request);
     }
@@ -77,7 +80,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private String getJwtFromRequest(HttpServletRequest request) {
         try {
-            Cookie cookie = CookieUtils.getCookie(request, TOKEN_COOKIE_KEY).get();
+            Cookie cookie = CookieUtils.getCookie(request, securityPolicy.tokenCookieKey()).get();
             String token = cookie.getValue();
             return token;
         } catch (Exception e) {
@@ -102,4 +105,5 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         return false;
     }
+
 }

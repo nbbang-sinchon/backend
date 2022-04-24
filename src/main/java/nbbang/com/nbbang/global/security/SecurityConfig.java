@@ -31,6 +31,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final AuthenticationManager authenticationManager;
     private final TokenProvider tokenProvider;
     private final LogoutService logoutService;
+    private final SecurityPolicy securityPolicy;
 
     @Value("${request.logging:false}")
     private Boolean doRequestLogging;
@@ -72,17 +73,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .userInfoEndpoint()
                 .userService(customOAuth2MemberService)
                 .and()
-                .successHandler(new OAuth2AuthenticationSuccessHandler());
+                .successHandler(oAuth2AuthenticationSuccessHandler());
     }
 
 
+    private OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler() {
+        return new OAuth2AuthenticationSuccessHandler(tokenProvider, securityPolicy);
+    }
 
     private AuthenticationEntryPoint getRestAuthenticationEntryPoint() {
         return new HttpStatusEntryPoint(HttpStatus.BAD_GATEWAY);
     }
 
     private JwtAuthenticationFilter jwtAuthenticationFilter() {
-        return new JwtAuthenticationFilter(authenticationManager, tokenProvider, logoutService);
+        return new JwtAuthenticationFilter(authenticationManager, tokenProvider, logoutService, securityPolicy);
     }
 
     private CharacterEncodingFilter utf8EncodingFilter() {

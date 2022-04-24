@@ -19,6 +19,7 @@ import static nbbang.com.nbbang.global.error.GlobalErrorResponseMessage.UNAUTHOR
 public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
+        log.error("Unauthorized user tried to access secured resource");
         response.setContentType("application/json");
         PrintWriter writer = response.getWriter();
         ObjectMapper om = new ObjectMapper();
