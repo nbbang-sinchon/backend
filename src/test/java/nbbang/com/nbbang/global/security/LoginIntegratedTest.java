@@ -42,10 +42,11 @@ public class LoginIntegratedTest extends IntegratedTestParent {
     @Test
     public void authenticatedMemberTest() throws Exception {
         String token = tokenProvider.createToken(null, mockMemberId);
+        Thread.sleep(1000); // to ensure different timestamp encryption
         HttpHeaders headers = new HttpHeaders();
         headers.set("Cookie", "access_token=" + token);
         HttpEntity req = new HttpEntity(headers);
-        ResponseEntity res = template.exchange("/members", HttpMethod.GET, req, DefaultResponse.class, 1);
+        ResponseEntity res = template.exchange("/members", HttpMethod.GET, req, DefaultResponse.class);
         Map data = controllerTestUtil.expectMapData(res);
         //data.keySet().stream().forEach(k -> {
         //    System.out.print(k + ": ");
@@ -58,6 +59,7 @@ public class LoginIntegratedTest extends IntegratedTestParent {
     public void unauthenticatedMemberTest() throws Exception {
         String salt = "hdjkrhqwiejnasklc";
         String token = tokenProvider.createToken(null, mockMemberId) + salt; // Illegal token
+        Thread.sleep(1000); // to ensure different timestamp encryption
         HttpHeaders headers = new HttpHeaders();
         headers.set("Cookie", "access_token=" + token);
         HttpEntity req = new HttpEntity(headers);
@@ -69,6 +71,7 @@ public class LoginIntegratedTest extends IntegratedTestParent {
     @Test
     public void logoutMemberTest() throws Exception {
         String token = tokenProvider.createToken(null, mockMemberId);
+        Thread.sleep(1000); // to ensure different timestamp encryption
         HttpHeaders headers = new HttpHeaders();
         headers.set("Cookie", "access_token=" + token);
         HttpEntity req = new HttpEntity(headers);
