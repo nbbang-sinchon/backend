@@ -53,6 +53,11 @@ public class ControllerTestUtil {
         return extractDefaultResponse(res);
     }
 
+    public DefaultResponse expectDefaultResponseObject(ResponseEntity responseEntity) {
+        DefaultResponse res = (DefaultResponse) responseEntity.getBody();
+        return res;
+    }
+
     protected DefaultResponse extractDefaultResponse(MvcResult res) throws Exception {
         if (res == null) {
             return null;

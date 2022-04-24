@@ -14,8 +14,6 @@ import nbbang.com.nbbang.global.security.context.CurrentMember;
 import nbbang.com.nbbang.global.response.DefaultResponse;
 import nbbang.com.nbbang.global.support.controller.ControllerMockTestParent;
 import nbbang.com.nbbang.global.support.controller.ControllerMockTestUtil;
-import nbbang.com.nbbang.global.support.controller.ControllerTestParent;
-import nbbang.com.nbbang.global.support.controller.ControllerTestUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +29,6 @@ import java.util.Arrays;
 import static nbbang.com.nbbang.global.response.StatusCode.OK;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 @WebMvcTest(ManyPartyController.class)

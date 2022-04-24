@@ -11,6 +11,10 @@ import org.springframework.boot.test.mock.mockito.MockBeans;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 
+/**
+ * Abstract controller Mock test
+ * Test classes extending this will bypass security filters
+ */
 @Import({ControllerMockTestUtil.class})
 @MockBeans({
         @MockBean(JpaMetamodelMappingContext.class),
