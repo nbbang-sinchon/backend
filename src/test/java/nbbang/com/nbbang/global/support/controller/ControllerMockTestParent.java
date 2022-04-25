@@ -19,7 +19,7 @@ import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
         @MockBean(CustomOAuth2MemberService.class), @MockBean(CurrentMember.class),
         @MockBean(LogoutService.class),
         @MockBean(JwtAuthenticationManager.class), @MockBean(TokenProvider.class),
-        @MockBean(SecurityPolicy.class)
+        @MockBean(SecurityPolicy.class), @MockBean(JwtAuthenticationTokenConverter.class)
 })
 public abstract class ControllerMockTestParent {
 }
