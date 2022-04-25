@@ -5,7 +5,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.server.resource.BearerTokenAuthenticationToken;
 import org.springframework.security.web.authentication.AuthenticationConverter;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -78,7 +77,7 @@ public final class JwtAuthenticationFilter extends OncePerRequestFilter {
     // 루피로 로그인 하기
     private void testAuthentication(HttpServletRequest request) {
         String token = tokenProvider.createTokenByMemberId(1L);
-        Authentication authReq = new BearerTokenAuthenticationToken(token);
+        Authentication authReq = new NbbangJwtAuthenticationToken(token);
         Authentication authResult = authenticationManager.authenticate(authReq);
         SecurityContext context = SecurityContextHolder.createEmptyContext();
         context.setAuthentication(authResult);

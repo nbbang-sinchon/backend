@@ -1,8 +1,8 @@
 package nbbang.com.nbbang.global.security;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.oauth2.server.resource.BearerTokenAuthenticationToken;
 import org.springframework.security.web.authentication.AuthenticationConverter;
 import org.springframework.stereotype.Component;
 
@@ -29,6 +29,6 @@ public class JwtAuthenticationTokenConverter implements AuthenticationConverter 
     public Authentication convert(HttpServletRequest request) {
         String token = getJwtFromRequest(request);
         if (token == null) throw new RuntimeException();
-        return new BearerTokenAuthenticationToken(token);
+        return new NbbangJwtAuthenticationToken(token);
     }
 }
