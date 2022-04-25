@@ -1,55 +1,46 @@
 package nbbang.com.nbbang.global.security;
 
-import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.AuthenticationConverter;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 // https://docs.spring.io/spring-security/reference/6.0/servlet/oauth2/resource-server/jwt.html
 @Slf4j
-public class JwtAuthenticationFilter extends OncePerRequestFilter {
-    private AuthenticationManager authenticationManager;
-    private TokenProvider tokenProvider;
-    private LogoutService logoutService;
-    private SecurityPolicy securityPolicy;
+public final class JwtAuthenticationFilter extends OncePerRequestFilter {
+    private final AuthenticationManager authenticationManager;
+    private final TokenProvider tokenProvider;
+    private final LogoutService logoutService;
+    private final SecurityPolicy securityPolicy;
+    private final AuthenticationConverter authenticationConverter;
 
     public JwtAuthenticationFilter(
             AuthenticationManager authenticationManager,
             TokenProvider tokenProvider,
             LogoutService logoutService,
-            SecurityPolicy securityPolicy
+            SecurityPolicy securityPolicy,
+            AuthenticationConverter authenticationConverter
     ) {
         this.authenticationManager = authenticationManager;
         this.tokenProvider = tokenProvider;
         this.logoutService = logoutService;
         this.securityPolicy = securityPolicy;
+        this.authenticationConverter = authenticationConverter;
     }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
-            String token = getJwtFromRequest(request);
-            if (token == null) {
-                log.error("null token taken from request");
-                throw new RuntimeException();
-            }
-            if (logoutService.isInvalid(token)) {
-                log.error("Logout member");
-                throw new RuntimeException();
-            }
-            processJwtAuthentication(token, request);
+            processAuthentication(request);
             log.info("Successfully authenticated");
         } catch (Exception e) {
             log.error("Failed to authenticate");
@@ -59,33 +50,39 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         filterChain.doFilter(request, response);
     }
-    
-    private void testAuthentication(HttpServletRequest request) {
-        Long memberId = 1L;
-        processAuthentication(memberId.toString(), request);
-    }
-    
-    private void processJwtAuthentication(String token, HttpServletRequest request) {
-        Long memberId = tokenProvider.getUserIdFromToken(token);
-        processAuthentication(memberId.toString(), request);
-    }
 
-    private void processAuthentication(String value, HttpServletRequest request) {
-        UsernamePasswordAuthenticationToken authReq = new UsernamePasswordAuthenticationToken(value, value);
+    private void processAuthentication(HttpServletRequest request) {
+        Authentication authReq = authenticationConverter.convert(request);
+        //if (isLogout((String) authReq.getPrincipal())) throw new RuntimeException();
+        if (jwtLogoutCheck(authReq.getPrincipal())) throw new RuntimeException();
         Authentication authResult = authenticationManager.authenticate(authReq);
         SecurityContext context = SecurityContextHolder.createEmptyContext();
         context.setAuthentication(authResult);
         SecurityContextHolder.setContext(context);
     }
 
-    private String getJwtFromRequest(HttpServletRequest request) {
+    private boolean jwtLogoutCheck(Object obj) {
         try {
-            Cookie cookie = CookieUtils.getCookie(request, securityPolicy.tokenCookieKey()).get();
-            String token = cookie.getValue();
-            return token;
+            String token = (String) obj;
+            return logoutService.isInvalid(token);
         } catch (Exception e) {
-            return null;
+            return false;
         }
+    }
+
+    private boolean isLogout(String token) {
+        return logoutService.isInvalid(token);
+    }
+
+    // 루피로 로그인 하기
+    private void testAuthentication(HttpServletRequest request) {
+        String token = tokenProvider.createTokenByMemberId(1L);
+        Authentication authReq = new NbbangJwtAuthenticationToken(token);
+        Authentication authResult = authenticationManager.authenticate(authReq);
+        SecurityContext context = SecurityContextHolder.createEmptyContext();
+        context.setAuthentication(authResult);
+        SecurityContextHolder.setContext(context);
+        log.info("루피로 로그인 합니다. 로컬 테스트 용도인 걸 확인하세요.");
     }
 
     @Override

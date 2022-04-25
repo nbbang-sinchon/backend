@@ -9,8 +9,7 @@ public class CurrentMemberImpl implements CurrentMember {
     @Override
     public Long id() {
         try {
-            String id = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            return Long.parseLong(id);
+            return (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         } catch (Exception e) {
             return null;
         }

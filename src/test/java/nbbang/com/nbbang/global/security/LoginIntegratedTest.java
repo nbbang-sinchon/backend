@@ -41,7 +41,7 @@ public class LoginIntegratedTest extends IntegratedTestParent {
 
     @Test
     public void authenticatedMemberTest() throws Exception {
-        String token = tokenProvider.createToken(null, mockMemberId);
+        String token = tokenProvider.createTokenByMemberId(mockMemberId);
         Thread.sleep(1000); // to ensure different timestamp encryption
         HttpHeaders headers = new HttpHeaders();
         headers.set("Cookie", "access_token=" + token);
@@ -58,7 +58,7 @@ public class LoginIntegratedTest extends IntegratedTestParent {
     @Test
     public void unauthenticatedMemberTest() throws Exception {
         String salt = "hdjkrhqwiejnasklc";
-        String token = tokenProvider.createToken(null, mockMemberId) + salt; // Illegal token
+        String token = tokenProvider.createTokenByMemberId(mockMemberId) + salt; // Illegal token
         Thread.sleep(1000); // to ensure different timestamp encryption
         HttpHeaders headers = new HttpHeaders();
         headers.set("Cookie", "access_token=" + token);
@@ -70,7 +70,7 @@ public class LoginIntegratedTest extends IntegratedTestParent {
 
     @Test
     public void logoutMemberTest() throws Exception {
-        String token = tokenProvider.createToken(null, mockMemberId);
+        String token = tokenProvider.createTokenByMemberId(mockMemberId);
         Thread.sleep(1000); // to ensure different timestamp encryption
         HttpHeaders headers = new HttpHeaders();
         headers.set("Cookie", "access_token=" + token);
@@ -78,7 +78,6 @@ public class LoginIntegratedTest extends IntegratedTestParent {
         ResponseEntity res = template.exchange("/members", HttpMethod.GET, req, DefaultResponse.class);
         Map data = controllerTestUtil.expectMapData(res);
         assertThat(data.get("nickname")).isEqualTo(mockNickname); // 멤버 조회 성공
-
 
         ResponseEntity res2 = template.exchange("/gologout", HttpMethod.POST, req, DefaultResponse.class);
         DefaultResponse resp2 = controllerTestUtil.expectDefaultResponseObject(res2);

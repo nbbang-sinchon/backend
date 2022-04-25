@@ -3,8 +3,6 @@ package nbbang.com.nbbang.global.security;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -15,10 +13,9 @@ import java.util.Date;
 public class TokenProvider {
     private final SecurityPolicy securityPolicy;
 
-    public String createToken(Authentication authentication, Long memberId) {
-        Date now = new Date();
+    public String createTokenByMemberId(Long memberId) {
+        Date now = new Date(); // Time unit: Seconds
         Date expiryDate = new Date(now.getTime() + securityPolicy.tokenExpireTime());
-
         return Jwts.builder()
                 .setSubject(Long.toString(memberId))
                 .setIssuedAt(new Date())
