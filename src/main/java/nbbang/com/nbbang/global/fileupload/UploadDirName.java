@@ -1,4 +1,4 @@
-package nbbang.com.nbbang.global.FileUpload;
+package nbbang.com.nbbang.global.fileupload;
 
 public class UploadDirName {
     public static String DIR_AVATAR = "profile-images";

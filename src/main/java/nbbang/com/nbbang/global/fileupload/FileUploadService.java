@@ -1,4 +1,4 @@
-package nbbang.com.nbbang.global.FileUpload;
+package nbbang.com.nbbang.global.fileupload;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

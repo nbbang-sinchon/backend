@@ -10,7 +10,7 @@ import nbbang.com.nbbang.domain.chat.repository.MessageRepository;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.repository.PartyRepository;
-import nbbang.com.nbbang.global.FileUpload.FileUploadService;
+import nbbang.com.nbbang.global.fileupload.FileUploadService;
 import nbbang.com.nbbang.global.socket.SocketSender;
 import nbbang.com.nbbang.global.socket.service.SocketPartyMemberService;
 import nbbang.com.nbbang.global.validator.PartyMemberValidator;
@@ -23,7 +23,7 @@ import org.webjars.NotFoundException;
 import static nbbang.com.nbbang.domain.chat.controller.ChatResponseMessage.MESSAGE_NOT_FOUND;
 import static nbbang.com.nbbang.domain.chat.domain.MessageType.IMAGE;
 import static nbbang.com.nbbang.domain.party.controller.PartyResponseMessage.PARTY_NOT_FOUND;
-import static nbbang.com.nbbang.global.FileUpload.UploadDirName.DIR_CHATS;
+import static nbbang.com.nbbang.global.fileupload.UploadDirName.DIR_CHATS;
 
 @Transactional(readOnly = true)
 @Service

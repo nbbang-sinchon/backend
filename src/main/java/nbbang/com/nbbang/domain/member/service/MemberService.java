@@ -7,7 +7,7 @@ import nbbang.com.nbbang.domain.member.controller.MemberResponseMessage;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.dto.Place;
 import nbbang.com.nbbang.domain.member.repository.MemberRepository;
-import nbbang.com.nbbang.global.FileUpload.FileUploadService;
+import nbbang.com.nbbang.global.fileupload.FileUploadService;
 import nbbang.com.nbbang.global.security.Role;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,7 +16,7 @@ import org.webjars.NotFoundException;
 
 import java.io.IOException;
 
-import static nbbang.com.nbbang.global.FileUpload.UploadDirName.DIR_AVATAR;
+import static nbbang.com.nbbang.global.fileupload.UploadDirName.DIR_AVATAR;
 
 @Service
 @Transactional(readOnly = true)

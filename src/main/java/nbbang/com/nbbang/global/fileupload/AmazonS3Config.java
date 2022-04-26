@@ -1,4 +1,4 @@
-package nbbang.com.nbbang.global.FileUpload;
+package nbbang.com.nbbang.global.fileupload;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
