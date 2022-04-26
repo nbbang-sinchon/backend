@@ -22,4 +22,9 @@ import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
         @MockBean(SecurityPolicy.class), @MockBean(JwtAuthenticationTokenConverter.class)
 })
 public abstract class ControllerMockTestParent {
+    /**
+     * TODO: keno
+     * @AutoConfigureMockMvc(addFilters = false) // Bypass security filters
+     * 어노테이션이 상속되지 않으므로 다른 방법을 찾을 것
+     */
 }
