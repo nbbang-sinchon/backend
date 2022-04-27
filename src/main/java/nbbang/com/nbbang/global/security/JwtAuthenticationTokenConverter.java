@@ -17,7 +17,7 @@ public class JwtAuthenticationTokenConverter implements AuthenticationConverter 
 
     private String getJwtFromRequest(HttpServletRequest request) {
         try {
-            Cookie cookie = CookieUtils.getCookie(request, securityPolicy.tokenCookieKey()).get();
+            Cookie cookie = CookieUtils.getCookie(request, securityPolicy.getTokenCookieKey()).get();
             String token = cookie.getValue();
             return token;
         } catch (Exception e) {

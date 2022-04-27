@@ -21,7 +21,7 @@ public class LogoutService {
 
     @PostConstruct
     public void logoutKey() {
-        redisTemplate.expire(key, securityPolicy.tokenExpireTime(), TimeUnit.MILLISECONDS);
+        redisTemplate.expire(key, securityPolicy.getTokenExpireTime(), TimeUnit.MILLISECONDS);
     }
 
     public void invalidate(String token) {

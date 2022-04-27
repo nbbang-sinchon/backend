@@ -15,18 +15,18 @@ public class TokenProvider {
 
     public String createTokenByMemberId(Long memberId) {
         Date now = new Date(); // Time unit: Seconds
-        Date expiryDate = new Date(now.getTime() + securityPolicy.tokenExpireTime());
+        Date expiryDate = new Date(now.getTime() + securityPolicy.getTokenExpireTime());
         return Jwts.builder()
                 .setSubject(Long.toString(memberId))
                 .setIssuedAt(new Date())
                 .setExpiration(expiryDate)
-                .signWith(SignatureAlgorithm.HS512, securityPolicy.tokenSecretKey())
+                .signWith(SignatureAlgorithm.HS512, securityPolicy.getTokenSecretKey())
                 .compact();
     }
 
     public Long getUserIdFromToken(String token) {
         Claims claims = Jwts.parser()
-                .setSigningKey(securityPolicy.tokenSecretKey())
+                .setSigningKey(securityPolicy.getTokenSecretKey())
                 .parseClaimsJws(token)
                 .getBody();
         return Long.parseLong(claims.getSubject());
@@ -35,7 +35,7 @@ public class TokenProvider {
     public boolean validateToken(String authToken) {
         log.info("Validating token...");
         try {
-            Jwts.parser().setSigningKey(securityPolicy.tokenSecretKey()).parseClaimsJws(authToken);
+            Jwts.parser().setSigningKey(securityPolicy.getTokenSecretKey()).parseClaimsJws(authToken);
             return true;
         } catch (SignatureException ex) {
             log.error("Invalid JWT signature");

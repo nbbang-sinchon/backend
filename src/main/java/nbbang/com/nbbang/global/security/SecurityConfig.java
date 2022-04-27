@@ -32,7 +32,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final JwtAuthenticationTokenConverter jwtAuthenticationConverter;
 
     @Value("${request.logging:false}")
-    private Boolean doRequestLogging;
+    private Boolean isRequestLogging;
 
     @Override
     public void configure(WebSecurity web) throws Exception {
@@ -45,7 +45,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         // Request logging
-        if (doRequestLogging) http.addFilterBefore(new SimpleRequestHeaderLoggingFilter(), WebAsyncManagerIntegrationFilter.class);
+        if (isRequestLogging) http.addFilterBefore(new SimpleRequestHeaderLoggingFilter(), WebAsyncManagerIntegrationFilter.class);
         http
                 // Jwt authentication
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
