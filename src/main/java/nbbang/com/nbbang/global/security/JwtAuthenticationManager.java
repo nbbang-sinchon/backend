@@ -1,17 +1,20 @@
 package nbbang.com.nbbang.global.security;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
+@RequiredArgsConstructor
 public class JwtAuthenticationManager implements AuthenticationManager {
+    private final TokenProvider tokenProvider;
     static final List<GrantedAuthority> AUTHORITIES = new ArrayList<GrantedAuthority>();
 
     static {
@@ -19,10 +22,18 @@ public class JwtAuthenticationManager implements AuthenticationManager {
     }
 
     public Authentication authenticate(Authentication auth) throws AuthenticationException {
-        if (auth.getName().equals(auth.getCredentials())) {
-            return new UsernamePasswordAuthenticationToken(auth.getName(),
-                    auth.getCredentials(), AUTHORITIES);
+        String token = (String) auth.getCredentials();
+        if (tokenProvider.validateToken(token)) {
+            Long memberId = tokenProvider.getUserIdFromToken(token);
+            Authentication authResult = convert(memberId);
+            return authResult;
+        } else {
+            throw new RuntimeException();
         }
-        throw new BadCredentialsException("Bad Credentials");
+    }
+
+    private Authentication convert(Long memberId) {
+        Authentication authResult = new NbbangJwtAuthentication(memberId, AUTHORITIES);
+        return authResult;
     }
 }

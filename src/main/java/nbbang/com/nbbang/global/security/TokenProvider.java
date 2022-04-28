@@ -1,44 +1,41 @@
 package nbbang.com.nbbang.global.security;
 
 import io.jsonwebtoken.*;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 
-import static nbbang.com.nbbang.global.security.SecurityPolicy.TOKEN_EXPIRE_TIME;
-import static nbbang.com.nbbang.global.security.SecurityPolicy.TOKEN_SECRET_KEY;
-
-@Service
 @Slf4j
+@Service
+@RequiredArgsConstructor
 public class TokenProvider {
-    private String secretKey = TOKEN_SECRET_KEY;
-    public String createToken(Authentication authentication, Long memberId) {
-        Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + TOKEN_EXPIRE_TIME);
+    private final SecurityPolicy securityPolicy;
 
+    public String createTokenByMemberId(Long memberId) {
+        Date now = new Date(); // Time unit: Seconds
+        Date expiryDate = new Date(now.getTime() + securityPolicy.getTokenExpireTime());
         return Jwts.builder()
                 .setSubject(Long.toString(memberId))
                 .setIssuedAt(new Date())
                 .setExpiration(expiryDate)
-                .signWith(SignatureAlgorithm.HS512, secretKey)
+                .signWith(SignatureAlgorithm.HS512, securityPolicy.getTokenSecretKey())
                 .compact();
     }
 
     public Long getUserIdFromToken(String token) {
         Claims claims = Jwts.parser()
-                .setSigningKey(secretKey)
+                .setSigningKey(securityPolicy.getTokenSecretKey())
                 .parseClaimsJws(token)
                 .getBody();
-
         return Long.parseLong(claims.getSubject());
     }
 
     public boolean validateToken(String authToken) {
         log.info("Validating token...");
         try {
-            Jwts.parser().setSigningKey(secretKey).parseClaimsJws(authToken);
+            Jwts.parser().setSigningKey(securityPolicy.getTokenSecretKey()).parseClaimsJws(authToken);
             return true;
         } catch (SignatureException ex) {
             log.error("Invalid JWT signature");

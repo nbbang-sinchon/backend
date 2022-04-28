@@ -4,8 +4,8 @@ import nbbang.com.nbbang.domain.party.service.PartyWishlistService;
 import nbbang.com.nbbang.global.error.ErrorResponse;
 import nbbang.com.nbbang.global.error.exception.UserException;
 import nbbang.com.nbbang.global.response.DefaultResponse;
-import nbbang.com.nbbang.global.support.controller.ControllerTestParent;
-import nbbang.com.nbbang.global.support.controller.ControllerTestUtil;
+import nbbang.com.nbbang.global.support.controller.ControllerMockTestParent;
+import nbbang.com.nbbang.global.support.controller.ControllerMockTestUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -24,12 +24,12 @@ import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
-@AutoConfigureMockMvc(addFilters = false)
+@AutoConfigureMockMvc(addFilters = false) // Bypass security filters
 @WebMvcTest(PartyWishlistController.class)
-class PartyWishlistControllerTest extends ControllerTestParent {
+class PartyWishlistControllerTest extends ControllerMockTestParent {
 
     @Autowired private MockMvc mockMvc;
-    @Autowired private ControllerTestUtil controllerTestUtil;
+    @Autowired private ControllerMockTestUtil controllerTestUtil;
     @MockBean private PartyWishlistService partyWishlistService;
 
     @Test

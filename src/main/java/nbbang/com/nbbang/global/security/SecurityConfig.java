@@ -5,15 +5,13 @@ import nbbang.com.nbbang.global.filter.SimpleRequestHeaderLoggingFilter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.web.AuthenticationEntryPoint;
-import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -27,15 +25,14 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final CustomOAuth2MemberService customOAuth2MemberService;
+    private final AuthenticationManager authenticationManager;
+    private final TokenProvider tokenProvider;
     private final LogoutService logoutService;
+    private final SecurityPolicy securityPolicy;
+    private final JwtAuthenticationTokenConverter jwtAuthenticationConverter;
 
     @Value("${request.logging:false}")
-    private Boolean requestLogging;
-
-    @Bean
-    public JwtAuthenticationFilter jwtAuthenticationFilter() {
-        return new JwtAuthenticationFilter(logoutService);
-    }
+    private Boolean isRequestLogging;
 
     @Override
     public void configure(WebSecurity web) throws Exception {
@@ -47,44 +44,46 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        if (requestLogging) http.addFilterBefore(new SimpleRequestHeaderLoggingFilter(), WebAsyncManagerIntegrationFilter.class);
+        // Request logging
+        if (isRequestLogging) http.addFilterBefore(new SimpleRequestHeaderLoggingFilter(), WebAsyncManagerIntegrationFilter.class);
         http
+                // Jwt authentication
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .addFilterBefore(utf8EncodingFilter(), WebAsyncManagerIntegrationFilter.class)
-                //.addFilterBefore(new CustomRequestLoggingFilter(), WebAsyncManagerIntegrationFilter.class)
-                .addFilterBefore(jwtAuthenticationFilter(), BasicAuthenticationFilter.class)
-                .addFilterBefore(new LoginRedirectionFilter(), WebAsyncManagerIntegrationFilter.class)
+                    .addFilterBefore(utf8EncodingFilter(), WebAsyncManagerIntegrationFilter.class)
+                    .addFilterBefore(jwtAuthenticationFilter(), BasicAuthenticationFilter.class)
+                    .addFilterBefore(new LoginRedirectUriFilter(), WebAsyncManagerIntegrationFilter.class)
                 .csrf().disable()
                 .cors()
-
                 .and()
-                .exceptionHandling()
-                .authenticationEntryPoint(new RestAuthenticationEntryPoint())
+                    .exceptionHandling()
+                    // Authentication failure handler
+                    .authenticationEntryPoint(new RestAuthenticationEntryPoint())
                 .and()
 
                 .authorizeRequests()
-                .antMatchers(HttpMethod.OPTIONS,"/**").permitAll()
-                .antMatchers("/login/**").permitAll()
-                .antMatchers("/oauth2/**").permitAll()
-                .antMatchers(HttpMethod.GET, "/parties").permitAll()
-                .antMatchers(HttpMethod.GET, "/parties/**").permitAll()
+                    .antMatchers(HttpMethod.OPTIONS,"/**").permitAll()
+                    .antMatchers("/login/**").permitAll()
+                    .antMatchers("/oauth2/**").permitAll()
+                    .antMatchers(HttpMethod.GET, "/parties").permitAll()
+                    .antMatchers(HttpMethod.GET, "/parties/**").permitAll()
                 .anyRequest().authenticated()
-
                 .and()
-                .oauth2Login()
-                .userInfoEndpoint()
-                .userService(customOAuth2MemberService)
+                    .oauth2Login()
+                    .userInfoEndpoint()
+                    .userService(customOAuth2MemberService)
                 .and()
-                .successHandler(new OAuth2AuthenticationSuccessHandler());
+                    .successHandler(oAuth2AuthenticationSuccessHandler());
     }
 
 
-
-    private AuthenticationEntryPoint getRestAuthenticationEntryPoint() {
-        return new HttpStatusEntryPoint(HttpStatus.BAD_GATEWAY);
+    private OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler() {
+        return new OAuth2AuthenticationSuccessHandler(tokenProvider, securityPolicy);
     }
 
+    private JwtAuthenticationFilter jwtAuthenticationFilter() {
+        return new JwtAuthenticationFilter(authenticationManager, tokenProvider, logoutService, securityPolicy, jwtAuthenticationConverter);
+    }
 
     private CharacterEncodingFilter utf8EncodingFilter() {
         CharacterEncodingFilter encodingFilter = new CharacterEncodingFilter();
