@@ -20,7 +20,7 @@ public class LoginHandShakeInterceptor implements HandshakeInterceptor {
 
     @Override
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
-        //socketIdUtil.rememberIdSocket(request, attributes);
+        socketIdUtil.rememberIdSocket(request, attributes);
         return true;
     }
 
