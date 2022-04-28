@@ -18,7 +18,7 @@ public class JwtAuthenticationManager implements AuthenticationManager {
     static final List<GrantedAuthority> AUTHORITIES = new ArrayList<GrantedAuthority>();
 
     static {
-        AUTHORITIES.add(new SimpleGrantedAuthority("ROLE_USER"));
+        AUTHORITIES.add(new SimpleGrantedAuthority(Role.USER.getKey()));
     }
 
     public Authentication authenticate(Authentication auth) throws AuthenticationException {

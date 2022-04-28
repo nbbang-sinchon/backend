@@ -71,11 +71,10 @@ public class OAuthAttributes {
     private static OAuthAttributes ofNaver(String userNameAttributeName,
                                            Map<String, Object> attributes) {
         Map attrs = (Map)attributes.get("response");
-        attrs.keySet().stream().forEach(k -> {
+        /*attrs.keySet().stream().forEach(k -> {
             System.out.print(k + " : ");
             System.out.println(attrs.get(k).toString());
-        });
-
+        });*/
         return OAuthAttributes.builder()
                 .nickname(randomNickname())
                 .email((String) attrs.get("id"))

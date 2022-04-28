@@ -16,7 +16,7 @@ import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 @MockBeans({
         @MockBean(JpaMetamodelMappingContext.class),
         @MockBean(WebMvcConfig.class),
-        @MockBean(CustomOAuth2MemberService.class), @MockBean(CurrentMember.class),
+        @MockBean(NbbangOAuth2MemberService.class), @MockBean(CurrentMember.class),
         @MockBean(LogoutService.class),
         @MockBean(JwtAuthenticationManager.class), @MockBean(TokenProvider.class),
         @MockBean(SecurityPolicy.class), @MockBean(JwtAuthenticationTokenConverter.class)

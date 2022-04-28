@@ -24,7 +24,7 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final CustomOAuth2MemberService customOAuth2MemberService;
+    private final NbbangOAuth2MemberService customOAuth2MemberService;
     private final AuthenticationManager authenticationManager;
     private final TokenProvider tokenProvider;
     private final LogoutService logoutService;

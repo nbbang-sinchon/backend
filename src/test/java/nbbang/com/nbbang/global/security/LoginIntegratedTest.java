@@ -30,7 +30,6 @@ public class LoginIntegratedTest extends IntegratedTestParent {
     private final Long mockMemberId = 1L;
     private final String mockNickname = "애기 루피";
 
-
     @BeforeEach
     public void createMockData() {
         // Mock member
