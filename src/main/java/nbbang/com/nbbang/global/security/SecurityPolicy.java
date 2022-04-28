@@ -23,19 +23,19 @@ public class SecurityPolicy {
     @Value("${jwt.secret.key}") // .gitignore
     private String TOKEN_SECRET_KEY;
 
-    public int tokenExpireTime() {
+    public int getTokenExpireTime() {
         return TOKEN_EXPIRE_TIME;
     }
 
-    public String tokenCookieKey() {
+    public String getTokenCookieKey() {
         return TOKEN_COOKIE_KEY;
     }
 
-    public String defaultRedirectUri() {
+    public String getDefaultRedirectUri() {
         return DEFAULT_REDIRECT_URI;
     }
 
-    public String tokenSecretKey() {
+    public String getTokenSecretKey() {
         return TOKEN_SECRET_KEY;
     }
 

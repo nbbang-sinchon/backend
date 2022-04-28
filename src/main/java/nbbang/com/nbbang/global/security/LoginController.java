@@ -51,7 +51,7 @@ public class LoginController {
     public DefaultResponse logout(HttpServletRequest request, HttpServletResponse response) {
         String message = "로그아웃 성공";
         try {
-            Cookie cookie = CookieUtils.getCookie(request, securityPolicy.tokenCookieKey()).get();
+            Cookie cookie = CookieUtils.getCookie(request, securityPolicy.getTokenCookieKey()).get();
             String token = cookie.getValue();
             logoutService.invalidate(token);
         } catch (Exception e) {

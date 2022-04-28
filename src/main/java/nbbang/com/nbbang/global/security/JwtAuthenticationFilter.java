@@ -1,10 +1,12 @@
 package nbbang.com.nbbang.global.security;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.web.authentication.AuthenticationConverter;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -16,26 +18,13 @@ import java.io.IOException;
 
 // https://docs.spring.io/spring-security/reference/6.0/servlet/oauth2/resource-server/jwt.html
 @Slf4j
+@AllArgsConstructor
 public final class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final AuthenticationManager authenticationManager;
     private final TokenProvider tokenProvider;
     private final LogoutService logoutService;
     private final SecurityPolicy securityPolicy;
     private final AuthenticationConverter authenticationConverter;
-
-    public JwtAuthenticationFilter(
-            AuthenticationManager authenticationManager,
-            TokenProvider tokenProvider,
-            LogoutService logoutService,
-            SecurityPolicy securityPolicy,
-            AuthenticationConverter authenticationConverter
-    ) {
-        this.authenticationManager = authenticationManager;
-        this.tokenProvider = tokenProvider;
-        this.logoutService = logoutService;
-        this.securityPolicy = securityPolicy;
-        this.authenticationConverter = authenticationConverter;
-    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {

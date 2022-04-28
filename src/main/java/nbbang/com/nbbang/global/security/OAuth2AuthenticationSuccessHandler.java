@@ -1,5 +1,6 @@
 package nbbang.com.nbbang.global.security;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -13,17 +14,10 @@ import java.io.IOException;
 import java.util.Optional;
 
 @Slf4j
+@AllArgsConstructor
 public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     private final TokenProvider tokenProvider;
     private final SecurityPolicy securityPolicy;
-
-    public OAuth2AuthenticationSuccessHandler(
-            TokenProvider tokenProvider,
-            SecurityPolicy securityPolicy
-    ) {
-        this.tokenProvider = tokenProvider;
-        this.securityPolicy = securityPolicy;
-    }
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
@@ -41,7 +35,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     }
 
     private void addAccessTokenCookie(HttpServletResponse response, String token) {
-        CookieUtils.addResponseCookie(response, securityPolicy.tokenCookieKey(), token, true, true, securityPolicy.tokenExpireTime(), "none", "", "/");
+        CookieUtils.addResponseCookie(response, securityPolicy.getTokenCookieKey(), token, true, true, securityPolicy.getTokenExpireTime(), "none", "", "/");
     }
 
     private String determineTargetUri(HttpServletRequest request) {
@@ -50,7 +44,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         if (!cookie.isEmpty()) { // Redirect uri specified by client
             redirect_uri = cookie.get().getValue();
         } else { // default
-            redirect_uri = securityPolicy.defaultRedirectUri();
+            redirect_uri = securityPolicy.getDefaultRedirectUri();
         }
         return UriComponentsBuilder.fromUriString(redirect_uri)
                 .build().toUriString();
