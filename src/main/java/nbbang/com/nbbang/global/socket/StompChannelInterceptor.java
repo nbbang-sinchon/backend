@@ -27,6 +27,7 @@ public class StompChannelInterceptor implements ChannelInterceptor {
     private final ChatRoomService chatRoomService;
     private final PartyMemberValidator partyMemberValidator;
     private final SocketIdUtil socketIdUtil;
+    private final CurrentMember currentMember;
 
     private static final String TOPIC_GLOBAL = "/topic/global";
     private static final String TOPIC_CHATTING = "/topic/chatting";
@@ -38,8 +39,10 @@ public class StompChannelInterceptor implements ChannelInterceptor {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
         Map<String, Object> attributes = accessor.getSessionAttributes();
 
-        attributes.put("memberId", socketIdUtil.idFromSocket(message));
-        Long memberId = (Long) attributes.get("memberId");
+        //attributes.put("memberId", socketIdUtil.idFromSocket(message));
+        attributes.put("memberId", currentMember.id());
+        //Long memberId = (Long) attributes.get("memberId");
+        Long memberId = currentMember.id();
         log.info("[{}] message: {}", accessor.getCommand(), message);
 
         if (StompCommand.CONNECT == accessor.getCommand()) {
