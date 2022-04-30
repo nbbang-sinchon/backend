@@ -3,6 +3,7 @@ package nbbang.com.nbbang.domain.party.domain;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import nbbang.com.nbbang.domain.hashtag.domain.PartyHashtag;
 import nbbang.com.nbbang.domain.partymember.domain.PartyMember;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.dto.Place;
@@ -64,7 +65,7 @@ public class Party {
     private String accountNumber;
 
     @Builder.Default
-    @OneToMany(mappedBy = "party")
+    @OneToMany(cascade = {CascadeType.ALL}, orphanRemoval = true,mappedBy = "party")
     private List<PartyHashtag> partyHashtags = new ArrayList<>();
 
     @Builder.Default
@@ -85,14 +86,13 @@ public class Party {
         return partyHashtags.stream().map(h -> h.getHashtag().getContent()).collect(Collectors.toList());
     }
 
-    public PartyHashtag deletePartyHashtag(String content){
-        PartyHashtag findPartyHashtag = partyHashtags.stream().filter(partyHashtag -> partyHashtag.getHashtag().getContent() == content)
-                .findAny().orElseThrow(() -> new NotFoundException(HASHTAG_NOT_FOUND));
-        partyHashtags.remove(findPartyHashtag);
-        return findPartyHashtag;
+    public List<PartyHashtag> deletePartyHashtags(List<String> contents) {
+        List<PartyHashtag> deletedPartyHashtags = partyHashtags.stream().filter(partyHashtag -> contents.contains(partyHashtag.getContent())).collect(Collectors.toList());
+        partyHashtags.removeAll(deletedPartyHashtags);
+        return deletedPartyHashtags;
     }
 
-    public void addOwner(Member member) {
+    public void setOwner(Member member) {
         this.owner = member;
     }
 
@@ -147,4 +147,6 @@ public class Party {
     public static Field getField(String field) throws NoSuchFieldException {
         return Party.class.getDeclaredField(field);
     }
+
+
 }

@@ -3,17 +3,17 @@ package nbbang.com.nbbang.domain.party.controller;
 import nbbang.com.nbbang.domain.partymember.domain.PartyMember;
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.dto.Place;
-import nbbang.com.nbbang.domain.party.domain.Hashtag;
+import nbbang.com.nbbang.domain.hashtag.domain.Hashtag;
 import nbbang.com.nbbang.domain.party.domain.Party;
-import nbbang.com.nbbang.domain.party.domain.PartyHashtag;
+import nbbang.com.nbbang.domain.hashtag.domain.PartyHashtag;
 import nbbang.com.nbbang.domain.party.domain.PartyStatus;
 import nbbang.com.nbbang.domain.party.dto.many.PartyListRequestFilterDto;
 import nbbang.com.nbbang.domain.party.dto.many.PartyListResponseDto;
 import nbbang.com.nbbang.domain.party.service.ManyPartyService;
 import nbbang.com.nbbang.global.security.context.CurrentMember;
 import nbbang.com.nbbang.global.response.DefaultResponse;
-import nbbang.com.nbbang.global.support.controller.ControllerTestParent;
-import nbbang.com.nbbang.global.support.controller.ControllerTestUtil;
+import nbbang.com.nbbang.global.support.controller.ControllerMockTestParent;
+import nbbang.com.nbbang.global.support.controller.ControllerMockTestUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,13 +29,12 @@ import java.util.Arrays;
 import static nbbang.com.nbbang.global.response.StatusCode.OK;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 @WebMvcTest(ManyPartyController.class)
-class ManyPartyControllerTest extends ControllerTestParent {
+class ManyPartyControllerTest extends ControllerMockTestParent {
     @Autowired private MockMvc mockMvc;
-    @Autowired private ControllerTestUtil controllerTestUtil;
+    @Autowired private ControllerMockTestUtil controllerMockTestUtil;
 
     @MockBean private ManyPartyService manyPartyService;
     @MockBean private CurrentMember currentMember;
@@ -69,9 +68,9 @@ class ManyPartyControllerTest extends ControllerTestParent {
         when(manyPartyService.findAllParties(pageable, PartyListRequestFilterDto.builder().build(), null, memberA.getId()))
                 .thenReturn(new PageImpl<>(Arrays.asList(partyA), pageable, 1));
         when(currentMember.id()).thenReturn(memberA.getId());
-        DefaultResponse res = controllerTestUtil.expectDefaultResponseObject(get("/parties"));
+        DefaultResponse res = controllerMockTestUtil.expectDefaultResponseObject(get("/parties"));
         assertThat(res.getStatusCode()).isEqualTo(OK);
-        PartyListResponseDto dto = controllerTestUtil.convert(res.getData(), PartyListResponseDto.class);
+        PartyListResponseDto dto = controllerMockTestUtil.convert(res.getData(), PartyListResponseDto.class);
 
         assertThat(dto.getParties().get(0).getJoinNumber()).isEqualTo(2);
         assertThat(dto.getParties().get(0).getHashtags().size()).isEqualTo(2);

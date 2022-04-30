@@ -56,7 +56,9 @@ dependencies {
 	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.2'
 
 	implementation "org.springframework.boot:spring-boot-starter-data-redis"
-	testImplementation("org.springframework.security:spring-security-test")
+
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.security:spring-security-test'
 
 	implementation group: 'it.ozimov', name: 'embedded-redis', version: '0.7.1' //0311
 

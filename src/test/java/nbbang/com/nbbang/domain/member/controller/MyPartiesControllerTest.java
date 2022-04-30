@@ -35,7 +35,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @ActiveProfiles("test")
 class MyPartiesIntegrationTest {
 
-    @Autowired ControllerTestUtil controllerTestUtil;
     @Autowired PartyService partyService;
     @Autowired MemberService memberService;
     @Autowired MemberRepository memberRepository;

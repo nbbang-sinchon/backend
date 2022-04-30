@@ -2,11 +2,13 @@ package nbbang.com.nbbang.domain.party.controller;
 
 import nbbang.com.nbbang.domain.member.domain.Member;
 import nbbang.com.nbbang.domain.member.dto.Place;
+import nbbang.com.nbbang.domain.member.service.MemberService;
 import nbbang.com.nbbang.domain.party.domain.Party;
 import nbbang.com.nbbang.domain.party.domain.PartyStatus;
 import nbbang.com.nbbang.domain.party.service.PartyService;
 import nbbang.com.nbbang.global.response.DefaultResponse;
-import nbbang.com.nbbang.global.support.controller.ControllerTestParent;
+import nbbang.com.nbbang.global.support.controller.ControllerMockTestParent;
+import nbbang.com.nbbang.global.support.controller.ControllerMockTestUtil;
 import nbbang.com.nbbang.global.support.controller.ControllerTestUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,24 +23,22 @@ import static nbbang.com.nbbang.global.response.StatusCode.OK;
 import static org.mockito.Mockito.when;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(PartyController.class)
-class PartyControllerTest extends ControllerTestParent {
+class PartyControllerTest extends ControllerMockTestParent {
 
     @Autowired private MockMvc mockMvc;
-    @Autowired private ControllerTestUtil controllerTestUtil;
+    @Autowired private ControllerMockTestUtil controllerTestUtil;
 
     @MockBean private PartyService partyService;
+    @MockBean private MemberService memberService;
 
-    @Test
-    public void partyReadTest() throws Exception {
-
-    }
-
+    /*
+     * 파티 조회는 인증 없이 가능합니다.
+     */
     @Test
     public void partyReadTest1() throws Exception {
         String ownerNickname = "루피";

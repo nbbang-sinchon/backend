@@ -1,91 +1,77 @@
 package nbbang.com.nbbang.global.security;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.web.authentication.AuthenticationConverter;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
-import static nbbang.com.nbbang.global.security.SecurityPolicy.TOKEN_COOKIE_KEY;
-import static org.springframework.security.web.context.HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY;
-
+// https://docs.spring.io/spring-security/reference/6.0/servlet/oauth2/resource-server/jwt.html
 @Slf4j
-public class JwtAuthenticationFilter extends OncePerRequestFilter {
-
-    private static AuthenticationManager authenticationManager = new JwtAuthenticationManager();
-    private TokenProvider tokenProvider = new TokenProvider();
-    private LogoutService logoutService;
-    @Value("${deploy:false}")
-    private Boolean isDeploy;
-
-    public JwtAuthenticationFilter(AuthenticationManager authenticationManager) {
-        this.authenticationManager = authenticationManager;
-    }
-
-    public JwtAuthenticationFilter() {
-
-    }
-
-    public JwtAuthenticationFilter(LogoutService logoutService) {
-        this.logoutService = logoutService;
-    }
+@AllArgsConstructor
+public final class JwtAuthenticationFilter extends OncePerRequestFilter {
+    private final AuthenticationManager authenticationManager;
+    private final TokenProvider tokenProvider;
+    private final LogoutService logoutService;
+    private final SecurityPolicy securityPolicy;
+    private final AuthenticationConverter authenticationConverter;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
-            String token = getJwtFromRequest(request);
-            if (logoutService.isInvalid(token)) {
-                log.error("Logout member");
-                throw new RuntimeException();
-            }
-            successAuthentication(token, request);
+            processAuthentication(request);
             log.info("Successfully authenticated");
         } catch (Exception e) {
             log.error("Failed to authenticate");
-            if (!isDeploy) {
+            if (!securityPolicy.isDeploy()) {
                 testAuthentication(request);
             }
         }
         filterChain.doFilter(request, response);
     }
-    
-    private void testAuthentication(HttpServletRequest request) {
-        Long memberId = 1L;
-        processAuthentication(memberId.toString(), request);
-    }
-    
-    private void successAuthentication(String token, HttpServletRequest request) {
-        Long memberId = tokenProvider.getUserIdFromToken(token);
-        processAuthentication(memberId.toString(), request);
-    }
 
-    private void processAuthentication(String value, HttpServletRequest request) {
-        UsernamePasswordAuthenticationToken authReq = new UsernamePasswordAuthenticationToken(value, value);
+    private void processAuthentication(HttpServletRequest request) {
+        Authentication authReq = authenticationConverter.convert(request);
+        //if (isLogout((String) authReq.getPrincipal())) throw new RuntimeException();
+        if (jwtLogoutCheck(authReq.getPrincipal())) throw new RuntimeException();
         Authentication authResult = authenticationManager.authenticate(authReq);
         SecurityContext context = SecurityContextHolder.createEmptyContext();
         context.setAuthentication(authResult);
         SecurityContextHolder.setContext(context);
     }
 
-    private String getJwtFromRequest(HttpServletRequest request) {
+    private boolean jwtLogoutCheck(Object obj) {
         try {
-            Cookie cookie = CookieUtils.getCookie(request, TOKEN_COOKIE_KEY).get();
-            String token = cookie.getValue();
-            return token;
+            String token = (String) obj;
+            return logoutService.isInvalid(token);
         } catch (Exception e) {
-            return null;
+            return false;
         }
+    }
+
+    private boolean isLogout(String token) {
+        return logoutService.isInvalid(token);
+    }
+
+    // 루피로 로그인 하기
+    private void testAuthentication(HttpServletRequest request) {
+        String token = tokenProvider.createTokenByMemberId(1L);
+        Authentication authReq = new NbbangJwtAuthenticationToken(token);
+        Authentication authResult = authenticationManager.authenticate(authReq);
+        SecurityContext context = SecurityContextHolder.createEmptyContext();
+        context.setAuthentication(authResult);
+        SecurityContextHolder.setContext(context);
+        log.info("루피로 로그인 합니다. 로컬 테스트 용도인 걸 확인하세요.");
     }
 
     @Override
@@ -105,4 +91,5 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         return false;
     }
+
 }

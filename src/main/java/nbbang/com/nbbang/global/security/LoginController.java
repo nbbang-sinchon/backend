@@ -27,6 +27,7 @@ import static nbbang.com.nbbang.global.security.SecurityPolicy.*;
 public class LoginController {
 
     private final LogoutService logoutService;
+    private final SecurityPolicy securityPolicy;
 
     @Operation(summary = "구글 로그인", description = "로그인 페이지로 이동합니다(구글). \n예시 1) https://www.nbbang.shop/api/oauth2/authorization/google?redirect_uri=https://www.nbbang.shop" + "\n예시2) https://www.nbbang.shop/api/oauth2/authorization/google")
     @GetMapping("oauth2/authorization/google")
@@ -50,7 +51,7 @@ public class LoginController {
     public DefaultResponse logout(HttpServletRequest request, HttpServletResponse response) {
         String message = "로그아웃 성공";
         try {
-            Cookie cookie = CookieUtils.getCookie(request, TOKEN_COOKIE_KEY).get();
+            Cookie cookie = CookieUtils.getCookie(request, securityPolicy.getTokenCookieKey()).get();
             String token = cookie.getValue();
             logoutService.invalidate(token);
         } catch (Exception e) {
